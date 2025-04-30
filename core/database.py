@@ -54,7 +54,14 @@ class DatabaseConnection:
         self.connection_string = None
 
     def conectar_a_base(self, database):
-        self.connection_string = self.connection_string_template.format(database)
+        try:
+            self.connection_string = self.connection_string_template.format(database)
+        except KeyError as e:
+            Logger().error(f"Error al conectar a la base de datos: {e}. Verifique que el controlador ODBC necesario esté instalado.")
+            raise
+        except Exception as e:
+            Logger().error(f"Error inesperado al conectar a la base de datos: {e}")
+            raise
 
     def ejecutar_query(self, query, params=None):
         if not self.connection_string:
