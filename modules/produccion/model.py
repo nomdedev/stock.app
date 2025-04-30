@@ -1,0 +1,59 @@
+class ProduccionModel:
+    def __init__(self, db_connection):
+        self.db = ProduccionDatabaseConnection()
+
+    def obtener_etapas(self):
+        query = "SELECT * FROM etapas_fabricacion"
+        return self.db.ejecutar_query(query)
+
+    def agregar_etapa(self, datos):
+        query = "INSERT INTO etapas_fabricacion (id_abertura, etapa, estado, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?, ?)"
+        self.db.ejecutar_query(query, datos)
+
+    def obtener_aberturas(self):
+        query = "SELECT * FROM aberturas"
+        return self.db.ejecutar_query(query)
+
+    def actualizar_estado_abertura(self, id_abertura, nuevo_estado):
+        query = "UPDATE aberturas SET estado_general = ? WHERE id = ?"
+        self.db.ejecutar_query(query, (nuevo_estado, id_abertura))
+
+    def obtener_etapas_por_abertura(self, id_abertura):
+        query = "SELECT * FROM etapas_fabricacion WHERE id_abertura = ?"
+        return self.db.ejecutar_query(query, (id_abertura,))
+
+    def finalizar_etapa(self, id_etapa, fecha_fin, tiempo_real):
+        query = """
+        UPDATE etapas_fabricacion
+        SET estado = 'finalizada', fecha_fin = ?, tiempo_real = ?
+        WHERE id = ?
+        """
+        self.db.ejecutar_query(query, (fecha_fin, tiempo_real, id_etapa))
+
+    def obtener_etapas_fabricacion(self):
+        query = """
+        SELECT id_abertura, etapa, estado
+        FROM etapas_fabricacion
+        WHERE estado != 'finalizada'
+        """
+        return self.db.ejecutar_query(query)
+
+    def iniciar_etapa_fabricacion(self, id_abertura, etapa, fecha_inicio):
+        query = "UPDATE etapas_fabricacion SET estado = 'en proceso', fecha_inicio = ? WHERE id = ? AND etapa = ?"
+        self.db.ejecutar_query(query, (fecha_inicio, id_abertura, etapa))
+
+    def finalizar_etapa_fabricacion(self, id_abertura, etapa, fecha_fin):
+        query = "UPDATE etapas_fabricacion SET estado = 'finalizada', fecha_fin = ? WHERE id = ? AND etapa = ?"
+        self.db.ejecutar_query(query, (fecha_fin, id_abertura, etapa))
+
+    def obtener_estado_abertura(self, id_abertura):
+        query = "SELECT etapa, estado FROM etapas_fabricacion WHERE id = ?"
+        return self.db.ejecutar_query(query, (id_abertura,))
+
+    def obtener_abertura_por_id(self, id_abertura):
+        query = "SELECT * FROM aberturas WHERE id = ?"
+        return self.db.ejecutar_query(query, (id_abertura,))
+
+    def eliminar_etapa_fabricacion(self, id_etapa):
+        query = "DELETE FROM etapas_fabricacion WHERE id = ?"
+        self.db.ejecutar_query(query, (id_etapa,))

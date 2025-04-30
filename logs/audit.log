@@ -1,0 +1,522 @@
+2025-04-15 18:10:23,232 - INFO - Aplicación iniciada
+2025-04-16 11:29:42,556 - INFO - Aplicación iniciada
+2025-04-16 11:33:49,403 - INFO - Aplicación iniciada
+2025-04-16 12:14:43,163 - INFO - Aplicación iniciada
+2025-04-16 13:08:52,395 - INFO - Aplicación iniciada
+2025-04-16 15:55:32,066 - INFO - Aplicación iniciada
+2025-04-16 16:00:32,063 - INFO - Pantalla bloqueada por inactividad
+2025-04-16 16:12:40,411 - INFO - Aplicación iniciada
+2025-04-16 16:17:40,433 - INFO - Pantalla bloqueada por inactividad
+2025-04-16 18:01:49,999 - INFO - Aplicación iniciada
+2025-04-17 09:47:31,007 - INFO - Aplicación iniciada
+2025-04-17 09:48:10,277 - INFO - Aplicación iniciada
+2025-04-17 09:53:34,662 - INFO - Aplicación iniciada
+2025-04-17 09:54:06,317 - INFO - Aplicación iniciada
+2025-04-17 09:55:00,048 - INFO - Aplicación iniciada
+2025-04-17 09:55:16,774 - INFO - Aplicación iniciada
+2025-04-17 10:00:16,793 - INFO - Pantalla bloqueada por inactividad
+2025-04-17 13:44:00,264 - INFO - Aplicación iniciada
+2025-04-17 13:45:19,886 - INFO - Aplicación iniciada
+2025-04-17 13:46:26,002 - INFO - Aplicación iniciada
+2025-04-17 13:51:26,004 - INFO - Pantalla bloqueada por inactividad
+2025-04-17 16:38:01,418 - INFO - Aplicación iniciada
+2025-04-17 16:41:49,412 - INFO - Aplicación iniciada
+2025-04-17 16:42:26,355 - INFO - Aplicación iniciada
+2025-04-17 16:47:26,384 - INFO - Pantalla bloqueada por inactividad
+2025-04-17 16:48:16,962 - INFO - Aplicación iniciada
+2025-04-17 16:53:16,980 - INFO - Pantalla bloqueada por inactividad
+2025-04-17 16:53:49,794 - INFO - Aplicación iniciada
+2025-04-17 16:58:49,785 - INFO - Pantalla bloqueada por inactividad
+2025-04-17 17:05:53,620 - INFO - Aplicación iniciada
+2025-04-17 17:10:53,629 - INFO - Pantalla bloqueada por inactividad
+2025-04-17 17:11:43,994 - INFO - Aplicación iniciada
+2025-04-17 17:12:45,436 - INFO - Aplicación iniciada
+2025-04-17 17:17:45,462 - INFO - Pantalla bloqueada por inactividad
+2025-04-17 17:20:12,930 - INFO - Aplicación iniciada
+2025-04-17 17:20:25,895 - INFO - Aplicación iniciada
+2025-04-17 17:25:25,908 - INFO - Pantalla bloqueada por inactividad
+2025-04-17 17:33:36,361 - INFO - Aplicación iniciada
+2025-04-17 17:38:36,389 - INFO - Pantalla bloqueada por inactividad
+2025-04-17 17:40:09,573 - INFO - Aplicación iniciada
+2025-04-17 17:44:48,380 - INFO - Aplicación iniciada
+2025-04-17 17:46:33,789 - INFO - Aplicación iniciada
+2025-04-19 17:55:02,146 - INFO - Aplicación iniciada
+2025-04-19 17:55:42,111 - INFO - Aplicación iniciada
+2025-04-19 17:55:51,484 - INFO - Aplicación iniciada
+2025-04-19 17:58:23,482 - INFO - Aplicación iniciada
+2025-04-19 18:01:03,339 - INFO - Aplicación iniciada
+2025-04-19 18:03:09,862 - INFO - Aplicación iniciada
+2025-04-19 18:03:46,674 - INFO - Aplicación iniciada
+2025-04-19 18:04:58,644 - INFO - Aplicación iniciada
+2025-04-19 18:06:44,535 - INFO - Aplicación iniciada
+2025-04-19 18:08:31,808 - INFO - Aplicación iniciada
+2025-04-19 18:10:57,902 - INFO - Aplicación iniciada
+2025-04-19 18:15:24,847 - INFO - Aplicación iniciada
+2025-04-19 18:16:19,925 - INFO - Aplicación iniciada
+2025-04-19 18:17:32,289 - INFO - Aplicación iniciada
+2025-04-19 18:18:26,472 - INFO - Aplicación iniciada
+2025-04-19 18:19:59,066 - INFO - Aplicación iniciada
+2025-04-19 18:20:50,212 - INFO - Aplicación iniciada
+2025-04-19 18:21:59,170 - INFO - Aplicación iniciada
+2025-04-19 18:22:44,103 - INFO - Aplicación iniciada
+2025-04-19 18:22:45,270 - INFO - Registrando plugin: auditoria
+2025-04-19 18:22:45,270 - ERROR - Error al registrar plugin auditoria: module 'modules.auditoria.controller' has no attribute 'AuditoriaModel'
+2025-04-19 18:22:45,271 - INFO - Registrando plugin: compras
+2025-04-19 18:22:45,271 - ERROR - Error al registrar plugin compras: module 'modules.compras.controller' has no attribute 'ComprasModel'
+2025-04-19 18:22:45,271 - INFO - Registrando plugin: configuracion
+2025-04-19 18:22:45,271 - ERROR - Error al registrar plugin configuracion: module 'modules.configuracion.controller' has no attribute 'ConfiguracionModel'
+2025-04-19 18:22:45,272 - INFO - Registrando plugin: contabilidad
+2025-04-19 18:22:45,272 - ERROR - Error al registrar plugin contabilidad: module 'modules.contabilidad.controller' has no attribute 'ContabilidadModel'
+2025-04-19 18:22:45,272 - INFO - Registrando plugin: inventario
+2025-04-19 18:22:45,272 - ERROR - Error al registrar plugin inventario: module 'modules.inventario.controller' has no attribute 'InventarioModel'
+2025-04-19 18:22:45,272 - INFO - Registrando plugin: logistica
+2025-04-19 18:22:45,272 - ERROR - Error al registrar plugin logistica: module 'modules.logistica.controller' has no attribute 'LogisticaModel'
+2025-04-19 18:22:45,272 - INFO - Registrando plugin: mantenimiento
+2025-04-19 18:22:45,273 - ERROR - Error al registrar plugin mantenimiento: module 'modules.mantenimiento.controller' has no attribute 'MantenimientoModel'
+2025-04-19 18:22:45,273 - INFO - Registrando plugin: materiales
+2025-04-19 18:22:45,273 - ERROR - Error al registrar plugin materiales: module 'modules.materiales.controller' has no attribute 'MaterialesModel'
+2025-04-19 18:22:45,273 - INFO - Registrando plugin: notificaciones
+2025-04-19 18:22:45,273 - ERROR - Error al registrar plugin notificaciones: module 'modules.notificaciones.controller' has no attribute 'NotificacionesModel'
+2025-04-19 18:22:45,273 - INFO - Registrando plugin: obras
+2025-04-19 18:22:45,273 - ERROR - Error al registrar plugin obras: module 'modules.obras.controller' has no attribute 'ObrasModel'
+2025-04-19 18:22:45,273 - INFO - Registrando plugin: pedidos
+2025-04-19 18:22:45,273 - ERROR - Error al registrar plugin pedidos: module 'modules.pedidos.controller' has no attribute 'PedidosModel'
+2025-04-19 18:22:45,274 - INFO - Registrando plugin: produccion
+2025-04-19 18:22:45,274 - ERROR - Error al registrar plugin produccion: module 'modules.produccion.controller' has no attribute 'ProduccionModel'
+2025-04-19 18:22:45,274 - INFO - Registrando plugin: usuarios
+2025-04-19 18:22:45,274 - ERROR - Error al registrar plugin usuarios: module 'modules.usuarios.controller' has no attribute 'UsuariosModel'
+2025-04-19 18:22:45,274 - INFO - Registrando plugin: vidrios
+2025-04-19 18:22:45,274 - ERROR - Error al registrar plugin vidrios: module 'modules.vidrios.controller' has no attribute 'VidriosModel'
+2025-04-19 18:22:45,278 - INFO - Iniciando precarga de datos
+2025-04-19 18:25:58,335 - INFO - Aplicación iniciada
+2025-04-19 18:25:59,469 - INFO - Registrando plugin: auditoria
+2025-04-19 18:25:59,471 - INFO - Registrando plugin: compras
+2025-04-19 18:25:59,471 - INFO - Registrando plugin: configuracion
+2025-04-19 18:25:59,472 - INFO - Registrando plugin: contabilidad
+2025-04-19 18:25:59,473 - INFO - Registrando plugin: inventario
+2025-04-19 18:25:59,475 - INFO - Registrando plugin: logistica
+2025-04-19 18:25:59,476 - INFO - Registrando plugin: mantenimiento
+2025-04-19 18:25:59,478 - INFO - Registrando plugin: materiales
+2025-04-19 18:25:59,479 - INFO - Registrando plugin: notificaciones
+2025-04-19 18:25:59,479 - INFO - Registrando plugin: obras
+2025-04-19 18:25:59,481 - INFO - Registrando plugin: pedidos
+2025-04-19 18:25:59,482 - ERROR - Error al registrar plugin pedidos: PedidosController.__init__() missing 1 required positional argument: 'db_connection'
+2025-04-19 18:25:59,483 - INFO - Registrando plugin: produccion
+2025-04-19 18:25:59,484 - INFO - Registrando plugin: usuarios
+2025-04-19 18:25:59,484 - ERROR - Error al registrar plugin usuarios: UsuariosView.__init__() missing 1 required positional argument: 'controller'
+2025-04-19 18:25:59,485 - INFO - Registrando plugin: vidrios
+2025-04-19 18:25:59,486 - INFO - Iniciando precarga de datos
+2025-04-19 18:30:18,061 - INFO - Aplicación iniciada
+2025-04-19 18:30:19,316 - INFO - Registrando plugin: auditoria
+2025-04-19 18:30:19,320 - INFO - Registrando plugin: compras
+2025-04-19 18:30:19,321 - INFO - Registrando plugin: configuracion
+2025-04-19 18:30:19,325 - INFO - Registrando plugin: contabilidad
+2025-04-19 18:30:19,329 - INFO - Registrando plugin: inventario
+2025-04-19 18:30:19,334 - INFO - Registrando plugin: logistica
+2025-04-19 18:30:19,338 - INFO - Registrando plugin: mantenimiento
+2025-04-19 18:30:19,352 - INFO - Registrando plugin: materiales
+2025-04-19 18:30:19,353 - INFO - Registrando plugin: notificaciones
+2025-04-19 18:30:19,354 - INFO - Registrando plugin: obras
+2025-04-19 18:30:19,361 - INFO - Registrando plugin: pedidos
+2025-04-19 18:30:19,366 - ERROR - Error al registrar plugin pedidos: PedidosController.__init__() missing 1 required positional argument: 'db_connection'
+2025-04-19 18:30:19,367 - INFO - Registrando plugin: produccion
+2025-04-19 18:30:19,373 - INFO - Registrando plugin: usuarios
+2025-04-19 18:30:19,374 - ERROR - Error al registrar plugin usuarios: UsuariosView.__init__() missing 1 required positional argument: 'controller'
+2025-04-19 18:30:19,374 - INFO - Registrando plugin: vidrios
+2025-04-19 18:30:19,375 - INFO - Iniciando precarga de datos
+2025-04-19 18:33:12,107 - INFO - Aplicación iniciada
+2025-04-19 18:33:13,360 - INFO - Registrando plugin: auditoria
+2025-04-19 18:33:13,364 - INFO - Registrando plugin: compras
+2025-04-19 18:33:13,366 - INFO - Registrando plugin: configuracion
+2025-04-19 18:33:13,370 - INFO - Registrando plugin: contabilidad
+2025-04-19 18:33:13,374 - INFO - Registrando plugin: inventario
+2025-04-19 18:33:13,381 - INFO - Registrando plugin: logistica
+2025-04-19 18:33:13,385 - INFO - Registrando plugin: mantenimiento
+2025-04-19 18:33:13,394 - INFO - Registrando plugin: materiales
+2025-04-19 18:33:13,395 - INFO - Registrando plugin: notificaciones
+2025-04-19 18:33:13,396 - INFO - Registrando plugin: obras
+2025-04-19 18:33:13,401 - INFO - Registrando plugin: pedidos
+2025-04-19 18:33:13,407 - INFO - Registrando plugin: produccion
+2025-04-19 18:33:13,413 - INFO - Registrando plugin: usuarios
+2025-04-19 18:33:13,421 - INFO - Registrando plugin: vidrios
+2025-04-19 18:33:13,423 - INFO - Iniciando precarga de datos
+2025-04-19 18:37:01,982 - INFO - Aplicación iniciada
+2025-04-19 18:37:03,263 - INFO - Iniciando precarga de datos
+2025-04-19 18:46:20,330 - INFO - Aplicación iniciada
+2025-04-19 18:47:27,480 - INFO - Aplicación iniciada
+2025-04-19 18:48:20,072 - INFO - Aplicación iniciada
+2025-04-19 18:48:59,792 - INFO - Aplicación iniciada
+2025-04-19 18:49:36,077 - INFO - Aplicación iniciada
+2025-04-19 18:51:36,654 - INFO - Aplicación iniciada
+2025-04-19 18:52:57,465 - INFO - Aplicación iniciada
+2025-04-19 18:56:06,160 - INFO - Aplicación iniciada
+2025-04-19 19:00:00,751 - INFO - Aplicación iniciada
+2025-04-19 19:01:13,860 - INFO - Aplicación iniciada
+2025-04-19 19:02:39,015 - INFO - Aplicación iniciada
+2025-04-19 19:02:45,141 - INFO - Aplicación iniciada
+2025-04-19 19:03:37,636 - INFO - Aplicación iniciada
+2025-04-19 19:03:49,912 - INFO - Aplicación iniciada
+2025-04-19 19:04:52,031 - INFO - Aplicación iniciada
+2025-04-19 19:04:53,987 - INFO - Iniciando precarga de datos
+2025-04-19 19:10:33,261 - INFO - Aplicación iniciada
+2025-04-19 19:10:34,414 - INFO - Iniciando precarga de datos
+2025-04-19 19:15:12,973 - INFO - Aplicación iniciada
+2025-04-19 19:15:14,163 - INFO - Iniciando precarga de datos
+2025-04-19 19:16:38,663 - INFO - Aplicación iniciada
+2025-04-19 19:16:39,865 - INFO - Iniciando precarga de datos
+2025-04-19 19:17:07,124 - INFO - Aplicación iniciada
+2025-04-19 19:17:07,866 - INFO - Iniciando precarga de datos
+2025-04-19 19:19:40,618 - INFO - Aplicación iniciada
+2025-04-19 19:19:41,905 - INFO - Iniciando precarga de datos
+2025-04-19 19:20:20,473 - INFO - Aplicación iniciada
+2025-04-19 19:20:21,657 - INFO - Iniciando precarga de datos
+2025-04-19 19:20:43,671 - INFO - Aplicación iniciada
+2025-04-19 19:20:44,855 - INFO - Iniciando precarga de datos
+2025-04-19 19:21:49,073 - INFO - Aplicación iniciada
+2025-04-19 19:21:50,253 - INFO - Iniciando precarga de datos
+2025-04-19 19:23:47,109 - INFO - Aplicación iniciada
+2025-04-19 19:23:48,401 - INFO - Iniciando precarga de datos
+2025-04-19 19:24:46,970 - INFO - Aplicación iniciada
+2025-04-19 19:24:48,287 - INFO - Iniciando precarga de datos
+2025-04-19 19:25:09,902 - INFO - Aplicación iniciada
+2025-04-19 19:25:11,108 - INFO - Iniciando precarga de datos
+2025-04-19 19:30:14,125 - INFO - Pantalla bloqueada por inactividad
+2025-04-19 19:45:14,175 - INFO - Pantalla bloqueada por inactividad
+2025-04-19 19:45:16,956 - INFO - Aplicación iniciada
+2025-04-19 19:45:18,187 - INFO - Iniciando precarga de datos
+2025-04-19 19:48:10,266 - INFO - Aplicación iniciada
+2025-04-19 19:48:11,501 - INFO - Iniciando precarga de datos
+2025-04-19 19:49:14,197 - INFO - Aplicación iniciada
+2025-04-19 19:49:15,446 - INFO - Iniciando precarga de datos
+2025-04-19 19:55:01,127 - INFO - Aplicación iniciada
+2025-04-19 19:55:02,375 - INFO - Iniciando precarga de datos
+2025-04-19 20:05:15,459 - INFO - Aplicación iniciada
+2025-04-19 20:06:16,088 - INFO - Aplicación iniciada
+2025-04-19 20:11:26,346 - INFO - Aplicación iniciada
+2025-04-19 20:11:27,622 - INFO - Iniciando precarga de datos
+2025-04-19 20:16:38,034 - INFO - Pantalla bloqueada por inactividad
+2025-04-19 20:21:38,040 - INFO - Pantalla bloqueada por inactividad
+2025-04-19 20:26:38,054 - INFO - Pantalla bloqueada por inactividad
+2025-04-19 21:04:11,462 - INFO - Aplicación iniciada
+2025-04-19 21:04:12,740 - INFO - Iniciando precarga de datos
+2025-04-19 21:05:30,787 - INFO - Aplicación iniciada
+2025-04-19 21:05:32,064 - INFO - Iniciando precarga de datos
+2025-04-19 21:10:30,803 - INFO - Pantalla bloqueada por inactividad
+2025-04-19 21:25:52,119 - INFO - Aplicación iniciada
+2025-04-19 21:26:30,951 - INFO - Aplicación iniciada
+2025-04-19 21:28:12,484 - INFO - Aplicación iniciada
+2025-04-19 21:28:13,783 - INFO - Iniciando precarga de datos
+2025-04-19 21:29:29,958 - INFO - Aplicación iniciada
+2025-04-19 21:29:31,310 - INFO - Iniciando precarga de datos
+2025-04-19 21:31:21,991 - INFO - Aplicación iniciada
+2025-04-19 21:31:23,237 - ERROR - El directorio de íconos no existe: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons
+2025-04-19 21:31:23,237 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\menu_white.svg
+2025-04-19 21:31:23,238 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\dashboard.svg
+2025-04-19 21:31:23,238 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\inventario.svg
+2025-04-19 21:31:23,239 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\obras.svg
+2025-04-19 21:31:23,239 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\producción.svg
+2025-04-19 21:31:23,275 - INFO - Iniciando precarga de datos
+2025-04-19 21:33:07,112 - INFO - Aplicación iniciada
+2025-04-19 21:33:08,437 - ERROR - El directorio de íconos no existe: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons
+2025-04-19 21:33:08,437 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\menu_white.svg
+2025-04-19 21:33:08,438 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\dashboard.svg
+2025-04-19 21:33:08,438 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\inventario.svg
+2025-04-19 21:33:08,438 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\obras.svg
+2025-04-19 21:33:08,439 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\producción.svg
+2025-04-19 21:33:08,479 - INFO - Iniciando precarga de datos
+2025-04-19 21:35:53,503 - INFO - Aplicación iniciada
+2025-04-19 21:35:54,719 - ERROR - El directorio de íconos no existe: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons
+2025-04-19 21:35:54,719 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\menu_white.svg
+2025-04-19 21:35:54,720 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\dashboard.svg
+2025-04-19 21:35:54,720 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\inventario.svg
+2025-04-19 21:35:54,721 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\obras.svg
+2025-04-19 21:35:54,721 - ERROR - Ícono no encontrado: c:\Users\Escorpio\Desktop\Martin\Proyectos\mejoras.app\icons\producción.svg
+2025-04-19 21:35:54,755 - INFO - Iniciando precarga de datos
+2025-04-19 22:06:05,040 - INFO - Aplicación iniciada
+2025-04-19 22:06:06,385 - INFO - Iniciando precarga de datos
+2025-04-19 22:08:45,774 - INFO - Aplicación iniciada
+2025-04-19 22:08:47,049 - INFO - Iniciando precarga de datos
+2025-04-19 22:11:27,544 - INFO - Aplicación iniciada
+2025-04-19 22:11:28,865 - INFO - Iniciando precarga de datos
+2025-04-19 22:17:13,941 - INFO - Aplicación iniciada
+2025-04-19 22:36:10,080 - INFO - Aplicación iniciada
+2025-04-19 22:37:15,096 - INFO - Aplicación iniciada
+2025-04-19 22:38:39,679 - INFO - Aplicación iniciada
+2025-04-19 22:38:40,144 - INFO - Iniciando precarga de datos
+2025-04-19 22:38:45,488 - INFO - Navegando a la sección con índice 0
+2025-04-19 22:38:46,200 - INFO - Navegando a la sección con índice 1
+2025-04-19 22:38:46,992 - INFO - Navegando a la sección con índice 2
+2025-04-19 22:38:47,574 - INFO - Navegando a la sección con índice 3
+2025-04-19 22:38:49,678 - INFO - Navegando a la sección con índice 4
+2025-04-19 22:38:51,140 - INFO - Navegando a la sección con índice 5
+2025-04-19 22:38:53,530 - INFO - Navegando a la sección con índice 6
+2025-04-19 22:38:54,177 - INFO - Navegando a la sección con índice 7
+2025-04-19 22:38:55,664 - INFO - Navegando a la sección con índice 8
+2025-04-19 22:39:01,866 - INFO - Navegando a la sección con índice 0
+2025-04-19 22:39:11,971 - INFO - Navegando a la sección con índice 1
+2025-04-19 22:39:29,650 - INFO - Navegando a la sección con índice 3
+2025-04-19 22:39:33,675 - INFO - Navegando a la sección con índice 2
+2025-04-19 22:39:41,138 - INFO - Navegando a la sección con índice 0
+2025-04-19 22:39:41,463 - INFO - Navegando a la sección con índice 1
+2025-04-19 22:40:48,081 - INFO - Aplicación iniciada
+2025-04-19 22:40:48,550 - INFO - Iniciando precarga de datos
+2025-04-19 22:40:50,435 - INFO - Navegando a la sección con índice 1
+2025-04-19 22:40:50,961 - INFO - Navegando a la sección con índice 0
+2025-04-19 22:43:56,138 - INFO - Aplicación iniciada
+2025-04-19 22:43:56,612 - INFO - Iniciando precarga de datos
+2025-04-19 22:44:00,065 - INFO - Navegando a la sección con índice 4
+2025-04-19 22:44:00,913 - INFO - Navegando a la sección con índice 3
+2025-04-19 22:44:01,743 - INFO - Navegando a la sección con índice 2
+2025-04-19 22:44:03,055 - INFO - Navegando a la sección con índice 4
+2025-04-19 22:44:40,791 - INFO - Navegando a la sección con índice 2
+2025-04-19 22:44:46,141 - INFO - Navegando a la sección con índice 8
+2025-04-19 22:44:47,273 - INFO - Navegando a la sección con índice 7
+2025-04-19 22:44:48,111 - INFO - Navegando a la sección con índice 6
+2025-04-19 22:46:54,569 - INFO - Aplicación iniciada
+2025-04-19 22:46:55,050 - INFO - Iniciando precarga de datos
+2025-04-19 22:46:56,728 - INFO - Navegando a la sección con índice 0
+2025-04-19 22:46:57,246 - INFO - Navegando a la sección con índice 1
+2025-04-19 22:46:57,584 - INFO - Navegando a la sección con índice 2
+2025-04-19 22:46:58,062 - INFO - Navegando a la sección con índice 3
+2025-04-19 22:46:58,476 - INFO - Navegando a la sección con índice 4
+2025-04-19 22:46:58,802 - INFO - Navegando a la sección con índice 5
+2025-04-19 22:47:30,736 - INFO - Navegando a la sección con índice 1
+2025-04-19 22:49:19,169 - INFO - Aplicación iniciada
+2025-04-19 22:49:19,654 - INFO - Iniciando precarga de datos
+2025-04-19 22:49:22,060 - INFO - Navegando a la sección con índice 0
+2025-04-19 22:49:22,724 - INFO - Navegando a la sección con índice 1
+2025-04-19 22:49:23,042 - INFO - Navegando a la sección con índice 0
+2025-04-19 22:52:37,422 - INFO - Aplicación iniciada
+2025-04-19 22:52:42,780 - INFO - Navegando a la sección con índice 0
+2025-04-19 22:52:43,744 - INFO - Navegando a la sección con índice 1
+2025-04-19 22:52:45,146 - INFO - Navegando a la sección con índice 2
+2025-04-19 22:52:45,846 - INFO - Navegando a la sección con índice 3
+2025-04-19 22:52:46,322 - INFO - Navegando a la sección con índice 4
+2025-04-19 22:52:47,073 - INFO - Navegando a la sección con índice 5
+2025-04-19 22:52:47,603 - INFO - Navegando a la sección con índice 6
+2025-04-19 22:52:48,104 - INFO - Navegando a la sección con índice 7
+2025-04-19 22:53:18,122 - INFO - Navegando a la sección con índice 5
+2025-04-19 22:53:19,292 - INFO - Navegando a la sección con índice 6
+2025-04-19 22:53:19,877 - INFO - Navegando a la sección con índice 7
+2025-04-19 22:53:22,297 - INFO - Navegando a la sección con índice 6
+2025-04-19 22:53:22,627 - INFO - Navegando a la sección con índice 5
+2025-04-19 22:53:23,880 - INFO - Navegando a la sección con índice 3
+2025-04-19 22:53:24,316 - INFO - Navegando a la sección con índice 2
+2025-04-19 22:53:26,624 - INFO - Navegando a la sección con índice 0
+2025-04-19 22:54:33,056 - INFO - Aplicación iniciada
+2025-04-19 22:54:35,235 - INFO - Navegando a la sección con índice 1
+2025-04-19 22:54:35,845 - INFO - Navegando a la sección con índice 2
+2025-04-19 22:54:36,583 - INFO - Navegando a la sección con índice 0
+2025-04-19 22:55:57,668 - INFO - Aplicación iniciada
+2025-04-19 22:55:59,353 - INFO - Navegando a la sección con índice 2
+2025-04-19 22:55:59,705 - INFO - Navegando a la sección con índice 1
+2025-04-19 22:59:47,429 - INFO - Aplicación iniciada
+2025-04-19 22:59:54,818 - INFO - Aplicación iniciada
+2025-04-19 23:00:42,792 - INFO - Aplicación iniciada
+2025-04-19 23:02:39,283 - INFO - Aplicación iniciada
+2025-04-19 23:09:19,675 - INFO - Aplicación iniciada
+2025-04-19 23:10:24,015 - INFO - Aplicación iniciada
+2025-04-19 23:12:14,994 - INFO - Aplicación iniciada
+2025-04-19 23:13:38,751 - INFO - Aplicación iniciada
+2025-04-19 23:17:35,567 - INFO - Aplicación iniciada
+2025-04-23 12:33:06,291 - INFO - Aplicación iniciada
+2025-04-23 12:34:49,874 - INFO - Aplicación iniciada
+2025-04-23 12:41:45,840 - INFO - Aplicación iniciada
+2025-04-23 13:04:31,064 - INFO - Aplicación iniciada
+2025-04-23 13:06:24,126 - INFO - Aplicación iniciada
+2025-04-23 13:08:23,093 - INFO - Aplicación iniciada
+2025-04-23 13:18:32,825 - INFO - Aplicación iniciada
+2025-04-23 15:16:27,218 - INFO - Aplicación iniciada
+2025-04-23 16:08:32,893 - INFO - Aplicación iniciada
+2025-04-23 16:27:39,809 - INFO - Navegando a la sección con índice 1
+2025-04-23 16:27:40,828 - INFO - Navegando a la sección con índice 2
+2025-04-23 16:27:41,853 - INFO - Navegando a la sección con índice 0
+2025-04-23 16:28:38,089 - INFO - Aplicación iniciada
+2025-04-23 16:30:52,919 - INFO - Aplicación iniciada
+2025-04-23 16:31:53,815 - INFO - Aplicación iniciada
+2025-04-23 16:32:01,550 - INFO - Navegando a la sección con índice 2
+2025-04-23 16:32:05,435 - INFO - Navegando a la sección con índice 1
+2025-04-23 16:32:06,724 - INFO - Navegando a la sección con índice 0
+2025-04-23 16:37:37,493 - INFO - Aplicación iniciada
+2025-04-23 16:38:56,505 - WARNING - Índice fuera de rango: 8
+2025-04-23 16:38:57,578 - WARNING - Índice fuera de rango: 8
+2025-04-23 16:44:18,789 - INFO - Aplicación iniciada
+2025-04-23 16:45:25,070 - INFO - Aplicación iniciada
+2025-04-23 16:53:45,250 - INFO - Aplicación iniciada
+2025-04-23 16:55:22,690 - INFO - Navegando a la sección con índice 1
+2025-04-23 16:55:24,951 - INFO - Navegando a la sección con índice 1
+2025-04-23 16:55:25,488 - INFO - Navegando a la sección con índice 2
+2025-04-23 16:55:25,878 - INFO - Navegando a la sección con índice 1
+2025-04-23 16:55:50,329 - INFO - Aplicación iniciada
+2025-04-23 16:56:17,600 - INFO - Navegando a la sección con índice 1
+2025-04-23 16:56:18,842 - INFO - Navegando a la sección con índice 0
+2025-04-23 16:56:20,160 - INFO - Navegando a la sección con índice 1
+2025-04-23 16:56:22,028 - INFO - Navegando a la sección con índice 2
+2025-04-23 16:56:25,502 - INFO - Navegando a la sección con índice 2
+2025-04-23 16:56:33,121 - INFO - Navegando a la sección con índice 7
+2025-04-23 16:56:34,210 - INFO - Navegando a la sección con índice 6
+2025-04-23 16:56:34,815 - INFO - Navegando a la sección con índice 7
+2025-04-23 16:56:36,647 - WARNING - Índice fuera de rango: 8
+2025-04-23 16:56:37,425 - INFO - Navegando a la sección con índice 7
+2025-04-23 16:56:38,165 - WARNING - Índice fuera de rango: 8
+2025-04-23 16:56:38,575 - INFO - Navegando a la sección con índice 7
+2025-04-23 16:56:39,002 - INFO - Navegando a la sección con índice 6
+2025-04-23 16:56:39,528 - INFO - Navegando a la sección con índice 7
+2025-04-23 16:56:40,061 - WARNING - Índice fuera de rango: 8
+2025-04-23 16:56:40,414 - INFO - Navegando a la sección con índice 7
+2025-04-23 16:56:41,514 - INFO - Navegando a la sección con índice 6
+2025-04-23 16:57:48,642 - INFO - Navegando a la sección con índice 0
+2025-04-23 16:57:50,960 - INFO - Navegando a la sección con índice 1
+2025-04-23 16:57:53,276 - INFO - Navegando a la sección con índice 1
+2025-04-23 16:57:53,612 - INFO - Navegando a la sección con índice 0
+2025-04-23 16:59:29,975 - INFO - Navegando a la sección con índice 7
+2025-04-23 16:59:38,259 - INFO - Aplicación iniciada
+2025-04-23 17:02:45,705 - INFO - Aplicación iniciada
+2025-04-23 17:02:52,305 - INFO - Navegando a la sección con índice 1
+2025-04-23 17:02:54,189 - INFO - Navegando a la sección con índice 2
+2025-04-23 17:02:54,615 - INFO - Navegando a la sección con índice 1
+2025-04-23 17:02:55,163 - INFO - Navegando a la sección con índice 2
+2025-04-23 17:02:58,561 - INFO - Navegando a la sección con índice 1
+2025-04-23 17:05:11,517 - INFO - Aplicación iniciada
+2025-04-23 17:14:18,403 - INFO - Navegando a la sección con índice 1
+2025-04-23 17:14:48,911 - INFO - Aplicación iniciada
+2025-04-23 17:14:58,390 - INFO - Aplicación iniciada
+2025-04-23 17:14:59,886 - INFO - Navegando a la sección con índice 1
+2025-04-23 17:19:25,812 - INFO - Aplicación iniciada
+2025-04-23 17:19:27,401 - INFO - Navegando a la sección con índice 1
+2025-04-23 17:19:28,610 - INFO - Navegando a la sección con índice 2
+2025-04-23 17:31:35,674 - INFO - Aplicación iniciada
+2025-04-23 17:34:40,153 - INFO - Aplicación iniciada
+2025-04-23 17:34:48,206 - INFO - Navegando a la sección con índice 1
+2025-04-23 17:34:49,040 - INFO - Navegando a la sección con índice 2
+2025-04-23 17:34:50,850 - INFO - Navegando a la sección con índice 3
+2025-04-23 17:34:52,227 - INFO - Navegando a la sección con índice 1
+2025-04-23 17:34:53,430 - INFO - Navegando a la sección con índice 2
+2025-04-23 17:36:42,035 - INFO - Aplicación iniciada
+2025-04-23 17:37:39,958 - INFO - Aplicación iniciada
+2025-04-23 17:37:44,852 - INFO - Navegando a la sección con índice 2
+2025-04-23 17:37:46,248 - INFO - Navegando a la sección con índice 3
+2025-04-23 17:37:49,192 - INFO - Navegando a la sección con índice 1
+2025-04-23 17:38:35,092 - INFO - Navegando a la sección con índice 4
+2025-04-23 17:38:37,865 - INFO - Navegando a la sección con índice 4
+2025-04-23 17:38:38,715 - INFO - Navegando a la sección con índice 5
+2025-04-23 17:38:44,848 - WARNING - Índice fuera de rango: 8
+2025-04-23 17:38:45,343 - INFO - Navegando a la sección con índice 7
+2025-04-23 17:39:04,123 - INFO - Aplicación iniciada
+2025-04-23 17:39:13,821 - INFO - Navegando a la sección con índice 2
+2025-04-23 17:39:17,881 - INFO - Navegando a la sección con índice 3
+2025-04-23 17:39:21,590 - INFO - Navegando a la sección con índice 4
+2025-04-23 18:06:59,751 - INFO - Aplicación iniciada
+2025-04-23 18:07:05,654 - INFO - Navegando a la sección con índice 4
+2025-04-23 18:07:15,147 - INFO - Navegando a la sección con índice 3
+2025-04-23 18:08:14,532 - INFO - Navegando a la sección con índice 3
+2025-04-23 18:08:15,079 - INFO - Navegando a la sección con índice 4
+2025-04-23 18:08:15,804 - INFO - Navegando a la sección con índice 5
+2025-04-23 18:08:19,936 - INFO - Navegando a la sección con índice 7
+2025-04-23 18:09:51,279 - INFO - Navegando a la sección con índice 2
+2025-04-23 18:09:57,162 - INFO - Navegando a la sección con índice 3
+2025-04-23 18:10:56,261 - INFO - Aplicación iniciada
+2025-04-23 18:11:09,830 - INFO - Aplicación iniciada
+2025-04-23 18:11:14,578 - INFO - Navegando a la sección con índice 1
+2025-04-23 18:11:25,992 - INFO - Navegando a la sección con índice 2
+2025-04-23 18:11:27,239 - INFO - Navegando a la sección con índice 1
+2025-04-23 18:11:27,899 - INFO - Navegando a la sección con índice 2
+2025-04-23 18:11:29,731 - INFO - Navegando a la sección con índice 1
+2025-04-23 18:11:30,645 - INFO - Navegando a la sección con índice 2
+2025-04-23 18:11:31,936 - INFO - Navegando a la sección con índice 5
+2025-04-23 18:11:59,917 - INFO - Navegando a la sección con índice 7
+2025-04-23 18:13:07,413 - WARNING - Índice fuera de rango: 8
+2025-04-23 18:16:38,068 - INFO - Aplicación iniciada
+2025-04-23 18:19:32,685 - INFO - Aplicación iniciada
+2025-04-23 18:19:36,946 - INFO - Navegando a la sección con índice 2
+2025-04-23 18:19:39,581 - INFO - Navegando a la sección con índice 1
+2025-04-23 18:19:41,910 - INFO - Navegando a la sección con índice 3
+2025-04-23 18:21:12,769 - INFO - Aplicación iniciada
+2025-04-23 18:21:16,166 - INFO - Navegando a la sección con índice 2
+2025-04-23 18:21:16,905 - INFO - Navegando a la sección con índice 4
+2025-04-23 18:21:19,321 - INFO - Navegando a la sección con índice 3
+2025-04-23 18:21:20,894 - INFO - Navegando a la sección con índice 2
+2025-04-23 18:21:22,084 - INFO - Navegando a la sección con índice 3
+2025-04-23 18:21:23,854 - INFO - Navegando a la sección con índice 2
+2025-04-23 18:21:25,396 - INFO - Navegando a la sección con índice 1
+2025-04-23 18:21:28,296 - INFO - Navegando a la sección con índice 1
+2025-04-23 18:21:30,598 - INFO - Navegando a la sección con índice 2
+2025-04-23 18:21:36,021 - INFO - Navegando a la sección con índice 2
+2025-04-23 18:21:36,770 - INFO - Navegando a la sección con índice 3
+2025-04-23 18:21:40,186 - INFO - Navegando a la sección con índice 4
+2025-04-23 18:21:44,780 - INFO - Navegando a la sección con índice 4
+2025-04-23 18:21:46,695 - INFO - Navegando a la sección con índice 3
+2025-04-23 18:21:53,657 - INFO - Navegando a la sección con índice 5
+2025-04-23 18:21:57,080 - INFO - Navegando a la sección con índice 5
+2025-04-23 18:21:57,598 - INFO - Navegando a la sección con índice 4
+2025-04-23 18:22:02,297 - INFO - Navegando a la sección con índice 4
+2025-04-23 18:22:02,868 - INFO - Navegando a la sección con índice 5
+2025-04-23 18:22:03,420 - INFO - Navegando a la sección con índice 4
+2025-04-23 18:22:17,769 - INFO - Navegando a la sección con índice 6
+2025-04-23 18:22:24,065 - WARNING - Índice fuera de rango: 8
+2025-04-23 18:22:24,677 - INFO - Navegando a la sección con índice 7
+2025-04-23 18:26:16,532 - INFO - Aplicación iniciada
+2025-04-23 18:32:10,578 - INFO - Aplicación iniciada
+2025-04-23 18:48:51,329 - INFO - Aplicación iniciada
+2025-04-23 18:53:36,539 - INFO - Aplicación iniciada
+2025-04-24 15:28:01,731 - INFO - Aplicación iniciada
+2025-04-25 09:38:53,423 - INFO - Aplicación iniciada
+2025-04-25 09:44:52,585 - INFO - Navegando a la sección con índice 1
+2025-04-25 09:44:53,605 - INFO - Navegando a la sección con índice 0
+2025-04-25 09:44:56,119 - INFO - Navegando a la sección con índice 1
+2025-04-25 09:45:02,514 - INFO - Navegando a la sección con índice 2
+2025-04-25 09:45:03,400 - INFO - Navegando a la sección con índice 1
+2025-04-25 09:45:04,134 - INFO - Navegando a la sección con índice 2
+2025-04-25 09:45:04,533 - INFO - Navegando a la sección con índice 3
+2025-04-25 09:45:05,813 - INFO - Navegando a la sección con índice 4
+2025-04-25 09:45:07,218 - INFO - Navegando a la sección con índice 3
+2025-04-25 09:45:08,273 - INFO - Navegando a la sección con índice 4
+2025-04-25 09:45:09,507 - INFO - Navegando a la sección con índice 3
+2025-04-25 09:45:56,043 - INFO - Navegando a la sección con índice 1
+2025-04-25 09:45:57,891 - INFO - Navegando a la sección con índice 2
+2025-04-25 09:46:12,783 - INFO - Navegando a la sección con índice 3
+2025-04-25 09:46:58,041 - INFO - Navegando a la sección con índice 5
+2025-04-25 09:47:01,335 - INFO - Navegando a la sección con índice 5
+2025-04-25 09:47:02,148 - INFO - Navegando a la sección con índice 6
+2025-04-25 09:47:03,984 - INFO - Navegando a la sección con índice 7
+2025-04-25 09:47:05,683 - WARNING - Índice fuera de rango: 8
+2025-04-25 09:47:20,719 - INFO - Aplicación iniciada
+2025-04-25 09:47:25,302 - INFO - Navegando a la sección con índice 0
+2025-04-25 09:47:25,798 - INFO - Navegando a la sección con índice 1
+2025-04-25 09:47:28,609 - INFO - Navegando a la sección con índice 2
+2025-04-25 09:47:29,891 - INFO - Navegando a la sección con índice 3
+2025-04-25 09:47:30,984 - INFO - Navegando a la sección con índice 4
+2025-04-25 09:47:31,974 - INFO - Navegando a la sección con índice 5
+2025-04-25 09:47:33,249 - INFO - Navegando a la sección con índice 6
+2025-04-25 09:47:34,461 - INFO - Navegando a la sección con índice 7
+2025-04-25 09:47:36,189 - INFO - Navegando a la sección con índice 1
+2025-04-25 09:47:37,278 - INFO - Navegando a la sección con índice 0
+2025-04-25 09:47:39,321 - INFO - Navegando a la sección con índice 0
+2025-04-25 09:47:40,128 - INFO - Navegando a la sección con índice 1
+2025-04-25 09:47:40,485 - INFO - Navegando a la sección con índice 0
+2025-04-25 09:47:42,591 - INFO - Navegando a la sección con índice 1
+2025-04-25 09:47:44,474 - INFO - Navegando a la sección con índice 0
+2025-04-25 09:49:01,946 - INFO - Navegando a la sección con índice 7
+2025-04-25 10:01:47,324 - INFO - Aplicación iniciada
+2025-04-25 10:01:50,503 - INFO - Navegando a la sección con índice 0
+2025-04-25 10:01:51,307 - INFO - Navegando a la sección con índice 1
+2025-04-25 10:01:51,850 - INFO - Navegando a la sección con índice 0
+2025-04-25 10:05:16,570 - INFO - Aplicación iniciada
+2025-04-25 10:05:18,151 - INFO - Navegando a la sección con índice 0
+2025-04-25 10:05:33,178 - INFO - Navegando a la sección con índice 1
+2025-04-25 10:05:34,808 - INFO - Navegando a la sección con índice 2
+2025-04-25 10:05:36,825 - INFO - Navegando a la sección con índice 3
+2025-04-25 10:05:38,261 - INFO - Navegando a la sección con índice 4
+2025-04-25 10:05:39,310 - INFO - Navegando a la sección con índice 5
+2025-04-25 10:05:40,660 - INFO - Navegando a la sección con índice 1
+2025-04-25 10:05:41,651 - INFO - Navegando a la sección con índice 0
+2025-04-25 10:06:45,371 - INFO - Aplicación iniciada
+2025-04-25 10:06:48,291 - INFO - Navegando a la sección con índice 1
+2025-04-25 10:06:49,275 - INFO - Navegando a la sección con índice 0
+2025-04-25 10:08:13,248 - INFO - Aplicación iniciada
+2025-04-25 10:19:54,774 - INFO - Aplicación iniciada
+2025-04-25 10:23:03,328 - INFO - Aplicación iniciada
+2025-04-25 10:23:58,659 - INFO - Aplicación iniciada
+2025-04-25 10:32:30,442 - INFO - Aplicación iniciada
+2025-04-30 09:10:51,849 - INFO - Aplicación iniciada
+2025-04-30 10:16:49,219 - INFO - Aplicación iniciada

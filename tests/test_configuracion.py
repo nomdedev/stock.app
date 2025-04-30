@@ -1,0 +1,60 @@
+import unittest
+from modules.configuracion.model import ConfiguracionModel
+
+class MockDBConnection:
+    def __init__(self):
+        self.last_query = None
+        self.last_params = None
+        self.query_result = []
+
+    def execute(self, query, params=None):
+        self.last_query = query
+        self.last_params = params
+
+    def fetchall(self):
+        return self.query_result
+
+    def set_query_result(self, result):
+        self.query_result = result
+
+    def ejecutar_query(self, query, params=None):
+        self.execute(query, params)
+
+class TestConfiguracionModel(unittest.TestCase):
+
+    def setUp(self):
+        # Simulación de conexión a base de datos
+        self.mock_db = MockDBConnection()
+        self.config_model = ConfiguracionModel(self.mock_db)
+
+    def test_obtener_configuracion(self):
+        # Simular datos de configuración
+        self.mock_db.set_query_result([
+            ("modo_offline", "False", "Modo offline activado/desactivado"),
+            ("notificaciones_activas", "True", "Estado de notificaciones")
+        ])
+        configuracion = self.config_model.obtener_configuracion()
+        self.assertEqual(len(configuracion), 2)
+        self.assertEqual(configuracion[0][0], "modo_offline")
+
+    def test_actualizar_configuracion(self):
+        # Probar actualización de configuración
+        self.config_model.actualizar_configuracion("modo_offline", "True")
+        self.assertEqual(self.mock_db.last_query, "UPDATE configuracion_sistema SET valor = ? WHERE clave = ?")
+        self.assertEqual(self.mock_db.last_params, ("True", "modo_offline"))
+
+    def test_activar_modo_offline(self):
+        self.config_model.activar_modo_offline()
+        self.assertEqual(self.mock_db.last_query, "UPDATE configuracion_sistema SET valor = 'True' WHERE clave = 'modo_offline'")
+
+    def test_desactivar_modo_offline(self):
+        self.config_model.desactivar_modo_offline()
+        self.assertEqual(self.mock_db.last_query, "UPDATE configuracion_sistema SET valor = 'False' WHERE clave = 'modo_offline'")
+
+    def test_actualizar_estado_notificaciones(self):
+        self.config_model.actualizar_estado_notificaciones(True)
+        self.assertEqual(self.mock_db.last_query, "UPDATE configuracion_sistema SET valor = ? WHERE clave = 'notificaciones_activas'")
+        self.assertEqual(self.mock_db.last_params, ("True",))
+
+if __name__ == "__main__":
+    unittest.main()
