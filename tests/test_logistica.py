@@ -1,6 +1,10 @@
 import unittest
+import sys
 import os
-from unittest.mock import Mock
+
+# Agregar el directorio raíz del proyecto al PYTHONPATH
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from modules.logistica.model import LogisticaModel
 
 class MockDB:

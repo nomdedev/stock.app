@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
     def initUI(self):
         # Crear instancia de conexión a la base de datos
         self.db_connection = DatabaseConnection()
-        self.db_connection.conectar_a_base("inventario_db")
+        self.db_connection.conectar_a_base("inventario")  # Cambiado a "inventario"
 
         # Crear instancias de modelos
         self.inventario_db_connection = InventarioDatabaseConnection()

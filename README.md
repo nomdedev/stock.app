@@ -3,7 +3,8 @@
 ### Requisitos Previos
 - Python 3.8 o superior
 - PostgreSQL 12 o superior
-- Librerías necesarias (ver archivo `requirements.txt`)
+- Librería `pyodbc` para la conexión a SQL Server.
+- Controlador ODBC para SQL Server (recomendado: **ODBC Driver 17 for SQL Server**).
 
 ### Pasos para la Instalación
 1. Clonar el repositorio:
@@ -23,11 +24,19 @@
    pip install -r requirements.txt
    ```
 
-4. Configurar la base de datos:
+   Asegúrate de que `pyodbc` esté incluido en el archivo `requirements.txt`. Si no, instálalo manualmente:
+   ```bash
+   pip install pyodbc
+   ```
+
+4. Instalar el controlador ODBC para SQL Server:
+   - Descarga e instala el controlador desde [Microsoft ODBC Driver for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server).
+
+5. Configurar la base de datos:
    - Crear las bases de datos necesarias ejecutando el script `MPS_SQL_COMPLETO_SIN_PREFIJOS.sql` en PostgreSQL.
    - Configurar las credenciales de la base de datos en el archivo `core/database.py`.
 
-5. Ejecutar el proyecto:
+6. Ejecutar el proyecto:
    ```bash
    python main.py
    ```
@@ -35,6 +44,9 @@
 ### Configuración Inicial
 - Crear un usuario administrador desde el módulo de usuarios.
 - Configurar los parámetros iniciales en el módulo de configuración.
+
+### Notas sobre la Conexión a la Base de Datos
+El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de que el controlador ODBC esté instalado y configurado correctamente.
 
 🧩 Módulo 1: Inventario General
 🗄 Base de datos: mpsInventario

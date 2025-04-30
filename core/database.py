@@ -1,6 +1,7 @@
 import os
 import pyodbc
 from datetime import datetime
+from core.logger import Logger
 
 class BaseDatabaseConnection:
     def __init__(self, server, username, password, database):
@@ -8,23 +9,38 @@ class BaseDatabaseConnection:
         self.username = username
         self.password = password
         self.database = database
-        self.driver = os.getenv("ODBC_DRIVER", "ODBC Driver 17 for SQL Server")  # Cambiar si usas otro controlador
-        self.connection_string = (
-            f"DRIVER={{{self.driver}}};"
-            f"SERVER={self.server};"
-            f"UID={self.username};"
-            f"PWD={self.password};"
-            f"DATABASE={self.database}"
-        )
+        self.driver = self.detectar_driver_odbc()
+
+    @staticmethod
+    def detectar_driver_odbc():
+        # Detectar el controlador ODBC disponible
+        drivers = pyodbc.drivers()
+        if "ODBC Driver 18 for SQL Server" in drivers:
+            return "ODBC Driver 18 for SQL Server"
+        elif "ODBC Driver 17 for SQL Server" in drivers:
+            return "ODBC Driver 17 for SQL Server"
+        else:
+            raise RuntimeError("No se encontró un controlador ODBC compatible. Instala ODBC Driver 17 o 18 para SQL Server.")
 
     def ejecutar_query(self, query, params=None):
-        with pyodbc.connect(self.connection_string) as conn:
-            cursor = conn.cursor()
-            if params:
-                cursor.execute(query, params)
-            else:
-                cursor.execute(query)
-            return cursor.fetchall()
+        try:
+            connection_string = (
+                f"DRIVER={{{self.driver}}};"
+                f"SERVER={self.server};"
+                f"UID={self.username};"
+                f"PWD={self.password};"
+                f"DATABASE={self.database};"
+            )
+            with pyodbc.connect(connection_string) as conn:
+                cursor = conn.cursor()
+                if params:
+                    cursor.execute(query, params)
+                else:
+                    cursor.execute(query)
+                return cursor.fetchall()
+        except Exception as e:
+            Logger().error(f"Error al ejecutar la consulta: {e}")
+            raise
 
 class InventarioDatabaseConnection(BaseDatabaseConnection):
     def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
@@ -38,72 +54,94 @@ class AuditoriaDatabaseConnection(BaseDatabaseConnection):
     def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
         super().__init__(server, username, password, "auditoria")
 
+class ObrasDatabaseConnection(BaseDatabaseConnection):
+    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
+        super().__init__(server, username, password, "obras")
+
+class ProduccionDatabaseConnection(BaseDatabaseConnection):
+    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
+        super().__init__(server, username, password, "produccion")
+
+class LogisticaDatabaseConnection(BaseDatabaseConnection):
+    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
+        super().__init__(server, username, password, "logistica")
+
+class PedidosDatabaseConnection(BaseDatabaseConnection):
+    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
+        super().__init__(server, username, password, "pedidos")
+
+class ConfiguracionDatabaseConnection(BaseDatabaseConnection):
+    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
+        super().__init__(server, username, password, "configuracion")
+
 class DatabaseConnection:
     def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
         self.server = server
         self.username = username
         self.password = password
-        self.driver = os.getenv("ODBC_DRIVER", "ODBC Driver 17 for SQL Server")  # Cambiar si usas otro controlador
-        self.connection_string_template = (
-            f"DRIVER={{{self.driver}}};"
-            f"SERVER={self.server};"
-            f"UID={self.username};"
-            f"PWD={self.password};"
-            f"DATABASE={{}}"
-        )
-        self.connection_string = None
+        self.driver = BaseDatabaseConnection.detectar_driver_odbc()
 
     def conectar_a_base(self, database):
         try:
-            self.connection_string = self.connection_string_template.format(database)
-        except KeyError as e:
-            Logger().error(f"Error al conectar a la base de datos: {e}. Verifique que el controlador ODBC necesario esté instalado.")
+            bases_validas = ["inventario", "users", "auditoria"]
+            if database not in bases_validas:
+                raise ValueError(f"La base de datos '{database}' no es válida. Bases disponibles: {bases_validas}")
+            self.database = database
+            print(f"Conexión establecida con la base de datos '{database}'.")
+        except ValueError as e:
+            print(f"Error de validación: {e}")
+            Logger().error(f"Error de validación: {e}")
             raise
         except Exception as e:
+            print(f"Error inesperado al conectar a la base de datos: {e}")
             Logger().error(f"Error inesperado al conectar a la base de datos: {e}")
             raise
 
     def ejecutar_query(self, query, params=None):
-        if not self.connection_string:
+        if not hasattr(self, 'database'):
             raise ValueError("No se ha establecido una conexión a ninguna base de datos.")
-        with pyodbc.connect(self.connection_string) as conn:
-            cursor = conn.cursor()
-            if params:
-                cursor.execute(query, params)
-            else:
-                cursor.execute(query)
-            return cursor.fetchall()
+        try:
+            connection_string = (
+                f"DRIVER={{{self.driver}}};"
+                f"SERVER={self.server};"
+                f"UID={self.username};"
+                f"PWD={self.password};"
+                f"DATABASE={self.database};"
+            )
+            with pyodbc.connect(connection_string) as conn:
+                cursor = conn.cursor()
+                if params:
+                    cursor.execute(query, params)
+                else:
+                    cursor.execute(query)
+                return cursor.fetchall()
+        except Exception as e:
+            Logger().error(f"Error al ejecutar la consulta: {e}")
+            raise
 
     @staticmethod
     def listar_bases_de_datos(server, username, password):
-        connection_string = (
-            f"DRIVER={{ODBC Driver 17 for SQL Server}};"
-            f"SERVER={server};"
-            f"UID={username};"
-            f"PWD={password}"
-        )
-        query = "SELECT name FROM sys.databases WHERE state = 0;"
-        with pyodbc.connect(connection_string) as conn:
-            cursor = conn.cursor()
-            cursor.execute(query)
-            return [row[0] for row in cursor.fetchall()]
+        try:
+            driver = BaseDatabaseConnection.detectar_driver_odbc()
+            connection_string = (
+                f"DRIVER={{{driver}}};"
+                f"SERVER={server};"
+                f"UID={username};"
+                f"PWD={password};"
+            )
+            with pyodbc.connect(connection_string) as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT name FROM sys.databases WHERE state = 0;")
+                return [row[0] for row in cursor.fetchall()]
+        except Exception as e:
+            Logger().error(f"Error al listar las bases de datos: {e}")
+            raise
 
 # Lógica para determinar la base de datos según el módulo
 MODULO_BASE_DATOS = {
     "auditoria": "auditoria",  # Base de datos para auditorías
-    "compras": "compras_db",
-    "configuracion": "configuracion_db",
-    "contabilidad": "contabilidad_db",
     "inventario": "inventario",  # Base de datos general
-    "logistica": "logistica_db",
-    "mantenimiento": "mantenimiento_db",
-    "materiales": "materiales_db",
-    "notificaciones": "notificaciones_db",
-    "obras": "obras_db",
-    "pedidos": "pedidos_db",
-    "produccion": "produccion_db",
-    "usuarios": "usuarios_db",  # Base de datos para logs y usuarios
-    "vidrios": "vidrios_db",
+    "usuarios": "users",  # Base de datos para logs y usuarios
 }
 
 def obtener_base_datos_para_modulo(modulo):
@@ -114,29 +152,29 @@ class DataAccessLayer:
         self.db = db_connection
 
     def get_pedidos_por_estado(self, estado):
-        query = "SELECT * FROM pedidos WHERE estado = ?"
+        query = "SELECT * FROM pedidos WHERE estado = %s"
         return self.db.ejecutar_query(query, (estado,))
 
     def insertar_material(self, material):
-        query = "INSERT INTO materiales (nombre, cantidad, proveedor) VALUES (?, ?, ?)"
+        query = "INSERT INTO materiales (nombre, cantidad, proveedor) VALUES (%s, %s, %s)"
         self.db.ejecutar_query(query, material)
 
     def get_usuarios_por_rol(self, rol):
-        query = "SELECT * FROM usuarios WHERE rol = ?"
+        query = "SELECT * FROM usuarios WHERE rol = %s"
         return self.db.ejecutar_query(query, (rol,))
 
     def verificar_concurrencia(self, tabla, id_registro, fecha_actualizacion):
-        query = f"SELECT fecha_actualizacion FROM {tabla} WHERE id = ?"
+        query = f"SELECT fecha_actualizacion FROM {tabla} WHERE id = %s"
         resultado = self.db.ejecutar_query(query, (id_registro,))
-        if resultado and resultado[0][0] != fecha_actualizacion:
+        if resultado and resultado[0]['fecha_actualizacion'] != fecha_actualizacion:
             return False  # Conflicto detectado
         return True
 
     def actualizar_registro(self, tabla, id_registro, datos, fecha_actualizacion):
         if not self.verificar_concurrencia(tabla, id_registro, fecha_actualizacion):
             raise Exception("Conflicto de concurrencia detectado.")
-        campos = ", ".join([f"{campo} = ?" for campo in datos.keys()])
-        query = f"UPDATE {tabla} SET {campos}, fecha_actualizacion = ? WHERE id = ?"
+        campos = ", ".join([f"{campo} = %s" for campo in datos.keys()])
+        query = f"UPDATE {tabla} SET {campos}, fecha_actualizacion = %s WHERE id = %s"
         valores = list(datos.values()) + [datetime.now().isoformat(), id_registro]
         self.db.ejecutar_query(query, valores)
 
@@ -163,23 +201,23 @@ class DataAccessLayer:
         return problemas
 
     def registrar_auditoria(self, usuario, accion, detalles):
-        query = "INSERT INTO auditoria (usuario, accion, detalles, fecha) VALUES (?, ?, ?, ?)"
+        query = "INSERT INTO auditoria (usuario, accion, detalles, fecha) VALUES (%s, %s, %s, %s)"
         self.db.ejecutar_query(query, (usuario, accion, detalles, datetime.now().isoformat()))
 
     def registrar_login_fallido(self, ip, usuario, timestamp, estado):
-        query = "INSERT INTO login_fallidos (ip, usuario, timestamp, estado) VALUES (?, ?, ?, ?)"
+        query = "INSERT INTO login_fallidos (ip, usuario, timestamp, estado) VALUES (%s, %s, %s, %s)"
         self.db.ejecutar_query(query, (ip, usuario, timestamp, estado))
 
     def actualizar_configuracion(self, clave, valor):
-        query = "UPDATE configuracion SET valor = ? WHERE clave = ?"
+        query = "UPDATE configuracion SET valor = %s WHERE clave = %s"
         self.db.ejecutar_query(query, (valor, clave))
 
     def obtener_metricas(self):
         metricas = {
-            "total_usuarios": self.db.ejecutar_query("SELECT COUNT(*) FROM usuarios")[0][0],
-            "empresas_activas": self.db.ejecutar_query("SELECT COUNT(*) FROM empresas WHERE estado = 'Activo'")[0][0],
-            "sesiones_activas": self.db.ejecutar_query("SELECT COUNT(*) FROM sesiones WHERE estado = 'Activa'")[0][0],
-            "logs_sistema": self.db.ejecutar_query("SELECT COUNT(*) FROM logs")[0][0],
+            "total_usuarios": self.db.ejecutar_query("SELECT COUNT(*) FROM usuarios")[0][''],
+            "empresas_activas": self.db.ejecutar_query("SELECT COUNT(*) FROM empresas WHERE estado = 'Activo'")[0][''],
+            "sesiones_activas": self.db.ejecutar_query("SELECT COUNT(*) FROM sesiones WHERE estado = 'Activa'")[0][''],
+            "logs_sistema": self.db.ejecutar_query("SELECT COUNT(*) FROM logs")[0][''],
         }
         return metricas
 
@@ -197,6 +235,7 @@ class DataAccessLayer:
 
     @staticmethod
     def detectar_plugins(modules_path="modules"):
+        # Detectamos plugins en el directorio `modules`
         plugins = []
         for carpeta in os.listdir(modules_path):
             ruta_modulo = os.path.join(modules_path, carpeta)

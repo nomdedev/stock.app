@@ -1,4 +1,10 @@
 import unittest
+import sys
+import os
+
+# Agregar el directorio raíz del proyecto al PYTHONPATH
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from modules.contabilidad.model import ContabilidadModel
 
 class MockDBConnection:

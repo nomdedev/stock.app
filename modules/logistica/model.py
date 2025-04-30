@@ -1,9 +1,10 @@
 import pandas as pd
 from fpdf import FPDF
+from core.database import LogisticaDatabaseConnection  # Importar la clase correcta
 
 class LogisticaModel:
-    def __init__(self, db_connection):
-        self.db = db_connection
+    def __init__(self, db_connection=None):
+        self.db = db_connection or LogisticaDatabaseConnection()  # Usar LogisticaDatabaseConnection
 
     def obtener_entregas(self):
         query = "SELECT * FROM entregas_obras"

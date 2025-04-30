@@ -1,9 +1,10 @@
 import pandas as pd
 from fpdf import FPDF
+from core.database import AuditoriaDatabaseConnection  # Importar la clase correcta
 
 class AuditoriaModel:
-    def __init__(self, db_connection):
-        self.db = AuditoriaDatabaseConnection()
+    def __init__(self, db_connection=None):
+        self.db = db_connection or AuditoriaDatabaseConnection()  # Usar AuditoriaDatabaseConnection
 
     def obtener_auditorias(self, filtros=None):
         query = "SELECT * FROM auditorias_sistema"

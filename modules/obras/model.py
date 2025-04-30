@@ -1,5 +1,6 @@
 import pandas as pd
 from fpdf import FPDF
+from core.database import ObrasDatabaseConnection  # Importar la clase correcta
 
 class ObrasDatabaseConnection:
     def ejecutar_query(self, query, params=None):
@@ -7,8 +8,8 @@ class ObrasDatabaseConnection:
         pass
 
 class ObrasModel:
-    def __init__(self, db_connection):
-        self.db = InventarioDatabaseConnection()
+    def __init__(self, db_connection=None):
+        self.db = db_connection or ObrasDatabaseConnection()  # Usar ObrasDatabaseConnection
 
     def obtener_obras(self):
         query = "SELECT * FROM obras"

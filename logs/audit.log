@@ -520,3 +520,58 @@
 2025-04-25 10:32:30,442 - INFO - Aplicación iniciada
 2025-04-30 09:10:51,849 - INFO - Aplicación iniciada
 2025-04-30 10:16:49,219 - INFO - Aplicación iniciada
+2025-04-30 10:40:21,395 - INFO - Aplicación iniciada
+2025-04-30 11:19:23,567 - INFO - Aplicación iniciada
+2025-04-30 11:20:55,099 - INFO - Aplicación iniciada
+2025-04-30 11:21:43,918 - INFO - Aplicación iniciada
+2025-04-30 11:21:43,923 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 17 for SQL Server'. Verifique que el controlador ODBC necesario esté instalado.
+2025-04-30 11:21:43,923 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 17 for SQL Server'. Verifique que el controlador ODBC necesario esté instalado.
+2025-04-30 11:22:09,329 - INFO - Aplicación iniciada
+2025-04-30 11:22:09,337 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 17 for SQL Server'. Verifique que el controlador ODBC necesario esté instalado.
+2025-04-30 11:22:09,337 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 17 for SQL Server'. Verifique que el controlador ODBC necesario esté instalado.
+2025-04-30 11:22:39,254 - INFO - Aplicación iniciada
+2025-04-30 11:22:39,262 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'. Verifique que el controlador ODBC necesario esté instalado.
+2025-04-30 11:22:39,262 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'. Verifique que el controlador ODBC necesario esté instalado.
+2025-04-30 11:23:55,344 - INFO - Aplicación iniciada
+2025-04-30 11:23:55,352 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'. Verifique que el controlador ODBC necesario esté instalado.
+2025-04-30 11:23:55,352 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'. Verifique que el controlador ODBC necesario esté instalado.
+2025-04-30 11:35:57,846 - INFO - Aplicación iniciada
+2025-04-30 11:35:57,850 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 11:35:57,850 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 11:37:28,055 - INFO - Aplicación iniciada
+2025-04-30 11:37:28,061 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 11:37:28,061 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 11:38:43,992 - INFO - Aplicación iniciada
+2025-04-30 11:38:43,998 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 11:38:43,998 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 11:41:11,730 - INFO - Aplicación iniciada
+2025-04-30 11:41:11,735 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 11:41:11,735 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 11:48:11,383 - INFO - Aplicación iniciada
+2025-04-30 11:48:54,767 - INFO - Aplicación iniciada
+2025-04-30 11:50:53,565 - INFO - Aplicación iniciada
+2025-04-30 11:52:54,753 - INFO - Aplicación iniciada
+2025-04-30 11:52:54,757 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 11:52:54,757 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 11:58:08,402 - INFO - Aplicación iniciada
+2025-04-30 11:58:08,410 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 11:58:08,410 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:01:02,048 - INFO - Aplicación iniciada
+2025-04-30 12:01:02,053 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:01:02,053 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:12:58,716 - INFO - Aplicación iniciada
+2025-04-30 12:12:58,721 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:12:58,721 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:13:58,748 - INFO - Aplicación iniciada
+2025-04-30 12:13:58,753 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:13:58,753 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:14:47,010 - INFO - Aplicación iniciada
+2025-04-30 12:14:47,015 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:14:47,015 - ERROR - Error al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:16:52,742 - INFO - Aplicación iniciada
+2025-04-30 12:16:52,747 - ERROR - Error crítico: Error al generar la cadena de conexión: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:16:52,747 - ERROR - Error crítico: Error al generar la cadena de conexión: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:19:58,061 - INFO - Aplicación iniciada
+2025-04-30 12:19:58,066 - ERROR - Error inesperado al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 12:19:58,066 - ERROR - Error inesperado al conectar a la base de datos: 'ODBC Driver 18 for SQL Server'
+2025-04-30 13:32:56,587 - INFO - Aplicación iniciada

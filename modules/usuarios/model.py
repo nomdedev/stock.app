@@ -1,6 +1,8 @@
+from core.database import UsuariosDatabaseConnection  # Importar la clase correcta
+
 class UsuariosModel:
-    def __init__(self, db_connection):
-        self.db = UsuariosDatabaseConnection()
+    def __init__(self, db_connection=None):
+        self.db = db_connection or UsuariosDatabaseConnection()  # Usar UsuariosDatabaseConnection
 
     def obtener_usuarios(self):
         query = "SELECT * FROM usuarios"
