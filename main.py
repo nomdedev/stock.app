@@ -67,48 +67,28 @@ class MainWindow(QMainWindow):
         self.auditoria_model = AuditoriaModel(db_connection=self.db_connection)
         self.configuracion_model = ConfiguracionModel(db_connection=self.db_connection)
 
-        # Crear instancias de vistas y controladores
+        # Crear instancias de vistas
         self.inventario_view = InventarioView()
-        self.inventario_controller = InventarioController(
-            model=self.inventario_model, view=self.inventario_view
-        )
-
         self.obras_view = ObrasView()
-        self.obras_controller = ObrasController(
-            model=self.obras_model, view=self.obras_view
-        )
-
         self.produccion_view = ProduccionView()
-        self.produccion_controller = ProduccionController(
-            model=self.produccion_model, view=self.produccion_view
-        )
-
         self.logistica_view = LogisticaView()
-        self.logistica_controller = LogisticaController(
-            model=self.logistica_model, view=self.logistica_view
-        )
-
         self.pedidos_view = PedidosView()
-        self.pedidos_controller = PedidosController(
-            model=self.pedidos_model, view=self.pedidos_view, db_connection=self.db_connection
-        )
-
-        # Crear instancias de controladores antes de las vistas
-        self.usuarios_controller = UsuariosController(
-            model=self.usuarios_model, view=None
-        )
-        self.usuarios_view = UsuariosView(controller=self.usuarios_controller)
-        self.usuarios_controller.view = self.usuarios_view
-
+        self.usuarios_view = UsuariosView(controller=None)
         self.auditoria_view = AuditoriaView()
-        self.auditoria_controller = AuditoriaController(
-            model=self.auditoria_model, view=self.auditoria_view
-        )
-
         self.configuracion_view = ConfiguracionView()
-        self.configuracion_controller = ConfiguracionController(
-            model=self.configuracion_model, view=self.configuracion_view
-        )
+
+        # Crear instancias de controladores
+        self.inventario_controller = InventarioController(model=self.inventario_model, view=self.inventario_view)
+        self.obras_controller = ObrasController(model=self.obras_model, view=self.obras_view)
+        self.produccion_controller = ProduccionController(model=self.produccion_model, view=self.produccion_view)
+        self.logistica_controller = LogisticaController(model=self.logistica_model, view=self.logistica_view)
+        self.pedidos_controller = PedidosController(model=self.pedidos_model, view=self.pedidos_view, db_connection=self.db_connection)
+        self.usuarios_controller = UsuariosController(model=self.usuarios_model, view=self.usuarios_view)
+        self.auditoria_controller = AuditoriaController(model=self.auditoria_model, view=self.auditoria_view)
+        self.configuracion_controller = ConfiguracionController(model=self.configuracion_model, view=self.configuracion_view)
+
+        # Asignar controlador a la vista de usuarios
+        self.usuarios_view.controller = self.usuarios_controller
 
         # Layout principal
         main_layout = QHBoxLayout()
@@ -142,6 +122,21 @@ class MainWindow(QMainWindow):
             self.logger.info(f"Navegando a la sección con índice {index}")
         else:
             self.logger.warning(f"Índice fuera de rango: {index}")
+
+    def manejar_error_conexion(self, mensaje):
+        QMessageBox.critical(self, "Error de Conexión", mensaje)
+        self.logger.error(mensaje)
+
+    def reconfigurar_conexion(self):
+        try:
+            conectado = self.db_connection.probar_conexion()
+            self.configuracion_controller.actualizar_estado_conexion(conectado)
+            if conectado:
+                self.logger.info("Conexión a la base de datos establecida.")
+            else:
+                self.manejar_error_conexion("No se pudo conectar a la base de datos.")
+        except Exception as e:
+            self.manejar_error_conexion(f"Error inesperado: {str(e)}")
 
 class Sidebar(QWidget):
     section_selected = pyqtSignal(int)  # Señal para emitir el índice seleccionado

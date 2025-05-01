@@ -45,6 +45,11 @@ class ConfiguracionView(QWidget):
         self.tabs.addTab(self.database_tab, "Base de Datos")
         self.layout.addWidget(self.tabs)
 
+        # Estado de conexión
+        self.estado_conexion_label = QLabel("🟢 Conectado a la base")
+        self.estado_conexion_label.setStyleSheet("font-size: 14px; font-weight: bold;")
+        self.layout.addWidget(self.estado_conexion_label)
+
         # Botón para guardar cambios
         self.save_button = QPushButton("Guardar Cambios")
         self.layout.addWidget(self.save_button)

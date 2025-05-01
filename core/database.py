@@ -3,12 +3,16 @@ import pyodbc
 from datetime import datetime
 from core.logger import Logger
 from core.config import DB_SERVER, DB_USERNAME, DB_PASSWORD
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde .env
+load_dotenv()
 
 class BaseDatabaseConnection:
     def __init__(self, database):
-        self.server = DB_SERVER
-        self.username = DB_USERNAME
-        self.password = DB_PASSWORD
+        self.server = os.getenv("DB_SERVER", "localhost")
+        self.username = os.getenv("DB_USERNAME", "root")
+        self.password = os.getenv("DB_PASSWORD", "")
         self.database = database
         self.driver = self.detectar_driver_odbc()
 

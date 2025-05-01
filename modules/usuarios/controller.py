@@ -9,7 +9,6 @@ class UsuariosController(BaseController):
         super().__init__(model, view)
 
     def setup_view_signals(self):
-        # Conectar señales después de que la vista esté completamente cargada
         if hasattr(self.view, 'boton_agregar'):
             self.view.boton_agregar.clicked.connect(self.agregar_usuario)
         if hasattr(self.view, 'boton_gestion_roles'):

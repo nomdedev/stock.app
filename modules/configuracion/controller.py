@@ -62,3 +62,7 @@ class ConfiguracionController:
         nuevo_estado = not estado_actual
         self.model.actualizar_estado_notificaciones(nuevo_estado)
         self.view.label.setText(f"Notificaciones {'activadas' if nuevo_estado else 'desactivadas'}.")
+
+    def actualizar_estado_conexion(self, conectado: bool):
+        estado = "🟢 Conectado a la base" if conectado else "🔴 Sin conexión"
+        self.view.estado_conexion_label.setText(estado)

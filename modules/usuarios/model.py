@@ -112,3 +112,13 @@ class UsuariosModel:
     def eliminar_usuarios_por_estado(self, estado):
         query = "DELETE FROM usuarios WHERE estado = ?"
         self.db.ejecutar_query(query, (estado,))
+
+    def inicializar_admin(self):
+        query = """
+        IF NOT EXISTS (SELECT * FROM usuarios WHERE usuario = 'admin')
+        BEGIN
+            INSERT INTO usuarios (nombre, usuario, password, rol, estado)
+            VALUES ('Administrador', 'admin', HASHBYTES('SHA2_256', 'admin'), 'admin', 'activo')
+        END
+        """
+        self.db.ejecutar_query(query)
