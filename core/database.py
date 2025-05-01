@@ -2,12 +2,13 @@ import os
 import pyodbc
 from datetime import datetime
 from core.logger import Logger
+from core.config import DB_SERVER, DB_USERNAME, DB_PASSWORD
 
 class BaseDatabaseConnection:
-    def __init__(self, server, username, password, database):
-        self.server = server
-        self.username = username
-        self.password = password
+    def __init__(self, database):
+        self.server = DB_SERVER
+        self.username = DB_USERNAME
+        self.password = DB_PASSWORD
         self.database = database
         self.driver = self.detectar_driver_odbc()
 
@@ -31,48 +32,54 @@ class BaseDatabaseConnection:
                 f"PWD={self.password};"
                 f"DATABASE={self.database};"
             )
-            with pyodbc.connect(connection_string) as conn:
+            with pyodbc.connect(connection_string, timeout=10) as conn:  # Agregar timeout
                 cursor = conn.cursor()
                 if params:
                     cursor.execute(query, params)
                 else:
                     cursor.execute(query)
                 return cursor.fetchall()
+        except pyodbc.OperationalError as e:
+            Logger().error(f"Error de conexión: {e}")
+            raise RuntimeError(
+                "No se pudo conectar a la base de datos. Verifica el nombre del servidor/instancia, "
+                "las credenciales y que SQL Server permita conexiones remotas."
+            ) from e
         except Exception as e:
             Logger().error(f"Error al ejecutar la consulta: {e}")
             raise
 
 class InventarioDatabaseConnection(BaseDatabaseConnection):
-    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
-        super().__init__(server, username, password, "inventario")
+    def __init__(self):
+        super().__init__("inventario")
 
 class UsuariosDatabaseConnection(BaseDatabaseConnection):
-    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
-        super().__init__(server, username, password, "users")
+    def __init__(self):
+        super().__init__("users")
 
 class AuditoriaDatabaseConnection(BaseDatabaseConnection):
-    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
-        super().__init__(server, username, password, "auditoria")
+    def __init__(self):
+        super().__init__("auditoria")
 
 class ObrasDatabaseConnection(BaseDatabaseConnection):
-    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
-        super().__init__(server, username, password, "obras")
+    def __init__(self):
+        super().__init__("obras")
 
 class ProduccionDatabaseConnection(BaseDatabaseConnection):
-    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
-        super().__init__(server, username, password, "produccion")
+    def __init__(self):
+        super().__init__("produccion")
 
 class LogisticaDatabaseConnection(BaseDatabaseConnection):
-    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
-        super().__init__(server, username, password, "logistica")
+    def __init__(self):
+        super().__init__("logistica")
 
 class PedidosDatabaseConnection(BaseDatabaseConnection):
-    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
-        super().__init__(server, username, password, "pedidos")
+    def __init__(self):
+        super().__init__("pedidos")
 
 class ConfiguracionDatabaseConnection(BaseDatabaseConnection):
-    def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
-        super().__init__(server, username, password, "configuracion")
+    def __init__(self):
+        super().__init__("configuracion")
 
 class DatabaseConnection:
     def __init__(self, server="DESKTOP-QHMPTG0\\SQLEXPRESS", username="sa", password="mps.1887"):
@@ -108,13 +115,19 @@ class DatabaseConnection:
                 f"PWD={self.password};"
                 f"DATABASE={self.database};"
             )
-            with pyodbc.connect(connection_string) as conn:
+            with pyodbc.connect(connection_string, timeout=10) as conn:  # Agregar timeout
                 cursor = conn.cursor()
                 if params:
                     cursor.execute(query, params)
                 else:
                     cursor.execute(query)
                 return cursor.fetchall()
+        except pyodbc.OperationalError as e:
+            Logger().error(f"Error de conexión: {e}")
+            raise RuntimeError(
+                "No se pudo conectar a la base de datos. Verifica el nombre del servidor/instancia, "
+                "las credenciales y que SQL Server permita conexiones remotas."
+            ) from e
         except Exception as e:
             Logger().error(f"Error al ejecutar la consulta: {e}")
             raise
