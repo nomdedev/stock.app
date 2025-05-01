@@ -67,6 +67,10 @@ Estas configuraciones también pueden ser modificadas desde el módulo de config
 
 ### Configuración de Conexión a la Base de Datos
 
+El archivo `core/config.py` contiene información sensible como credenciales de la base de datos. **No debe subirse al repositorio**. Asegúrate de que esté incluido en el archivo `.gitignore`.
+
+Si necesitas compartir configuraciones genéricas, utiliza un archivo de ejemplo como `config.example.py` y excluye las credenciales reales.
+
 Para configurar las credenciales de conexión a la base de datos, edita el archivo `core/config.py` y define los valores correspondientes:
 
 ```python
