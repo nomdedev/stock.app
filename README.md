@@ -41,6 +41,46 @@
    python main.py
    ```
 
+### Configuración de Variables Globales
+
+El sistema permite configurar variables globales desde el archivo `core/config.py` o desde el módulo de configuración en la aplicación.
+
+### Variables Disponibles
+
+#### Conexión a la Base de Datos
+- **DB_SERVER**: Dirección o IP del servidor SQL.
+- **DB_USERNAME**: Usuario de la base de datos.
+- **DB_PASSWORD**: Contraseña del usuario.
+- **DB_PORT**: Puerto del servidor SQL (por defecto: 1433).
+- **DB_DEFAULT_DATABASE**: Base de datos predeterminada.
+- **DB_TIMEOUT**: Tiempo de espera para la conexión (en segundos).
+
+#### Configuración General
+- **DEBUG_MODE**: Activar o desactivar modo de depuración.
+- **FILE_STORAGE_PATH**: Ruta para almacenar archivos generados.
+- **DEFAULT_LANGUAGE**: Idioma predeterminado de la aplicación.
+- **DEFAULT_TIMEZONE**: Zona horaria predeterminada.
+- **NOTIFICATIONS_ENABLED**: Activar o desactivar notificaciones globales.
+
+### Edición desde la Aplicación
+Estas configuraciones también pueden ser modificadas desde el módulo de configuración, en las pestañas "General" y "Base de Datos".
+
+### Configuración de Conexión a la Base de Datos
+
+Para configurar las credenciales de conexión a la base de datos, edita el archivo `core/config.py` y define los valores correspondientes:
+
+```python
+# filepath: c:\Users\Escorpio\Desktop\Martin\Proyectos\stock.app\core\config.py
+DB_SERVER = "192.168.1.100"  # Dirección o IP del servidor SQL
+DB_USERNAME = "sa"           # Usuario de la base de datos
+DB_PASSWORD = "mps.1887"     # Contraseña del usuario
+```
+
+### Notas:
+- Asegúrate de que el servidor SQL permita conexiones remotas.
+- Si cambias el puerto predeterminado (1433), incluye el puerto en `DB_SERVER`, por ejemplo: `"192.168.1.100,1434"`.
+- No compartas este archivo públicamente, ya que contiene información sensible.
+
 ### Configuración Inicial
 - Crear un usuario administrador desde el módulo de usuarios.
 - Configurar los parámetros iniciales en el módulo de configuración.
