@@ -92,6 +92,48 @@ DB_PASSWORD = "mps.1887"     # Contraseña del usuario
 ### Notas sobre la Conexión a la Base de Datos
 El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de que el controlador ODBC esté instalado y configurado correctamente.
 
+## Buenas Prácticas de Programación
+
+### Evitar el uso excesivo de condicionales `if`
+
+Para mantener el código limpio, escalable y fácil de mantener, se recomienda evitar el uso excesivo de condicionales `if`. En su lugar, considere las siguientes alternativas:
+
+1. **Diccionarios o Mapas**:
+   Use diccionarios para mapear claves a funciones o valores, eliminando la necesidad de múltiples `if`.
+   ```python
+   acciones = {
+       "accion1": funcion1,
+       "accion2": funcion2,
+       "accion3": funcion3,
+   }
+   accion = "accion1"
+   if accion in acciones:
+       acciones[accion]()
+   ```
+
+2. **Patrón de Diseño Estrategia**:
+   Implemente estrategias como clases o funciones y seleccione la adecuada en tiempo de ejecución.
+
+3. **Polimorfismo**:
+   Si trabaja con objetos, utilice polimorfismo para que cada clase implemente su propia lógica, eliminando la necesidad de múltiples `if`.
+
+4. **Uso de `match` (Python 3.10 o superior)**:
+   El operador `match` es una alternativa más limpia y legible a múltiples `if-elif`.
+   ```python
+   match accion:
+       case "accion1":
+           funcion1()
+       case "accion2":
+           funcion2()
+       case _:
+           print("Acción no reconocida")
+   ```
+
+5. **Refactorización**:
+   Divida el código en funciones más pequeñas y específicas para reducir la complejidad.
+
+Adoptar estas prácticas no solo mejora la calidad del código, sino que también facilita su mantenimiento y escalabilidad a largo plazo.
+
 🧩 Módulo 1: Inventario General
 🗄 Base de datos: mpsInventario
 

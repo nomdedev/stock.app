@@ -9,29 +9,30 @@ class UsuariosController(BaseController):
         super().__init__(model, view)
 
     def setup_view_signals(self):
-        # Conectar señales después de que la vista esté completamente cargada
-        if hasattr(self.view, 'boton_agregar'):
-            self.view.boton_agregar.clicked.connect(self.agregar_usuario)
-        if hasattr(self.view, 'boton_gestion_roles'):
-            self.view.boton_gestion_roles.clicked.connect(self._mostrar_roles_permisos)
-        if hasattr(self.view, 'boton_exportar_logs'):
-            self.view.boton_exportar_logs.clicked.connect(self.exportar_logs)
-        if hasattr(self.view, 'boton_nuevo_usuario'):
-            self.view.boton_nuevo_usuario.clicked.connect(self.limpiar_formulario)
-        if hasattr(self.view, 'boton_suspender'):
-            self.view.boton_suspender.clicked.connect(self._suspender_selected)
-        if hasattr(self.view, 'boton_reactivar'):
-            self.view.boton_reactivar.clicked.connect(self._reactivar_selected)
-        if hasattr(self.view, 'boton_clonar_permisos'):
-            self.view.boton_clonar_permisos.clicked.connect(self._clonar_permisos)
-        if hasattr(self.view, 'boton_guardar_permisos'):
-            self.view.boton_guardar_permisos.clicked.connect(self.guardar_permisos)
+        # Diccionario para mapear botones a métodos
+        botones_acciones = {
+            'boton_agregar': self.agregar_usuario,
+            'boton_gestion_roles': self._mostrar_roles_permisos,
+            'boton_exportar_logs': self.exportar_logs,
+            'boton_nuevo_usuario': self.limpiar_formulario,
+            'boton_suspender': self._suspender_selected,
+            'boton_reactivar': self._reactivar_selected,
+            'boton_clonar_permisos': self._clonar_permisos,
+            'boton_guardar_permisos': self.guardar_permisos
+        }
+
+        # Conectar señales dinámicamente
+        for boton, accion in botones_acciones.items():
+            if hasattr(self.view, boton):
+                getattr(self.view, boton).clicked.connect(accion)
+
         # Llenar combo de roles y cargar usuarios al iniciar la vista
         roles_data = self.model.obtener_roles()
         if hasattr(self.view, 'rol_input') and self.view.rol_input:
             roles = [r[0] for r in roles_data]
             self.view.rol_input.clear()
             self.view.rol_input.addItems(roles)
+
         # Cargar usuarios solo si la vista está lista
         if hasattr(self.view, 'tabla_usuarios'):
             self.cargar_usuarios()

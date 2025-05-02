@@ -7,22 +7,72 @@ class AjustarStockDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Ajustar Stock")
-        self.setFixedSize(600, 400)
+        self.setFixedSize(700, 400)  # Hacer la ventana más ancha
         self.initUI()
 
     def initUI(self):
         layout = QVBoxLayout(self)
 
-        # Campo para ingresar el código del material
+        # Aplicar estilo general a la ventana
+        self.setStyleSheet("""
+            QDialog {
+                background-color: #f9f9f9;
+                border-radius: 10px;
+                font-family: Arial, sans-serif;
+            }
+            QLabel {
+                font-size: 12px;
+                color: #333333;
+                font-weight: bold;
+            }
+            QLineEdit {
+                border: 1px solid #cccccc;
+                border-radius: 5px;
+                padding: 5px;
+                font-size: 12px;
+            }
+            QPushButton {
+                background-color: #0078d7;
+                color: white;
+                font-size: 12px;
+                border-radius: 5px;
+                padding: 5px 10px;
+                width: 200px;
+                height: 25px;
+            }
+            QPushButton:hover {
+                background-color: #005a9e;
+            }
+            QTableWidget {
+                border: 1px solid #cccccc;
+                background-color: #ffffff;
+                font-size: 12px;
+            }
+            QHeaderView::section {
+                background-color: #f0f0f0;
+                font-weight: bold;
+                border: 1px solid #cccccc;
+            }
+        """)
+
+        # Campo para ingresar el código del material y mostrar la descripción
+        input_layout = QHBoxLayout()
         self.codigo_input = QLineEdit()
         self.codigo_input.setPlaceholderText("Ingrese el código del material")
-        layout.addWidget(QLabel("Código del Material:"))
-        layout.addWidget(self.codigo_input)
+        self.codigo_input.textChanged.connect(self.mostrar_descripcion)
+        input_layout.addWidget(QLabel("Código del Material:"))
+        input_layout.addWidget(self.codigo_input)
 
-        # Botón para buscar el material
-        self.buscar_button = QPushButton("Buscar")
-        self.buscar_button.clicked.connect(self.buscar_material)
-        layout.addWidget(self.buscar_button)
+        self.descripcion_label = QLabel("Descripción: -")
+        input_layout.addWidget(self.descripcion_label)
+
+        layout.addLayout(input_layout)
+
+        # Botón para agregar el material a la lista
+        self.agregar_button = QPushButton("Agregar a la Lista")
+        self.agregar_button.setFixedSize(200, 25)
+        self.agregar_button.clicked.connect(self.agregar_a_lista)
+        layout.addWidget(self.agregar_button)
 
         # Tabla para mostrar los materiales a ajustar
         self.tabla_ajustes = QTableWidget()
@@ -30,39 +80,32 @@ class AjustarStockDialog(QDialog):
         self.tabla_ajustes.setHorizontalHeaderLabels(["Código", "Descripción", "Cantidad"])
         layout.addWidget(self.tabla_ajustes)
 
-        # Botones para agregar y aceptar ajustes
-        botones_layout = QHBoxLayout()
-        self.agregar_button = QPushButton("Agregar a la Lista")
-        self.agregar_button.clicked.connect(self.agregar_a_lista)
+        # Botón para cargar el stock
         self.cargar_button = QPushButton("Cargar Stock")
+        self.cargar_button.setFixedSize(200, 25)
         self.cargar_button.clicked.connect(self.cargar_stock)
-        botones_layout.addWidget(self.agregar_button)
-        botones_layout.addWidget(self.cargar_button)
-        layout.addLayout(botones_layout)
+        layout.addWidget(self.cargar_button)
 
         self.lista_ajustes = []  # Lista para almacenar los ajustes temporales
 
-    def buscar_material(self):
+    def mostrar_descripcion(self):
         codigo = self.codigo_input.text()
-        if not codigo:
-            QMessageBox.warning(self, "Advertencia", "Por favor, ingrese un código de material.")
-            return
-
-        # Buscar el material en la tabla de inventario
-        for row in range(self.parent().tabla_inventario.rowCount()):
-            item_codigo = self.parent().tabla_inventario.item(row, 1)  # Columna de código
-            item_descripcion = self.parent().tabla_inventario.item(row, 2)  # Columna de descripción
-            if item_codigo and item_codigo.text() == codigo:
-                descripcion = item_descripcion.text() if item_descripcion else ""
-                QMessageBox.information(self, "Material Encontrado", f"Descripción: {descripcion}")
-                return
-
-        QMessageBox.warning(self, "No Encontrado", "El código ingresado no existe en el inventario.")
+        descripcion = next(
+            (
+                self.parent().tabla_inventario.item(row, 2).text()
+                for row in range(self.parent().tabla_inventario.rowCount())
+                if self.parent().tabla_inventario.item(row, 1) and self.parent().tabla_inventario.item(row, 1).text() == codigo
+            ),
+            "-"
+        )
+        self.descripcion_label.setText(f"Descripción: {descripcion}")
 
     def agregar_a_lista(self):
         codigo = self.codigo_input.text()
-        if not codigo:
-            QMessageBox.warning(self, "Advertencia", "Por favor, ingrese un código de material.")
+        descripcion = self.descripcion_label.text().replace("Descripción: ", "")
+
+        if not codigo or descripcion == "-":
+            QMessageBox.warning(self, "Advertencia", "Por favor, ingrese un código válido.")
             return
 
         cantidad, ok = QInputDialog.getInt(self, "Cantidad", "Ingrese la cantidad a ajustar:")
@@ -70,42 +113,36 @@ class AjustarStockDialog(QDialog):
             QMessageBox.warning(self, "Advertencia", "Cantidad inválida.")
             return
 
-        # Buscar el material en la tabla de inventario
-        for row in range(self.parent().tabla_inventario.rowCount()):
-            item_codigo = self.parent().tabla_inventario.item(row, 1)  # Columna de código
-            item_descripcion = self.parent().tabla_inventario.item(row, 2)  # Columna de descripción
-            if item_codigo and item_codigo.text() == codigo:
-                descripcion = item_descripcion.text() if item_descripcion else ""
-                self.lista_ajustes.append((codigo, descripcion, cantidad))
+        self.lista_ajustes.append((codigo, descripcion, cantidad))
 
-                # Agregar a la tabla de ajustes
-                row_position = self.tabla_ajustes.rowCount()
-                self.tabla_ajustes.insertRow(row_position)
-                self.tabla_ajustes.setItem(row_position, 0, QTableWidgetItem(codigo))
-                self.tabla_ajustes.setItem(row_position, 1, QTableWidgetItem(descripcion))
-                self.tabla_ajustes.setItem(row_position, 2, QTableWidgetItem(str(cantidad)))
-                QMessageBox.information(self, "Agregado", "El material ha sido agregado a la lista de ajustes.")
-                return
-
-        QMessageBox.warning(self, "No Encontrado", "El código ingresado no existe en el inventario.")
+        # Agregar a la tabla de ajustes
+        row_position = self.tabla_ajustes.rowCount()
+        self.tabla_ajustes.insertRow(row_position)
+        for col, value in enumerate([codigo, descripcion, str(cantidad)]):
+            self.tabla_ajustes.setItem(row_position, col, QTableWidgetItem(value))
 
     def cargar_stock(self):
         if not self.lista_ajustes:
             QMessageBox.warning(self, "Advertencia", "No hay ajustes para cargar.")
             return
 
-        # Actualizar la tabla de inventario
-        for codigo, descripcion, cantidad in self.lista_ajustes:
-            for row in range(self.parent().tabla_inventario.rowCount()):
-                item_codigo = self.parent().tabla_inventario.item(row, 1)  # Columna de código
-                item_stock = self.parent().tabla_inventario.item(row, 11)  # Columna de stock
-                if item_codigo and item_codigo.text() == codigo:
-                    nuevo_stock = int(item_stock.text()) + cantidad
-                    self.parent().tabla_inventario.setItem(row, 11, QTableWidgetItem(str(nuevo_stock)))
+        inventario_items = {
+            self.parent().tabla_inventario.item(row, 1).text(): row
+            for row in range(self.parent().tabla_inventario.rowCount())
+            if self.parent().tabla_inventario.item(row, 1)
+        }
+
+        for codigo, _, cantidad in self.lista_ajustes:
+            if codigo in inventario_items:
+                row = inventario_items[codigo]
+                item_stock = self.parent().tabla_inventario.item(row, 11)
+                stock_actual = int(item_stock.text()) if item_stock and item_stock.text().isdigit() else 0
+                nuevo_stock = stock_actual + cantidad
+                self.parent().tabla_inventario.setItem(row, 11, QTableWidgetItem(str(nuevo_stock)))
 
         QMessageBox.information(self, "Éxito", "El stock ha sido actualizado correctamente.")
         self.lista_ajustes.clear()
-        self.tabla_ajustes.setRowCount(0)  # Limpiar la tabla de ajustes
+        self.tabla_ajustes.setRowCount(0)
 
 class InventarioView(QWidget):
     def __init__(self):
@@ -164,7 +201,6 @@ class InventarioView(QWidget):
             QPushButton("Nuevo Ítem"),
             QPushButton("Ver Movimientos"),
             QPushButton("Reservar"),
-            QPushButton("Ajustar Stock"),
             QPushButton("Exportar a Excel"),
             QPushButton("Exportar a PDF"),
             QPushButton("Buscar"),
@@ -188,10 +224,23 @@ class InventarioView(QWidget):
             """)
             botones_layout.addWidget(boton)
 
-        # Conectar el botón "Ajustar Stock" al diálogo
-        for boton in self.findChildren(QPushButton):
-            if boton.text() == "Ajustar Stock":
-                boton.clicked.connect(self.abrir_ajustar_stock_dialog)
+        # Conectar el botón "Ajustar Stock" directamente
+        self.boton_ajustar_stock = QPushButton("Ajustar Stock")
+        self.boton_ajustar_stock.setFixedSize(200, 30)
+        self.boton_ajustar_stock.setStyleSheet("""
+            QPushButton {
+                font-size: 10px;
+                border-radius: 15px;
+                background-color: #0078d7;
+                color: white;
+                padding: 5px;
+            }
+            QPushButton:hover {
+                background-color: #005a9e;
+            }
+        """)
+        self.boton_ajustar_stock.clicked.connect(self.abrir_ajustar_stock_dialog)
+        botones_layout.addWidget(self.boton_ajustar_stock)
 
         general_layout.addLayout(botones_layout)
 
@@ -256,6 +305,7 @@ class InventarioView(QWidget):
     def abrir_ajustar_stock_dialog(self):
         dialog = AjustarStockDialog(self)
         dialog.exec()
+        return dialog
 
     def abrir_configuracion_columnas(self):
         dialog = QDialog(self)
@@ -349,6 +399,20 @@ class InventarioView(QWidget):
             return id_item
         else:
             return None
+
+    def obtener_datos_ajuste_stock(self):
+        """Obtiene los datos de ajuste de stock desde la tabla de ajustes."""
+        datos_ajuste = []
+        for row in range(self.tabla_ajustes.rowCount()):
+            codigo = self.tabla_ajustes.item(row, 0).text() if self.tabla_ajustes.item(row, 0) else ""
+            descripcion = self.tabla_ajustes.item(row, 1).text() if self.tabla_ajustes.item(row, 1) else ""
+            cantidad = self.tabla_ajustes.item(row, 2).text() if self.tabla_ajustes.item(row, 2) else "0"
+            datos_ajuste.append({
+                "codigo": codigo,
+                "descripcion": descripcion,
+                "cantidad": int(cantidad)
+            })
+        return datos_ajuste
 
 class Inventario(QWidget):
     def __init__(self):

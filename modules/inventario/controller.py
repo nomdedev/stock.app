@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QTableWidgetItem
+from PyQt6.QtWidgets import QTableWidgetItem, QDialog
 from PyQt6 import QtGui
 
 class InventarioController:
@@ -68,13 +68,21 @@ class InventarioController:
             self.view.label.setText("Error: Datos incompletos para registrar la reserva.")
 
     def ajustar_stock(self):
-        datos_ajuste = self.view.obtener_datos_ajuste_stock()
-        if datos_ajuste:
-            self.model.actualizar_stock(datos_ajuste['id_item'], datos_ajuste['cantidad'])
-            self.view.label.setText("Stock ajustado exitosamente.")
-            self.actualizar_inventario()
-        else:
-            self.view.label.setText("Error: Datos incompletos para ajustar el stock.")
+        dialog = self.view.abrir_ajustar_stock_dialog()
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            datos_ajuste = dialog.obtener_datos_ajuste_stock()
+            for ajuste in datos_ajuste:
+                codigo = ajuste["codigo"]
+                cantidad = ajuste["cantidad"]
+
+                # Actualizar la tabla de inventario
+                for row in range(self.view.tabla_inventario.rowCount()):
+                    item_codigo = self.view.tabla_inventario.item(row, 1)  # Columna de código
+                    item_stock = self.view.tabla_inventario.item(row, 11)  # Columna de stock
+                    if item_codigo and item_codigo.text() == codigo:
+                        stock_actual = int(item_stock.text()) if item_stock and item_stock.text().isdigit() else 0
+                        nuevo_stock = stock_actual + cantidad
+                        self.view.tabla_inventario.setItem(row, 11, QTableWidgetItem(str(nuevo_stock)))
 
     def buscar_item(self):
         codigo = self.view.buscar_input.text()

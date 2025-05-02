@@ -11,13 +11,15 @@ class PedidosController:
         self.view.boton_cargar_presupuesto.clicked.connect(self.cargar_presupuesto)
 
     def crear_pedido(self):
-        cliente = self.view.cliente_input.text()
-        producto = self.view.producto_input.text()
-        cantidad = self.view.cantidad_input.text()
-        fecha = self.view.fecha_input.text()
+        campos = {
+            "cliente": self.view.cliente_input.text(),
+            "producto": self.view.producto_input.text(),
+            "cantidad": self.view.cantidad_input.text(),
+            "fecha": self.view.fecha_input.text()
+        }
 
-        if cliente and producto and cantidad and fecha:
-            self.dal.insertar_material((cliente, producto, cantidad, fecha))  # Usar DAL
+        if all(campos.values()):
+            self.dal.insertar_material(tuple(campos.values()))  # Usar DAL
             self.view.label.setText("Pedido creado exitosamente.")
         else:
             self.view.label.setText("Por favor, complete todos los campos.")
@@ -31,26 +33,32 @@ class PedidosController:
 
     def ver_detalles_pedido(self):
         fila_seleccionada = self.view.tabla_pedidos.currentRow()
-        if (fila_seleccionada != -1):
-            id_pedido = self.view.tabla_pedidos.item(fila_seleccionada, 0).text()
-            detalles = self.model.obtener_detalle_pedido(id_pedido)
-            self.view.tabla_detalle_pedido.setRowCount(len(detalles))
-            for row, detalle in enumerate(detalles):
-                for col, value in enumerate(detalle):
-                    self.view.tabla_detalle_pedido.setItem(row, col, QTableWidgetItem(str(value)))
+        if fila_seleccionada == -1:
+            return
+
+        id_pedido = self.view.tabla_pedidos.item(fila_seleccionada, 0).text()
+        detalles = self.model.obtener_detalle_pedido(id_pedido)
+        self.view.tabla_detalle_pedido.setRowCount(len(detalles))
+        for row, detalle in enumerate(detalles):
+            for col, value in enumerate(detalle):
+                self.view.tabla_detalle_pedido.setItem(row, col, QTableWidgetItem(str(value)))
 
     def cargar_presupuesto(self):
         fila_seleccionada = self.view.tabla_pedidos.currentRow()
-        if (fila_seleccionada != -1):
-            id_pedido = self.view.tabla_pedidos.item(fila_seleccionada, 0).text()
-            proveedor = "Proveedor X"  # Ejemplo, debería obtenerse dinámicamente
-            fecha_recepcion = "2023-12-31"  # Ejemplo
-            archivo_adjunto = "archivo.pdf"
-            comentarios = "Sin comentarios"
-            precio_total = 1000.0
-            seleccionado = False
-            self.model.agregar_presupuesto((id_pedido, proveedor, fecha_recepcion, archivo_adjunto, comentarios, precio_total, seleccionado))
-            self.view.label.setText(f"Presupuesto cargado para el pedido {id_pedido}.")
+        if fila_seleccionada == -1:
+            return
+
+        id_pedido = self.view.tabla_pedidos.item(fila_seleccionada, 0).text()
+        presupuesto = {
+            "proveedor": "Proveedor X",  # Ejemplo, debería obtenerse dinámicamente
+            "fecha_recepcion": "2023-12-31",  # Ejemplo
+            "archivo_adjunto": "archivo.pdf",
+            "comentarios": "Sin comentarios",
+            "precio_total": 1000.0,
+            "seleccionado": False
+        }
+        self.model.agregar_presupuesto((id_pedido, *presupuesto.values()))
+        self.view.label.setText(f"Presupuesto cargado para el pedido {id_pedido}.")
 
     def comparar_presupuestos(self, id_pedido):
         presupuestos = self.model.obtener_presupuestos_por_pedido(id_pedido)

@@ -4,6 +4,7 @@ from PyQt6.QtGui import QPalette, QColor
 from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal, QSize
 from utils.icon_loader import get_icon
 from functools import partial
+import ctypes
 
 # Dependencias principales
 import sys, os
@@ -48,7 +49,23 @@ class MainWindow(QMainWindow):
         self.logger = Logger()  # Inicializar el logger
         self.logger.info("Aplicación iniciada")
         self.setWindowTitle("MPS Inventario App")
-        self.setGeometry(100, 100, 1200, 800)
+
+        # Obtener el tamaño de la pantalla
+        user32 = ctypes.windll.user32
+        screen_width = user32.GetSystemMetrics(0)
+        screen_height = user32.GetSystemMetrics(1)
+
+        # Calcular el tamaño de la ventana (80% del tamaño de la pantalla)
+        window_width = int(screen_width * 0.8)
+        window_height = int(screen_height * 0.8)
+
+        # Calcular la posición para centrar la ventana
+        pos_x = (screen_width - window_width) // 2
+        pos_y = (screen_height - window_height) // 2
+
+        # Establecer geometría de la ventana
+        self.setGeometry(pos_x, pos_y, window_width, window_height)
+
         self.initUI()
 
     def initUI(self):
