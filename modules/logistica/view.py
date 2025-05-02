@@ -25,7 +25,22 @@ class LogisticaView(QWidget):
 
         # Botón estilizado para agregar entrega
         self.boton_agregar = QPushButton("Agregar Entrega")
-        self.boton_agregar.setStyleSheet("background-color: #2563eb; color: white; padding: 10px; border-radius: 5px;")
+        self.boton_agregar.setStyleSheet("""
+            QPushButton {
+                background-color: #2563eb;
+                color: white;
+                font-size: 14px;
+                font-weight: bold;
+                border-radius: 8px;
+                padding: 8px 16px;
+            }
+            QPushButton:hover {
+                background-color: #1e40af;
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a;
+            }
+        """)
         self.boton_agregar.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout.addWidget(self.boton_agregar)
 
@@ -33,11 +48,27 @@ class LogisticaView(QWidget):
         self.tabla_entregas = QTableWidget()
         self.tabla_entregas.setColumnCount(5)
         self.tabla_entregas.setHorizontalHeaderLabels(["Destino", "Fecha", "Estado", "Vehículo", "Chofer"])
+        self.tabla_entregas.setStyleSheet("""
+            QTableWidget {
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                font-size: 14px;
+                background-color: #ffffff;
+            }
+            QHeaderView::section {
+                background-color: #2563eb;
+                color: white;
+                font-weight: bold;
+                font-size: 14px;
+                border: none;
+                padding: 6px;
+            }
+        """)
         self.layout.addWidget(self.tabla_entregas)
 
         # Botón para actualizar estado
         self.boton_actualizar_estado = QPushButton("Actualizar Estado")
-        self.boton_actualizar_estado.setStyleSheet("background-color: #2563eb; color: white; padding: 10px; border-radius: 5px;")
+        self.boton_actualizar_estado.setStyleSheet(self.boton_agregar.styleSheet())
         self.boton_actualizar_estado.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout.addWidget(self.boton_actualizar_estado)
 

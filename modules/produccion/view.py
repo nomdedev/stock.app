@@ -24,7 +24,22 @@ class ProduccionView(QWidget):
 
         # Botones estilizados
         self.boton_agregar = QPushButton("Agregar Etapa")
-        self.boton_agregar.setStyleSheet("background-color: #2563eb; color: white; padding: 10px; border-radius: 5px;")
+        self.boton_agregar.setStyleSheet("""
+            QPushButton {
+                background-color: #2563eb;
+                color: white;
+                font-size: 14px;
+                font-weight: bold;
+                border-radius: 8px;
+                padding: 8px 16px;
+            }
+            QPushButton:hover {
+                background-color: #1e40af;
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a;
+            }
+        """)
         self.boton_agregar.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout.addWidget(self.boton_agregar)
 
@@ -34,7 +49,7 @@ class ProduccionView(QWidget):
         self.layout.addWidget(self.boton_ver_detalles)
 
         self.boton_finalizar_etapa = QPushButton("Finalizar Etapa")
-        self.boton_finalizar_etapa.setStyleSheet("background-color: #2563eb; color: white; padding: 10px; border-radius: 5px;")
+        self.boton_finalizar_etapa.setStyleSheet(self.boton_agregar.styleSheet())
         self.boton_finalizar_etapa.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout.addWidget(self.boton_finalizar_etapa)
 
@@ -42,7 +57,22 @@ class ProduccionView(QWidget):
         self.tabla_aberturas = QTableWidget()
         self.tabla_aberturas.setColumnCount(5)
         self.tabla_aberturas.setHorizontalHeaderLabels(["ID", "Código", "Tipo", "Estado", "Fecha Inicio"])
-        self.tabla_aberturas.setStyleSheet("border: 1px solid #e5e7eb; border-radius: 8px;")
+        self.tabla_aberturas.setStyleSheet("""
+            QTableWidget {
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                font-size: 14px;
+                background-color: #ffffff;
+            }
+            QHeaderView::section {
+                background-color: #2563eb;
+                color: white;
+                font-weight: bold;
+                font-size: 14px;
+                border: none;
+                padding: 6px;
+            }
+        """)
         self.tabla_aberturas.horizontalHeader().setStyleSheet("")
         self.layout.addWidget(self.tabla_aberturas)
 

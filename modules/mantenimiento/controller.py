@@ -50,6 +50,15 @@ class MantenimientoController(BaseController):
             self.notificaciones_controller.enviar_notificacion_automatica(mensaje, "mantenimiento")
             self.view.label.setText(mensaje)
 
+    def verificar_tareas_recurrentes_vencidas(self):
+        tareas_vencidas = self.model.obtener_tareas_recurrentes_vencidas()
+        if tareas_vencidas:
+            mensaje = f"Hay {len(tareas_vencidas)} tareas recurrentes vencidas."
+            self.notificaciones_controller.enviar_notificacion_automatica(mensaje, "mantenimiento")
+            self.view.label.setText(mensaje)
+        else:
+            self.view.label.setText("No hay tareas recurrentes vencidas.")
+
     def exportar_reporte_mantenimiento(self, formato):
         mensaje = self.model.exportar_reporte_mantenimiento(formato)
         self.view.label.setText(mensaje)

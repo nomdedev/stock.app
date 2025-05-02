@@ -133,3 +133,9 @@ class InventarioController:
             self.actualizar_inventario()
         else:
             self.view.label.setText("Error al transformar la reserva en entrega.")
+
+    def verificar_conexion_y_actualizar(self):
+        if AppState.is_connected("inventario"):
+            self.actualizar_inventario()
+        else:
+            self.view.label.setText("Error: No hay conexión con la base de datos.")

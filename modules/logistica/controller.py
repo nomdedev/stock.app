@@ -47,6 +47,8 @@ class LogisticaController:
             mensaje = f"Hay {len(entregas_vencidas)} entregas vencidas."
             self.notificaciones_controller.enviar_notificacion_automatica(mensaje, "logística")
             self.view.label.setText(mensaje)
+        else:
+            self.view.label.setText("No hay entregas vencidas.")
 
     def generar_hoja_de_ruta(self, id_vehiculo):
         hoja_de_ruta = self.model.generar_hoja_de_ruta(id_vehiculo)
@@ -62,3 +64,11 @@ class LogisticaController:
     def exportar_acta_entrega(self, id_entrega):
         mensaje = self.model.exportar_acta_entrega(id_entrega)
         self.view.label.setText(mensaje)
+
+    def generar_reporte_entregas_pendientes(self):
+        entregas_pendientes = self.model.obtener_entregas_por_estado("pendiente")
+        if entregas_pendientes:
+            self.model.exportar_reporte("entregas_pendientes", entregas_pendientes)
+            self.view.label.setText("Reporte de entregas pendientes generado exitosamente.")
+        else:
+            self.view.label.setText("No hay entregas pendientes para generar un reporte.")

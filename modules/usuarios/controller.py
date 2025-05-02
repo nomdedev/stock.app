@@ -69,6 +69,17 @@ class UsuariosController(BaseController):
         self.model.db.registrar_login_fallido(ip, usuario, datetime.now().isoformat(), "fallido")
         self.view.label.setText(f"Intento de login fallido registrado para el usuario: {usuario}")
 
+    def registrar_intento_fallido(self, usuario, ip_origen):
+        self.model.registrar_log_usuario((usuario, "Intento fallido", "usuarios", "Acceso denegado", ip_origen))
+        self.view.label.setText(f"Intento fallido registrado para el usuario: {usuario}.")
+        self.notificaciones_controller.enviar_notificacion_automatica(
+            f"Intento fallido de acceso para el usuario {usuario} desde IP {ip_origen}.", "seguridad"
+        )
+
+    def registrar_intento_fallido(self, usuario_id):
+        self.model.registrar_intento_fallido(usuario_id)
+        self.view.mostrar_toast("Intento fallido registrado.")
+
     def limpiar_formulario(self):
         self.view.nombre_input.clear()
         self.view.apellido_input.clear()

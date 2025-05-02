@@ -143,6 +143,9 @@ class UsuariosView(QWidget):
         self.boton_clonar_permisos = CustomButton("Clonar Permisos")
         self.layout.addWidget(self.boton_clonar_permisos)
 
+        self.boton_registrar_fallido = CustomButton("Registrar Intento Fallido")
+        self.layout.addWidget(self.boton_registrar_fallido)
+
 class Usuarios(QWidget):
     def __init__(self):
         super().__init__()

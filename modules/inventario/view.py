@@ -20,7 +20,24 @@ class InventarioView(QWidget):
         anchos = [80, 90, 200, 90, 100, 120, 120, 80, 80, 90, 120, 80, 90, 80]
         for i, ancho in enumerate(anchos):
             self.tabla_inventario.setColumnWidth(i, ancho)
-        self.tabla_inventario.horizontalHeader().setStyleSheet("")  # Restablecer estilo predeterminado
+        self.tabla_inventario.horizontalHeader().setStyleSheet("""
+            QHeaderView::section {
+                background-color: #2563eb;
+                color: white;
+                font-weight: bold;
+                font-size: 14px;
+                border: none;
+                padding: 6px;
+            }
+        """)
+        self.tabla_inventario.setStyleSheet("""
+            QTableWidget {
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                font-size: 14px;
+                background-color: #ffffff;
+            }
+        """)
         self.tabla_inventario.setFixedSize(800, 400)
 
         # Botones
