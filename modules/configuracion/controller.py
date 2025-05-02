@@ -1,3 +1,5 @@
+from mps.services.app_state import AppState
+
 class ConfiguracionController:
     def __init__(self, model, view):
         self.model = model
@@ -48,6 +50,9 @@ class ConfiguracionController:
         }
         self.model.guardar_configuracion_conexion(datos)
         self.view.label.setText("Configuración de conexión guardada exitosamente.")
+        # Actualizar estado de conexión en AppState
+        conectado = AppState.is_connected("configuracion")
+        self.actualizar_estado_conexion(conectado)
 
     def activar_modo_offline(self):
         self.model.activar_modo_offline()
@@ -66,3 +71,20 @@ class ConfiguracionController:
     def actualizar_estado_conexion(self, conectado: bool):
         estado = "🟢 Conectado a la base" if conectado else "🔴 Sin conexión"
         self.view.estado_conexion_label.setText(estado)
+        AppState.set_db_status("configuracion", conectado)  # Actualizar estado en AppState
+
+    def probar_conexiones(self):
+        bases = ["inventario", "usuarios", "auditoria"]
+        exitosas = []
+        for base in bases:
+            try:
+                self.model.probar_conexion(base)
+                AppState.set_db_status(base, True)
+                exitosas.append(base)
+            except Exception as e:
+                AppState.set_db_status(base, False)
+                self.view.mostrar_mensaje_error(f"Error al conectar con {base}: {str(e)}")
+        if len(exitosas) == len(bases):
+            self.view.mostrar_mensaje_exito("Conexión exitosa con todas las bases.")
+        else:
+            self.view.mostrar_mensaje_error("Algunas conexiones fallaron. Verifique la configuración.")

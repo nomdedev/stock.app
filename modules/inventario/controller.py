@@ -1,8 +1,12 @@
 from PyQt6.QtWidgets import QTableWidgetItem
 from PyQt6 import QtGui
+from mps.services.app_state import AppState
 
 class InventarioController:
     def __init__(self, model, view):
+        super().__init__(model, view)
+        AppState.registrar_observador_conexion(self.reconectar)
+
         self.model = model
         self.view = view
 
@@ -26,6 +30,10 @@ class InventarioController:
             self.view.boton_generar_qr.clicked.connect(self.generar_qr_para_item)
 
         self.actualizar_inventario()
+
+    def reconectar(self, base, conectado):
+        if base == "inventario" and conectado:
+            self.obtener_materiales()
 
     def actualizar_inventario(self, offset=0, limite=500):
         datos = self.model.obtener_items_por_lotes(offset, limite)

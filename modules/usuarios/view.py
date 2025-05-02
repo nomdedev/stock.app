@@ -72,9 +72,8 @@ class UsuariosView(QWidget):
         self.layout.addWidget(self.boton_nuevo_usuario)
 
         self.boton_favorito = CustomButton("Marcar como Favorito")
-        if self.controller is None:
-            raise AttributeError("El controlador no está inicializado correctamente.")
-        self.boton_favorito.clicked.connect(self.controller.marcar_como_favorito)
+        if self.controller:
+            self.boton_favorito.clicked.connect(self.controller.marcar_como_favorito)
         self.layout.addWidget(self.boton_favorito)
 
         # Botón para gestionar roles y permisos

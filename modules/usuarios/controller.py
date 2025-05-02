@@ -3,10 +3,16 @@ from datetime import datetime
 import secrets
 import hashlib
 from core.base_controller import BaseController
+from mps.services.app_state import AppState
 
 class UsuariosController(BaseController):
     def __init__(self, model, view):
         super().__init__(model, view)
+        AppState.registrar_observador_conexion(self.reconectar)
+
+    def reconectar(self, base, conectado):
+        if base == "usuarios" and conectado:
+            self.cargar_usuarios()
 
     def setup_view_signals(self):
         if hasattr(self.view, 'boton_agregar'):

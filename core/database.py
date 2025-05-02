@@ -4,6 +4,7 @@ from datetime import datetime
 from core.logger import Logger
 from core.config import DB_SERVER, DB_USERNAME, DB_PASSWORD
 from dotenv import load_dotenv
+from mps.services.app_state import AppState
 
 # Cargar variables de entorno desde .env
 load_dotenv()
@@ -42,16 +43,21 @@ class BaseDatabaseConnection:
                     cursor.execute(query, params)
                 else:
                     cursor.execute(query)
+                AppState.set_db_status(self.database, True)  # Actualizar estado de conexión
                 return cursor.fetchall()
         except pyodbc.OperationalError as e:
             Logger().error(f"Error de conexión: {e}")
+            AppState.set_db_status(self.database, False)  # Marcar como desconectado
             raise RuntimeError(
                 "No se pudo conectar a la base de datos. Verifica el nombre del servidor/instancia, "
                 "las credenciales y que SQL Server permita conexiones remotas."
             ) from e
+        except pyodbc.ProgrammingError as e:
+            Logger().error(f"Error en la consulta SQL: {e}")
+            raise RuntimeError("Error en la consulta SQL. Verifica la sintaxis y los parámetros.") from e
         except Exception as e:
-            Logger().error(f"Error al ejecutar la consulta: {e}")
-            raise
+            Logger().error(f"Error inesperado al ejecutar la consulta: {e}")
+            raise RuntimeError("Ocurrió un error inesperado al ejecutar la consulta.") from e
 
 class InventarioDatabaseConnection(BaseDatabaseConnection):
     def __init__(self):
@@ -125,16 +131,21 @@ class DatabaseConnection:
                     cursor.execute(query, params)
                 else:
                     cursor.execute(query)
+                AppState.set_db_status(self.database, True)  # Actualizar estado de conexión
                 return cursor.fetchall()
         except pyodbc.OperationalError as e:
             Logger().error(f"Error de conexión: {e}")
+            AppState.set_db_status(self.database, False)  # Marcar como desconectado
             raise RuntimeError(
                 "No se pudo conectar a la base de datos. Verifica el nombre del servidor/instancia, "
                 "las credenciales y que SQL Server permita conexiones remotas."
             ) from e
+        except pyodbc.ProgrammingError as e:
+            Logger().error(f"Error en la consulta SQL: {e}")
+            raise RuntimeError("Error en la consulta SQL. Verifica la sintaxis y los parámetros.") from e
         except Exception as e:
-            Logger().error(f"Error al ejecutar la consulta: {e}")
-            raise
+            Logger().error(f"Error inesperado al ejecutar la consulta: {e}")
+            raise RuntimeError("Ocurrió un error inesperado al ejecutar la consulta.") from e
 
     @staticmethod
     def listar_bases_de_datos(server, username, password):
@@ -246,7 +257,7 @@ class DataAccessLayer:
         # Simulación de sincronización manual
         try:
             # Aquí se implementaría la lógica de sincronización con un servidor o base de datos remota
-            return "Sincronización completada exitosamente."
+            pass  # Asegúrate de que no falte un paréntesis o carácter aquí
         except Exception as e:
             return f"Error durante la sincronización: {str(e)}"
 

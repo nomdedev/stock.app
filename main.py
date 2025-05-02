@@ -117,26 +117,51 @@ class MainWindow(QMainWindow):
 
     def navigate_to_section(self, index):
         """Actualizar la sección activa en el QStackedWidget."""
-        if 0 <= index < self.module_stack.count():
-            self.module_stack.setCurrentIndex(index)
-            self.logger.info(f"Navegando a la sección con índice {index}")
-        else:
-            self.logger.warning(f"Índice fuera de rango: {index}")
+        try:
+            if 0 <= index < self.module_stack.count():
+                self.module_stack.setCurrentIndex(index)
+                self.logger.info(f"Navegando a la sección con índice {index}")
+            else:
+                raise IndexError(f"Índice fuera de rango: {index}")
+        except IndexError as e:
+            self.logger.error(str(e))
+            QMessageBox.warning(self, "Error de Navegación", "La sección seleccionada no es válida.")
+        except Exception as e:
+            self.logger.error(f"Error inesperado: {str(e)}")
+            QMessageBox.critical(self, "Error", "Ocurrió un error inesperado al cambiar de sección.")
 
     def manejar_error_conexion(self, mensaje):
         QMessageBox.critical(self, "Error de Conexión", mensaje)
         self.logger.error(mensaje)
 
     def reconfigurar_conexion(self):
+        """Reconfigurar la conexión a la base de datos y recargar datos."""
         try:
             conectado = self.db_connection.probar_conexion()
             self.configuracion_controller.actualizar_estado_conexion(conectado)
             if conectado:
                 self.logger.info("Conexión a la base de datos establecida.")
+                self.recargar_datos()
             else:
                 self.manejar_error_conexion("No se pudo conectar a la base de datos.")
         except Exception as e:
             self.manejar_error_conexion(f"Error inesperado: {str(e)}")
+
+    def recargar_datos(self):
+        """Recargar datos en todas las vistas activas."""
+        try:
+            self.inventario_controller.actualizar_datos()
+            self.obras_controller.actualizar_datos()
+            self.produccion_controller.actualizar_datos()
+            self.logistica_controller.actualizar_datos()
+            self.pedidos_controller.actualizar_datos()
+            self.usuarios_controller.actualizar_datos()
+            self.auditoria_controller.actualizar_datos()
+            self.configuracion_controller.actualizar_datos()
+            self.logger.info("Datos recargados exitosamente.")
+        except Exception as e:
+            self.logger.error(f"Error al recargar datos: {str(e)}")
+            QMessageBox.critical(self, "Error", "Ocurrió un error al recargar los datos.")
 
 class Sidebar(QWidget):
     section_selected = pyqtSignal(int)  # Señal para emitir el índice seleccionado
@@ -189,8 +214,23 @@ class Sidebar(QWidget):
                     background-color: #1e3a8a; /* Azul aún más oscuro */
                 }
             """)
-            btn.clicked.connect(partial(self.section_selected.emit, index))
+            btn.clicked.connect(partial(self.confirm_section_change, index))
             self.layout.addWidget(btn)
+
+    def confirm_section_change(self, index):
+        """Confirma el cambio de sección antes de emitir la señal."""
+        try:
+            reply = QMessageBox.question(
+                self,
+                "Confirmar Cambio",
+                f"¿Desea cambiar a la sección '{self.layout.itemAt(index).widget().text()}'?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+            if reply == QMessageBox.StandardButton.Yes:
+                self.section_selected.emit(index)
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Error al cambiar de sección: {str(e)}")
+            self.logger.error(f"Error al cambiar de sección: {str(e)}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
