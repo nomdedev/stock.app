@@ -190,6 +190,22 @@ class InventarioView(QWidget):
         else:
             return None
 
+    def obtener_datos_reserva(self):
+        """Obtiene los datos necesarios para registrar una reserva desde los campos de entrada."""
+        fila_seleccionada = self.tabla_inventario.currentRow()
+        if fila_seleccionada != -1:
+            id_item = self.tabla_inventario.item(fila_seleccionada, 0).text()
+            cantidad_reservada = 5  # Reemplazar con el campo real para ingresar la cantidad
+            referencia_obra = "Obra de ejemplo"  # Reemplazar con el campo real para ingresar la referencia
+
+            if id_item and cantidad_reservada and referencia_obra:
+                return {
+                    "id_item": id_item,
+                    "cantidad_reservada": cantidad_reservada,
+                    "referencia_obra": referencia_obra
+                }
+        return None
+
 class Inventario(QWidget):
     def __init__(self):
         super().__init__()

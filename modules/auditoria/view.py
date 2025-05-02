@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QSizePolicy, QMessageBox
 
 class AuditoriaView(QWidget):
     def __init__(self):
@@ -25,12 +25,14 @@ class AuditoriaView(QWidget):
         self.boton_exportar = QPushButton("Exportar Auditorías")
         self.boton_exportar.setStyleSheet("background-color: #2563eb; color: white; padding: 10px; border-radius: 5px;")
         self.boton_exportar.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        self.boton_exportar.clicked.connect(self.exportar_auditorias_placeholder)
         self.layout.addWidget(self.boton_exportar)
 
         # Botón para exportar auditorías a Excel
         self.boton_exportar_excel = QPushButton("Exportar a Excel")
         self.boton_exportar_excel.setStyleSheet("background-color: #4caf50; color: white; padding: 10px; border-radius: 5px;")
         self.boton_exportar_excel.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        self.boton_exportar_excel.clicked.connect(self.exportar_excel_placeholder)
         self.layout.addWidget(self.boton_exportar_excel)
 
         # Botón para exportar auditorías a PDF
@@ -40,6 +42,12 @@ class AuditoriaView(QWidget):
         self.layout.addWidget(self.boton_exportar_pdf)
 
         self.setLayout(self.layout)
+
+    def exportar_auditorias_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Exportar Auditorías' está en desarrollo.")
+
+    def exportar_excel_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Exportar a Excel' está en desarrollo.")
 
 class Auditoria(QWidget):
     def __init__(self):

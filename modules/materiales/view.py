@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QMessageBox
 
 class MaterialesView(QWidget):
     def __init__(self):
@@ -21,3 +21,9 @@ class MaterialesView(QWidget):
         self.layout.addWidget(self.boton_agregar)
 
         self.setLayout(self.layout)
+
+    def configurar_eventos(self):
+        self.boton_agregar.clicked.connect(self.agregar_material_placeholder)
+
+    def agregar_material_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Agregar Material' está en desarrollo.")

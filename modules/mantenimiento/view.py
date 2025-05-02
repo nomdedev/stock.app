@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QTextEdit, QComboBox, QDateEdit, QTableWidget, QTableWidgetItem, QFormLayout, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QTextEdit, QComboBox, QDateEdit, QTableWidget, QTableWidgetItem, QFormLayout, QSizePolicy, QMessageBox
 
 class MantenimientoView(QWidget):
     def __init__(self):
@@ -144,3 +144,25 @@ class MantenimientoView(QWidget):
         for row, tarea in enumerate(tareas):
             for col, value in enumerate(tarea):
                 self.tabla_tareas_recurrentes.setItem(row, col, QTableWidgetItem(str(value)))
+
+    def configurar_eventos(self):
+        self.boton_agregar_mantenimiento.clicked.connect(self.agregar_mantenimiento_placeholder)
+        self.boton_ver_tareas_recurrentes.clicked.connect(self.ver_tareas_recurrentes_placeholder)
+        self.boton_exportar_excel.clicked.connect(self.exportar_excel_placeholder)
+        self.boton_exportar_pdf.clicked.connect(self.exportar_pdf_placeholder)
+        self.boton_registrar_repuesto.clicked.connect(self.registrar_repuesto_placeholder)
+
+    def agregar_mantenimiento_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Agregar Mantenimiento' está en desarrollo.")
+
+    def ver_tareas_recurrentes_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Ver Tareas Recurrentes' está en desarrollo.")
+
+    def exportar_excel_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Exportar Historial a Excel' está en desarrollo.")
+
+    def exportar_pdf_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Exportar Historial a PDF' está en desarrollo.")
+
+    def registrar_repuesto_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Registrar Repuesto' está en desarrollo.")

@@ -647,3 +647,8 @@
 2025-05-02 13:35:46,465 - ERROR - Error de conexión: ('08001', '[08001] [Microsoft][ODBC Driver 18 for SQL Server]SSL Provider: La cadena de certificación fue emitida por una entidad en la que no se confía.\r\n (-2146893019) (SQLDriverConnect); [08001] [Microsoft][ODBC Driver 18 for SQL Server]Client unable to establish connection. For solutions related to encryption errors, see https://go.microsoft.com/fwlink/?linkid=2226722 (-2146893019)')
 2025-05-02 13:36:55,128 - INFO - Aplicación iniciada
 2025-05-02 13:38:31,921 - INFO - Aplicación iniciada
+2025-05-02 13:40:45,455 - INFO - Aplicación iniciada
+2025-05-02 14:14:09,474 - INFO - Aplicación iniciada
+2025-05-02 14:15:14,891 - INFO - Aplicación iniciada
+2025-05-02 14:15:55,874 - INFO - Aplicación iniciada
+2025-05-02 14:21:22,644 - INFO - Aplicación iniciada

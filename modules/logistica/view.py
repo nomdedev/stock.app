@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QSizePolicy, QMessageBox
 
 class LogisticaView(QWidget):
     def __init__(self):
@@ -74,28 +74,11 @@ class LogisticaView(QWidget):
         self.boton_generar_hoja_ruta.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.botones_layout.addWidget(self.boton_generar_hoja_ruta)
 
-        self.layout.addLayout(self.botones_layout)
-        self.setLayout(self.layout)
+        self.boton_exportar_acta.clicked.connect(self.exportar_acta_placeholder)
+        self.boton_generar_hoja_ruta.clicked.connect(self.generar_hoja_ruta_placeholder)
 
-    def mostrar_hoja_de_ruta(self, hoja_de_ruta):
-        self.tabla_hoja_ruta = QTableWidget()
-        self.tabla_hoja_ruta.setRowCount(len(hoja_de_ruta))
-        self.tabla_hoja_ruta.setColumnCount(5)
-        self.tabla_hoja_ruta.setHorizontalHeaderLabels(["ID Entrega", "ID Obra", "Fecha Programada", "Estado", "Chofer Asignado"])
+    def exportar_acta_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Exportar Acta de Entrega' está en desarrollo.")
 
-        for row_idx, entrega in enumerate(hoja_de_ruta):
-            self.tabla_hoja_ruta.setItem(row_idx, 0, QTableWidgetItem(str(entrega["ID Entrega"])))
-            self.tabla_hoja_ruta.setItem(row_idx, 1, QTableWidgetItem(str(entrega["ID Obra"])))
-            self.tabla_hoja_ruta.setItem(row_idx, 2, QTableWidgetItem(str(entrega["Fecha Programada"])))
-            self.tabla_hoja_ruta.setItem(row_idx, 3, QTableWidgetItem(str(entrega["Estado"])))
-            self.tabla_hoja_ruta.setItem(row_idx, 4, QTableWidgetItem(str(entrega["Chofer Asignado"])))
-
-        self.layout.addWidget(self.tabla_hoja_ruta)
-
-class Logistica(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.layout = QVBoxLayout()
-        self.label = QLabel("Vista de Logística")
-        self.layout.addWidget(self.label)
-        self.setLayout(self.layout)
+    def generar_hoja_ruta_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Generar Hoja de Ruta' está en desarrollo.")

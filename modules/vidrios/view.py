@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QMessageBox
 
 class VidriosView(QWidget):
     def __init__(self):
@@ -19,5 +19,9 @@ class VidriosView(QWidget):
 
         self.boton_agregar = QPushButton("Agregar Vidrio")
         self.layout.addWidget(self.boton_agregar)
+        self.boton_agregar.clicked.connect(self.agregar_vidrio_placeholder)
 
         self.setLayout(self.layout)
+
+    def agregar_vidrio_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Agregar Vidrio' está en desarrollo.")

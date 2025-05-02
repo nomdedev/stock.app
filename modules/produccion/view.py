@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QScrollArea, QFrame, QHBoxLayout, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QScrollArea, QFrame, QHBoxLayout, QSizePolicy, QMessageBox
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt
@@ -48,6 +48,8 @@ class ProduccionView(QWidget):
 
         self.setLayout(self.layout)
 
+        self.configurar_eventos()
+
     def agregar_grafico(self, datos):
         figura = Figure()
         canvas = FigureCanvas(figura)
@@ -84,6 +86,20 @@ class ProduccionView(QWidget):
             tarjeta = QLabel(tarjeta_texto)
             tarjeta.setStyleSheet("background-color: lightblue; padding: 5px; margin: 5px; border: 1px solid black;")
             self.columnas[etapa].addWidget(tarjeta)
+
+    def configurar_eventos(self):
+        self.boton_agregar.clicked.connect(self.agregar_etapa_placeholder)
+        self.boton_ver_detalles.clicked.connect(self.ver_detalles_placeholder)
+        self.boton_finalizar_etapa.clicked.connect(self.finalizar_etapa_placeholder)
+
+    def agregar_etapa_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Agregar Etapa' está en desarrollo.")
+
+    def ver_detalles_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Ver Detalles de Abertura' está en desarrollo.")
+
+    def finalizar_etapa_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Finalizar Etapa' está en desarrollo.")
 
 class Produccion(QWidget):
     def __init__(self):

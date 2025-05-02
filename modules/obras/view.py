@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QTableWidget, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QTableWidget, QSizePolicy, QMessageBox
 from core.ui_components import CustomButton
 
 class ObrasView(QWidget):
@@ -29,11 +29,13 @@ class ObrasView(QWidget):
         self.boton_ver_cronograma = CustomButton("Ver Cronograma")
         self.boton_ver_cronograma.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout.addWidget(self.boton_ver_cronograma)
+        self.boton_ver_cronograma.clicked.connect(self.ver_cronograma_placeholder)
 
         # Botón para asignar materiales
         self.boton_asignar_materiales = CustomButton("Asignar Materiales")
         self.boton_asignar_materiales.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout.addWidget(self.boton_asignar_materiales)
+        self.boton_asignar_materiales.clicked.connect(self.asignar_materiales_placeholder)
 
         # Botón para exportar cronograma a Excel
         self.boton_exportar_excel = CustomButton("Exportar Cronograma a Excel")
@@ -67,6 +69,12 @@ class ObrasView(QWidget):
         self.layout.addWidget(self.tabla_materiales)
 
         self.setLayout(self.layout)
+
+    def ver_cronograma_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Ver Cronograma' está en desarrollo.")
+
+    def asignar_materiales_placeholder(self):
+        QMessageBox.information(self, "En desarrollo", "La función 'Asignar Materiales' está en desarrollo.")
 
 class Obras(QWidget):
     def __init__(self):
