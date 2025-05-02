@@ -41,12 +41,25 @@ class UsuariosController(BaseController):
         email = self.view.email_input.text()
         rol = self.view.rol_input.text()
 
-        if nombre and email and rol:
-            self.model.agregar_usuario((nombre, email, rol))
-            self.view.label.setText("Usuario agregado exitosamente.")
-            self.model.db.registrar_auditoria("admin", "Agregar Usuario", f"Nombre: {nombre}, Email: {email}")
-        else:
+        if not (nombre and email and rol):
             self.view.label.setText("Por favor, complete todos los campos.")
+            return
+
+        if self.model.verificar_usuario_existente(email, nombre):
+            QMessageBox.warning(
+                self.view,
+                "Usuario Existente",
+                "Ya existe un usuario con el mismo email o nombre de usuario."
+            )
+            self.view.email_input.setStyleSheet("border: 1px solid red;")
+            self.view.nombre_input.setStyleSheet("border: 1px solid red;")
+            return
+
+        self.model.agregar_usuario((nombre, email, rol))
+        self.view.label.setText("Usuario agregado exitosamente.")
+        self.model.db.registrar_auditoria("admin", "Agregar Usuario", f"Nombre: {nombre}, Email: {email}")
+        self.view.email_input.setStyleSheet("")
+        self.view.nombre_input.setStyleSheet("")
 
     def actualizar_usuario(self, id_usuario, datos, fecha_actualizacion):
         try:

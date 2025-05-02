@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox
 
 class ObrasController:
     def __init__(self, model, view):
@@ -15,11 +15,24 @@ class ObrasController:
         cliente = self.view.cliente_input.text()
         estado = self.view.estado_input.text()
 
-        if nombre and cliente and estado:
-            self.model.agregar_obra((nombre, cliente, estado))
-            self.view.label.setText("Obra agregada exitosamente.")
-        else:
+        if not (nombre and cliente and estado):
             self.view.label.setText("Por favor, complete todos los campos.")
+            return
+
+        if self.model.verificar_obra_existente(nombre, cliente):
+            QMessageBox.warning(
+                self.view,
+                "Obra Existente",
+                "Ya existe una obra con el mismo nombre y cliente."
+            )
+            self.view.nombre_input.setStyleSheet("border: 1px solid red;")
+            self.view.cliente_input.setStyleSheet("border: 1px solid red;")
+            return
+
+        self.model.agregar_obra((nombre, cliente, estado))
+        self.view.label.setText("Obra agregada exitosamente.")
+        self.view.nombre_input.setStyleSheet("")
+        self.view.cliente_input.setStyleSheet("")
 
     def ver_cronograma(self):
         fila_seleccionada = self.view.tabla_obras.currentRow()

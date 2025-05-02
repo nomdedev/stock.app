@@ -37,8 +37,15 @@ class InventarioController:
     def agregar_item(self):
         datos = self.view.obtener_datos_nuevo_item()
         if datos:
+            codigo = datos.get("codigo")
+            if self.model.obtener_item_por_codigo(codigo):
+                self.view.label.setText("Error: Ya existe un ítem con el mismo código.")
+                self.view.buscar_input.setStyleSheet("border: 1px solid red;")
+                return
+
             self.model.agregar_item(datos)
             self.view.label.setText("Ítem agregado exitosamente.")
+            self.view.buscar_input.setStyleSheet("")
             self.actualizar_inventario()
         else:
             self.view.label.setText("Error: Datos incompletos para agregar el ítem.")

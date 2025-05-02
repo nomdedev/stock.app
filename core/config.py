@@ -1,5 +1,6 @@
 # Configuración de conexión a la base de datos
-DB_SERVER = "192.168.1.100"  # Dirección o IP del servidor SQL
+DB_SERVER = "192.168.88.205"  # Dirección o IP del servidor SQL
+DB_SERVER_ALTERNATE = "localhost\\SQLEXPRESS"  # Nombre del servidor local actualizado
 DB_USERNAME = "sa"           # Usuario de la base de datos
 DB_PASSWORD = "mps.1887"     # Contraseña del usuario
 DB_PORT = 1433               # Puerto del servidor SQL

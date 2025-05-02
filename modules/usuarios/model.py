@@ -112,3 +112,8 @@ class UsuariosModel:
     def eliminar_usuarios_por_estado(self, estado):
         query = "DELETE FROM usuarios WHERE estado = ?"
         self.db.ejecutar_query(query, (estado,))
+
+    def verificar_usuario_existente(self, email, usuario):
+        query = "SELECT COUNT(*) FROM usuarios WHERE email = ? OR usuario = ?"
+        resultado = self.db.ejecutar_query(query, (email, usuario))
+        return resultado[0][0] > 0

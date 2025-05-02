@@ -19,6 +19,11 @@ class ObrasModel:
         query = "INSERT INTO obras (nombre, cliente, estado) VALUES (?, ?, ?)"
         self.db.ejecutar_query(query, datos)
 
+    def verificar_obra_existente(self, nombre, cliente):
+        query = "SELECT COUNT(*) FROM obras WHERE nombre = ? AND cliente = ?"
+        resultado = self.db.ejecutar_query(query, (nombre, cliente))
+        return resultado[0][0] > 0
+
     def obtener_cronograma_por_obra(self, id_obra):
         query = "SELECT * FROM cronograma_obras WHERE id_obra = ?"
         return self.db.ejecutar_query(query, (id_obra,))
