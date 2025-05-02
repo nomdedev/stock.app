@@ -2,7 +2,7 @@ class ConfiguracionController:
     def __init__(self, model, view):
         self.model = model
         self.view = view
-        self.view.boton_guardar_cambios.clicked.connect(self.guardar_cambios)
+        self.view.save_button.clicked.connect(self.guardar_cambios)
 
     def cargar_configuracion(self):
         configuracion = self.model.obtener_configuracion()

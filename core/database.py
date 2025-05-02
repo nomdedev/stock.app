@@ -31,6 +31,7 @@ class BaseDatabaseConnection:
                 f"UID={self.username};"
                 f"PWD={self.password};"
                 f"DATABASE={self.database};"
+                f"TrustServerCertificate=yes;"
             )
             with pyodbc.connect(connection_string, timeout=10) as conn:  # Agregar timeout
                 cursor = conn.cursor()
@@ -114,6 +115,7 @@ class DatabaseConnection:
                 f"UID={self.username};"
                 f"PWD={self.password};"
                 f"DATABASE={self.database};"
+                f"TrustServerCertificate=yes;"
             )
             with pyodbc.connect(connection_string, timeout=10) as conn:  # Agregar timeout
                 cursor = conn.cursor()
@@ -141,6 +143,7 @@ class DatabaseConnection:
                 f"SERVER={server};"
                 f"UID={username};"
                 f"PWD={password};"
+                f"TrustServerCertificate=yes;"
             )
             with pyodbc.connect(connection_string) as conn:
                 cursor = conn.cursor()
