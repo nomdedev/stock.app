@@ -174,6 +174,24 @@ Para mantener el código limpio, escalable y fácil de mantener, se recomienda e
 
 Adoptar estas prácticas no solo mejora la calidad del código, sino que también facilita su mantenimiento y escalabilidad a largo plazo.
 
+### Cambios Recientes
+
+#### Integración de Módulos
+- **Materiales** y **Vidrios** ahora están integrados como pestañas dentro del módulo **Inventario**.
+- **Pedidos** se ha movido como una pestaña dentro del módulo **Compras**.
+
+#### Actualización de Funcionalidades
+- El módulo **Inventario** ahora incluye pestañas adicionales para gestionar materiales y vidrios, permitiendo una administración centralizada.
+- El módulo **Compras** permite gestionar pedidos directamente desde una pestaña dedicada, mejorando la organización y el flujo de trabajo.
+
+#### Mejoras en la Interfaz
+- Se han ajustado los botones para mostrar íconos en lugar de texto, utilizando imágenes de la carpeta `img`.
+- Se han añadido estilos consistentes para los botones y pestañas, siguiendo el esquema de colores definido en el modo oscuro.
+
+### Notas Adicionales
+- Asegúrate de que las imágenes necesarias para los íconos estén disponibles en la carpeta `img`.
+- Verifica que las nuevas pestañas en los módulos **Inventario** y **Compras** funcionen correctamente tras la integración.
+
 🧩 Módulo 1: Inventario General
 🗄 Base de datos: mpsInventario
 

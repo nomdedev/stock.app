@@ -7,14 +7,14 @@ class InventarioModel:
 
     def obtener_items(self):
         query = """
-        SELECT id, codigo, descripcion, tipo, acabado, numero, vs, proveedor, longitud, ancho, alto, necesarias, stock, faltan, ped_min, emba, pedido, importe
+        SELECT id, codigo, descripcion, proveedor, necesarias, stock, faltan, ped_min, emba, pedido, importe
         FROM inventario
         """
         return self.db.ejecutar_query(query)
 
     def obtener_items_por_lotes(self, offset=0, limite=500):
         query = """
-        SELECT id, codigo, descripcion, tipo, acabado, numero, vs, proveedor, longitud, ancho, alto, necesarias, stock, faltan, ped_min, emba, pedido, importe
+        SELECT id, codigo, descripcion, proveedor, necesarias, stock, faltan, ped_min, emba, pedido, importe
         FROM inventario
         ORDER BY id
         OFFSET ? ROWS

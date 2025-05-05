@@ -1,10 +1,21 @@
-from PyQt6.QtWidgets import QWidget, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout
+from PyQt6.QtWidgets import QWidget, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QTabWidget
+from modules.pedidos.view import PedidosView
 
 class ComprasView(QWidget):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout(self)
         self.inicializar_botones()
+
+        # Crear QTabWidget para las pestañas
+        self.tab_widget = QTabWidget()
+
+        # Crear pestaña de Pedidos
+        self.tab_pedidos = PedidosView()
+        self.tab_widget.addTab(self.tab_pedidos, "Pedidos")
+
+        # Agregar el QTabWidget al layout principal
+        self.layout.addWidget(self.tab_widget)
 
     def inicializar_botones(self):
         self.boton_comparar_presupuestos = QPushButton("Comparar Presupuestos")

@@ -2,6 +2,8 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButt
 from PyQt6 import QtGui, QtWidgets
 from PyQt6.QtCore import Qt
 import json
+from modules.materiales.view import MaterialesView
+from modules.vidrios.view import VidriosView
 
 class AjustarStockDialog(QDialog):
     def __init__(self, parent=None):
@@ -318,6 +320,14 @@ class InventarioView(QWidget):
         self.tab_widget.addTab(self.tab_general, "General")
         self.tab_widget.addTab(self.tab_detalles, "Detalles")
 
+        # Crear pestañas adicionales para Materiales y Vidrios
+        self.tab_materiales = MaterialesView()
+        self.tab_vidrios = VidriosView()
+
+        # Agregar las pestañas al QTabWidget
+        self.tab_widget.addTab(self.tab_materiales, "Materiales")
+        self.tab_widget.addTab(self.tab_vidrios, "Vidrios")
+
         # Agregar QTabWidget al layout principal
         layout.addWidget(self.tab_widget)
 
@@ -408,74 +418,15 @@ class InventarioView(QWidget):
 
     def resaltar_items_bajo_stock(self):
         for row in range(self.tabla_inventario.rowCount()):
-            for col in range(self.tabla_inventario.columnCount()):
-                item = self.tabla_inventario.item(row, col)
-                if item and item.text() == "Bajo Stock":  # Suponiendo que hay una columna que indica el estado
-                    item.setBackground(QtGui.QColor("red"))
+            stock_item = self.tabla_inventario.item(row, 11)  # Assuming column 11 is "Stock"
+            stock_min_item = self.tabla_inventario.item(row, 12)  # Assuming column 12 is "Stock Mínimo"
 
-    def set_modo_lectura(self, activar):
-        # Deshabilitar botones
-        for boton in self.findChildren(QPushButton):
-            boton.setDisabled(activar)
-
-        # Deshabilitar campos de entrada
-        for campo in self.findChildren(QLineEdit):
-            campo.setDisabled(activar)
-
-    def obtener_datos_nuevo_item(self):
-        """Obtiene los datos del nuevo ítem desde los campos de entrada."""
-        # Aquí puedes agregar los campos necesarios para el nuevo ítem
-        codigo = self.buscar_input.text()
-        descripcion = "Descripción de ejemplo"  # Reemplazar con el campo real
-        cantidad = 10  # Reemplazar con el campo real
-
-        if codigo and descripcion and cantidad:
-            return {
-                "codigo": codigo,
-                "descripcion": descripcion,
-                "cantidad": cantidad
-            }
-        else:
-            return None
-
-    def obtener_id_item_seleccionado(self):
-        """Obtiene el ID del ítem seleccionado en la tabla de inventario."""
-        fila_seleccionada = self.tabla_inventario.currentRow()
-        if fila_seleccionada != -1:
-            id_item = self.tabla_inventario.item(fila_seleccionada, 0).text()
-            return id_item
-        else:
-            return None
-
-    def obtener_datos_ajuste_stock(self):
-        """Obtiene los datos de ajuste de stock desde la tabla de ajustes."""
-        datos_ajuste = []
-        for row in range(self.tabla_ajustes.rowCount()):
-            codigo = self.tabla_ajustes.item(row, 0).text() if self.tabla_ajustes.item(row, 0) else ""
-            descripcion = self.tabla_ajustes.item(row, 1).text() if self.tabla_ajustes.item(row, 1) else ""
-            cantidad = self.tabla_ajustes.item(row, 2).text() if self.tabla_ajustes.item(row, 2) else "0"
-            datos_ajuste.append({
-                "codigo": codigo,
-                "descripcion": descripcion,
-                "cantidad": int(cantidad)
-            })
-        return datos_ajuste
-
-class Inventario(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.layout = QVBoxLayout()
-        self.label = QLabel("Vista de Inventario")
-        self.layout.addWidget(self.label)
-        self.setLayout(self.layout)
-
-if __name__ == "__main__":
-    import sys
-    from PyQt6.QtWidgets import QApplication
-
-    app = QApplication(sys.argv)
-    ventana_inventario = InventarioView()
-    ventana_inventario.setWindowTitle("Inventario - Vista Independiente")
-    ventana_inventario.resize(1200, 800)
-    ventana_inventario.show()
-    sys.exit(app.exec())
+            if stock_item and stock_min_item:
+                try:
+                    stock = int(stock_item.text())
+                    stock_min = int(stock_min_item.text())
+                    if stock < stock_min:
+                        for col in range(self.tabla_inventario.columnCount()):
+                            self.tabla_inventario.item(row, col).setBackground(QtGui.QColor("#ffcccc"))  # Light red
+                except ValueError:
+                    continue

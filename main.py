@@ -236,6 +236,9 @@ class MainWindow(QMainWindow):
         ]
         self.sidebar.create_buttons(sections)
 
+        # Conectar la señal del sidebar al QStackedWidget
+        self.sidebar.pageChanged.connect(self.navigate_to_section)
+
         # Agregar al layout principal
         main_layout.addWidget(self.sidebar)
         main_layout.addWidget(self.module_stack)
@@ -298,6 +301,9 @@ class PedidosView(QWidget):
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.setSpacing(20)
 
+        # Crear lista para almacenar los botones
+        self.botones = []
+
         # Crear contenedor para los botones
         botones_layout = QHBoxLayout()
         botones_layout.setSpacing(10)  # Espaciado entre botones
@@ -323,6 +329,7 @@ class PedidosView(QWidget):
             }
         """)
         botones_layout.addWidget(self.boton_crear)
+        self.botones.append(self.boton_crear)
 
         # Botón "Ver Detalles del Pedido"
         self.boton_ver_detalles = QPushButton("Ver Detalles del Pedido")
@@ -344,6 +351,7 @@ class PedidosView(QWidget):
             }
         """)
         botones_layout.addWidget(self.boton_ver_detalles)
+        self.botones.append(self.boton_ver_detalles)
 
         # Botón "Cargar Presupuesto"
         self.boton_cargar_presupuesto = QPushButton("Cargar Presupuesto")
@@ -365,6 +373,37 @@ class PedidosView(QWidget):
             }
         """)
         botones_layout.addWidget(self.boton_cargar_presupuesto)
+        self.botones.append(self.boton_cargar_presupuesto)
+
+        # Ajustar los botones para que utilicen imágenes de la carpeta img
+        botones = [
+            ("Nuevo Ítem", "plus_icon.svg"),
+            ("Ver Movimientos", "search_icon.svg"),
+            ("Reservar", "reservar-mas.png"),
+            ("Exportar a Excel", "excel_icon.svg"),
+            ("Exportar a PDF", "pdf_icon.svg"),
+            ("Buscar", "buscar.png"),
+            ("Generar QR", "qr_icon.svg"),
+            ("Actualizar Inventario", "refresh_icon.svg")
+        ]
+
+        for boton, (texto, icono) in zip(self.botones, botones):
+            boton.setText("")  # Eliminar texto del botón
+            boton.setIcon(QtGui.QIcon(f"img/{icono}"))
+            boton.setIconSize(QtCore.QSize(24, 24))  # Tamaño del ícono
+            boton.setStyleSheet("""
+                QPushButton {
+                    background-color: #2563eb; /* Azul */
+                    border-radius: 8px; /* Bordes redondeados */
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #1e40af; /* Azul más oscuro */
+                }
+                QPushButton:pressed {
+                    background-color: #1e3a8a; /* Azul aún más oscuro */
+                }
+            """)
 
         # Agregar el layout de botones al layout principal
         self.layout.addLayout(botones_layout)
