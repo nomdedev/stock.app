@@ -28,16 +28,28 @@ class InventarioController:
         self.actualizar_inventario()
 
     def actualizar_inventario(self, offset=0, limite=500):
-        datos = self.model.obtener_items_por_lotes(offset, limite)
-        self.view.tabla_inventario.setRowCount(len(datos))
-        for row, item in enumerate(datos):
-            for col, value in enumerate(item):
-                self.view.tabla_inventario.setItem(row, col, QTableWidgetItem(str(value)))
+        try:
+            datos = self.model.obtener_items_por_lotes(offset, limite)
+            self.view.tabla_inventario.setRowCount(len(datos))
+            for row, item in enumerate(datos):
+                for col, value in enumerate(item):
+                    self.view.tabla_inventario.setItem(row, col, QTableWidgetItem(str(value)))
+        except Exception as e:
+            print(f"Error al actualizar inventario: {e}")
+            self.view.label.setText("Error al cargar el inventario.")
 
     def agregar_item(self):
-        datos = self.view.obtener_datos_nuevo_item()
-        if datos:
+        try:
+            datos = self.view.obtener_datos_nuevo_item()
+            if not datos:
+                self.view.label.setText("Error: Datos incompletos para agregar el ítem.")
+                return
+
             codigo = datos.get("codigo")
+            if not codigo:
+                self.view.label.setText("Error: El código del ítem es obligatorio.")
+                return
+
             if self.model.obtener_item_por_codigo(codigo):
                 self.view.label.setText("Error: Ya existe un ítem con el mismo código.")
                 self.view.buscar_input.setStyleSheet("border: 1px solid red;")
@@ -47,8 +59,9 @@ class InventarioController:
             self.view.label.setText("Ítem agregado exitosamente.")
             self.view.buscar_input.setStyleSheet("")
             self.actualizar_inventario()
-        else:
-            self.view.label.setText("Error: Datos incompletos para agregar el ítem.")
+        except Exception as e:
+            print(f"Error al agregar ítem: {e}")
+            self.view.label.setText("Error al agregar el ítem.")
 
     def ver_movimientos(self):
         id_item = self.view.obtener_id_item_seleccionado()
@@ -111,13 +124,17 @@ class InventarioController:
             self.view.label.setText("Por favor, ingrese un ID de ítem válido.")
 
     def resaltar_items_bajo_stock(self):
-        items_bajo_stock = self.model.obtener_items_bajo_stock()
-        for row in range(self.view.tabla_inventario.rowCount()):
-            codigo_item = self.view.tabla_inventario.item(row, 0).text()
-            for item in items_bajo_stock:
-                if codigo_item == item[1]:  # Suponiendo que el código está en la columna 1 del resultado
-                    for col in range(self.view.tabla_inventario.columnCount()):
-                        self.view.tabla_inventario.item(row, col).setBackground(QtGui.QColor("red"))
+        try:
+            items_bajo_stock = self.model.obtener_items_bajo_stock()
+            for row in range(self.view.tabla_inventario.rowCount()):
+                codigo_item = self.view.tabla_inventario.item(row, 0).text()
+                for item in items_bajo_stock:
+                    if codigo_item == item[1]:  # Suponiendo que el código está en la columna 1 del resultado
+                        for col in range(self.view.tabla_inventario.columnCount()):
+                            self.view.tabla_inventario.item(row, col).setBackground(QtGui.QColor("red"))
+        except Exception as e:
+            print(f"Error al resaltar ítems bajo stock: {e}")
+            self.view.label.setText("Error al resaltar ítems con bajo stock.")
 
     def activar_modo_lectura(self):
         self.view.set_modo_lectura(True)

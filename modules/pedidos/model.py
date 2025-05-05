@@ -9,12 +9,20 @@ class PedidosModel:
         return self.db.ejecutar_query(query)
 
     def crear_pedido(self, datos):
-        query = "INSERT INTO pedidos (cliente, producto, cantidad, fecha) VALUES (?, ?, ?, ?)"
-        self.db.ejecutar_query(query, datos)
+        try:
+            query = "INSERT INTO pedidos (cliente, producto, cantidad, fecha) VALUES (?, ?, ?, ?)"
+            self.db.ejecutar_query(query, datos)
+        except Exception as e:
+            print(f"Error al crear pedido: {e}")
+            raise
 
     def obtener_detalle_pedido(self, id_pedido):
-        query = "SELECT * FROM detalle_pedido WHERE id_pedido = ?"
-        return self.db.ejecutar_query(query, (id_pedido,))
+        try:
+            query = "SELECT * FROM detalle_pedido WHERE id_pedido = ?"
+            return self.db.ejecutar_query(query, (id_pedido,))
+        except Exception as e:
+            print(f"Error al obtener detalle del pedido: {e}")
+            return []
 
     def agregar_detalle_pedido(self, datos):
         query = """
@@ -28,11 +36,15 @@ class PedidosModel:
         return self.db.ejecutar_query(query, (id_pedido,))
 
     def agregar_presupuesto(self, datos):
-        query = """
-        INSERT INTO presupuestos (id_pedido, proveedor, fecha_recepcion, archivo_adjunto, comentarios, precio_total, seleccionado)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        """
-        self.db.ejecutar_query(query, datos)
+        try:
+            query = """
+            INSERT INTO presupuestos (id_pedido, proveedor, fecha_recepcion, archivo_adjunto, comentarios, precio_total, seleccionado)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """
+            self.db.ejecutar_query(query, datos)
+        except Exception as e:
+            print(f"Error al agregar presupuesto: {e}")
+            raise
 
     def actualizar_estado_pedido(self, id_pedido, nuevo_estado):
         query = "UPDATE pedidos_compra SET estado = ? WHERE id = ?"

@@ -20,8 +20,13 @@ class LogisticaModel:
         return self.db.ejecutar_query(query, (estado,))
 
     def actualizar_estado_entrega(self, id_entrega, nuevo_estado):
-        query = "UPDATE entregas_obras SET estado = ? WHERE id = ?"
-        self.db.ejecutar_query(query, (nuevo_estado, id_entrega))
+        """Actualiza el estado de una entrega."""
+        try:
+            query = "UPDATE entregas_obras SET estado = ? WHERE id = ?"
+            self.db.ejecutar_query(query, (nuevo_estado, id_entrega))
+        except Exception as e:
+            print(f"Error al actualizar estado de entrega: {e}")
+            raise
 
     def obtener_checklist_por_entrega(self, id_entrega):
         query = "SELECT * FROM checklist_entrega WHERE id_entrega = ?"
@@ -149,3 +154,15 @@ class LogisticaModel:
         """Obtiene los datos de la tabla de inventario desde la base de datos."""
         query = "SELECT destino, fecha_programada, estado, vehiculo, chofer FROM inventario"
         return self.db.ejecutar_query(query)
+
+    def agregar_entrega(self, datos):
+        """Agrega una nueva entrega a la base de datos."""
+        try:
+            query = """
+            INSERT INTO entregas_obras (destino, fecha_programada, estado, vehiculo_asignado, chofer_asignado, observaciones)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """
+            self.db.ejecutar_query(query, datos)
+        except Exception as e:
+            print(f"Error al agregar entrega: {e}")
+            raise

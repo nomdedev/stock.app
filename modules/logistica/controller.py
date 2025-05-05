@@ -21,25 +21,39 @@ class LogisticaController:
             self.view.label.setText(f"Error al cargar datos: {e}")
 
     def agregar_entrega(self):
-        destino = self.view.destino_input.text()
-        fecha_programada = self.view.fecha_programada_input.text()
-        estado = self.view.estado_input.text()
-        vehiculo = self.view.vehiculo_input.text()
-        chofer = self.view.chofer_input.text()
+        """Agrega una nueva entrega."""
+        try:
+            destino = self.view.destino_input.text()
+            fecha_programada = self.view.fecha_programada_input.text()
+            estado = self.view.estado_input.text()
+            vehiculo = self.view.vehiculo_input.text()
+            chofer = self.view.chofer_input.text()
 
-        if destino and fecha_programada and estado and vehiculo and chofer:
+            if not all([destino, fecha_programada, estado, vehiculo, chofer]):
+                self.view.label.setText("Por favor, complete todos los campos.")
+                return
+
             self.model.agregar_entrega((destino, fecha_programada, estado, vehiculo, chofer, ""))
             self.view.label.setText("Entrega agregada exitosamente.")
-        else:
-            self.view.label.setText("Por favor, complete todos los campos.")
+        except Exception as e:
+            print(f"Error al agregar entrega: {e}")
+            self.view.label.setText("Error al agregar la entrega.")
 
     def actualizar_estado_entrega(self):
-        fila_seleccionada = self.view.tabla_entregas.currentRow()
-        if fila_seleccionada != -1:
+        """Actualiza el estado de una entrega seleccionada."""
+        try:
+            fila_seleccionada = self.view.tabla_entregas.currentRow()
+            if fila_seleccionada == -1:
+                self.view.label.setText("Seleccione una entrega para actualizar su estado.")
+                return
+
             id_entrega = self.view.tabla_entregas.item(fila_seleccionada, 0).text()
             nuevo_estado = "en ruta"  # Ejemplo, debería obtenerse dinámicamente
             self.model.actualizar_estado_entrega(id_entrega, nuevo_estado)
             self.view.label.setText(f"Estado de la entrega {id_entrega} actualizado a {nuevo_estado}.")
+        except Exception as e:
+            print(f"Error al actualizar estado de entrega: {e}")
+            self.view.label.setText("Error al actualizar el estado de la entrega.")
 
     def agregar_item_checklist(self):
         fila_seleccionada = self.view.tabla_entregas.currentRow()

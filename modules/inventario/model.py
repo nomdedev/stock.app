@@ -23,11 +23,15 @@ class InventarioModel:
         return self.db.ejecutar_query(query, (offset, limite))
 
     def agregar_item(self, datos):
-        query = """
-        INSERT INTO inventario_items (codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr_code, imagen_referencia)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """
-        self.db.ejecutar_query(query, datos)
+        try:
+            query = """
+            INSERT INTO inventario_items (codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr_code, imagen_referencia)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """
+            self.db.ejecutar_query(query, datos)
+        except Exception as e:
+            print(f"Error al agregar ítem: {e}")
+            raise
 
     def registrar_movimiento(self, datos):
         query = """
@@ -52,16 +56,24 @@ class InventarioModel:
         return self.db.ejecutar_query(query, (id_item,))
 
     def obtener_item_por_codigo(self, codigo):
-        query = "SELECT * FROM inventario_items WHERE codigo = ?"
-        return self.db.ejecutar_query(query, (codigo,))
+        try:
+            query = "SELECT * FROM inventario_items WHERE codigo = ?"
+            return self.db.ejecutar_query(query, (codigo,))
+        except Exception as e:
+            print(f"Error al obtener ítem por código: {e}")
+            return None
 
     def actualizar_stock(self, id_item, cantidad):
         query = "UPDATE inventario_items SET stock_actual = stock_actual + ? WHERE id = ?"
         self.db.ejecutar_query(query, (cantidad, id_item))
 
     def obtener_items_bajo_stock(self):
-        query = "SELECT * FROM inventario_items WHERE stock_actual < stock_minimo"
-        return self.db.ejecutar_query(query)
+        try:
+            query = "SELECT * FROM inventario_items WHERE stock_actual < stock_minimo"
+            return self.db.ejecutar_query(query)
+        except Exception as e:
+            print(f"Error al obtener ítems bajo stock: {e}")
+            return []
 
     def generar_qr(self, id_item):
         query = "SELECT codigo FROM inventario_items WHERE id = ?"

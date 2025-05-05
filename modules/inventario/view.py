@@ -208,17 +208,48 @@ class InventarioView(QWidget):
             QPushButton("Actualizar Inventario")
         ]
 
+        # Asignar íconos y tooltips
+        botones[0].setIcon(QtGui.QIcon("img/plus_icon.png"))  # Ícono de '+'
+        botones[0].setToolTip("<b>Nuevo Ítem</b>: Agregar un nuevo ítem al inventario")
+        botones[0].setStyleSheet(botones[0].styleSheet() + """
+            QToolTip {
+                background-color: #f0f0f0;
+                color: #000000;
+                border: 1px solid #cccccc;
+                border-radius: 5px;
+                padding: 5px;
+                font-size: 10px;
+            }
+        """)
+
+        botones[3].setIcon(QtGui.QIcon("img/excel_icon.png"))  # Ícono de Excel
+        botones[3].setToolTip("<b>Exportar a Excel</b>: Exportar el inventario a un archivo Excel")
+
+        botones[4].setIcon(QtGui.QIcon("img/pdf_icon.png"))  # Ícono de PDF
+        botones[4].setToolTip("<b>Exportar a PDF</b>: Exportar el inventario a un archivo PDF")
+
+        # Ajustar los botones para que solo muestren íconos
+        botones[0].setText("")  # Eliminar texto del botón
+        botones[3].setText("")
+        botones[4].setText("")
+        botones[5].setText("")
+        botones[6].setText("")
+        botones[7].setText("")
+
+        # Ajustar el tamaño de los botones
         for boton in botones:
-            boton.setFixedSize(200, 30)
+            boton.setFixedSize(100, 23)
+
+        # Ajustar el tamaño de la fuente de los botones
+        for boton in botones:
             boton.setStyleSheet("""
                 QPushButton {
-                    font-size: 10px;
+                    font-size: 8px; /* Tamaño de letra */
                     border-radius: 15px;
                     background-color: #2563eb; /* Azul */
                     color: white; /* Texto blanco */
                     text-align: center; /* Centrar texto */
                     border: none;
-                    font-size: 14px; /* Tamaño de letra */
                     font-weight: bold; /* Negrita */
                     border-radius: 8px; /* Bordes redondeados */
                 }
@@ -253,6 +284,8 @@ class InventarioView(QWidget):
                 background-color: #1e3a8a; /* Azul aún más oscuro */
             }
         """)
+        self.boton_ajustar_stock.setText("")
+        self.boton_ajustar_stock.setIcon(QtGui.QIcon("img/refresh_icon.png"))
         self.boton_ajustar_stock.clicked.connect(self.abrir_ajustar_stock_dialog)
         botones_layout.addWidget(self.boton_ajustar_stock)
 

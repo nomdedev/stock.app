@@ -7,17 +7,23 @@ class ProduccionController:
         self.view.boton_finalizar_etapa.clicked.connect(self.finalizar_etapa)
 
     def agregar_etapa(self):
-        campos = {
-            "abertura": self.view.abertura_input.text(),
-            "etapa": self.view.etapa_input.text(),
-            "estado": self.view.estado_input.text()
-        }
+        """Agrega una nueva etapa de fabricación."""
+        try:
+            campos = {
+                "abertura": self.view.abertura_input.text(),
+                "etapa": self.view.etapa_input.text(),
+                "estado": self.view.estado_input.text()
+            }
 
-        if all(campos.values()):
+            if not all(campos.values()):
+                self.view.label.setText("Por favor, complete todos los campos.")
+                return
+
             self.model.agregar_etapa((*campos.values(), None, None))
             self.view.label.setText("Etapa agregada exitosamente.")
-        else:
-            self.view.label.setText("Por favor, complete todos los campos.")
+        except Exception as e:
+            print(f"Error al agregar etapa: {e}")
+            self.view.label.setText("Error al agregar la etapa.")
 
     def ver_detalles_abertura(self):
         fila_seleccionada = self.view.tabla_aberturas.currentRow()
@@ -32,15 +38,21 @@ class ProduccionController:
                 self.view.tabla_etapas.setItem(row, col, QTableWidgetItem(str(value)))
 
     def finalizar_etapa(self):
-        fila_seleccionada = self.view.tabla_etapas.currentRow()
-        if fila_seleccionada == -1:
-            return
+        """Finaliza una etapa de fabricación."""
+        try:
+            fila_seleccionada = self.view.tabla_etapas.currentRow()
+            if fila_seleccionada == -1:
+                self.view.label.setText("Seleccione una etapa para finalizar.")
+                return
 
-        id_etapa = self.view.tabla_etapas.item(fila_seleccionada, 0).text()
-        fecha_fin = "2023-12-31"  # Ejemplo, debería obtenerse dinámicamente
-        tiempo_real = "2 horas"  # Ejemplo, debería calcularse
-        self.model.finalizar_etapa(id_etapa, fecha_fin, tiempo_real)
-        self.view.label.setText(f"Etapa {id_etapa} finalizada exitosamente.")
+            id_etapa = self.view.tabla_etapas.item(fila_seleccionada, 0).text()
+            fecha_fin = "2023-12-31"  # Ejemplo, debería obtenerse dinámicamente
+            tiempo_real = "2 horas"  # Ejemplo, debería calcularse
+            self.model.finalizar_etapa(id_etapa, fecha_fin, tiempo_real)
+            self.view.label.setText(f"Etapa {id_etapa} finalizada exitosamente.")
+        except Exception as e:
+            print(f"Error al finalizar etapa: {e}")
+            self.view.label.setText("Error al finalizar la etapa.")
 
     def cargar_kanban(self):
         etapas = self.model.obtener_etapas_fabricacion()

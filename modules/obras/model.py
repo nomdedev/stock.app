@@ -17,11 +17,15 @@ class ObrasModel:
 
     def agregar_obra(self, datos):
         """Agrega una nueva obra a la base de datos."""
-        query = """
-            INSERT INTO obras (nombre, cliente, estado, fecha)
-            VALUES (?, ?, ?, ?)
-        """
-        self.db_connection.ejecutar_query(query, datos)
+        try:
+            query = """
+                INSERT INTO obras (nombre, cliente, estado, fecha)
+                VALUES (?, ?, ?, ?)
+            """
+            self.db_connection.ejecutar_query(query, datos)
+        except Exception as e:
+            print(f"Error al agregar obra: {e}")
+            raise
 
     def verificar_obra_existente(self, nombre, cliente):
         """Verifica si ya existe una obra con el mismo nombre y cliente."""
@@ -45,15 +49,25 @@ class ObrasModel:
         self.db_connection.ejecutar_query(query, (nuevo_estado, id_obra))
 
     def obtener_materiales_por_obra(self, id_obra):
-        query = "SELECT * FROM materiales_por_obra WHERE id_obra = ?"
-        return self.db_connection.ejecutar_query(query, (id_obra,))
+        """Obtiene los materiales asignados a una obra."""
+        try:
+            query = "SELECT * FROM materiales_por_obra WHERE id_obra = ?"
+            return self.db_connection.ejecutar_query(query, (id_obra,))
+        except Exception as e:
+            print(f"Error al obtener materiales por obra: {e}")
+            return []
 
     def asignar_material_a_obra(self, datos):
-        query = """
-        INSERT INTO materiales_por_obra (id_obra, id_item, cantidad_necesaria, cantidad_reservada, estado)
-        VALUES (?, ?, ?, ?, ?)
-        """
-        self.db_connection.ejecutar_query(query, datos)
+        """Asigna un material a una obra."""
+        try:
+            query = """
+            INSERT INTO materiales_por_obra (id_obra, id_item, cantidad_necesaria, cantidad_reservada, estado)
+            VALUES (?, ?, ?, ?, ?)
+            """
+            self.db_connection.ejecutar_query(query, datos)
+        except Exception as e:
+            print(f"Error al asignar material a obra: {e}")
+            raise
 
     def exportar_cronograma(self, formato, id_obra):
         query = """

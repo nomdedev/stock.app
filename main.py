@@ -27,6 +27,10 @@ from modules.pedidos.view import PedidosView
 from modules.usuarios.view import UsuariosView
 from modules.auditoria.view import AuditoriaView
 from modules.configuracion.view import ConfiguracionView
+from modules.mantenimiento.view import MantenimientoView
+from modules.contabilidad.view import ContabilidadView
+from modules.materiales.view import MaterialesView
+from modules.vidrios.view import VidriosView
 
 # Importar controladores
 from modules.inventario.controller import InventarioController
@@ -164,15 +168,27 @@ class MainWindow(QMainWindow):
         self.usuarios_view = UsuariosView(controller=self.usuarios_controller)
         self.usuarios_controller.view = self.usuarios_view
 
-        self.auditoria_view = AuditoriaView()
-        self.auditoria_controller = AuditoriaController(
-            model=self.auditoria_model, view=self.auditoria_view
-        )
+        try:
+            # Inicializar el módulo Auditoría
+            self.auditoria_view = AuditoriaView()  # Crear instancia de AuditoriaView
+            self.auditoria_model = AuditoriaModel()  # Crear instancia de AuditoriaModel
+            self.auditoria_controller = AuditoriaController(
+                model=self.auditoria_model, view=self.auditoria_view
+            )
+        except Exception as e:
+            print(f"Error al inicializar el módulo Auditoría: {e}")
+            # Mostrar un mensaje de advertencia en la interfaz
+            self.statusBar().showMessage("El módulo Auditoría está deshabilitado temporalmente.")
 
-        self.configuracion_view = ConfiguracionView()
-        self.configuracion_controller = ConfiguracionController(
-            model=self.configuracion_model, view=self.configuracion_view
-        )
+        try:
+            # Inicializar el módulo Configuración
+            self.configuracion_view = ConfiguracionView()
+            self.configuracion_controller = ConfiguracionController(
+                model=self.configuracion_model, view=self.configuracion_view
+            )
+        except Exception as e:
+            print(f"Error al inicializar el módulo Configuración: {e}")
+            self.statusBar().showMessage("El módulo Configuración está deshabilitado temporalmente.")
 
         # Layout principal
         main_layout = QHBoxLayout()
@@ -191,9 +207,34 @@ class MainWindow(QMainWindow):
         self.module_stack.addWidget(self.auditoria_view)    # index 6
         self.module_stack.addWidget(self.configuracion_view)# index 7
 
+        # Agregar vistas de módulos adicionales
+        self.mantenimiento_view = MantenimientoView()
+        self.contabilidad_view = ContabilidadView()
+        self.materiales_view = MaterialesView()
+        self.vidrios_view = VidriosView()
+
+        self.module_stack.addWidget(self.mantenimiento_view)  # index 8
+        self.module_stack.addWidget(self.contabilidad_view)  # index 9
+        self.module_stack.addWidget(self.materiales_view)    # index 10
+        self.module_stack.addWidget(self.vidrios_view)       # index 11
+
         # Sidebar
         self.sidebar = Sidebar()
-        self.sidebar.section_selected.connect(self.navigate_to_section)
+        sections = [
+            ("Inventario", "inventario", 0),
+            ("Obras", "obras", 1),
+            ("Producción", "produccion", 2),
+            ("Logística", "logistica", 3),
+            ("Pedidos", "pedidos", 4),
+            ("Usuarios", "usuarios", 5),
+            ("Auditoría", "auditoria", 6),
+            ("Configuración", "configuracion", 7),
+            ("Mantenimiento", "mantenimiento", 8),
+            ("Contabilidad", "contabilidad", 9),
+            ("Materiales", "materiales", 10),
+            ("Vidrios", "vidrios", 11),
+        ]
+        self.sidebar.create_buttons(sections)
 
         # Agregar al layout principal
         main_layout.addWidget(self.sidebar)
@@ -221,20 +262,8 @@ class Sidebar(QWidget):
                 border-radius: 12px;
             }
         """)
-        self.create_buttons()
 
-    def create_buttons(self):
-        sections = [
-            ("Inventario", "inventario", 0),
-            ("Obras", "obras", 1),
-            ("Producción", "produccion", 2),
-            ("Logística", "logistica", 3),
-            ("Pedidos", "pedidos", 4),
-            ("Usuarios", "usuarios", 5),
-            ("Auditoría", "auditoria", 6),
-            ("Configuración", "configuracion", 7),
-        ]
-
+    def create_buttons(self, sections):
         for name, icon_name, index in sections:
             btn = QPushButton(name)
             btn.setObjectName("botonMenu")

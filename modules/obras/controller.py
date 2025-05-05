@@ -46,31 +46,34 @@ class ObrasController:
 
     def agregar_obra(self):
         """Agrega una nueva obra con los datos ingresados."""
-        nombre = self.view.nombre_input.text()
-        cliente = self.view.cliente_input.text()
-        estado = self.view.estado_input.currentText()  # Obtener el estado seleccionado
+        try:
+            nombre = self.view.nombre_input.text()
+            cliente = self.view.cliente_input.text()
+            estado = self.view.estado_input.currentText()  # Obtener el estado seleccionado
 
-        if not (nombre and cliente and estado):
-            self.view.label.setText("Por favor, complete todos los campos.")
-            return
+            if not (nombre and cliente and estado):
+                self.view.label.setText("Por favor, complete todos los campos.")
+                return
 
-        if self.model.verificar_obra_existente(nombre, cliente):
-            QMessageBox.warning(
-                self.view,
-                "Obra Existente",
-                "Ya existe una obra con el mismo nombre y cliente."
-            )
-            self.view.nombre_input.setStyleSheet("border: 1px solid red;")
-            self.view.cliente_input.setStyleSheet("border: 1px solid red;")
-            return
+            if self.model.verificar_obra_existente(nombre, cliente):
+                QMessageBox.warning(
+                    self.view,
+                    "Obra Existente",
+                    "Ya existe una obra con el mismo nombre y cliente."
+                )
+                self.view.nombre_input.setStyleSheet("border: 1px solid red;")
+                self.view.cliente_input.setStyleSheet("border: 1px solid red;")
+                return
 
-        # Guardar la obra con el estado seleccionado y la fecha actual
-        fecha_actual = QtCore.QDate.currentDate().toString("yyyy-MM-dd")
-        self.model.agregar_obra((nombre, cliente, estado, fecha_actual))
-        self.view.label.setText("Obra agregada exitosamente.")
-        self.view.nombre_input.setStyleSheet("")
-        self.view.cliente_input.setStyleSheet("")
-        self.cargar_datos_obras()  # Recargar la tabla de obras
+            fecha_actual = QtCore.QDate.currentDate().toString("yyyy-MM-dd")
+            self.model.agregar_obra((nombre, cliente, estado, fecha_actual))
+            self.view.label.setText("Obra agregada exitosamente.")
+            self.view.nombre_input.setStyleSheet("")
+            self.view.cliente_input.setStyleSheet("")
+            self.cargar_datos_obras()
+        except Exception as e:
+            print(f"Error al agregar obra: {e}")
+            self.view.label.setText("Error al agregar la obra.")
 
     def ver_cronograma(self):
         fila_seleccionada = self.view.tabla_obras.currentRow()
@@ -122,9 +125,14 @@ class ObrasController:
             self.view.label.setText("Seleccione una obra para exportar su cronograma.")
 
     def sincronizar_materiales_con_inventario(self, id_obra):
-        materiales = self.model.obtener_materiales_por_obra(id_obra)
-        for material in materiales:
-            id_item = material[1]  # Suponiendo que el ID del ítem está en la columna 1
-            cantidad_reservada = material[3]  # Suponiendo que la cantidad reservada está en la columna 3
-            self.inventario_model.actualizar_stock(id_item, -cantidad_reservada)  # Reducir stock
-        self.view.label.setText(f"Materiales de la obra {id_obra} sincronizados con el inventario.")
+        """Sincroniza los materiales de una obra con el inventario."""
+        try:
+            materiales = self.model.obtener_materiales_por_obra(id_obra)
+            for material in materiales:
+                id_item = material[1]  # Suponiendo que el ID del ítem está en la columna 1
+                cantidad_reservada = material[3]  # Suponiendo que la cantidad reservada está en la columna 3
+                self.inventario_model.actualizar_stock(id_item, -cantidad_reservada)  # Reducir stock
+            self.view.label.setText(f"Materiales de la obra {id_obra} sincronizados con el inventario.")
+        except Exception as e:
+            print(f"Error al sincronizar materiales con inventario: {e}")
+            self.view.label.setText("Error al sincronizar materiales con el inventario.")

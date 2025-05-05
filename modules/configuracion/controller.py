@@ -4,77 +4,106 @@ class ConfiguracionController:
     def __init__(self, model, view):
         self.model = model
         self.view = view
-        self.view.save_button.clicked.connect(self.guardar_cambios)
-
-        # Conectar el switch de tema
-        self.view.switch_tema.stateChanged.connect(self.toggle_tema)
-
-        # Conectar botones adicionales
-        self.view.boton_activar_offline.clicked.connect(self.activar_modo_offline)
-        self.view.boton_desactivar_offline.clicked.connect(self.desactivar_modo_offline)
-        self.view.boton_guardar_conexion.clicked.connect(self.guardar_configuracion_conexion)
-        self.view.boton_cambiar_notificaciones.clicked.connect(self.cambiar_estado_notificaciones)
+        try:
+            # Validar y conectar botones
+            if hasattr(self.view, "save_button"):
+                self.view.save_button.clicked.connect(self.guardar_cambios)
+            if hasattr(self.view, "switch_tema"):
+                self.view.switch_tema.stateChanged.connect(self.toggle_tema)
+            if hasattr(self.view, "boton_activar_offline"):
+                self.view.boton_activar_offline.clicked.connect(self.activar_modo_offline)
+            if hasattr(self.view, "boton_desactivar_offline"):
+                self.view.boton_desactivar_offline.clicked.connect(self.desactivar_modo_offline)
+            if hasattr(self.view, "boton_guardar_conexion"):
+                self.view.boton_guardar_conexion.clicked.connect(self.guardar_configuracion_conexion)
+            if hasattr(self.view, "boton_cambiar_notificaciones"):
+                self.view.boton_cambiar_notificaciones.clicked.connect(self.cambiar_estado_notificaciones)
+        except AttributeError as e:
+            print(f"Error en ConfiguracionController: {e}")
 
     def cargar_configuracion(self):
-        configuracion = self.model.obtener_configuracion()
-        for clave, valor, descripcion in configuracion:
-            if clave == "nombre_app":
-                self.view.nombre_app_input.setText(valor)
-            elif clave == "zona_horaria":
-                self.view.zona_horaria_input.setCurrentText(valor)
-            elif clave == "modo_mantenimiento":
-                self.view.modo_mantenimiento_checkbox.setChecked(valor == "True")
+        try:
+            configuracion = self.model.obtener_configuracion()
+            for clave, valor, descripcion in configuracion:
+                inputs = {
+                    "nombre_app": self.view.nombre_app_input.setText,
+                    "zona_horaria": self.view.zona_horaria_input.setCurrentText,
+                    "modo_mantenimiento": lambda v: self.view.modo_mantenimiento_checkbox.setChecked(v == "True")
+                }
+                if clave in inputs:
+                    inputs[clave](valor)
 
-        # Cargar apariencia del usuario (ejemplo con usuario_id = 1)
-        apariencia = self.model.obtener_apariencia_usuario(1)
-        if apariencia:
-            modo_color, idioma, notificaciones, tamaño_fuente = apariencia[0]
-            self.view.modo_color_input.setCurrentText(modo_color)
-            self.view.idioma_input.setCurrentText(idioma)
-            self.view.notificaciones_checkbox.setChecked(notificaciones)
-            self.view.tamaño_fuente_input.setCurrentText(tamaño_fuente)
+            # Cargar apariencia del usuario (ejemplo con usuario_id = 1)
+            apariencia = self.model.obtener_apariencia_usuario(1)
+            if apariencia:
+                modo_color, idioma, notificaciones, tamaño_fuente = apariencia[0]
+                self.view.modo_color_input.setCurrentText(modo_color)
+                self.view.idioma_input.setCurrentText(idioma)
+                self.view.notificaciones_checkbox.setChecked(notificaciones)
+                self.view.tamaño_fuente_input.setCurrentText(tamaño_fuente)
+        except Exception as e:
+            print(f"Error al cargar configuración: {e}")
 
     def guardar_cambios(self):
-        # Guardar configuración general
-        self.model.actualizar_configuracion("nombre_app", self.view.nombre_app_input.text())
-        self.model.actualizar_configuracion("zona_horaria", self.view.zona_horaria_input.currentText())
-        self.model.actualizar_configuracion("modo_mantenimiento", str(self.view.modo_mantenimiento_checkbox.isChecked()))
+        try:
+            # Guardar configuración general
+            self.model.actualizar_configuracion("nombre_app", self.view.nombre_app_input.text())
+            self.model.actualizar_configuracion("zona_horaria", self.view.zona_horaria_input.currentText())
+            self.model.actualizar_configuracion("modo_mantenimiento", str(self.view.modo_mantenimiento_checkbox.isChecked()))
 
-        # Guardar apariencia del usuario (ejemplo con usuario_id = 1)
-        datos_apariencia = (
-            self.view.modo_color_input.currentText(),
-            self.view.idioma_input.currentText(),
-            self.view.notificaciones_checkbox.isChecked(),
-            self.view.tamaño_fuente_input.currentText()
-        )
-        self.model.actualizar_apariencia_usuario(1, datos_apariencia)
+            # Guardar apariencia del usuario
+            datos_apariencia = (
+                self.view.modo_color_input.currentText(),
+                self.view.idioma_input.currentText(),
+                self.view.notificaciones_checkbox.isChecked(),
+                self.view.tamaño_fuente_input.currentText()
+            )
+            self.model.actualizar_apariencia_usuario(1, datos_apariencia)
 
-        self.view.label.setText("Cambios guardados exitosamente.")
+            self.view.label.setText("Cambios guardados exitosamente.")
+        except Exception as e:
+            print(f"Error al guardar cambios: {e}")
 
     def guardar_configuracion_conexion(self):
-        datos = {
-            "base_predeterminada": self.view.base_predeterminada_input.text(),
-            "servidor": self.view.servidor_input.text(),
-            "puerto": self.view.puerto_input.text(),
-        }
-        self.model.guardar_configuracion_conexion(datos)
-        self.view.label.setText("Configuración de conexión guardada exitosamente.")
+        try:
+            datos = {
+                "base_predeterminada": self.view.base_predeterminada_input.text(),
+                "servidor": self.view.servidor_input.text(),
+                "puerto": self.view.puerto_input.text(),
+            }
+            self.model.guardar_configuracion_conexion(datos)
+            self.view.label.setText("Configuración de conexión guardada exitosamente.")
+        except Exception as e:
+            print(f"Error al guardar configuración de conexión: {e}")
 
     def activar_modo_offline(self):
-        self.model.activar_modo_offline()
-        self.view.label.setText("Modo offline activado.")
+        try:
+            self.model.activar_modo_offline()
+            self.view.label.setText("Modo offline activado.")
+        except Exception as e:
+            print(f"Error al activar el modo offline: {e}")
 
     def desactivar_modo_offline(self):
-        self.model.desactivar_modo_offline()
-        self.view.label.setText("Modo offline desactivado.")
+        try:
+            self.model.desactivar_modo_offline()
+            self.view.label.setText("Modo offline desactivado.")
+        except Exception as e:
+            print(f"Error al desactivar el modo offline: {e}")
 
     def cambiar_estado_notificaciones(self):
-        estado_actual = self.model.obtener_estado_notificaciones()
-        nuevo_estado = not estado_actual
-        self.model.actualizar_estado_notificaciones(nuevo_estado)
-        self.view.label.setText(f"Notificaciones {'activadas' if nuevo_estado else 'desactivadas'}.")
+        try:
+            estado_actual = self.model.obtener_estado_notificaciones()
+            nuevo_estado = not estado_actual
+            self.model.actualizar_estado_notificaciones(nuevo_estado)
+            self.view.label.setText(f"Notificaciones {'activadas' if nuevo_estado else 'desactivadas'}.")
+        except Exception as e:
+            print(f"Error al cambiar estado de notificaciones: {e}")
 
     def toggle_tema(self, estado):
-        nuevo_modo = "oscuro" if estado == Qt.CheckState.Checked else "light"
-        aplicar_tema(QApplication.instance(), nuevo_modo)
-        guardar_modo_tema(nuevo_modo)
+        try:
+            modos = {0: "light", 2: "oscuro"}  # Diccionario para evitar condicionales
+            nuevo_modo = modos.get(estado, "light")
+            aplicar_tema(QApplication.instance(), nuevo_modo)
+            guardar_modo_tema(nuevo_modo)
+        except Exception as e:
+            print(f"Error al cambiar tema: {e}")

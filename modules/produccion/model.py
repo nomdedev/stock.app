@@ -9,8 +9,16 @@ class ProduccionModel:
         return self.db.ejecutar_query(query)
 
     def agregar_etapa(self, datos):
-        query = "INSERT INTO etapas_fabricacion (id_abertura, etapa, estado, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?, ?)"
-        self.db.ejecutar_query(query, datos)
+        """Agrega una nueva etapa de fabricación."""
+        try:
+            query = """
+            INSERT INTO etapas_fabricacion (id_abertura, etapa, estado, fecha_inicio, fecha_fin)
+            VALUES (?, ?, ?, ?, ?)
+            """
+            self.db.ejecutar_query(query, datos)
+        except Exception as e:
+            print(f"Error al agregar etapa: {e}")
+            raise
 
     def obtener_aberturas(self):
         query = "SELECT * FROM aberturas"
@@ -25,12 +33,17 @@ class ProduccionModel:
         return self.db.ejecutar_query(query, (id_abertura,))
 
     def finalizar_etapa(self, id_etapa, fecha_fin, tiempo_real):
-        query = """
-        UPDATE etapas_fabricacion
-        SET estado = 'finalizada', fecha_fin = ?, tiempo_real = ?
-        WHERE id = ?
-        """
-        self.db.ejecutar_query(query, (fecha_fin, tiempo_real, id_etapa))
+        """Finaliza una etapa de fabricación."""
+        try:
+            query = """
+            UPDATE etapas_fabricacion
+            SET estado = 'finalizada', fecha_fin = ?, tiempo_real = ?
+            WHERE id = ?
+            """
+            self.db.ejecutar_query(query, (fecha_fin, tiempo_real, id_etapa))
+        except Exception as e:
+            print(f"Error al finalizar etapa: {e}")
+            raise
 
     def obtener_etapas_fabricacion(self):
         query = """

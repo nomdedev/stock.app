@@ -1,5 +1,6 @@
 import unittest
 from modules.configuracion.model import ConfiguracionModel
+from modules.configuracion.view import ConfiguracionView
 
 class MockDBConnection:
     def __init__(self):
@@ -55,6 +56,11 @@ class TestConfiguracionModel(unittest.TestCase):
         self.config_model.actualizar_estado_notificaciones(True)
         self.assertEqual(self.mock_db.last_query, "UPDATE configuracion_sistema SET valor = ? WHERE clave = 'notificaciones_activas'")
         self.assertEqual(self.mock_db.last_params, ("True",))
+
+class TestConfiguracionView(unittest.TestCase):
+    def test_boton_activar_offline_existe(self):
+        view = ConfiguracionView()
+        self.assertTrue(hasattr(view, "boton_activar_offline"), "El botón 'boton_activar_offline' no está definido.")
 
 if __name__ == "__main__":
     unittest.main()
