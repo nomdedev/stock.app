@@ -189,10 +189,13 @@ class InventarioView(QWidget):
             }
         """)
 
-        # Eliminar la primera columna automática
-        self.tabla_inventario.setColumnHidden(0, True)
+        # Configurar columnas visibles por defecto
+        columnas_visibles = ["Código", "Descripción", "Tiras Necesarias", "Stock", "Pedido"]
+        for i, columna in enumerate(columnas):
+            if columna not in columnas_visibles:
+                self.tabla_inventario.setColumnHidden(i, True)
 
-        # Conectar clic en los encabezados para mostrar menú
+        # Agregar opción para mostrar/ocultar columnas
         self.tabla_inventario.horizontalHeader().sectionClicked.connect(self.mostrar_menu_columnas)
 
         general_layout.addWidget(self.tabla_inventario)
@@ -331,6 +334,11 @@ class InventarioView(QWidget):
         # Agregar QTabWidget al layout principal
         layout.addWidget(self.tab_widget)
 
+        # Agregar un QLabel para mostrar mensajes de estado o error
+        self.label_estado = QLabel()
+        self.label_estado.setStyleSheet("color: red; font-weight: bold;")
+        layout.addWidget(self.label_estado)
+
         # Ajustar el layout principal
         self.setLayout(layout)
         self.setStyleSheet("""
@@ -346,12 +354,7 @@ class InventarioView(QWidget):
 
     def mostrar_menu_columnas(self, index):
         menu = QMenu(self)
-        columnas = [
-            "ID", "Código", "Descripción", "Acabado", "Documento", "Proveedor",
-            "Dimensiones", "Unidades", "Pedido", "Importe", "Ubicación", "Stock", "Stock Mínimo", "Estado"
-        ]
-
-        for i, columna in enumerate(columnas):
+        for i, columna in enumerate(self.tabla_inventario.horizontalHeaderLabels()):
             accion = menu.addAction(columna)
             accion.setCheckable(True)
             accion.setChecked(not self.tabla_inventario.isColumnHidden(i))
@@ -363,6 +366,58 @@ class InventarioView(QWidget):
         dialog = AjustarStockDialog(self)
         dialog.exec()
         return dialog
+
+    def abrir_formulario_nuevo_item(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Nuevo Ítem")
+
+        layout = QVBoxLayout()
+
+        form_layout = QFormLayout()
+        self.codigo_input = QLineEdit()
+        self.nombre_input = QLineEdit()
+        self.cantidad_input = QLineEdit()
+        self.ubicacion_input = QLineEdit()
+        self.tipo_input = QLineEdit()
+        self.proveedor_input = QLineEdit()
+        self.observaciones_input = QLineEdit()
+
+        form_layout.addRow("Código:", self.codigo_input)
+        form_layout.addRow("Nombre:", self.nombre_input)
+        form_layout.addRow("Cantidad:", self.cantidad_input)
+        form_layout.addRow("Ubicación:", self.ubicacion_input)
+        form_layout.addRow("Tipo:", self.tipo_input)
+        form_layout.addRow("Proveedor:", self.proveedor_input)
+        form_layout.addRow("Observaciones:", self.observaciones_input)
+
+        layout.addLayout(form_layout)
+
+        botones_layout = QHBoxLayout()
+        guardar_button = QPushButton("Guardar")
+        cancelar_button = QPushButton("Cancelar")
+        botones_layout.addWidget(guardar_button)
+        botones_layout.addWidget(cancelar_button)
+
+        layout.addLayout(botones_layout)
+        dialog.setLayout(layout)
+
+        guardar_button.clicked.connect(lambda: self.guardar_nuevo_item(dialog))
+        cancelar_button.clicked.connect(dialog.reject)
+
+        dialog.exec()
+
+    def guardar_nuevo_item(self, dialog):
+        datos = {
+            "codigo": self.codigo_input.text(),
+            "nombre": self.nombre_input.text(),
+            "cantidad": self.cantidad_input.text(),
+            "ubicacion": self.ubicacion_input.text(),
+            "tipo": self.tipo_input.text(),
+            "proveedor": self.proveedor_input.text(),
+            "observaciones": self.observaciones_input.text()
+        }
+        dialog.accept()
+        return datos
 
     def abrir_configuracion_columnas(self):
         dialog = QDialog(self)
@@ -430,3 +485,11 @@ class InventarioView(QWidget):
                             self.tabla_inventario.item(row, col).setBackground(QtGui.QColor("#ffcccc"))  # Light red
                 except ValueError:
                     continue
+
+    def llenar_tabla(self, datos):
+        """Llena la tabla de inventario con los datos proporcionados."""
+        self.tabla_inventario.setRowCount(0)  # Limpiar la tabla
+        for row_idx, row_data in enumerate(datos):
+            self.tabla_inventario.insertRow(row_idx)
+            for col_idx, value in enumerate(row_data):
+                self.tabla_inventario.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))

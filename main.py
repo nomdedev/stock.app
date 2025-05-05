@@ -52,6 +52,9 @@ from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from modules.configuracion.model import ConfiguracionModel
 
+# Importar componentes
+from components.sidebar_button import SidebarButton
+
 # Clase principal
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -220,24 +223,7 @@ class MainWindow(QMainWindow):
 
         # Sidebar
         self.sidebar = Sidebar()
-        sections = [
-            ("Inventario", "inventario", 0),
-            ("Obras", "obras", 1),
-            ("Producción", "produccion", 2),
-            ("Logística", "logistica", 3),
-            ("Pedidos", "pedidos", 4),
-            ("Usuarios", "usuarios", 5),
-            ("Auditoría", "auditoria", 6),
-            ("Configuración", "configuracion", 7),
-            ("Mantenimiento", "mantenimiento", 8),
-            ("Contabilidad", "contabilidad", 9),
-            ("Materiales", "materiales", 10),
-            ("Vidrios", "vidrios", 11),
-        ]
-        self.sidebar.create_buttons(sections)
-
-        # Conectar la señal del sidebar al QStackedWidget
-        self.sidebar.pageChanged.connect(self.navigate_to_section)
+        self.sidebar.section_selected.connect(self.navigate_to_section)
 
         # Agregar al layout principal
         main_layout.addWidget(self.sidebar)
@@ -247,6 +233,7 @@ class MainWindow(QMainWindow):
         """Actualizar la sección activa en el QStackedWidget."""
         if 0 <= index < self.module_stack.count():
             self.module_stack.setCurrentIndex(index)
+            self.sidebar.set_active_button(index)
             self.logger.info(f"Navegando a la sección con índice {index}")
         else:
             self.logger.warning(f"Índice fuera de rango: {index}")
@@ -257,42 +244,38 @@ class Sidebar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(10, 20, 10, 10)
-        self.layout.setSpacing(8)
+        self.layout.setContentsMargins(12, 12, 12, 12)
+        self.layout.setSpacing(6)
+        self.setFixedWidth(240)  # Ancho fijo del sidebar
         self.setStyleSheet("""
-            QFrame {
-                background-color: white;
-                border-radius: 12px;
+            QWidget {
+                background-color: #0D1117; /* Fondo oscuro */
             }
         """)
 
-    def create_buttons(self, sections):
-        for name, icon_name, index in sections:
-            btn = QPushButton(name)
-            btn.setObjectName("botonMenu")
-            btn.setFixedHeight(40)  # Altura fija
-            btn.setFixedWidth(150)  # Ancho fijo
-            btn.setIcon(get_icon(f"{icon_name}.svg"))
-            btn.setIconSize(QSize(20, 20))
-            btn.setStyleSheet("""
-                QPushButton#botonMenu {
-                    background-color: #2563eb; /* Azul */
-                    color: white; /* Texto blanco */
-                    text-align: center; /* Centrar texto */
-                    border: none;
-                    font-size: 14px; /* Tamaño de letra */
-                    font-weight: bold; /* Negrita */
-                    border-radius: 8px; /* Bordes redondeados */
-                }
-                QPushButton#botonMenu:hover {
-                    background-color: #1e40af; /* Azul más oscuro */
-                }
-                QPushButton#botonMenu:pressed {
-                    background-color: #1e3a8a; /* Azul aún más oscuro */
-                }
-            """)
-            btn.clicked.connect(partial(self.section_selected.emit, index))
-            self.layout.addWidget(btn)
+        # Crear botones del sidebar
+        self.buttons = []
+        sections = [
+            ("Inventario", "utils/icons/inventario.svg", 0),
+            ("Obras", "utils/icons/obras.svg", 1),
+            ("Órdenes", "utils/icons/ordenes.svg", 2),
+            ("Usuarios", "utils/icons/usuarios.svg", 3),
+            ("Auditoría", "utils/icons/auditoria.svg", 4),
+            ("Logística", "utils/icons/logistica.svg", 5),
+            ("Mantenimiento", "utils/icons/mantenimiento.svg", 6),
+            ("Configuración", "utils/icons/configuracion.svg", 7),
+        ]
+
+        for name, icon_path, index in sections:
+            button = SidebarButton(name, icon_path, activo=(index == 0))  # Marcar el primer botón como activo
+            button.clicked.connect(partial(self.section_selected.emit, index))
+            self.layout.addWidget(button)
+            self.buttons.append(button)
+
+    def set_active_button(self, index):
+        """Actualizar el botón activo en el sidebar."""
+        for i, button in enumerate(self.buttons):
+            button.set_activo(i == index)
 
 class PedidosView(QWidget):
     def __init__(self):

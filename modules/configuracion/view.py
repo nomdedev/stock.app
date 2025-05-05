@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QComboBox, QCheckBox, QPushButton, QSizePolicy, QTabWidget
+from themes.theme_manager import aplicar_tema, guardar_preferencia_tema, cargar_preferencia_tema
 
 class ConfiguracionView(QWidget):
     def __init__(self):
@@ -10,7 +11,12 @@ class ConfiguracionView(QWidget):
         try:
             # Switch para cambiar el tema
             self.switch_tema = QCheckBox("Tema Oscuro")
-            self.switch_tema.setChecked(True)
+            
+            # Cargar preferencia inicial del tema
+            tema_inicial = cargar_preferencia_tema()
+            self.switch_tema.setChecked(tema_inicial == "dark")
+            aplicar_tema(tema_inicial)
+
             self.switch_tema.setStyleSheet("""
                 QCheckBox::indicator {
                     width: 50px;
@@ -24,6 +30,9 @@ class ConfiguracionView(QWidget):
                 }
             """)
             self.layout.addWidget(self.switch_tema)
+
+            # Conectar el interruptor al cambio de tema
+            self.switch_tema.stateChanged.connect(self.cambiar_tema)
 
             # Crear pestañas
             self.tabs = QTabWidget()
@@ -89,6 +98,12 @@ class ConfiguracionView(QWidget):
             self.setLayout(self.layout)
         except Exception as e:
             print(f"Error al inicializar ConfiguracionView: {e}")
+
+    def cambiar_tema(self, estado):
+        """Cambia el tema de la aplicación y guarda la preferencia."""
+        nuevo_tema = "dark" if estado == 2 else "light"
+        aplicar_tema(nuevo_tema)
+        guardar_preferencia_tema(nuevo_tema)
 
 class Configuracion(QWidget):
     def __init__(self):

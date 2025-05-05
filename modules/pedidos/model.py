@@ -8,6 +8,15 @@ class PedidosModel:
         query = "SELECT * FROM pedidos"
         return self.db.ejecutar_query(query)
 
+    def obtener_todos_pedidos(self):
+        """Obtiene todos los pedidos de la base de datos."""
+        try:
+            query = "SELECT id, cliente, producto, cantidad, fecha, estado FROM pedidos"
+            return self.db.ejecutar_query(query)
+        except Exception as e:
+            print(f"Error al obtener pedidos: {e}")
+            return []
+
     def crear_pedido(self, datos):
         try:
             query = "INSERT INTO pedidos (cliente, producto, cantidad, fecha) VALUES (?, ?, ?, ?)"

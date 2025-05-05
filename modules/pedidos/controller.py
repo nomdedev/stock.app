@@ -89,3 +89,15 @@ class PedidosController:
         except Exception as e:
             print(f"Error al sincronizar pedido con inventario: {e}")
             self.view.label.setText("Error al sincronizar el pedido con el inventario.")
+
+    def cargar_pedidos(self):
+        try:
+            pedidos = self.model.obtener_todos_pedidos()
+            self.view.tabla_pedidos.setRowCount(len(pedidos))
+            for row, pedido in enumerate(pedidos):
+                for col, value in enumerate(pedido):
+                    self.view.tabla_pedidos.setItem(row, col, QTableWidgetItem(str(value)))
+            self.view.label.setText("Pedidos cargados correctamente.")
+        except Exception as e:
+            print(f"Error al cargar pedidos: {e}")
+            self.view.label.setText("Error al cargar los pedidos.")

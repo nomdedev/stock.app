@@ -120,6 +120,27 @@ class PedidosView(QWidget):
         """)
         self.layout.addWidget(self.boton_ejemplo)
 
+        # Tabla principal de pedidos
+        self.tabla_pedidos = QTableWidget()
+        self.tabla_pedidos.setColumnCount(6)
+        self.tabla_pedidos.setHorizontalHeaderLabels([
+            "ID del Pedido", "Cliente", "Producto", "Cantidad", "Fecha", "Estado"
+        ])
+        self.tabla_pedidos.horizontalHeader().setStretchLastSection(True)
+        self.tabla_pedidos.setStyleSheet("""
+            QTableWidget {
+                border: 1px solid #dcdcdc;
+                background-color: #f9f9f9;
+                font-size: 12px;
+            }
+            QHeaderView::section {
+                background-color: #f0f0f0;
+                font-weight: bold;
+                border: 1px solid #dcdcdc;
+            }
+        """)
+        self.layout.addWidget(self.tabla_pedidos)
+
         # Tabla de detalles del pedido
         self.tabla_detalle_pedido = QTableWidget()
         self.tabla_detalle_pedido.setColumnCount(5)
@@ -141,6 +162,11 @@ class PedidosView(QWidget):
         self.kanban_layout = QVBoxLayout(self.kanban_frame)
         self.kanban_scroll.setWidget(self.kanban_frame)
         self.layout.addWidget(self.kanban_scroll)
+
+        # Agregar un QLabel para mostrar mensajes de estado o error
+        self.label = QLabel()
+        self.label.setStyleSheet("color: red; font-weight: bold;")
+        self.layout.addWidget(self.label)
 
         self.controller = None
 
