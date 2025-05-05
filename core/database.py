@@ -11,6 +11,8 @@ class BaseDatabaseConnection:
         self.password = DB_PASSWORD
         self.database = database
         self.driver = self.detectar_driver_odbc()
+        self.logger = Logger()
+        self.connection = None  # Conexión persistente
 
     @staticmethod
     def detectar_driver_odbc():
@@ -23,40 +25,63 @@ class BaseDatabaseConnection:
         else:
             raise RuntimeError("No se encontró un controlador ODBC compatible. Instala ODBC Driver 17 o 18 para SQL Server.")
 
-    def ejecutar_query(self, query, params=None):
+    def conectar(self):
+        """Establece una conexión persistente a la base de datos."""
         try:
             connection_string = (
                 f"DRIVER={{{self.driver}}};"
-                f"SERVER={self.server};"
+                f"SERVER=localhost\\SQLEXPRESS;"  # Usar el nombre del servidor predeterminado
+                f"DATABASE={self.database};"
                 f"UID={self.username};"
                 f"PWD={self.password};"
-                f"DATABASE={self.database};"
                 f"TrustServerCertificate=yes;"
             )
-            with pyodbc.connect(connection_string, timeout=10) as conn:  # Agregar timeout
-                cursor = conn.cursor()
-                if params:
-                    cursor.execute(query, params)
-                else:
-                    cursor.execute(query)
-                return cursor.fetchall()
+            self.connection = pyodbc.connect(connection_string, timeout=10)
+            self.logger.info(f"Conexión establecida con la base de datos '{self.database}'.")
         except pyodbc.OperationalError as e:
-            Logger().error(f"Error de conexión: {e}")
+            self.logger.error(f"Error al conectar a la base de datos: {e}")
+            raise RuntimeError("No se pudo conectar a la base de datos.") from e
+
+    def cerrar_conexion(self):
+        """Cierra la conexión persistente a la base de datos."""
+        if self.connection:
+            self.connection.close()
+            self.logger.info(f"Conexión cerrada con la base de datos '{self.database}'.")
+
+    def ejecutar_query(self, query, parametros=None):
+        """Ejecuta una consulta utilizando la conexión persistente."""
+        try:
+            if not self.connection:
+                self.conectar()  # Reconectar si la conexión no está activa
+            cursor = self.connection.cursor()
+            if parametros:
+                cursor.execute(query, parametros)
+            else:
+                cursor.execute(query)
+            if query.strip().upper().startswith("SELECT"):
+                return cursor.fetchall()
+            self.connection.commit()
+        except pyodbc.OperationalError as e:
+            self.logger.error(f"Error de conexión: {e}")
             raise RuntimeError(
-                "No se pudo conectar a la base de datos. Verifica el nombre del servidor/instancia, "
-                "las credenciales y que SQL Server permita conexiones remotas."
+                "No se pudo conectar a la base de datos. Verifica lo siguiente:\n"
+                "- El nombre del servidor o la dirección IP es correcta.\n"
+                "- El puerto 1433 está habilitado y accesible.\n"
+                "- Las credenciales de usuario y contraseña son válidas.\n"
+                "- SQL Server está configurado para aceptar conexiones remotas.\n"
+                "- El firewall no está bloqueando el puerto de SQL Server."
             ) from e
         except Exception as e:
-            Logger().error(f"Error al ejecutar la consulta: {e}")
-            raise
+            self.logger.error(f"Error al ejecutar la consulta: {e}")
+            raise RuntimeError("Error al ejecutar la consulta en la base de datos.") from e
 
 class InventarioDatabaseConnection(BaseDatabaseConnection):
     def __init__(self):
-        super().__init__("inventario")
+        super().__init__("mps.app-inventario")  # Actualizar el nombre de la base de datos
 
 class UsuariosDatabaseConnection(BaseDatabaseConnection):
     def __init__(self):
-        super().__init__("users")
+        super().__init__("mps.app-users")  # Actualizar el nombre de la base de datos
 
 class AuditoriaDatabaseConnection(BaseDatabaseConnection):
     def __init__(self):
@@ -88,6 +113,7 @@ class DatabaseConnection:
         self.username = username
         self.password = password
         self.driver = BaseDatabaseConnection.detectar_driver_odbc()
+        self.database = None  # Inicializar la base de datos como None
 
     def conectar_a_base(self, database):
         try:
@@ -98,41 +124,45 @@ class DatabaseConnection:
             print(f"Conexión establecida con la base de datos '{database}'.")
         except ValueError as e:
             print(f"Error de validación: {e}")
-            Logger().error(f"Error de validación: {e}")
+            self.logger.error(f"Error de validación: {e}")  # Corregir Logger() a self.logger
             raise
         except Exception as e:
             print(f"Error inesperado al conectar a la base de datos: {e}")
-            Logger().error(f"Error inesperado al conectar a la base de datos: {e}")
+            self.logger.error(f"Error inesperado al conectar a la base de datos: {e}")  # Corregir Logger() a self.logger
             raise
 
-    def ejecutar_query(self, query, params=None):
-        if not hasattr(self, 'database'):
-            raise ValueError("No se ha establecido una conexión a ninguna base de datos.")
+    def ejecutar_query(self, query, parametros=None):
         try:
             connection_string = (
                 f"DRIVER={{{self.driver}}};"
-                f"SERVER={self.server};"
+                f"SERVER=localhost\\SQLEXPRESS;"  # Usar el nombre del servidor predeterminado
+                f"DATABASE={self.database};"
                 f"UID={self.username};"
                 f"PWD={self.password};"
-                f"DATABASE={self.database};"
                 f"TrustServerCertificate=yes;"
             )
             with pyodbc.connect(connection_string, timeout=10) as conn:  # Agregar timeout
                 cursor = conn.cursor()
-                if params:
-                    cursor.execute(query, params)
+                if parametros:
+                    cursor.execute(query, parametros)
                 else:
                     cursor.execute(query)
-                return cursor.fetchall()
+                if query.strip().upper().startswith("SELECT"):
+                    return cursor.fetchall()
+                conn.commit()
         except pyodbc.OperationalError as e:
-            Logger().error(f"Error de conexión: {e}")
+            self.logger.error(f"Error de conexión: {e}")  # Corregir Logger() a self.logger
             raise RuntimeError(
-                "No se pudo conectar a la base de datos. Verifica el nombre del servidor/instancia, "
-                "las credenciales y que SQL Server permita conexiones remotas."
+                "No se pudo conectar a la base de datos. Verifica lo siguiente:\n"
+                "- El nombre del servidor o la dirección IP es correcta.\n"
+                "- El puerto 1433 está habilitado y accesible.\n"
+                "- Las credenciales de usuario y contraseña son válidas.\n"
+                "- SQL Server está configurado para aceptar conexiones remotas.\n"
+                "- El firewall no está bloqueando el puerto de SQL Server."
             ) from e
         except Exception as e:
-            Logger().error(f"Error al ejecutar la consulta: {e}")
-            raise
+            self.logger.error(f"Error al ejecutar la consulta: {e}")  # Corregir Logger() a self.logger
+            raise RuntimeError("Error al ejecutar la consulta en la base de datos.") from e
 
     @staticmethod
     def listar_bases_de_datos(server, username, password):
@@ -150,7 +180,7 @@ class DatabaseConnection:
                 cursor.execute("SELECT name FROM sys.databases WHERE state = 0;")
                 return [row[0] for row in cursor.fetchall()]
         except Exception as e:
-            Logger().error(f"Error al listar las bases de datos: {e}")
+            Logger().error(f"Error al listar las bases de datos: {e}")  # Corregir Logger() a self.logger si es necesario
             raise
 
 # Lógica para determinar la base de datos según el módulo
@@ -251,12 +281,18 @@ class DataAccessLayer:
 
     @staticmethod
     def detectar_plugins(modules_path="modules"):
-        # Detectamos plugins en el directorio `modules`
+        """Detecta plugins en el directorio especificado."""
         plugins = []
-        for carpeta in os.listdir(modules_path):
-            ruta_modulo = os.path.join(modules_path, carpeta)
-            if os.path.isdir(ruta_modulo):
-                archivos = os.listdir(ruta_modulo)
-                if "controller.py" in archivos and "view.py" in archivos:
-                    plugins.append(carpeta)
+        try:
+            if not os.path.exists(modules_path):
+                raise FileNotFoundError(f"La ruta '{modules_path}' no existe.")
+            
+            for carpeta in os.listdir(modules_path):
+                ruta_modulo = os.path.join(modules_path, carpeta)
+                if os.path.isdir(ruta_modulo):
+                    archivos = os.listdir(ruta_modulo)
+                    if "controller.py" in archivos and "view.py" in archivos:
+                        plugins.append(carpeta)
+        except Exception as e:
+            Logger().error(f"Error al detectar plugins: {e}")
         return plugins

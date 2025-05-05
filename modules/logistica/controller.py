@@ -1,3 +1,5 @@
+from PyQt6.QtWidgets import QTableWidgetItem
+
 class LogisticaController:
     def __init__(self, model, view):
         self.model = model
@@ -5,6 +7,18 @@ class LogisticaController:
         self.view.boton_agregar.clicked.connect(self.agregar_entrega)
         self.view.boton_actualizar_estado.clicked.connect(self.actualizar_estado_entrega)
         self.view.boton_agregar_checklist.clicked.connect(self.agregar_item_checklist)
+        self.cargar_datos_entregas()
+
+    def cargar_datos_entregas(self):
+        """Carga los datos de la tabla de entregas en la vista de logística."""
+        try:
+            datos = self.model.obtener_datos_entregas()
+            self.view.tabla_entregas.setRowCount(len(datos))
+            for row_idx, row_data in enumerate(datos):
+                for col_idx, value in enumerate(row_data):
+                    self.view.tabla_entregas.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
+        except Exception as e:
+            self.view.label.setText(f"Error al cargar datos: {e}")
 
     def agregar_entrega(self):
         destino = self.view.destino_input.text()

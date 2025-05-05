@@ -1,10 +1,12 @@
-from core.database import DataAccessLayer
 from PyQt6.QtWidgets import QTableWidgetItem
+from core.database import DataAccessLayer  # Importar DataAccessLayer
 
 class PedidosController:
     def __init__(self, model, view, db_connection):
         self.model = model
         self.view = view
+        if not hasattr(db_connection, 'logger'):
+            db_connection.logger = None  # Asegurar que db_connection tenga un logger
         self.dal = DataAccessLayer(db_connection)  # Usar DAL
         self.view.boton_crear.clicked.connect(self.crear_pedido)
         self.view.boton_ver_detalles.clicked.connect(self.ver_detalles_pedido)

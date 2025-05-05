@@ -32,20 +32,93 @@ class PedidosView(QWidget):
         self.layout.addLayout(self.form_layout)
 
         self.boton_crear = QPushButton("Crear Pedido")
-        self.boton_crear.setStyleSheet("background-color: #2563eb; color: white; padding: 10px; border-radius: 5px;")
+        self.boton_crear.setStyleSheet("""
+            QPushButton {
+                background-color: #2563eb; /* Azul */
+                color: white; /* Texto blanco */
+                text-align: center; /* Centrar texto */
+                border: none;
+                font-size: 14px; /* Tamaño de letra */
+                font-weight: bold; /* Negrita */
+                border-radius: 8px; /* Bordes redondeados */
+            }
+            QPushButton:hover {
+                background-color: #1e40af; /* Azul más oscuro */
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a; /* Azul aún más oscuro */
+            }
+        """)
         self.boton_crear.setFixedWidth(100)
         self.boton_crear.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout.addWidget(self.boton_crear)
 
         # Botón para ver detalles del pedido
         self.boton_ver_detalles = CustomButton("Ver Detalles del Pedido")
+        self.boton_ver_detalles.setStyleSheet("""
+            QPushButton {
+                background-color: #2563eb; /* Azul */
+                color: white; /* Texto blanco */
+                text-align: center; /* Centrar texto */
+                border: none;
+                font-size: 14px; /* Tamaño de letra */
+                font-weight: bold; /* Negrita */
+                border-radius: 8px; /* Bordes redondeados */
+            }
+            QPushButton:hover {
+                background-color: #1e40af; /* Azul más oscuro */
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a; /* Azul aún más oscuro */
+            }
+        """)
         self.boton_ver_detalles.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout.addWidget(self.boton_ver_detalles)
 
         # Botón para cargar presupuesto
         self.boton_cargar_presupuesto = CustomButton("Cargar Presupuesto")
+        self.boton_cargar_presupuesto.setStyleSheet("""
+            QPushButton {
+                background-color: #2563eb; /* Azul */
+                color: white; /* Texto blanco */
+                text-align: center; /* Centrar texto */
+                border: none;
+                font-size: 14px; /* Tamaño de letra */
+                font-weight: bold; /* Negrita */
+                border-radius: 8px; /* Bordes redondeados */
+            }
+            QPushButton:hover {
+                background-color: #1e40af; /* Azul más oscuro */
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a; /* Azul aún más oscuro */
+            }
+        """)
         self.boton_cargar_presupuesto.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout.addWidget(self.boton_cargar_presupuesto)
+
+        # Botón de ejemplo
+        self.boton_ejemplo = QPushButton("Ejemplo Pedidos")
+        self.boton_ejemplo.setFixedHeight(40)  # Altura fija
+        self.boton_ejemplo.setFixedWidth(150)  # Ancho fijo
+        self.boton_ejemplo.setStyleSheet("""
+            QPushButton {
+                background-color: #2563eb; /* Azul */
+                color: white; /* Texto blanco */
+                text-align: center; /* Centrar texto */
+                border: none;
+                font-size: 14px; /* Tamaño de letra */
+                font-weight: bold; /* Negrita */
+                border-radius: 8px; /* Bordes redondeados */
+            }
+            QPushButton:hover {
+                background-color: #1e40af; /* Azul más oscuro */
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a; /* Azul aún más oscuro */
+            }
+        """)
+        self.layout.addWidget(self.boton_ejemplo)
 
         # Tabla de detalles del pedido
         self.tabla_detalle_pedido = QTableWidget()

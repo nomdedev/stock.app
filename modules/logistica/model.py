@@ -3,8 +3,13 @@ from fpdf import FPDF
 from core.database import LogisticaDatabaseConnection  # Importar la clase correcta
 
 class LogisticaModel:
-    def __init__(self, db_connection=None):
-        self.db = db_connection or LogisticaDatabaseConnection()  # Usar LogisticaDatabaseConnection
+    def __init__(self, db_connection):
+        self.db_connection = db_connection
+
+    def obtener_datos_entregas(self):
+        """Obtiene los datos de la tabla de entregas desde la base de datos."""
+        query = "SELECT destino, fecha_programada, estado, vehiculo, chofer FROM entregas"
+        return self.db_connection.ejecutar_query(query)
 
     def obtener_entregas(self):
         query = "SELECT * FROM entregas_obras"
@@ -138,4 +143,9 @@ class LogisticaModel:
         FROM entregas_obras
         GROUP BY estado
         """
+        return self.db.ejecutar_query(query)
+
+    def obtener_datos_inventario(self):
+        """Obtiene los datos de la tabla de inventario desde la base de datos."""
+        query = "SELECT destino, fecha_programada, estado, vehiculo, chofer FROM inventario"
         return self.db.ejecutar_query(query)

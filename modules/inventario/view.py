@@ -214,12 +214,19 @@ class InventarioView(QWidget):
                 QPushButton {
                     font-size: 10px;
                     border-radius: 15px;
-                    background-color: #0078d7;
-                    color: white;
-                    padding: 5px;
+                    background-color: #2563eb; /* Azul */
+                    color: white; /* Texto blanco */
+                    text-align: center; /* Centrar texto */
+                    border: none;
+                    font-size: 14px; /* Tamaño de letra */
+                    font-weight: bold; /* Negrita */
+                    border-radius: 8px; /* Bordes redondeados */
                 }
                 QPushButton:hover {
-                    background-color: #005a9e;
+                    background-color: #1e40af; /* Azul más oscuro */
+                }
+                QPushButton:pressed {
+                    background-color: #1e3a8a; /* Azul aún más oscuro */
                 }
             """)
             botones_layout.addWidget(boton)
@@ -231,12 +238,19 @@ class InventarioView(QWidget):
             QPushButton {
                 font-size: 10px;
                 border-radius: 15px;
-                background-color: #0078d7;
-                color: white;
-                padding: 5px;
+                background-color: #2563eb; /* Azul */
+                color: white; /* Texto blanco */
+                text-align: center; /* Centrar texto */
+                border: none;
+                font-size: 14px; /* Tamaño de letra */
+                font-weight: bold; /* Negrita */
+                border-radius: 8px; /* Bordes redondeados */
             }
             QPushButton:hover {
-                background-color: #005a9e;
+                background-color: #1e40af; /* Azul más oscuro */
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a; /* Azul aún más oscuro */
             }
         """)
         self.boton_ajustar_stock.clicked.connect(self.abrir_ajustar_stock_dialog)

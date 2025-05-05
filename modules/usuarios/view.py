@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QTableWidget, QComboBox, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QTableWidget, QComboBox, QSizePolicy, QPushButton
 from PyQt6.QtCore import QTimer
 from core.ui_components import CustomButton
 
@@ -6,7 +6,40 @@ class UsuariosView(QWidget):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
-        self.layout = QVBoxLayout()
+        self.layout = QVBoxLayout(self)
+
+        # Ajustar estilo general de la vista
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #f0f0f0; /* Fondo gris claro */
+                color: #000000; /* Texto negro */
+                font-family: Arial, sans-serif;
+            }
+            QLabel {
+                font-size: 14px;
+                font-weight: bold;
+                color: #333333; /* Gris oscuro */
+            }
+            QTableWidget {
+                border: 1px solid #000000; /* Bordes negros */
+                background-color: #ffffff; /* Fondo blanco */
+                font-size: 12px;
+                gridline-color: #000000; /* Líneas de cuadrícula negras */
+            }
+            QTableWidget::item {
+                background-color: #ffffff; /* Fondo blanco */
+            }
+            QTableWidget::item:selected {
+                background-color: #d1d5db; /* Gris más oscuro */
+                color: #000000; /* Texto negro */
+            }
+            QHeaderView::section {
+                background-color: #dbeafe; /* Azul crema */
+                color: #000000; /* Texto negro */
+                font-weight: bold; /* Letras en negrita */
+                border: 1px solid #000000; /* Bordes negros */
+            }
+        """)
 
         self.label = QLabel("Gestión de Usuarios")
         self.layout.addWidget(self.label)
@@ -37,35 +70,10 @@ class UsuariosView(QWidget):
         self.boton_agregar.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout.addWidget(self.boton_agregar)
 
+        # Tabla principal de usuarios
         self.tabla_usuarios = QTableWidget()
-        self.tabla_usuarios.setColumnCount(10)
-        self.tabla_usuarios.setHorizontalHeaderLabels([
-            "ID", "Nombre", "Apellido", "Email", "Usuario", "Rol", "Estado",
-            "Editar", "Suspender/Reactivar", "Resetear Contraseña"
-        ])
-        self.tabla_usuarios.horizontalHeader().setStretchLastSection(True)
-        self.tabla_usuarios.horizontalHeader().setSectionsMovable(True)
-        self.tabla_usuarios.horizontalHeader().setStyleSheet("")
-        self.tabla_usuarios.setStyleSheet("""
-            QTableWidget {
-                border: 1px solid #e5e7eb;
-                border-radius: 12px;
-                font-size: 14px;
-                background: #f8f9fc;
-                selection-background-color: #2563eb;
-                selection-color: #fff;
-            }
-            QHeaderView::section {
-                background-color: #2563eb;
-                color: white;
-                font-weight: bold;
-                font-size: 14px;
-                border: none;
-                padding: 6px;
-                border-radius: 12px;
-            }
-        """)
-        self.tabla_usuarios.setFixedSize(800, 400)
+        self.tabla_usuarios.setColumnCount(7)
+        self.tabla_usuarios.setHorizontalHeaderLabels(["ID", "Nombre", "Apellido", "Email", "Usuario", "Rol", "Estado"])
         self.layout.addWidget(self.tabla_usuarios)
 
         self.boton_nuevo_usuario = CustomButton("Nuevo Usuario")
@@ -83,11 +91,10 @@ class UsuariosView(QWidget):
         self.boton_gestion_roles.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout.addWidget(self.boton_gestion_roles)
 
-        # Tabla de roles y permisos
+        # Tabla de permisos por rol
         self.tabla_roles_permisos = QTableWidget()
         self.tabla_roles_permisos.setColumnCount(6)
         self.tabla_roles_permisos.setHorizontalHeaderLabels(["Rol", "Módulo", "Ver", "Editar", "Aprobar", "Eliminar"])
-        self.tabla_roles_permisos.horizontalHeader().setStyleSheet("")
         self.layout.addWidget(self.tabla_roles_permisos)
 
         # Botón para guardar permisos
@@ -114,6 +121,29 @@ class UsuariosView(QWidget):
         """)
         self.toast_label.setVisible(False)
         self.layout.addWidget(self.toast_label)
+
+        # Botón de ejemplo
+        self.boton_ejemplo = QPushButton("Ejemplo Usuarios")
+        self.boton_ejemplo.setFixedHeight(40)  # Altura fija
+        self.boton_ejemplo.setFixedWidth(150)  # Ancho fijo
+        self.boton_ejemplo.setStyleSheet("""
+            QPushButton {
+                background-color: #2563eb; /* Azul */
+                color: white; /* Texto blanco */
+                text-align: center; /* Centrar texto */
+                border: none;
+                font-size: 14px; /* Tamaño de letra */
+                font-weight: bold; /* Negrita */
+                border-radius: 8px; /* Bordes redondeados */
+            }
+            QPushButton:hover {
+                background-color: #1e40af; /* Azul más oscuro */
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a; /* Azul aún más oscuro */
+            }
+        """)
+        self.layout.addWidget(self.boton_ejemplo)
 
         self.setLayout(self.layout)
 

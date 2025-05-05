@@ -92,6 +92,46 @@ DB_PASSWORD = "mps.1887"     # Contraseña del usuario
 ### Notas sobre la Conexión a la Base de Datos
 El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de que el controlador ODBC esté instalado y configurado correctamente.
 
+## Bases de Datos y Tablas Existentes
+
+### Bases de Datos
+1. **mps.app-inventario**
+2. **mps.app-users**
+
+---
+
+### Tablas en `mps.app-inventario`
+- **dbo.estado_material**: Estado de los materiales.
+- **dbo.historial**: Historial de movimientos o cambios.
+- **dbo.inventario**: Inventario general de materiales.
+- **dbo.materiales**: Detalles de los materiales.
+- **dbo.materiales_proveedores**: Relación entre materiales y proveedores.
+- **dbo.movimientos_inventario**: Movimientos registrados en el inventario.
+- **dbo.obras**: Información de las obras.
+- **dbo.obras_materiales**: Relación entre obras y materiales asignados.
+- **dbo.obra_materiales**: Detalles específicos de materiales por obra.
+- **dbo.pedidos**: Pedidos realizados.
+- **dbo.pedidos_pendientes**: Pedidos que aún no han sido completados.
+- **dbo.pedidos_por_obra**: Pedidos relacionados con obras específicas.
+- **dbo.perfiles_por_obra**: Perfiles asignados a obras.
+- **dbo.proveedores**: Información de los proveedores.
+
+---
+
+### Tablas en `mps.app-users`
+- **dbo.usuarios**: Información de los usuarios registrados.
+
+---
+
+### Notas Importantes
+1. **Nombres de Tablas**: Solo se deben usar los nombres de tablas existentes. No se deben crear tablas con nombres diferentes sin previa consulta y aprobación.
+2. **Creación de Nuevas Tablas**: Si se necesita crear una nueva tabla, consulta primero y espera la aprobación antes de proceder.
+3. **Consistencia**: Asegúrate de que las consultas y operaciones en la base de datos utilicen los nombres exactos de las tablas listadas aquí.
+
+---
+
+Si necesitas agregar más información o realizar cambios en las bases de datos, por favor consulta con el equipo antes de proceder.
+
 ## Buenas Prácticas de Programación
 
 ### Evitar el uso excesivo de condicionales `if`
