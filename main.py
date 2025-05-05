@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QPalette, QColor
 from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal, QSize
 from utils.icon_loader import get_icon
+from utils.theme_manager import aplicar_tema, cargar_modo_tema
 from functools import partial
 import ctypes
 import sys, os
@@ -352,73 +353,49 @@ class AuditoriaView(QWidget):
         botones_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Centrar botones
 
         # Botón "Ver Logs"
-        self.boton_ver_logs = QPushButton("Ver Logs")
-        self.boton_ver_logs.setFixedSize(150, 30)
-        self.boton_ver_logs.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                border: none;
-                border-radius: 15px; /* Bordes redondeados */
-                font-size: 12px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
+        self.boton_ver_logs = self.crear_boton("Ver Logs")
         botones_layout.addWidget(self.boton_ver_logs)
 
         # Botón "Exportar Logs"
-        self.boton_exportar_logs = QPushButton("Exportar Logs")
-        self.boton_exportar_logs.setFixedSize(150, 30)
-        self.boton_exportar_logs.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                border: none;
-                border-radius: 15px; /* Bordes redondeados */
-                font-size: 12px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
+        self.boton_exportar_logs = self.crear_boton("Exportar Logs")
         botones_layout.addWidget(self.boton_exportar_logs)
 
         # Botón "Filtrar Logs"
-        self.boton_filtrar_logs = QPushButton("Filtrar Logs")
-        self.boton_filtrar_logs.setFixedSize(150, 30)
-        self.boton_filtrar_logs.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                border: none;
-                border-radius: 15px; /* Bordes redondeados */
-                font-size: 12px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
+        self.boton_filtrar_logs = self.crear_boton("Filtrar Logs")
         botones_layout.addWidget(self.boton_filtrar_logs)
 
         # Agregar el layout de botones al layout principal
         self.layout.addLayout(botones_layout)
 
+    def crear_boton(self, texto):
+        """Crea un botón estilizado con el texto proporcionado."""
+        boton = QPushButton(texto)
+        boton.setFixedSize(150, 30)
+        boton.setStyleSheet("""
+            QPushButton {
+                background-color: #2563eb; /* Azul */
+                color: white; /* Texto blanco */
+                border: none;
+                border-radius: 15px; /* Bordes redondeados */
+                font-size: 12px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #1e40af; /* Azul más oscuro */
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a; /* Azul aún más oscuro */
+            }
+        """)
+        return boton
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    
+    # Aplicar el tema inicial
+    modo_inicial = cargar_modo_tema()
+    aplicar_tema(app, modo_inicial)
+
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

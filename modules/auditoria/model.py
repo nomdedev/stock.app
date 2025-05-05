@@ -75,3 +75,9 @@ class AuditoriaModel:
     def obtener_logs(self, modulo_afectado):
         query = "SELECT * FROM auditorias_sistema WHERE modulo_afectado = ?"
         return self.db.ejecutar_query(query, (modulo_afectado,))
+
+    def consultar_auditoria(self, fecha_inicio, fecha_fin, usuario):
+        query = "SELECT * FROM auditoria WHERE fecha >= ? AND fecha <= ? AND usuario LIKE ?"
+        parametros = (fecha_inicio, fecha_fin, f"%{usuario}%")
+        resultados = self.db.ejecutar_query(query, parametros)
+        return resultados

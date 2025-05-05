@@ -5,31 +5,20 @@ class AuditoriaController:
     def __init__(self, model, view):
         self.model = model
         self.view = view
-        self.view.boton_filtrar.clicked.connect(self.aplicar_filtros)
+        self.view.boton_filtrar.clicked.connect(self.aplicar_filtros)  # Conectar el botón al método
         self.view.boton_exportar.clicked.connect(self.exportar_logs)
         self.view.boton_exportar_excel.clicked.connect(lambda: self.exportar_auditorias("excel"))
         self.view.boton_exportar_pdf.clicked.connect(lambda: self.exportar_auditorias("pdf"))
 
     def aplicar_filtros(self):
-        filtros = {}
-        if self.view.filtro_usuario.text():
-            filtros["usuario_id"] = self.view.filtro_usuario.text()
-        if self.view.filtro_modulo.text():
-            filtros["modulo_afectado"] = self.view.filtro_modulo.text()
-        if self.view.filtro_fecha.text():
-            filtros["fecha_hora"] = self.view.filtro_fecha.text()
-
-        auditorias = self.model.obtener_auditorias(filtros)
-        self.view.tabla_auditorias.setRowCount(len(auditorias))
-        for row, auditoria in enumerate(auditorias):
-            for col, value in enumerate(auditoria):
-                self.view.tabla_auditorias.setItem(row, col, QTableWidgetItem(str(value)))
-
-        errores = self.model.obtener_errores(filtros)
-        self.view.tabla_errores.setRowCount(len(errores))
-        for row, error in enumerate(errores):
-            for col, value in enumerate(error):
-                self.view.tabla_errores.setItem(row, col, QTableWidgetItem(str(value)))
+        # Leer los filtros desde la vista
+        fecha_inicio = self.view.fecha_inicio.text()  # Ajustar según los widgets reales
+        fecha_fin = self.view.fecha_fin.text()
+        usuario = self.view.campo_usuario.text()
+        # Consultar la base de datos con los filtros
+        resultados = self.model.consultar_auditoria(fecha_inicio, fecha_fin, usuario)
+        # Actualizar la tabla con los resultados
+        self.view.actualizar_tabla(resultados)
 
     def exportar_logs(self):
         logs = self.model.obtener_auditorias()

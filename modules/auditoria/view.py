@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QTableWidget, QSizePolicy
+from PyQt6.QtCore import Qt
 
 class AuditoriaView(QWidget):
     def __init__(self):
@@ -12,25 +13,20 @@ class AuditoriaView(QWidget):
         botones_layout.setSpacing(10)  # Espaciado entre botones
 
         # Botón "Filtrar"
-        self.boton_filtrar = QPushButton("Filtrar")
-        self.boton_filtrar.setFixedSize(150, 30)
+        self.boton_filtrar = QPushButton("Filtrar")  # Definir el botón
+        self.boton_filtrar.setFixedSize(100, 30)
         self.boton_filtrar.setStyleSheet("""
             QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                border: none;
-                border-radius: 15px; /* Bordes redondeados */
-                font-size: 12px;
-                font-weight: bold;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #f0f0f0;
+                padding: 5px 10px;
             }
             QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
+                background-color: #e0e0e0;
             }
         """)
-        botones_layout.addWidget(self.boton_filtrar)
+        botones_layout.addWidget(self.boton_filtrar, alignment=Qt.AlignmentFlag.AlignLeft)
 
         # Botón "Exportar"
         self.boton_exportar = QPushButton("Exportar")

@@ -1,8 +1,19 @@
+from utils.theme_manager import aplicar_tema, guardar_modo_tema
+
 class ConfiguracionController:
     def __init__(self, model, view):
         self.model = model
         self.view = view
         self.view.save_button.clicked.connect(self.guardar_cambios)
+
+        # Conectar el switch de tema
+        self.view.switch_tema.stateChanged.connect(self.toggle_tema)
+
+        # Conectar botones adicionales
+        self.view.boton_activar_offline.clicked.connect(self.activar_modo_offline)
+        self.view.boton_desactivar_offline.clicked.connect(self.desactivar_modo_offline)
+        self.view.boton_guardar_conexion.clicked.connect(self.guardar_configuracion_conexion)
+        self.view.boton_cambiar_notificaciones.clicked.connect(self.cambiar_estado_notificaciones)
 
     def cargar_configuracion(self):
         configuracion = self.model.obtener_configuracion()
@@ -62,3 +73,8 @@ class ConfiguracionController:
         nuevo_estado = not estado_actual
         self.model.actualizar_estado_notificaciones(nuevo_estado)
         self.view.label.setText(f"Notificaciones {'activadas' if nuevo_estado else 'desactivadas'}.")
+
+    def toggle_tema(self, estado):
+        nuevo_modo = "oscuro" if estado == Qt.CheckState.Checked else "light"
+        aplicar_tema(QApplication.instance(), nuevo_modo)
+        guardar_modo_tema(nuevo_modo)

@@ -3,7 +3,26 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout
 class ConfiguracionView(QWidget):
     def __init__(self):
         super().__init__()
-        self.layout = QVBoxLayout()
+        self.layout = QVBoxLayout(self)
+        self.layout.setContentsMargins(20, 20, 20, 20)
+        self.layout.setSpacing(20)
+
+        # Switch para cambiar el tema
+        self.switch_tema = QCheckBox("Tema Oscuro")
+        self.switch_tema.setChecked(True)  # Por defecto, tema oscuro
+        self.switch_tema.setStyleSheet("""
+            QCheckBox::indicator {
+                width: 50px;
+                height: 25px;
+            }
+            QCheckBox::indicator:unchecked {
+                image: url(assets/switch_off.png);
+            }
+            QCheckBox::indicator:checked {
+                image: url(assets/switch_on.png);
+            }
+        """)
+        self.layout.addWidget(self.switch_tema)
 
         # Crear pestañas
         self.tabs = QTabWidget()
