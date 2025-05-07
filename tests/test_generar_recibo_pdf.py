@@ -1,5 +1,5 @@
 import os
-from modules.contabilidad.model import ContabilidadModel
+from modules.contabilidad.model import ContabilidadModel  # Confirmar que la ruta es correcta
 
 class MockDB:
     def ejecutar_query(self, query, params):

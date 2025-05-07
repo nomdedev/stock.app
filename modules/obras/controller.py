@@ -7,7 +7,7 @@ class ObrasController:
         self.view = view
         self.view.boton_agregar.clicked.connect(self.agregar_obra)
         self.view.boton_ver_cronograma.clicked.connect(self.ver_cronograma)
-        self.view.boton_asignar_materiales.clicked.connect(self.asignar_materiales)
+        self.view.boton_asignar_herrajes.clicked.connect(self.asignar_materiales)
         self.view.boton_exportar_excel.clicked.connect(lambda: self.exportar_cronograma_seleccionada("excel"))
         self.view.boton_exportar_pdf.clicked.connect(lambda: self.exportar_cronograma_seleccionada("pdf"))
         self.cargar_datos_obras()  # Cargar datos al iniciar

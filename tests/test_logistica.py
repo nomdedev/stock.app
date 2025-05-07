@@ -5,7 +5,7 @@ import os
 # Agregar el directorio raíz del proyecto al PYTHONPATH
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from modules.logistica.model import LogisticaModel
+from modules.logistica.model import LogisticaModel  # Confirmar que la ruta es correcta
 
 class MockDB:
     def __init__(self):

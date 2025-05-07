@@ -2,7 +2,6 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButt
 from PyQt6 import QtGui, QtWidgets
 from PyQt6.QtCore import Qt
 import json
-from modules.materiales.view import MaterialesView
 from modules.vidrios.view import VidriosView
 
 class AjustarStockDialog(QDialog):
@@ -344,11 +343,9 @@ class InventarioView(QWidget):
         self.tab_widget.addTab(self.tab_detalles, "Detalles")
 
         # Crear pestañas adicionales para Materiales y Vidrios
-        self.tab_materiales = MaterialesView()
         self.tab_vidrios = VidriosView()
 
         # Agregar las pestañas al QTabWidget
-        self.tab_widget.addTab(self.tab_materiales, "Materiales")
         self.tab_widget.addTab(self.tab_vidrios, "Vidrios")
 
         # Agregar QTabWidget al layout principal

@@ -1,4 +1,6 @@
-class MaterialesController:
+from PyQt6.QtWidgets import QMessageBox
+
+class HerrajesController:
     def __init__(self, model, view):
         self.model = model
         self.view = view

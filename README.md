@@ -103,13 +103,13 @@ El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de qu
 ### Tablas en `mps.app-inventario`
 - **dbo.estado_herrajes**: Estado de los herrajes.
 - **dbo.historial**: Historial de movimientos o cambios.
-- **dbo.inventario**: Inventario general de materiales.
+- **dbo.inventario**: Inventario general de herrajes.
 - **dbo.herrajes**: Detalles de los herrajes.
 - **dbo.herrajes_proveedores**: Relación entre herrajes y proveedores.
 - **dbo.movimientos_inventario**: Movimientos registrados en el inventario.
 - **dbo.obras**: Información de las obras.
-- **dbo.obras_materiales**: Relación entre obras y materiales asignados.
-- **dbo.obra_materiales**: Detalles específicos de materiales por obra.
+- **dbo.obras_materiales**: Relación entre obras y herrajes asignados.
+- **dbo.obra_materiales**: Detalles específicos de herrajes por obra.
 - **dbo.pedidos**: Pedidos realizados (ahora gestionados dentro del módulo Compras).
 - **dbo.pedidos_pendientes**: Pedidos que aún no han sido completados (parte del módulo Compras).
 - **dbo.pedidos_por_obra**: Pedidos relacionados con obras específicas.
@@ -178,7 +178,7 @@ Adoptar estas prácticas no solo mejora la calidad del código, sino que tambié
 
 #### Integración de Módulos
 - **Vidrios** ahora está integrado como una pestaña dentro del módulo **Inventario**.
-- El módulo **Materiales** ha sido eliminado.
+- El módulo **Materiales** ha sido eliminado y su funcionalidad está integrada en el módulo **Herrajes**.
 
 #### Actualización de Funcionalidades
 - El módulo **Inventario** ahora incluye pestañas adicionales para gestionar vidrios, permitiendo una administración centralizada.

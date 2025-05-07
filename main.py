@@ -21,7 +21,7 @@ from core.database import DatabaseConnection, InventarioDatabaseConnection
 # Importar vistas
 from modules.inventario.view import InventarioView
 from modules.obras.view import ObrasView
-from modules.produccion.view import ProduccionView
+from modules.obras.produccion.view import ProduccionView  # Importar desde el módulo correcto
 from modules.logistica.view import LogisticaView
 from modules.compras.view import PedidosView
 from modules.usuarios.view import UsuariosView
@@ -34,9 +34,9 @@ from modules.herrajes.view import HerrajesView
 # Importar controladores
 from modules.inventario.controller import InventarioController
 from modules.obras.controller import ObrasController
-from modules.produccion.controller import ProduccionController
+from modules.obras.produccion.controller import ProduccionController  # Importar desde el módulo correcto
 from modules.logistica.controller import LogisticaController
-from modules.compras.controller import PedidosController
+from modules.compras.pedidos.controller import PedidosController  # Importar desde el módulo correcto
 from modules.usuarios.controller import UsuariosController
 from modules.auditoria.controller import AuditoriaController
 from modules.configuracion.controller import ConfiguracionController
@@ -45,9 +45,9 @@ from modules.herrajes.controller import HerrajesController
 # Importar modelos
 from modules.inventario.model import InventarioModel
 from modules.obras.model import ObrasModel
-from modules.produccion.model import ProduccionModel
+from modules.obras.produccion.model import ProduccionModel  # Importar desde el módulo correcto
 from modules.logistica.model import LogisticaModel
-from modules.compras.model import PedidosModel
+from modules.compras.pedidos.model import PedidosModel  # Importar desde el módulo correcto
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from modules.configuracion.model import ConfiguracionModel
@@ -55,6 +55,7 @@ from modules.herrajes.model import HerrajesModel
 
 # Importar componentes
 from components.sidebar_button import SidebarButton
+from widgets.sidebar import Sidebar
 
 # Clase principal
 class MainWindow(QMainWindow):
@@ -225,262 +226,29 @@ class MainWindow(QMainWindow):
         self.module_stack.addWidget(self.auditoria_view)    # index 8
         self.module_stack.addWidget(self.usuarios_view)     # index 9
         self.module_stack.addWidget(self.configuracion_view)# index 10
-        self.module_stack.addWidget(self.materiales_view)   # index 11
 
-        # Sidebar
-        self.sidebar = Sidebar()
-        self.sidebar.section_selected.connect(self.navigate_to_section)
-
-        # Agregar botón al sidebar
-        self.sidebar.add_button("Pedidos", "utils/compras.svg", lambda: self.module_stack.setCurrentWidget(self.pedidos_view))
-
-        # Agregar al layout principal
-        main_layout.addWidget(self.sidebar)
-        main_layout.addWidget(self.module_stack)
-
-    def navigate_to_section(self, index):
-        """Actualizar la sección activa en el QStackedWidget."""
-        if 0 <= index < self.module_stack.count():
-            self.module_stack.setCurrentIndex(index)
-            self.sidebar.set_active_button(index)
-            self.logger.info(f"Navegando a la sección con índice {index}")
-        else:
-            self.logger.warning(f"Índice fuera de rango: {index}")
-
-class Sidebar(QWidget):
-    section_selected = pyqtSignal(int)  # Señal para emitir el índice seleccionado
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(12, 12, 12, 12)
-        self.layout.setSpacing(6)
-        self.setFixedWidth(100)  # Ancho fijo del sidebar actualizado a 200px
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #0D1117; /* Fondo oscuro */
-            }
-        """)
-        self.setStyleSheet(self.styleSheet() + """
-            QPushButton {
-                background-color: #1e40af; /* Azul oscuro */
-                color: #FFFFFF; /* Texto blanco */
-                border: none;
-                border-radius: 8px;
-                font-size: 10px; /* Tamaño de letra */
-                font-weight: bold;
-                width: 80px; /* Ancho */
-                height: 25px; /* Alto */
-            }
-            QPushButton:hover {
-                background-color: #1e3a8a; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #14274e; /* Azul aún más oscuro */
-            }
-        """)
-
-        # Crear botones del sidebar
-        self.buttons = []
+        # Crear el sidebar con los módulos
         sections = [
-            ("Inventario", "utils/inventario.svg", 0),
-            ("Obras", "utils/factory.svg", 1),
-            ("Producción", "utils/produccion.svg", 2),
-            ("Logística", "utils/logistica.svg", 3),
-            ("Pedidos", "utils/compras.svg", 4),
-            ("Mantenimiento", "utils/mantenimiento.svg", 5),
-            ("Contabilidad", "utils/contabilidad.svg", 6),
-            ("Herrajes", "utils/herrajes.svg", 7),
-            ("Auditoría", "utils/auditoria.svg", 8),
-            ("Usuarios", "utils/users.svg", 9),
-            ("Configuración", "utils/configuracion.svg", 10),
-            ("Materiales", "utils/materiales.svg", 11),
+            ("Inventario", "img/inventario.svg"),
+            ("Obras", "img/obras.svg"),
+            ("Producción", "img/produccion.svg"),
+            ("Logística", "img/logistica.svg"),
+            ("Compras", "img/compras.svg"),
+            ("Usuarios", "img/users.svg"),
+            ("Auditoría", "img/auditoria.svg"),
+            ("Configuración", "img/configuracion.svg"),
+            ("Mantenimiento", "img/mantenimiento.svg"),
+            ("Contabilidad", "img/contabilidad.svg"),
+            ("Vidrios", "img/vidrios.svg")
         ]
+        self.sidebar = Sidebar("img", sections)
+        self.sidebar.pageChanged.connect(self.module_stack.setCurrentIndex)
+        main_layout.addWidget(self.sidebar)
 
-        for name, icon_path, index in sections:
-            button = SidebarButton("", icon_path, activo=(index == 0))  # Eliminar texto del botón
-            button.setFixedWidth(80)  # Ancho fijo de 80 px
-            button.setIcon(QtGui.QIcon(icon_path))  # Establecer el ícono
-            button.setIconSize(QtCore.QSize(24, 24))  # Tamaño del ícono
-            button.clicked.connect(partial(self.section_selected.emit, index))
-            self.layout.addWidget(button)
-            self.buttons.append(button)
-
-    def set_active_button(self, index):
-        """Actualizar el botón activo en el sidebar."""
-        for i, button in enumerate(self.buttons):
-            button.set_activo(i == index)
-
-class PedidosView(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(20, 20, 20, 20)
-        self.layout.setSpacing(20)
-
-        # Crear lista para almacenar los botones
-        self.botones = []
-
-        # Crear contenedor para los botones
-        botones_layout = QHBoxLayout()
-        botones_layout.setSpacing(10)  # Espaciado entre botones
-        botones_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Centrar botones
-
-        # Botón "Crear Pedido"
-        self.boton_crear = QPushButton("Crear Pedido")
-        self.boton_crear.setFixedSize(100, 25)
-        self.boton_crear.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                border: none;
-                border-radius: 15px; /* Bordes redondeados */
-                font-size: 12px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_crear)
-        self.botones.append(self.boton_crear)
-
-        # Botón "Ver Detalles del Pedido"
-        self.boton_ver_detalles = QPushButton("Ver Detalles del Pedido")
-        self.boton_ver_detalles.setFixedSize(100, 25)
-        self.boton_ver_detalles.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                border: none;
-                border-radius: 15px; /* Bordes redondeados */
-                font-size: 12px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_ver_detalles)
-        self.botones.append(self.boton_ver_detalles)
-
-        # Botón "Cargar Presupuesto"
-        self.boton_cargar_presupuesto = QPushButton("Cargar Presupuesto")
-        self.boton_cargar_presupuesto.setFixedSize(100, 25)
-        self.boton_cargar_presupuesto.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                border: none;
-                border-radius: 15px; /* Bordes redondeados */
-                font-size: 12px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_cargar_presupuesto)
-        self.botones.append(self.boton_cargar_presupuesto)
-
-        # Ajustar los botones para que utilicen imágenes de la carpeta img
-        botones = [
-            ("Nuevo Ítem", "plus_icon.svg"),
-            ("Ver Movimientos", "search_icon.svg"),
-            ("Reservar", "reservar-mas.png"),
-            ("Exportar a Excel", "excel_icon.svg"),
-            ("Exportar a PDF", "pdf_icon.svg"),
-            ("Buscar", "buscar.png"),
-            ("Generar QR", "qr_icon.svg"),
-            ("Actualizar Inventario", "refresh_icon.svg")
-        ]
-
-        for boton, (texto, icono) in zip(self.botones, botones):
-            boton.setText("")  # Eliminar texto del botón
-            boton.setIcon(QtGui.QIcon(f"img/{icono}"))
-            boton.setIconSize(QtCore.QSize(24, 24))  # Tamaño del ícono
-            boton.setStyleSheet("""
-                QPushButton {
-                    background-color: #2563eb; /* Azul */
-                    border-radius: 8px; /* Bordes redondeados */
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #1e40af; /* Azul más oscuro */
-                }
-                QPushButton:pressed {
-                    background-color: #1e3a8a; /* Azul aún más oscuro */
-                }
-            """)
-
-        # Agregar el layout de botones al layout principal
-        self.layout.addLayout(botones_layout)
-
-class AuditoriaView(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(20, 20, 20, 20)
-        self.layout.setSpacing(20)
-
-        # Crear contenedor para los botones
-        botones_layout = QHBoxLayout()
-        botones_layout.setSpacing(10)  # Espaciado entre botones
-        botones_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Centrar botones
-
-        # Botón "Ver Logs"
-        self.boton_ver_logs = self.crear_boton("Ver Logs")
-        botones_layout.addWidget(self.boton_ver_logs)
-
-        # Botón "Exportar Logs"
-        self.boton_exportar_logs = self.crear_boton("Exportar Logs")
-        botones_layout.addWidget(self.boton_exportar_logs)
-
-        # Botón "Filtrar Logs"
-        self.boton_filtrar_logs = self.crear_boton("Filtrar Logs")
-        botones_layout.addWidget(self.boton_filtrar_logs)
-
-        # Agregar el layout de botones al layout principal
-        self.layout.addLayout(botones_layout)
-
-    def crear_boton(self, texto):
-        """Crea un botón estilizado con el texto proporcionado."""
-        boton = QPushButton(texto)
-        boton.setFixedSize(150, 30)
-        boton.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                border: none;
-                border-radius: 15px; /* Bordes redondeados */
-                font-size: 12px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        return boton
+        main_layout.addWidget(self.module_stack)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    
-    # Aplicar el tema inicial
-    modo_inicial = cargar_modo_tema()
-    aplicar_tema(app, modo_inicial)
-
-    window = MainWindow()
-    window.show()
+    main_window = MainWindow()
+    main_window.show()
     sys.exit(app.exec())

@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QTabWidget
-from modules.pedidos.view import PedidosView
+from modules.compras.pedidos.view import PedidosView  # Importar desde el módulo correcto
 
 class ComprasView(QWidget):
     def __init__(self):

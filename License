@@ -1,0 +1,425 @@
+stock.admin
+
+stock.admin es una aplicación de escritorio desarrollada en Python con PyQt6, diseñada para gestionar de manera eficiente el inventario, obras, órdenes, usuarios y otros aspectos clave de una empresa. Su interfaz moderna y modular permite una navegación intuitiva y una administración centralizada de los recursos.
+
+📋 Índice
+🧾 Descripción del Proyecto
+
+🚀 Características Principales
+
+🛠️ Tecnologías Utilizadas
+
+📁 Estructura del Proyecto
+
+⚙️ Instalación y Configuración
+
+🖥️ Uso de la Aplicación
+
+🔐 Gestión de Permisos y Seguridad
+
+📦 Exportación de Datos
+
+🧪 Pruebas y Validaciones
+
+📌 Roadmap
+
+📄 Licencia
+
+🧾 Descripción del Proyecto
+stock.admin es una solución integral para la gestión de inventarios y operaciones relacionadas en empresas que requieren un control detallado de sus recursos. La aplicación permite:
+
+Gestión de Inventario: Control de stock, ajustes, reservas y generación de códigos QR para etiquetado.
+
+Administración de Obras: Seguimiento de proyectos, asignación de materiales y control de avances.
+
+Órdenes de Trabajo: Creación, seguimiento y cierre de órdenes con trazabilidad completa.
+
+Gestión de Usuarios: Administración de roles, permisos y auditoría de acciones.
+
+Logística y Mantenimiento: Planificación de entregas, mantenimiento preventivo y correctivo de equipos.
+
+Configuración Personalizada: Ajustes de la aplicación, temas claro/oscuro y preferencias de usuario.
+
+🚀 Características Principales
+Interfaz Moderna: Diseño limpio y responsivo con soporte para temas claro y oscuro.
+
+Modularidad: Cada funcionalidad está encapsulada en módulos independientes para facilitar el mantenimiento y la escalabilidad.
+
+Gestión de Permisos: Control de acceso basado en roles para garantizar la seguridad de la información.
+
+Exportación de Datos: Posibilidad de exportar información en formatos Excel y PDF.
+
+Generación de Códigos QR: Creación de códigos QR para identificación rápida de ítems.
+
+Auditoría: Registro detallado de acciones realizadas por los usuarios en el sistema.
+
+🛠️ Tecnologías Utilizadas
+Lenguaje de Programación: Python 3.10
+
+Framework de Interfaz Gráfica: PyQt6
+
+Base de Datos: SQL Server
+
+ORM: SQLAlchemy
+
+Generación de Códigos QR: qrcode
+
+Exportación a Excel: openpyxl
+
+Exportación a PDF: ReportLab
+
+Control de Versiones: Git
+
+Gestión de Dependencias: pip
+
+📁 Estructura del Proyecto
+bash
+Copiar
+Editar
+stock.admin/
+├── main.py
+├── requirements.txt
+├── README.md
+├── config/
+│   └── config.json
+├── utils/
+│   ├── icons/
+│   └── helpers.py
+├── themes/
+│   ├── dark.qss
+│   └── light.qss
+├── modules/
+│   ├── inventario/
+│   │   ├── model.py
+│   │   ├── view.py
+│   │   └── controller.py
+│   ├── obras/
+│   ├── ordenes/
+│   ├── usuarios/
+│   ├── auditoria/
+│   ├── logistica/
+│   ├── mantenimiento/
+│   └── materiales/
+└── tests/
+    └── test_modules.py
+⚙️ Instalación y Configuración
+Requisitos Previos
+Python 3.10 instalado en el sistema.
+
+SQL Server configurado y en funcionamiento.
+
+Git para clonar el repositorio.
+
+Pasos de Instalación
+Clonar el repositorio:
+
+bash
+Copiar
+Editar
+git clone https://github.com/usuario/stock.admin.git
+cd stock.admin
+Crear y activar un entorno virtual:
+
+bash
+Copiar
+Editar
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+Instalar las dependencias:
+
+bash
+Copiar
+Editar
+pip install -r requirements.txt
+Configurar la base de datos:
+
+Crear una base de datos en SQL Server llamada inventario.
+
+Ejecutar los scripts de creación de tablas ubicados en scripts/sql/.
+
+Configurar el archivo config.json:
+
+json
+Copiar
+Editar
+{
+  "db_connection": "Driver={SQL Server};Server=SERVIDOR;Database=inventario;Trusted_Connection=yes;",
+  "theme": "dark",
+  "default_language": "es"
+}
+Ejecutar la aplicación:
+
+bash
+Copiar
+Editar
+python main.py
+🖥️ Uso de la Aplicación
+Al iniciar la aplicación, se presenta una interfaz con una barra lateral que permite navegar entre los diferentes módulos:
+
+Inventario: Visualización y gestión de los ítems en stock.
+
+Obras: Seguimiento de proyectos y asignación de recursos.
+
+Órdenes: Creación y seguimiento de órdenes de trabajo.
+
+Usuarios: Administración de cuentas y permisos.
+
+Auditoría: Revisión de acciones realizadas en el sistema.
+
+Logística: Planificación y seguimiento de entregas.
+
+Mantenimiento: Registro y programación de mantenimientos.
+
+Materiales: Gestión de herrajes y materiales específicos.
+
+Cada módulo ofrece funcionalidades específicas, como búsqueda, filtrado, exportación de datos y generación de reportes.
+
+🔐 Gestión de Permisos y Seguridad
+La aplicación implementa un sistema de roles para controlar el acceso a las diferentes funcionalidades:
+
+Administrador: Acceso completo a todas las funcionalidades.
+
+Supervisor: Gestión de inventario y obras.
+
+Usuario: Acceso limitado según las asignaciones.
+
+Además, se registra un historial de acciones para auditoría y seguimiento de cambios.
+
+📦 Exportación de Datos
+Los módulos de la aplicación permiten exportar la información visualizada en formatos:
+
+Excel (.xlsx): Para análisis y manipulación de datos.
+
+PDF: Para generación de reportes y documentación.
+
+La exportación incluye los filtros aplicados y respeta la configuración de columnas visibles.
+
+🧪 Pruebas y Validaciones
+Se han implementado pruebas unitarias y de integración para garantizar la estabilidad del sistema:
+
+Pruebas Unitarias: Validación de funciones individuales en los módulos.
+
+Pruebas de Integración: Verificación del flujo de datos entre módulos y la base de datos.
+
+Pruebas de Interfaz: Asegurar la correcta interacción del usuario con la aplicación.
+
+Las pruebas se encuentran en el directorio tests/ y pueden ejecutarse con:
+
+bash
+Copiar
+Editar
+pytest tests/
+📌 Roadmap
+ Implementación de módulo de Inventario.
+
+ Desarrollo de módulo de Obras.
+
+ Integración de módulo de Órdenes.
+
+ Gestión de Usuarios y Roles.
+
+ Auditoría de acciones.
+
+ Módulo de Logística.
+
+ Módulo de Mantenimiento.
+
+ Módulo de Materiales (Herrajes).
+
+ Implementación de notificaciones por correo.
+
+ Integración con sistemas externos (ERP, CRM).
+
+ Desarrollo de aplicación móvil complementaria.
+
+📄 Licencia
+Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.
+
+------------------------------------------------------------------------------------------------------------------
+
+
+🧠 Guía de Desarrollo y Referencia para stock.admin
+
+Este documento sirve como guía oficial para Copilot y cualquier desarrollador que trabaje sobre el proyecto stock.admin. Define la estructura, lógica esperada y acciones por módulo. Todo cambio en el sistema debe seguir esta referencia.
+
+✨ GENERALIDADES
+
+El proyecto está hecho en Python 3.10 con PyQt6
+
+El diseño de la UI debe tener bordes redondeados, botones con sombra y estilos modernos
+
+El cambio de tema claro/oscuro debe reflejarse en todos los widgets, incluyendo tablas
+
+La app debe poder iniciar incluso sin conexión a la base de datos
+
+Toda acción debe dejar trazabilidad en el módulo de auditoría
+
+🏢 CONEXIÓN Y CONFIGURACIÓN DE BASE DE DATOS
+
+Se define en el archivo config/config.json
+
+Debe permitir seleccionar servidor y credenciales desde un panel de configuración visual
+
+Las bases actuales son:
+
+inventario: contiene materiales, stock, obras, etc.
+
+usuarios: información de usuarios y roles
+
+auditorias: toda acción ejecutada en la app
+
+📅 MÓDULO: INVENTARIO
+
+Objetivo
+
+Gestín y visualización del stock actual.
+
+Acciones permitidas:
+
+Ver listado de perfiles y cantidades
+
+Buscar por código, descripción o estado
+
+Agregar nuevo material (formulario con campos obligatorios: código, descripción, cantidad, tipo)
+
+Ajustar stock:
+
+Abre una ventana modal
+
+Se ingresa un código de perfil, se muestra automáticamente el nombre
+
+Se ingresa la cantidad y se registra en la DB
+
+Queda guardado en la tabla ajustes_stock con usuario, fecha y motivo
+
+Eliminar o modificar material
+
+Generar QR por material
+
+🏛️ MÓDULO: OBRAS
+
+Objetivo
+
+Cargar, visualizar y modificar obras.
+
+Acciones permitidas:
+
+Cargar nueva obra (nombre, apellido, dirección, teléfono, etc.)
+
+Asignar fecha de medición, fabricación y colocación
+
+Ver cronograma global
+
+Ver estado de avance por porcentajes
+
+Ver perfiles reservados y materiales pedidos
+
+🚚 MÓDULO: LOGÍSTICA
+
+Objetivo
+
+Coordinar entregas, colocaciones y pedidos de vidrio.
+
+Acciones permitidas:
+
+Registrar finalización de obra (con formulario de lo pendiente)
+
+Ver cronograma de instalación
+
+Registrar pedido de vidrios (vinculado a obra y abertura)
+
+Confirmar llegada de vidrios
+
+Indicar tipología, proveedor, medidas
+
+Generar comparativa de presupuestos de vidrio
+
+💪 MÓDULO: USUARIOS
+
+Objetivo
+
+Gestín de usuarios, sesiones y permisos
+
+Acciones permitidas:
+
+Crear, editar o eliminar usuarios
+
+Asignar roles: admin, supervisor, logística, ventas, etc.
+
+Ver sesión activa y usuario actual
+
+Cambiar contraseña
+
+📊 MÓDULO: AUDITORÍA
+
+Objetivo
+
+Trazabilidad completa de las acciones del sistema
+
+Acciones permitidas:
+
+Filtrar acciones por usuario, fecha o módulo
+
+Ver detalles de acción ejecutada
+
+🪨 MÓDULO: MATERIALES (Herrajes)
+
+Objetivo
+
+Control de herrajes disponibles y su uso en obras
+
+Acciones permitidas:
+
+Cargar herraje nuevo
+
+Ver listado con columnas: código, descripción, cantidad, ubicación
+
+Editar o eliminar herraje
+
+Exportar Excel o PDF
+
+Asociar a obra o reserva
+
+🏋️ MÓDULO: MANTENIMIENTO
+
+Objetivo
+
+Llevar registro de mantenimiento preventivo y correctivo de vehículos, herramientas o equipos
+
+Acciones permitidas:
+
+Agendar mantenimiento
+
+Ver historial de mantenimientos
+
+Asociar a vehículo, responsable, tipo de tarea
+
+🔧 MÓDULO: CONFIGURACIÓN
+
+Objetivo
+
+Personalizar y ajustar opciones del sistema
+
+Acciones permitidas:
+
+Cambiar tema (claro/oscuro)
+
+Configurar conexión a la base de datos
+
+Ver estado de conexión
+
+Guardar preferencias entre sesiones
+
+🖇️ REGLAS GENERALES PARA COPILOT
+
+NO crear archivos en rutas incorrectas. Respetar estructura de modules/{modulo}/
+
+Usar los nombres exactos de tablas en la base de datos
+
+Todo debe dejar un registro en auditoría
+
+Si una acción requiere privilegios, verificar el rol del usuario
+
+Siempre validar formularios antes de insertar o actualizar
+
+Evitar crasheos: si la DB no está conectada, mostrar aviso y dejar funcional lo demás

@@ -1,6 +1,6 @@
 from core.database import DatabaseConnection
 
-class MaterialModel:
+class HerrajesModel:
     def __init__(self, db_connection: DatabaseConnection):
         self.db = db_connection
 

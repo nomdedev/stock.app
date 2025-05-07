@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QTableWidget, QTabWidget, QCalendarWidget, QPushButton, QHBoxLayout, QComboBox
 from PyQt6.QtCore import Qt
 from core.ui_components import CustomButton
+from modules.obras.produccion.view import ProduccionView  # Importar ProduccionView desde el módulo correcto
 
 class ObrasView(QWidget):
     def __init__(self):
@@ -205,5 +206,9 @@ class ObrasView(QWidget):
 
         self.tab_calendario.setLayout(self.tab_calendario_layout)
         self.tabs.addTab(self.tab_calendario, "Calendario")
+
+        # Pestaña de Producción
+        self.tab_produccion = ProduccionView()
+        self.tabs.addTab(self.tab_produccion, "Producción")
 
         self.setLayout(self.layout)

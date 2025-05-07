@@ -5,3 +5,4 @@ logger==1.4
 DataAccessLayer==0.1.0
 matplotlib==3.7.1
 PyQt5==5.15.11
+pyodbc==4.0.35
