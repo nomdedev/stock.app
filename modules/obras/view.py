@@ -78,10 +78,10 @@ class ObrasView(QWidget):
         """)
         botones_layout.addWidget(self.boton_ver_cronograma)
 
-        self.boton_asignar_materiales = QPushButton("Asignar Materiales")
-        self.boton_asignar_materiales.setFixedHeight(30)
-        self.boton_asignar_materiales.setFixedWidth(150)
-        self.boton_asignar_materiales.setStyleSheet("""
+        self.boton_asignar_herrajes = QPushButton("Asignar Herrajes")
+        self.boton_asignar_herrajes.setFixedHeight(30)
+        self.boton_asignar_herrajes.setFixedWidth(150)
+        self.boton_asignar_herrajes.setStyleSheet("""
             QPushButton {
                 background-color: #2563eb; /* Azul */
                 color: white; /* Texto blanco */
@@ -97,7 +97,7 @@ class ObrasView(QWidget):
                 background-color: #1e3a8a; /* Azul aún más oscuro */
             }
         """)
-        botones_layout.addWidget(self.boton_asignar_materiales)
+        botones_layout.addWidget(self.boton_asignar_herrajes)
 
         self.boton_finalizar = QPushButton("Finalizar Obra")
         self.boton_finalizar.setFixedHeight(30)

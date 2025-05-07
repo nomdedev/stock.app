@@ -1,7 +1,7 @@
-/* style_moderno.qss */
+/* style_moderno.qss actualizado para tema oscuro */
 /* Sidebar */
 #menuLateral {
-    background-color: #ffffff;
+    background-color: #0A0E1A; /* Azul oscuro profundo */
     border-radius: 12px;
     padding: 8px;
 }
@@ -9,23 +9,23 @@
 /* Botones del Sidebar */
 QPushButton#botonMenu {
     background-color: transparent;
-    color: #1f2937;
+    color: #F5F5DC; /* Crema */
     border-radius: 8px;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 500;
 }
 QPushButton#botonMenu:hover {
-    background-color: #f3f4f6;
+    background-color: #1E3A8A; /* Azul oscuro */
 }
 QPushButton#botonMenuActivo {
-    background-color: #2563eb;
-    color: #ffffff;
+    background-color: #1E40AF; /* Azul más claro */
+    color: #F5F5DC; /* Crema */
 }
 
 /* Contenedor Widgets */
 #contenedorWidgets {
-    background-color: #ffffff;
+    background-color: #161B22; /* Azul muy oscuro */
     border-radius: 12px;
     padding: 16px;
     margin: 16px;
@@ -33,30 +33,30 @@ QPushButton#botonMenuActivo {
 
 /* Tarjetas del Dashboard */
 QGroupBox {
-    background-color: white;
+    background-color: #21262D; /* Azul oscuro */
     border-radius: 12px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #30363D; /* Azul grisáceo */
     padding: 20px;
     margin: 10px;
 }
 
 /* Table styling */
 QTableWidget {
-    background-color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    gridline-color: #e0e0e0;
+    background-color: #161B22; /* Azul muy oscuro */
+    color: #F5F5DC; /* Crema */
+    gridline-color: #30363D; /* Azul grisáceo */
+    border: 1px solid #21262D; /* Azul oscuro */
 }
 QTableWidget QHeaderView::section {
-    background-color: #f5f5f5;
-    color: #1f2937;
+    background-color: #21262D; /* Azul oscuro */
+    color: #F5F5DC; /* Crema */
     font-weight: bold;
     padding: 8px;
-    border: none;
+    border: 1px solid #30363D; /* Azul grisáceo */
 }
 QTableWidget::item:selected {
-    background-color: #2563eb;
-    color: #ffffff;
+    background-color: #1E40AF; /* Azul más claro */
+    color: #F5F5DC; /* Crema */
 }
 
 /* Scrollbars */
@@ -67,40 +67,41 @@ QScrollBar:vertical, QScrollBar:horizontal {
     height: 8px;
 }
 QScrollBar::handle {
-    background: #cbd5e1;
+    background: #30363D; /* Azul grisáceo */
     border-radius: 4px;
 }
 QScrollBar::handle:hover {
-    background: #94a3b8;
+    background: #1E40AF; /* Azul más claro */
 }
 
 /* Buttons */
 QPushButton {
-    background-color: #2563eb;
-    color: #ffffff;
+    background-color: #2563EB; /* Azul claro */
+    color: #FFFFFF; /* Texto blanco */
+    border: 1px solid #1E3A8A; /* Azul oscuro */
     border-radius: 8px;
     padding: 8px 16px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
 }
 QPushButton:hover {
-    background-color: #1e40af;
+    background-color: #1E40AF; /* Azul más oscuro */
 }
 QPushButton:pressed {
-    background-color: #1e3a8a;
+    background-color: #14274E; /* Azul aún más oscuro */
 }
 
 /* Estado Online/Offline */
 QLabel#estadoOnline {
-    background-color: #dcfce7;
-    color: #065f46;
+    background-color: #1E3A8A; /* Azul oscuro */
+    color: #F5F5DC; /* Crema */
     font-weight: bold;
     border-radius: 8px;
     padding: 4px 10px;
 }
 QLabel#estadoOffline {
-    background-color: #fee2e2;
-    color: #991b1b;
+    background-color: #991B1B; /* Rojo oscuro */
+    color: #F5F5DC; /* Crema */
     font-weight: bold;
     border-radius: 8px;
     padding: 4px 10px;
@@ -108,6 +109,27 @@ QLabel#estadoOffline {
 
 /* Global typography */
 * {
-    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    font-family: 'Segoe UI', 'Inter', sans-serif;
     font-size: 14px;
+}
+
+/* Aplicar bordes redondeados globalmente */
+QWidget, QDialog, QFrame, QPushButton, QTableWidget, QLabel {
+    border-radius: 12px; /* Bordes redondeados */
+}
+
+/* Estilo moderno con gamas de azules */
+QWidget {
+    background-color: #0A0E1A; /* Azul oscuro profundo */
+    color: #F5F5DC; /* Crema */
+    font-family: 'Segoe UI', 'Inter', sans-serif;
+    font-size: 14px;
+}
+
+QLabel {
+    color: #B3C7E6; /* Azul crema claro */
+}
+
+QFrame {
+    border: 1px solid #2D2D2D; /* Azul grisáceo oscuro */
 }

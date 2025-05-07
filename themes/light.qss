@@ -6,20 +6,28 @@ QWidget {
     font-size: 14px;
 }
 
+/* Aplicar bordes redondeados globalmente */
+QWidget, QDialog, QFrame, QPushButton, QTableWidget, QLabel {
+    border-radius: 12px; /* Bordes redondeados */
+}
+
 QPushButton {
-    background-color: #B0C4DE;
-    color: #1C1C1C;
-    border-radius: 6px;
-    padding: 6px;
+    background-color: #F5F5DC; /* Fondo crema */
+    color: #333333; /* Texto gris oscuro */
+    border: 1px solid #E0E0D1; /* Borde crema más claro */
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: bold;
+    width: 100px;
+    height: 25px;
 }
 
 QPushButton:hover {
-    background-color: #A0B4CE;
+    background-color: #FAFAD2; /* Crema más claro al pasar el mouse */
 }
 
 QPushButton:pressed {
-    background-color: #90A4BE;
-    color: #FFFFFF;
+    background-color: #FFFFE0; /* Crema aún más claro al presionar */
 }
 
 QTableWidget {
@@ -34,4 +42,8 @@ QHeaderView::section {
     color: #1C1C1C;
     font-weight: bold;
     border: 1px solid #D1D5DB;
+}
+
+QLabel {
+    color: #000000; /* Texto negro */
 }

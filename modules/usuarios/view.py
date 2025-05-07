@@ -76,6 +76,9 @@ class UsuariosView(QWidget):
         self.tabla_usuarios.setHorizontalHeaderLabels(["ID", "Nombre", "Apellido", "Email", "Usuario", "Rol", "Estado"])
         self.layout.addWidget(self.tabla_usuarios)
 
+        # Ajustar el ancho de las columnas al contenido
+        self.tabla_usuarios.resizeColumnsToContents()
+
         self.boton_nuevo_usuario = CustomButton("Nuevo Usuario")
         self.layout.addWidget(self.boton_nuevo_usuario)
 
@@ -96,6 +99,9 @@ class UsuariosView(QWidget):
         self.tabla_roles_permisos.setColumnCount(6)
         self.tabla_roles_permisos.setHorizontalHeaderLabels(["Rol", "Módulo", "Ver", "Editar", "Aprobar", "Eliminar"])
         self.layout.addWidget(self.tabla_roles_permisos)
+
+        # Ajustar el ancho de las columnas al contenido
+        self.tabla_roles_permisos.resizeColumnsToContents()
 
         # Botón para guardar permisos
         self.boton_guardar_permisos = CustomButton("Guardar Permisos")

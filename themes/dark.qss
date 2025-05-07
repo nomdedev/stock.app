@@ -1,37 +1,53 @@
-/* Tema oscuro */
-QWidget {
-    background-color: #0D1117;
-    color: #E6EDF3;
+/* Tema oscuro con gamas de azules oscuros y claros */
+QWidget, QDialog, QFrame, QPushButton, QTableWidget, QLabel {
+    border-radius: 12px; /* Bordes redondeados */
+}
+
+QWidget, QDialog {
+    background-color: #0A0E1A; /* Azul oscuro profundo */
+    color: #F5F5DC; /* Crema */
     font-family: 'Segoe UI', 'Inter', sans-serif;
     font-size: 14px;
+    border: 1px solid #1E3A8A; /* Borde azul oscuro */
 }
 
 QPushButton {
-    background-color: #21262D;
-    color: #E6EDF3;
-    border-radius: 6px;
-    padding: 6px;
+    background-color: #2563EB; /* Azul claro */
+    color: #FFFFFF; /* Texto blanco */
+    border: 1px solid #1E3A8A; /* Azul oscuro */
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    width: 100px;
+    height: 25px;
 }
 
 QPushButton:hover {
-    background-color: #30363D;
+    background-color: #1E40AF; /* Azul más oscuro */
 }
 
 QPushButton:pressed {
-    background-color: #1F6FEB;
-    color: #FFFFFF;
+    background-color: #14274E; /* Azul aún más oscuro */
 }
 
 QTableWidget {
-    background-color: #161B22;
-    color: #E6EDF3;
-    gridline-color: #30363D;
-    border: 1px solid #21262D;
+    background-color: #161B22; /* Azul muy oscuro */
+    color: #F5F5DC; /* Crema */
+    gridline-color: #30363D; /* Azul grisáceo */
+    border: 1px solid #21262D; /* Azul oscuro */
 }
 
 QHeaderView::section {
-    background-color: #21262D;
-    color: #E6EDF3;
+    background-color: #21262D; /* Azul oscuro */
+    color: #F5F5DC; /* Crema */
     font-weight: bold;
-    border: 1px solid #30363D;
+    border: 1px solid #30363D; /* Azul grisáceo */
+}
+
+QLabel {
+    color: #B3C7E6; /* Azul crema claro */
+}
+
+QFrame {
+    border: 1px solid #2D2D2D; /* Azul grisáceo oscuro */
 }

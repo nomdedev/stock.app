@@ -66,6 +66,7 @@ class Sidebar(QWidget):
             button = QPushButton(section)
             button.setObjectName("botonMenu")
             button.setFixedHeight(44)
+            button.setFixedSize(100, 25)
             button.setStyleSheet("""
                 QPushButton#botonMenu {
                     background-color: white;

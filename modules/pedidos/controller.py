@@ -49,6 +49,8 @@ class PedidosController:
         for row, detalle in enumerate(detalles):
             for col, value in enumerate(detalle):
                 self.view.tabla_detalle_pedido.setItem(row, col, QTableWidgetItem(str(value)))
+        # Ajustar el ancho de las columnas al contenido
+        self.view.tabla_detalle_pedido.resizeColumnsToContents()
 
     def cargar_presupuesto(self):
         try:
@@ -97,6 +99,8 @@ class PedidosController:
             for row, pedido in enumerate(pedidos):
                 for col, value in enumerate(pedido):
                     self.view.tabla_pedidos.setItem(row, col, QTableWidgetItem(str(value)))
+            # Ajustar el ancho de las columnas al contenido
+            self.view.tabla_pedidos.resizeColumnsToContents()
             self.view.label.setText("Pedidos cargados correctamente.")
         except Exception as e:
             print(f"Error al cargar pedidos: {e}")

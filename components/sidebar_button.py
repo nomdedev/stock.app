@@ -25,24 +25,24 @@ class SidebarButton(QPushButton):
         if activo:
             return """
                 QPushButton {
-                    background-color: #21262D; /* Fondo activo */
+                    background-color: #FFFFFF; /* Fondo activo blanco */
                     color: #1F6FEB; /* Texto activo */
                     font-weight: bold;
                     border-radius: 6px;
                 }
                 QPushButton:hover {
-                    background-color: #30363D; /* Hover */
+                    background-color: #F0F0F0; /* Hover blanco */
                 }
             """
         else:
             return """
                 QPushButton {
-                    background-color: #0D1117; /* Fondo normal */
-                    color: #E6EDF3; /* Texto normal */
+                    background-color: #FFFFFF; /* Fondo normal blanco */
+                    color: #000000; /* Texto normal negro */
                     border-radius: 6px;
                 }
                 QPushButton:hover {
-                    background-color: #30363D; /* Hover */
+                    background-color: #F0F0F0; /* Hover blanco */
                 }
             """
 

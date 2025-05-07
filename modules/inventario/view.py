@@ -70,11 +70,21 @@ class AjustarStockDialog(QDialog):
 
         layout.addLayout(input_layout)
 
-        # Botón para agregar el material a la lista
-        self.agregar_button = QPushButton("Agregar a la Lista")
-        self.agregar_button.setFixedSize(200, 25)
+        # Botón para agregar el material a la lista con ícono
+        self.agregar_button = QPushButton()
+        self.agregar_button.setIcon(QtGui.QIcon('img/plus_icon.svg'))
+        self.agregar_button.setToolTip("Agregar a la Lista")
+        self.agregar_button.setFixedSize(40, 40)
         self.agregar_button.clicked.connect(self.agregar_a_lista)
         layout.addWidget(self.agregar_button)
+
+        # Botón para cargar el stock con ícono
+        self.cargar_button = QPushButton()
+        self.cargar_button.setIcon(QtGui.QIcon('img/refresh_icon.svg'))
+        self.cargar_button.setToolTip("Cargar Stock")
+        self.cargar_button.setFixedSize(40, 40)
+        self.cargar_button.clicked.connect(self.cargar_stock)
+        layout.addWidget(self.cargar_button)
 
         # Tabla para mostrar los materiales a ajustar
         self.tabla_ajustes = QTableWidget()
@@ -82,11 +92,8 @@ class AjustarStockDialog(QDialog):
         self.tabla_ajustes.setHorizontalHeaderLabels(["Código", "Descripción", "Cantidad"])
         layout.addWidget(self.tabla_ajustes)
 
-        # Botón para cargar el stock
-        self.cargar_button = QPushButton("Cargar Stock")
-        self.cargar_button.setFixedSize(200, 25)
-        self.cargar_button.clicked.connect(self.cargar_stock)
-        layout.addWidget(self.cargar_button)
+        # Ajustar el ancho de las columnas al contenido
+        self.tabla_ajustes.resizeColumnsToContents()
 
         self.lista_ajustes = []  # Lista para almacenar los ajustes temporales
 
@@ -146,6 +153,12 @@ class AjustarStockDialog(QDialog):
         self.lista_ajustes.clear()
         self.tabla_ajustes.setRowCount(0)
 
+    def closeEvent(self, event):
+        """Asegura que el diálogo se cierre correctamente."""
+        self.lista_ajustes.clear()  # Limpiar la lista de ajustes
+        self.tabla_ajustes.setRowCount(0)  # Limpiar la tabla
+        event.accept()
+
 class InventarioView(QWidget):
     def __init__(self):
         super().__init__()
@@ -188,6 +201,9 @@ class InventarioView(QWidget):
                 border: 1px solid #dcdcdc;
             }
         """)
+
+        # Ajustar el ancho de las columnas al contenido
+        self.tabla_inventario.resizeColumnsToContents()
 
         # Configurar columnas visibles por defecto
         columnas_visibles = ["Código", "Descripción", "Tiras Necesarias", "Stock", "Pedido"]
@@ -316,6 +332,10 @@ class InventarioView(QWidget):
                 border: 1px solid #dcdcdc;
             }
         """)
+
+        # Ajustar el ancho de las columnas al contenido
+        self.tabla_detalles.resizeColumnsToContents()
+
         detalles_layout.addWidget(QLabel("Detalles del Inventario", alignment=Qt.AlignmentFlag.AlignCenter))
         detalles_layout.addWidget(self.tabla_detalles)
 
@@ -354,7 +374,9 @@ class InventarioView(QWidget):
 
     def mostrar_menu_columnas(self, index):
         menu = QMenu(self)
-        for i, columna in enumerate(self.tabla_inventario.horizontalHeaderLabels()):
+        # Obtener las etiquetas de las columnas correctamente
+        for i in range(self.tabla_inventario.columnCount()):
+            columna = self.tabla_inventario.horizontalHeaderItem(i).text() if self.tabla_inventario.horizontalHeaderItem(i) else ""
             accion = menu.addAction(columna)
             accion.setCheckable(True)
             accion.setChecked(not self.tabla_inventario.isColumnHidden(i))

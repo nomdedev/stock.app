@@ -20,6 +20,8 @@ class ObrasController:
             for row_idx, row_data in enumerate(datos):
                 for col_idx, value in enumerate(row_data):
                     self.view.tabla_obras.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
+            # Ajustar el ancho de las columnas al contenido
+            self.view.tabla_obras.resizeColumnsToContents()
         except Exception as e:
             self.view.label.setText(f"Error al cargar datos: {e}")
 
@@ -31,6 +33,8 @@ class ObrasController:
             for row_idx, row_data in enumerate(cronograma):
                 for col_idx, value in enumerate(row_data):
                     self.view.tabla_cronograma.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
+            # Ajustar el ancho de las columnas al contenido
+            self.view.tabla_cronograma.resizeColumnsToContents()
         except Exception as e:
             self.view.label.setText(f"Error al cargar cronograma: {e}")
 

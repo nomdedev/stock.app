@@ -101,17 +101,17 @@ El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de qu
 ---
 
 ### Tablas en `mps.app-inventario`
-- **dbo.estado_material**: Estado de los materiales.
+- **dbo.estado_herrajes**: Estado de los herrajes.
 - **dbo.historial**: Historial de movimientos o cambios.
 - **dbo.inventario**: Inventario general de materiales.
-- **dbo.materiales**: Detalles de los materiales.
-- **dbo.materiales_proveedores**: Relación entre materiales y proveedores.
+- **dbo.herrajes**: Detalles de los herrajes.
+- **dbo.herrajes_proveedores**: Relación entre herrajes y proveedores.
 - **dbo.movimientos_inventario**: Movimientos registrados en el inventario.
 - **dbo.obras**: Información de las obras.
 - **dbo.obras_materiales**: Relación entre obras y materiales asignados.
 - **dbo.obra_materiales**: Detalles específicos de materiales por obra.
-- **dbo.pedidos**: Pedidos realizados.
-- **dbo.pedidos_pendientes**: Pedidos que aún no han sido completados.
+- **dbo.pedidos**: Pedidos realizados (ahora gestionados dentro del módulo Compras).
+- **dbo.pedidos_pendientes**: Pedidos que aún no han sido completados (parte del módulo Compras).
 - **dbo.pedidos_por_obra**: Pedidos relacionados con obras específicas.
 - **dbo.perfiles_por_obra**: Perfiles asignados a obras.
 - **dbo.proveedores**: Información de los proveedores.
@@ -177,11 +177,11 @@ Adoptar estas prácticas no solo mejora la calidad del código, sino que tambié
 ### Cambios Recientes
 
 #### Integración de Módulos
-- **Materiales** y **Vidrios** ahora están integrados como pestañas dentro del módulo **Inventario**.
-- **Pedidos** se ha movido como una pestaña dentro del módulo **Compras**.
+- **Vidrios** ahora está integrado como una pestaña dentro del módulo **Inventario**.
+- El módulo **Materiales** ha sido eliminado.
 
 #### Actualización de Funcionalidades
-- El módulo **Inventario** ahora incluye pestañas adicionales para gestionar materiales y vidrios, permitiendo una administración centralizada.
+- El módulo **Inventario** ahora incluye pestañas adicionales para gestionar vidrios, permitiendo una administración centralizada.
 - El módulo **Compras** permite gestionar pedidos directamente desde una pestaña dedicada, mejorando la organización y el flujo de trabajo.
 
 #### Mejoras en la Interfaz
@@ -191,6 +191,9 @@ Adoptar estas prácticas no solo mejora la calidad del código, sino que tambié
 ### Notas Adicionales
 - Asegúrate de que las imágenes necesarias para los íconos estén disponibles en la carpeta `img`.
 - Verifica que las nuevas pestañas en los módulos **Inventario** y **Compras** funcionen correctamente tras la integración.
+
+### Estilo de Botones
+Por defecto, todos los botones deben tener un tamaño estándar de 100x25 px para mantener la consistencia visual en la aplicación. Este tamaño se aplica automáticamente a menos que se especifique lo contrario.
 
 🧩 Módulo 1: Inventario General
 🗄 Base de datos: mpsInventario

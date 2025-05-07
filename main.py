@@ -23,34 +23,35 @@ from modules.inventario.view import InventarioView
 from modules.obras.view import ObrasView
 from modules.produccion.view import ProduccionView
 from modules.logistica.view import LogisticaView
-from modules.pedidos.view import PedidosView
+from modules.compras.view import PedidosView
 from modules.usuarios.view import UsuariosView
 from modules.auditoria.view import AuditoriaView
 from modules.configuracion.view import ConfiguracionView
 from modules.mantenimiento.view import MantenimientoView
 from modules.contabilidad.view import ContabilidadView
-from modules.materiales.view import MaterialesView
-from modules.vidrios.view import VidriosView
+from modules.herrajes.view import HerrajesView
 
 # Importar controladores
 from modules.inventario.controller import InventarioController
 from modules.obras.controller import ObrasController
 from modules.produccion.controller import ProduccionController
 from modules.logistica.controller import LogisticaController
-from modules.pedidos.controller import PedidosController
+from modules.compras.controller import PedidosController
 from modules.usuarios.controller import UsuariosController
 from modules.auditoria.controller import AuditoriaController
 from modules.configuracion.controller import ConfiguracionController
+from modules.herrajes.controller import HerrajesController
 
 # Importar modelos
 from modules.inventario.model import InventarioModel
 from modules.obras.model import ObrasModel
 from modules.produccion.model import ProduccionModel
 from modules.logistica.model import LogisticaModel
-from modules.pedidos.model import PedidosModel
+from modules.compras.model import PedidosModel
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from modules.configuracion.model import ConfiguracionModel
+from modules.herrajes.model import HerrajesModel
 
 # Importar componentes
 from components.sidebar_button import SidebarButton
@@ -159,6 +160,7 @@ class MainWindow(QMainWindow):
             model=self.logistica_model, view=self.logistica_view
         )
 
+        # Inicializar el módulo Pedidos dentro de Compras
         self.pedidos_view = PedidosView()
         self.pedidos_controller = PedidosController(
             model=self.pedidos_model, view=self.pedidos_view, db_connection=self.db_connection_inventario
@@ -193,6 +195,17 @@ class MainWindow(QMainWindow):
             print(f"Error al inicializar el módulo Configuración: {e}")
             self.statusBar().showMessage("El módulo Configuración está deshabilitado temporalmente.")
 
+        # Inicializar el módulo Mantenimiento
+        self.mantenimiento_view = MantenimientoView()
+
+        # Inicializar el módulo Contabilidad
+        self.contabilidad_view = ContabilidadView()
+
+        # Inicializar el módulo Herrajes
+        self.herrajes_model = HerrajesModel(self.db_connection_inventario)
+        self.herrajes_view = HerrajesView()
+        self.herrajes_controller = HerrajesController(self.herrajes_model, self.herrajes_view)
+
         # Layout principal
         main_layout = QHBoxLayout()
         central_widget = QWidget()
@@ -206,24 +219,20 @@ class MainWindow(QMainWindow):
         self.module_stack.addWidget(self.produccion_view)   # index 2
         self.module_stack.addWidget(self.logistica_view)    # index 3
         self.module_stack.addWidget(self.pedidos_view)      # index 4
-        self.module_stack.addWidget(self.usuarios_view)     # index 5
-        self.module_stack.addWidget(self.auditoria_view)    # index 6
-        self.module_stack.addWidget(self.configuracion_view)# index 7
-
-        # Agregar vistas de módulos adicionales
-        self.mantenimiento_view = MantenimientoView()
-        self.contabilidad_view = ContabilidadView()
-        self.materiales_view = MaterialesView()
-        self.vidrios_view = VidriosView()
-
-        self.module_stack.addWidget(self.mantenimiento_view)  # index 8
-        self.module_stack.addWidget(self.contabilidad_view)  # index 9
-        self.module_stack.addWidget(self.materiales_view)    # index 10
-        self.module_stack.addWidget(self.vidrios_view)       # index 11
+        self.module_stack.addWidget(self.mantenimiento_view)  # index 5
+        self.module_stack.addWidget(self.contabilidad_view)  # index 6
+        self.module_stack.addWidget(self.herrajes_view)      # index 7
+        self.module_stack.addWidget(self.auditoria_view)    # index 8
+        self.module_stack.addWidget(self.usuarios_view)     # index 9
+        self.module_stack.addWidget(self.configuracion_view)# index 10
+        self.module_stack.addWidget(self.materiales_view)   # index 11
 
         # Sidebar
         self.sidebar = Sidebar()
         self.sidebar.section_selected.connect(self.navigate_to_section)
+
+        # Agregar botón al sidebar
+        self.sidebar.add_button("Pedidos", "utils/compras.svg", lambda: self.module_stack.setCurrentWidget(self.pedidos_view))
 
         # Agregar al layout principal
         main_layout.addWidget(self.sidebar)
@@ -246,28 +255,53 @@ class Sidebar(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(12, 12, 12, 12)
         self.layout.setSpacing(6)
-        self.setFixedWidth(240)  # Ancho fijo del sidebar
+        self.setFixedWidth(100)  # Ancho fijo del sidebar actualizado a 200px
         self.setStyleSheet("""
             QWidget {
                 background-color: #0D1117; /* Fondo oscuro */
+            }
+        """)
+        self.setStyleSheet(self.styleSheet() + """
+            QPushButton {
+                background-color: #1e40af; /* Azul oscuro */
+                color: #FFFFFF; /* Texto blanco */
+                border: none;
+                border-radius: 8px;
+                font-size: 10px; /* Tamaño de letra */
+                font-weight: bold;
+                width: 80px; /* Ancho */
+                height: 25px; /* Alto */
+            }
+            QPushButton:hover {
+                background-color: #1e3a8a; /* Azul más oscuro */
+            }
+            QPushButton:pressed {
+                background-color: #14274e; /* Azul aún más oscuro */
             }
         """)
 
         # Crear botones del sidebar
         self.buttons = []
         sections = [
-            ("Inventario", "utils/icons/inventario.svg", 0),
-            ("Obras", "utils/icons/obras.svg", 1),
-            ("Órdenes", "utils/icons/ordenes.svg", 2),
-            ("Usuarios", "utils/icons/usuarios.svg", 3),
-            ("Auditoría", "utils/icons/auditoria.svg", 4),
-            ("Logística", "utils/icons/logistica.svg", 5),
-            ("Mantenimiento", "utils/icons/mantenimiento.svg", 6),
-            ("Configuración", "utils/icons/configuracion.svg", 7),
+            ("Inventario", "utils/inventario.svg", 0),
+            ("Obras", "utils/factory.svg", 1),
+            ("Producción", "utils/produccion.svg", 2),
+            ("Logística", "utils/logistica.svg", 3),
+            ("Pedidos", "utils/compras.svg", 4),
+            ("Mantenimiento", "utils/mantenimiento.svg", 5),
+            ("Contabilidad", "utils/contabilidad.svg", 6),
+            ("Herrajes", "utils/herrajes.svg", 7),
+            ("Auditoría", "utils/auditoria.svg", 8),
+            ("Usuarios", "utils/users.svg", 9),
+            ("Configuración", "utils/configuracion.svg", 10),
+            ("Materiales", "utils/materiales.svg", 11),
         ]
 
         for name, icon_path, index in sections:
-            button = SidebarButton(name, icon_path, activo=(index == 0))  # Marcar el primer botón como activo
+            button = SidebarButton("", icon_path, activo=(index == 0))  # Eliminar texto del botón
+            button.setFixedWidth(80)  # Ancho fijo de 80 px
+            button.setIcon(QtGui.QIcon(icon_path))  # Establecer el ícono
+            button.setIconSize(QtCore.QSize(24, 24))  # Tamaño del ícono
             button.clicked.connect(partial(self.section_selected.emit, index))
             self.layout.addWidget(button)
             self.buttons.append(button)
@@ -294,7 +328,7 @@ class PedidosView(QWidget):
 
         # Botón "Crear Pedido"
         self.boton_crear = QPushButton("Crear Pedido")
-        self.boton_crear.setFixedSize(150, 30)
+        self.boton_crear.setFixedSize(100, 25)
         self.boton_crear.setStyleSheet("""
             QPushButton {
                 background-color: #2563eb; /* Azul */
@@ -316,7 +350,7 @@ class PedidosView(QWidget):
 
         # Botón "Ver Detalles del Pedido"
         self.boton_ver_detalles = QPushButton("Ver Detalles del Pedido")
-        self.boton_ver_detalles.setFixedSize(150, 30)
+        self.boton_ver_detalles.setFixedSize(100, 25)
         self.boton_ver_detalles.setStyleSheet("""
             QPushButton {
                 background-color: #2563eb; /* Azul */
@@ -338,7 +372,7 @@ class PedidosView(QWidget):
 
         # Botón "Cargar Presupuesto"
         self.boton_cargar_presupuesto = QPushButton("Cargar Presupuesto")
-        self.boton_cargar_presupuesto.setFixedSize(150, 30)
+        self.boton_cargar_presupuesto.setFixedSize(100, 25)
         self.boton_cargar_presupuesto.setStyleSheet("""
             QPushButton {
                 background-color: #2563eb; /* Azul */
