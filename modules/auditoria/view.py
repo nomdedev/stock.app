@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QSizePolicy, QHBoxLayout
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtGui import QIcon
 
 class AuditoriaView(QWidget):
     def __init__(self):
@@ -8,68 +9,45 @@ class AuditoriaView(QWidget):
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.setSpacing(20)
 
-        # Crear contenedor para los botones
+        # Botones principales como iconos
         botones_layout = QHBoxLayout()
-        botones_layout.setSpacing(10)  # Espaciado entre botones
-        botones_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Centrar botones
-
-        # Botón "Ver Logs"
-        self.boton_ver_logs = self.crear_boton("Ver Logs")
-        botones_layout.addWidget(self.boton_ver_logs)
-
-        # Botón "Exportar Logs"
-        self.boton_exportar_logs = self.crear_boton("Exportar Logs")
-        botones_layout.addWidget(self.boton_exportar_logs)
-
-        # Botón "Filtrar Logs"
-        self.boton_filtrar_logs = self.crear_boton("Filtrar Logs")
-        botones_layout.addWidget(self.boton_filtrar_logs)
-
-        # Botón "Acción"
-        self.boton_accion = QPushButton("Acción")
-        self.boton_accion.setFixedSize(150, 30)
-        self.boton_accion.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                border: none;
-                border-radius: 15px; /* Bordes redondeados */
-                font-size: 12px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_accion)
-
-        # Agregar el layout de botones al layout principal
+        botones = [
+            QPushButton(),  # Ver Logs
+            QPushButton(),  # Exportar Logs
+            QPushButton(),  # Filtrar Logs
+        ]
+        iconos = [
+            ("search_icon.svg", "Ver logs de auditoría"),
+            ("excel_icon.svg", "Exportar logs a Excel"),
+            ("pdf_icon.svg", "Exportar logs a PDF"),
+        ]
+        for boton, (icono, tooltip) in zip(botones, iconos):
+            boton.setIcon(QIcon(f"img/{icono}"))
+            boton.setIconSize(QSize(32, 32))
+            boton.setToolTip(tooltip)
+            boton.setText("")
+            boton.setFixedSize(48, 48)
+            boton.setStyleSheet("""
+                QPushButton {
+                    background-color: #2563eb;
+                    border-radius: 12px;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #1e40af;
+                }
+                QPushButton:pressed {
+                    background-color: #1e3a8a;
+                }
+            """)
+            botones_layout.addWidget(boton)
         self.layout.addLayout(botones_layout)
 
-    def crear_boton(self, texto):
-        """Crea un botón estilizado con el texto proporcionado."""
-        boton = QPushButton(texto)
-        boton.setFixedSize(150, 30)
-        boton.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                border: none;
-                border-radius: 15px; /* Bordes redondeados */
-                font-size: 12px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        return boton
+        # Tabla de logs (placeholder)
+        self.tabla_logs = QTableWidget()
+        self.layout.addWidget(self.tabla_logs)
+
+        self.setLayout(self.layout)
 
 class Auditoria(QWidget):
     def __init__(self):

@@ -1,53 +1,52 @@
-/* Tema oscuro con gamas de azules oscuros y claros */
-QWidget, QDialog, QFrame, QPushButton, QTableWidget, QLabel {
-    border-radius: 12px; /* Bordes redondeados */
+/* Estilo general de la app */
+QMainWindow, QWidget {
+    background-color: #1A1A2E;
+    color: #F0F0F0;
+    font-family: "Segoe UI", sans-serif;
+    font-size: 13px;
 }
 
-QWidget, QDialog {
-    background-color: #0A0E1A; /* Azul oscuro profundo */
-    color: #F5F5DC; /* Crema */
-    font-family: 'Segoe UI', 'Inter', sans-serif;
-    font-size: 14px;
-    border: 1px solid #1E3A8A; /* Borde azul oscuro */
-}
-
+/* Botones */
 QPushButton {
-    background-color: #2563EB; /* Azul claro */
-    color: #FFFFFF; /* Texto blanco */
-    border: 1px solid #1E3A8A; /* Azul oscuro */
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: bold;
-    width: 100px;
-    height: 25px;
+    background-color: #324A5F;
+    border-radius: 10px;
+    color: white;
+    padding: 6px 12px;
+    border: 1px solid #506680;
 }
-
 QPushButton:hover {
-    background-color: #1E40AF; /* Azul más oscuro */
+    background-color: #3C5C70;
 }
-
 QPushButton:pressed {
-    background-color: #14274E; /* Azul aún más oscuro */
+    background-color: #2A3E4F;
 }
 
+/* Tabla */
 QTableWidget {
-    background-color: #161B22; /* Azul muy oscuro */
-    color: #F5F5DC; /* Crema */
-    gridline-color: #30363D; /* Azul grisáceo */
-    border: 1px solid #21262D; /* Azul oscuro */
+    background-color: #1F1F2E;
+    alternate-background-color: #2A2A3C;
+    gridline-color: #3C3C50;
+    selection-background-color: #3D6E70;
+    selection-color: white;
+    border: none;
 }
-
 QHeaderView::section {
-    background-color: #21262D; /* Azul oscuro */
-    color: #F5F5DC; /* Crema */
-    font-weight: bold;
-    border: 1px solid #30363D; /* Azul grisáceo */
+    background-color: #2F2F40;
+    color: white;
+    border: none;
+    padding: 4px;
 }
 
-QLabel {
-    color: #B3C7E6; /* Azul crema claro */
+/* Inputs */
+QLineEdit, QComboBox, QSpinBox {
+    background-color: #2A2A3A;
+    border: 1px solid #3F3F5F;
+    border-radius: 6px;
+    padding: 4px;
+    color: white;
 }
 
-QFrame {
-    border: 1px solid #2D2D2D; /* Azul grisáceo oscuro */
+/* Switch (ejemplo personalizado si tenés uno) */
+QCheckBox::indicator:checked {
+    background-color: #70D8FF;
 }

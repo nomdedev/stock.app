@@ -1,6 +1,8 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QTableWidget, QComboBox, QSizePolicy, QPushButton, QHBoxLayout
 from PyQt6.QtCore import QTimer, QSize
 from PyQt6 import QtGui
+from PyQt6.QtGui import QIcon
+import os
 from core.ui_components import CustomButton
 
 class UsuariosView(QWidget):
@@ -12,33 +14,35 @@ class UsuariosView(QWidget):
         # Ajustar estilo general de la vista
         self.setStyleSheet("""
             QWidget {
-                background-color: #f0f0f0; /* Fondo gris claro */
-                color: #000000; /* Texto negro */
+                background-color: #f0f0f0;
+                color: #000000;
                 font-family: Arial, sans-serif;
+                font-size: 10px;
             }
             QLabel {
-                font-size: 14px;
+                font-size: 10px;
                 font-weight: bold;
-                color: #333333; /* Gris oscuro */
+                color: #333333;
             }
             QTableWidget {
-                border: 1px solid #000000; /* Bordes negros */
-                background-color: #ffffff; /* Fondo blanco */
-                font-size: 12px;
-                gridline-color: #000000; /* Líneas de cuadrícula negras */
+                border: 1px solid #000000;
+                background-color: #ffffff;
+                font-size: 10px;
+                gridline-color: #000000;
             }
             QTableWidget::item {
-                background-color: #ffffff; /* Fondo blanco */
+                background-color: #ffffff;
             }
             QTableWidget::item:selected {
-                background-color: #d1d5db; /* Gris más oscuro */
-                color: #000000; /* Texto negro */
+                background-color: #d1d5db;
+                color: #000000;
             }
             QHeaderView::section {
-                background-color: #dbeafe; /* Azul crema */
-                color: #000000; /* Texto negro */
-                font-weight: bold; /* Letras en negrita */
-                border: 1px solid #000000; /* Bordes negros */
+                background-color: #dbeafe;
+                color: #000000;
+                font-weight: bold;
+                border: 1px solid #000000;
+                font-size: 10px;
             }
         """)
 
@@ -66,40 +70,6 @@ class UsuariosView(QWidget):
         self.form_layout.addRow("Rol:", self.rol_input)
         self.layout.addLayout(self.form_layout)
 
-        # Botones principales como iconos
-        botones_layout = QHBoxLayout()
-        botones = [
-            QPushButton(),  # Nuevo Usuario
-            QPushButton(),  # Buscar Usuario
-            QPushButton(),  # Exportar Usuarios
-        ]
-        iconos = [
-            ("plus_icon.svg", "Agregar nuevo usuario"),
-            ("buscar.png", "Buscar usuario"),
-            ("excel_icon.svg", "Exportar usuarios a Excel"),
-        ]
-        for boton, (icono, tooltip) in zip(botones, iconos):
-            boton.setIcon(QtGui.QIcon(f"img/{icono}"))
-            boton.setIconSize(QSize(32, 32))
-            boton.setToolTip(tooltip)
-            boton.setText("")
-            boton.setFixedSize(48, 48)
-            boton.setStyleSheet("""
-                QPushButton {
-                    background-color: #2563eb;
-                    border-radius: 12px;
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #1e40af;
-                }
-                QPushButton:pressed {
-                    background-color: #1e3a8a;
-                }
-            """)
-            botones_layout.addWidget(boton)
-        self.layout.addLayout(botones_layout)
-
         # Tabla principal de usuarios
         self.tabla_usuarios = QTableWidget()
         self.tabla_usuarios.setColumnCount(7)
@@ -109,11 +79,7 @@ class UsuariosView(QWidget):
         # Ajustar el ancho de las columnas al contenido
         self.tabla_usuarios.resizeColumnsToContents()
 
-        self.boton_favorito = CustomButton("Marcar como Favorito")
-        if self.controller is None:
-            raise AttributeError("El controlador no está inicializado correctamente.")
-        self.boton_favorito.clicked.connect(self.controller.marcar_como_favorito)
-        self.layout.addWidget(self.boton_favorito)
+        self.inicializar_botones()
 
         # Botón para gestionar roles y permisos
         self.boton_gestion_roles = CustomButton("Gestionar Roles y Permisos")
@@ -180,32 +146,64 @@ class UsuariosView(QWidget):
 
         self.setLayout(self.layout)
 
-        self.inicializar_botones()
-
-    def mostrar_toast(self, mensaje):
-        self.toast_label.setText(mensaje)
-        self.toast_label.setVisible(True)
-        QTimer.singleShot(3000, lambda: self.toast_label.setVisible(False))
-
     def inicializar_botones(self):
-        self.boton_suspender = CustomButton("Suspender Cuenta")
-        self.layout.addWidget(self.boton_suspender)
-
-        self.boton_reactivar = CustomButton("Reactivar Cuenta")
-        self.layout.addWidget(self.boton_reactivar)
-
+        # Layout horizontal para los botones principales
+        botones_layout = QHBoxLayout()
+        # Botón Suspender (icono)
+        self.boton_suspender = QPushButton()
+        self.boton_suspender.setIcon(QtGui.QIcon('img/usuarios.svg'))
+        self.boton_suspender.setIconSize(QSize(12, 12))
+        self.boton_suspender.setToolTip('Suspender cuenta de usuario')
+        self.boton_suspender.setText("")
+        self.boton_suspender.setFixedSize(15, 15)
+        self.boton_suspender.setStyleSheet("""
+            QPushButton {
+                background-color: #2563eb;
+                border-radius: 12px;
+                border: none;
+            }
+            QPushButton:hover {
+                background-color: #1e40af;
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a;
+            }
+        """)
+        botones_layout.addWidget(self.boton_suspender)
+        # Botón Reactivar (icono)
+        self.boton_reactivar = QPushButton()
+        self.boton_reactivar.setIcon(QtGui.QIcon('img/sync.svg'))
+        self.boton_reactivar.setIconSize(QSize(12, 12))
+        self.boton_reactivar.setToolTip('Reactivar cuenta de usuario')
+        self.boton_reactivar.setText("")
+        self.boton_reactivar.setFixedSize(15, 15)
+        self.boton_reactivar.setStyleSheet(self.boton_suspender.styleSheet())
+        botones_layout.addWidget(self.boton_reactivar)
+        # Botón Clonar Permisos (icono)
+        self.boton_clonar_permisos = QPushButton()
+        self.boton_clonar_permisos.setIcon(QtGui.QIcon('img/copy_icon.svg'))
+        self.boton_clonar_permisos.setIconSize(QSize(12, 12))
+        self.boton_clonar_permisos.setToolTip('Clonar permisos entre roles')
+        self.boton_clonar_permisos.setText("")
+        self.boton_clonar_permisos.setFixedSize(15, 15)
+        self.boton_clonar_permisos.setStyleSheet(self.boton_suspender.styleSheet())
+        botones_layout.addWidget(self.boton_clonar_permisos)
+        # Agregar layout de botones debajo de la tabla principal
+        self.layout.addLayout(botones_layout)
+        # Inputs para clonado de permisos
         self.label_rol_origen = QLabel("Rol Origen:")
         self.layout.addWidget(self.label_rol_origen)
         self.input_rol_origen = QLineEdit()
         self.layout.addWidget(self.input_rol_origen)
-
         self.label_rol_destino = QLabel("Rol Destino:")
         self.layout.addWidget(self.label_rol_destino)
         self.input_rol_destino = QLineEdit()
         self.layout.addWidget(self.input_rol_destino)
 
-        self.boton_clonar_permisos = CustomButton("Clonar Permisos")
-        self.layout.addWidget(self.boton_clonar_permisos)
+    def mostrar_toast(self, mensaje):
+        self.toast_label.setText(mensaje)
+        self.toast_label.setVisible(True)
+        QTimer.singleShot(3000, lambda: self.toast_label.setVisible(False))
 
     @property
     def label(self):
@@ -217,12 +215,14 @@ class UsuariosView(QWidget):
     def buscar_input(self):
         if not hasattr(self, '_buscar_input'):
             self._buscar_input = QLineEdit()
+            self._buscar_input.setPlaceholderText('Buscar usuario...')
         return self._buscar_input
 
     @property
     def id_item_input(self):
         if not hasattr(self, '_id_item_input'):
             self._id_item_input = QLineEdit()
+            self._id_item_input.setPlaceholderText('ID de usuario')
         return self._id_item_input
 
 class Usuarios(QWidget):

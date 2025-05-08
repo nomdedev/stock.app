@@ -10,48 +10,8 @@ class ObrasView(QWidget):
         self.layout = QVBoxLayout()
 
         self.label_titulo = QLabel("Gestión de Obras")
-        self.label_titulo.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 20px;")
+        self.label_titulo.setStyleSheet("font-size: 10px; font-weight: bold; margin-bottom: 10px;")
         self.layout.addWidget(self.label_titulo)
-
-        # Botones principales como iconos
-        botones_layout = QHBoxLayout()
-        self.boton_agregar = QPushButton()
-        self.boton_ver_detalles = QPushButton()
-        self.boton_ver_cronograma = QPushButton()
-        self.boton_exportar_excel = QPushButton()
-        botones = [
-            self.boton_agregar,
-            self.boton_ver_detalles,
-            self.boton_ver_cronograma,
-            self.boton_exportar_excel,
-        ]
-        iconos = [
-            ("plus_icon.svg", "Agregar nueva obra"),
-            ("search_icon.svg", "Ver detalles de obra"),
-            ("calendar_icon.svg", "Ver cronograma"),
-            ("excel_icon.svg", "Exportar obras a Excel"),
-        ]
-        for boton, (icono, tooltip) in zip(botones, iconos):
-            boton.setIcon(QIcon(f"img/{icono}"))
-            boton.setIconSize(QSize(32, 32))
-            boton.setToolTip(tooltip)
-            boton.setText("")
-            boton.setFixedSize(48, 48)
-            boton.setStyleSheet("""
-                QPushButton {
-                    background-color: #2563eb;
-                    border-radius: 12px;
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #1e40af;
-                }
-                QPushButton:pressed {
-                    background-color: #1e3a8a;
-                }
-            """)
-            botones_layout.addWidget(boton)
-        self.layout.addLayout(botones_layout)
 
         # Formulario de entrada
         self.form_layout = QFormLayout()
@@ -98,6 +58,46 @@ class ObrasView(QWidget):
         # Pestaña de Producción
         self.tab_produccion = ProduccionView()
         self.tabs.addTab(self.tab_produccion, "Producción")
+
+        # Botones principales como iconos
+        botones_layout = QHBoxLayout()
+        self.boton_agregar = QPushButton()
+        self.boton_ver_detalles = QPushButton()
+        self.boton_ver_cronograma = QPushButton()
+        self.boton_exportar_excel = QPushButton()
+        botones = [
+            self.boton_agregar,
+            self.boton_ver_detalles,
+            self.boton_ver_cronograma,
+            self.boton_exportar_excel,
+        ]
+        iconos = [
+            ("plus_icon.svg", "Agregar nueva obra"),
+            ("search_icon.svg", "Ver detalles de obra"),
+            ("calendar_icon.svg", "Ver cronograma"),
+            ("excel_icon.svg", "Exportar obras a Excel"),
+        ]
+        for boton, (icono, tooltip) in zip(botones, iconos):
+            boton.setIcon(QIcon(f"img/{icono}"))
+            boton.setIconSize(QSize(12, 12))
+            boton.setToolTip(tooltip)
+            boton.setText("")
+            boton.setFixedSize(15, 15)
+            boton.setStyleSheet("""
+                QPushButton {
+                    background-color: #2563eb;
+                    border-radius: 4px;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #1e40af;
+                }
+                QPushButton:pressed {
+                    background-color: #1e3a8a;
+                }
+            """)
+            botones_layout.addWidget(boton)
+        self.layout.addLayout(botones_layout)
 
         self.setLayout(self.layout)
 

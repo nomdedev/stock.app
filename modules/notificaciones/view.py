@@ -1,4 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import QSize
 
 class NotificacionesView(QWidget):
     def __init__(self):
@@ -17,7 +19,26 @@ class NotificacionesView(QWidget):
         self.form_layout.addRow("Tipo:", self.tipo_input)
         self.layout.addLayout(self.form_layout)
 
-        self.boton_agregar = QPushButton("Agregar Notificación")
+        # Botón principal como icono
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/plus_icon.svg"))
+        self.boton_agregar.setIconSize(QSize(32, 32))
+        self.boton_agregar.setToolTip("Agregar nueva notificación")
+        self.boton_agregar.setText("")
+        self.boton_agregar.setFixedSize(48, 48)
+        self.boton_agregar.setStyleSheet("""
+            QPushButton {
+                background-color: #2563eb;
+                border-radius: 12px;
+                border: none;
+            }
+            QPushButton:hover {
+                background-color: #1e40af;
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a;
+            }
+        """)
         self.layout.addWidget(self.boton_agregar)
 
         self.setLayout(self.layout)

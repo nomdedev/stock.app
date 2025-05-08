@@ -89,15 +89,15 @@ class MaterialesView(QWidget):
         ])
         self.layout.addWidget(self.tabla_materiales)
 
-        # Barra de botones
+        # Botones principales como iconos
         botones_layout = QHBoxLayout()
-        self.boton_agregar = QPushButton("Agregar Herraje")
-        self.boton_modificar = QPushButton("Modificar")
-        self.boton_eliminar = QPushButton("Eliminar")
-        self.boton_buscar = QPushButton("Buscar")
-        self.boton_exportar_excel = QPushButton("Exportar Excel")
-        self.boton_exportar_pdf = QPushButton("Exportar PDF")
-        self.boton_ver_movimientos = QPushButton("Ver Movimientos")
+        self.boton_agregar = QPushButton()
+        self.boton_modificar = QPushButton()
+        self.boton_eliminar = QPushButton()
+        self.boton_buscar = QPushButton()
+        self.boton_exportar_excel = QPushButton()
+        self.boton_exportar_pdf = QPushButton()
+        self.boton_ver_movimientos = QPushButton()
 
         botones = [
             self.boton_agregar, self.boton_modificar, self.boton_eliminar,
@@ -105,7 +105,35 @@ class MaterialesView(QWidget):
             self.boton_ver_movimientos
         ]
 
-        for boton in botones:
+        iconos = [
+            ("plus_icon.svg", "Agregar nuevo material"),
+            ("edit_icon.svg", "Modificar material"),
+            ("delete_icon.svg", "Eliminar material"),
+            ("buscar.png", "Buscar material"),
+            ("excel_icon.svg", "Exportar materiales a Excel"),
+            ("pdf_icon.svg", "Exportar materiales a PDF"),
+            ("movements_icon.svg", "Ver movimientos de materiales"),
+        ]
+
+        for boton, (icono, tooltip) in zip(botones, iconos):
+            boton.setIcon(QIcon(f"img/{icono}"))
+            boton.setIconSize(QSize(32, 32))
+            boton.setToolTip(tooltip)
+            boton.setText("")
+            boton.setFixedSize(48, 48)
+            boton.setStyleSheet("""
+                QPushButton {
+                    background-color: #2563eb;
+                    border-radius: 12px;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #1e40af;
+                }
+                QPushButton:pressed {
+                    background-color: #1e3a8a;
+                }
+            """)
             botones_layout.addWidget(boton)
 
         self.layout.addLayout(botones_layout)

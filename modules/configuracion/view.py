@@ -1,4 +1,6 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QComboBox, QCheckBox, QPushButton, QSizePolicy, QTabWidget
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QComboBox, QCheckBox, QPushButton, QSizePolicy, QTabWidget, QHBoxLayout
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import QSize
 from themes.theme_manager import aplicar_tema, guardar_preferencia_tema, cargar_preferencia_tema
 
 class ConfiguracionView(QWidget):
@@ -30,6 +32,38 @@ class ConfiguracionView(QWidget):
                 }
             """)
             self.layout.addWidget(self.switch_tema)
+
+            # Barra de botones principales como iconos
+            botones_layout = QHBoxLayout()
+            botones = [
+                QPushButton(),  # Guardar configuración
+                QPushButton(),  # Restaurar valores
+            ]
+            iconos = [
+                ("plus_icon.svg", "Guardar configuración"),
+                ("refresh_icon.svg", "Restaurar valores predeterminados"),
+            ]
+            for boton, (icono, tooltip) in zip(botones, iconos):
+                boton.setIcon(QIcon(f"img/{icono}"))
+                boton.setIconSize(QSize(32, 32))
+                boton.setToolTip(tooltip)
+                boton.setText("")
+                boton.setFixedSize(48, 48)
+                boton.setStyleSheet("""
+                    QPushButton {
+                        background-color: #2563eb;
+                        border-radius: 12px;
+                        border: none;
+                    }
+                    QPushButton:hover {
+                        background-color: #1e40af;
+                    }
+                    QPushButton:pressed {
+                        background-color: #1e3a8a;
+                    }
+                """)
+                botones_layout.addWidget(boton)
+            self.layout.addLayout(botones_layout)
 
             # Conectar el interruptor al cambio de tema
             self.switch_tema.stateChanged.connect(self.cambiar_tema)

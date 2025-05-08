@@ -30,6 +30,23 @@ class ContabilidadView(QWidget):
         self.form_layout.addRow("Destinatario:", self.destinatario_input)
         self.layout.addLayout(self.form_layout)
 
+        # Tabla de recibos
+        self.tabla_recibos = QTableWidget()
+        self.tabla_recibos.setColumnCount(6)
+        self.tabla_recibos.setHorizontalHeaderLabels(["ID", "Fecha", "Obra", "Monto", "Concepto", "Estado"])
+        self.layout.addWidget(self.tabla_recibos)
+
+        # Timer para refrescar la tabla de recibos cada 3 segundos
+        self.timer_refresco = QTimer(self)
+        self.timer_refresco.timeout.connect(self.refrescar_tabla_recibos)
+        self.timer_refresco.start(3000)
+
+        # Tabla de movimientos contables
+        self.tabla_movimientos = QTableWidget()
+        self.tabla_movimientos.setColumnCount(5)
+        self.tabla_movimientos.setHorizontalHeaderLabels(["Fecha", "Tipo", "Monto", "Concepto", "Observaciones"])
+        self.layout.addWidget(self.tabla_movimientos)
+
         # Botones principales como iconos
         botones_layout = QHBoxLayout()
         botones = [
@@ -63,23 +80,6 @@ class ContabilidadView(QWidget):
             """)
             botones_layout.addWidget(boton)
         self.layout.addLayout(botones_layout)
-
-        # Tabla de recibos
-        self.tabla_recibos = QTableWidget()
-        self.tabla_recibos.setColumnCount(6)
-        self.tabla_recibos.setHorizontalHeaderLabels(["ID", "Fecha", "Obra", "Monto", "Concepto", "Estado"])
-        self.layout.addWidget(self.tabla_recibos)
-
-        # Timer para refrescar la tabla de recibos cada 3 segundos
-        self.timer_refresco = QTimer(self)
-        self.timer_refresco.timeout.connect(self.refrescar_tabla_recibos)
-        self.timer_refresco.start(3000)
-
-        # Tabla de movimientos contables
-        self.tabla_movimientos = QTableWidget()
-        self.tabla_movimientos.setColumnCount(5)
-        self.tabla_movimientos.setHorizontalHeaderLabels(["Fecha", "Tipo", "Monto", "Concepto", "Observaciones"])
-        self.layout.addWidget(self.tabla_movimientos)
 
         self.setLayout(self.layout)
         self.controller = None

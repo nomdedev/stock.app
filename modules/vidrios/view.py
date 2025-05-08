@@ -1,4 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QDateEdit
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import QSize
 
 class VidriosView(QWidget):
     def __init__(self):
@@ -17,13 +19,31 @@ class VidriosView(QWidget):
         self.form_layout = self.create_form_layout()
         self.layout.addLayout(self.form_layout)
 
-        # Botón para agregar vidrio
-        self.boton_agregar = QPushButton("Agregar Vidrio")
-        self.layout.addWidget(self.boton_agregar)
-
         # Tabla para mostrar los vidrios
         self.tabla_vidrios = self.create_table()
         self.layout.addWidget(self.tabla_vidrios)
+
+        # Botón principal como icono
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/plus_icon.svg"))
+        self.boton_agregar.setIconSize(QSize(32, 32))
+        self.boton_agregar.setToolTip("Agregar nuevo vidrio")
+        self.boton_agregar.setText("")
+        self.boton_agregar.setFixedSize(48, 48)
+        self.boton_agregar.setStyleSheet("""
+            QPushButton {
+                background-color: #2563eb;
+                border-radius: 12px;
+                border: none;
+            }
+            QPushButton:hover {
+                background-color: #1e40af;
+            }
+            QPushButton:pressed {
+                background-color: #1e3a8a;
+            }
+        """)
+        self.layout.addWidget(self.boton_agregar)
 
         self.setLayout(self.layout)
 

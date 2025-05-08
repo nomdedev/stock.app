@@ -1,7 +1,8 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QScrollArea, QFrame, QHBoxLayout, QSizePolicy
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import Qt, QSize
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from PyQt6.QtCore import Qt
 
 class ProduccionView(QWidget):
     def __init__(self):
@@ -9,8 +10,12 @@ class ProduccionView(QWidget):
         self.layout = QVBoxLayout()
 
         self.label_titulo = QLabel("Gestión de Producción")
-        self.label_titulo.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 20px;")
+        self.label_titulo.setStyleSheet("font-size: 10px; font-weight: bold; margin-bottom: 10px;")
         self.layout.addWidget(self.label_titulo)
+
+        self.label = self.label_titulo  # Para compatibilidad con controladores
+        self.buscar_input = None  # No hay campo de búsqueda en esta vista
+        self.id_item_input = None  # No hay campo de ID explícito en esta vista
 
         # Formulario de entrada
         self.form_layout = QFormLayout()
@@ -22,75 +27,6 @@ class ProduccionView(QWidget):
         self.form_layout.addRow("Estado:", self.estado_input)
         self.layout.addLayout(self.form_layout)
 
-        # Botones estilizados en una fila
-        botones_layout = QHBoxLayout()
-        botones_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Centrar los botones
-
-        self.boton_agregar = QPushButton("Agregar Etapa")
-        self.boton_agregar.setFixedHeight(30)
-        self.boton_agregar.setFixedWidth(150)
-        self.boton_agregar.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                padding: 5px;
-                border-radius: 6px; /* Bordes redondeados */
-                font-size: 12px; /* Tamaño de letra */
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_agregar)
-
-        self.boton_ver_detalles = QPushButton("Ver Detalles de Abertura")
-        self.boton_ver_detalles.setFixedHeight(30)
-        self.boton_ver_detalles.setFixedWidth(150)
-        self.boton_ver_detalles.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                padding: 5px;
-                border-radius: 6px; /* Bordes redondeados */
-                font-size: 12px; /* Tamaño de letra */
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_ver_detalles)
-
-        self.boton_finalizar_etapa = QPushButton("Finalizar Etapa")
-        self.boton_finalizar_etapa.setFixedHeight(30)
-        self.boton_finalizar_etapa.setFixedWidth(150)
-        self.boton_finalizar_etapa.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                padding: 5px;
-                border-radius: 6px; /* Bordes redondeados */
-                font-size: 12px; /* Tamaño de letra */
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_finalizar_etapa)
-
-        self.layout.addLayout(botones_layout)  # Agregar el layout de botones al layout principal
-
         # Tabla de aberturas
         self.tabla_aberturas = QTableWidget()
         self.tabla_aberturas.setColumnCount(5)
@@ -98,6 +34,46 @@ class ProduccionView(QWidget):
         self.tabla_aberturas.setStyleSheet("border: 1px solid #e5e7eb; border-radius: 8px;")
         self.tabla_aberturas.horizontalHeader().setStyleSheet("")
         self.layout.addWidget(self.tabla_aberturas)
+
+        # Tabla de etapas de fabricación (para detalles y finalizar etapa)
+        self.tabla_etapas = QTableWidget()
+        self.tabla_etapas.setColumnCount(5)
+        self.tabla_etapas.setHorizontalHeaderLabels(["ID", "Etapa", "Estado", "Fecha Inicio", "Fecha Fin"])
+        self.tabla_etapas.setStyleSheet("border: 1px solid #e5e7eb; border-radius: 8px;")
+        self.tabla_etapas.horizontalHeader().setStyleSheet("")
+        self.layout.addWidget(self.tabla_etapas)
+
+        # Botones principales como iconos (ahora como atributos de instancia)
+        botones_layout = QHBoxLayout()
+        self.boton_agregar = QPushButton()
+        self.boton_ver_detalles = QPushButton()
+        self.boton_finalizar_etapa = QPushButton()
+        botones = [
+            (self.boton_agregar, "plus_icon.svg", "Agregar etapa"),
+            (self.boton_ver_detalles, "search_icon.svg", "Ver detalles de abertura"),
+            (self.boton_finalizar_etapa, "refresh_icon.svg", "Finalizar etapa"),
+        ]
+        for boton, icono, tooltip in botones:
+            boton.setIcon(QIcon(f"img/{icono}"))
+            boton.setIconSize(QSize(12, 12))
+            boton.setToolTip(tooltip)
+            boton.setText("")
+            boton.setFixedSize(15, 15)
+            boton.setStyleSheet("""
+                QPushButton {
+                    background-color: #2563eb;
+                    border-radius: 4px;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #1e40af;
+                }
+                QPushButton:pressed {
+                    background-color: #1e3a8a;
+                }
+            """)
+            botones_layout.addWidget(boton)
+        self.layout.addLayout(botones_layout)
 
         self.setLayout(self.layout)
 
