@@ -1,9 +1,37 @@
 from utils.theme_manager import aplicar_tema, guardar_modo_tema
+from modules.usuarios.model import UsuariosModel
+from modules.auditoria.model import AuditoriaModel
+from functools import wraps
+
+class PermisoAuditoria:
+    def __init__(self, modulo):
+        self.modulo = modulo
+    def __call__(self, accion):
+        def decorador(func):
+            @wraps(func)
+            def wrapper(controller, *args, **kwargs):
+                usuario_model = getattr(controller, 'usuarios_model', UsuariosModel())
+                auditoria_model = getattr(controller, 'auditoria_model', AuditoriaModel())
+                usuario = getattr(controller, 'usuario_actual', None)
+                if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                    return None
+                resultado = func(controller, *args, **kwargs)
+                auditoria_model.registrar_evento(usuario, self.modulo, accion)
+                return resultado
+            return wrapper
+        return decorador
+
+permiso_auditoria_configuracion = PermisoAuditoria('configuracion')
 
 class ConfiguracionController:
-    def __init__(self, model, view):
+    def __init__(self, model, view, usuario_actual=None):
         self.model = model
         self.view = view
+        self.usuario_actual = usuario_actual
+        self.usuarios_model = UsuariosModel()
+        self.auditoria_model = AuditoriaModel()
         try:
             # Validar y conectar botones
             if hasattr(self.view, "save_button"):
@@ -21,6 +49,7 @@ class ConfiguracionController:
         except AttributeError as e:
             print(f"Error en ConfiguracionController: {e}")
 
+    @permiso_auditoria_configuracion('ver')
     def cargar_configuracion(self):
         try:
             configuracion = self.model.obtener_configuracion()
@@ -44,6 +73,7 @@ class ConfiguracionController:
         except Exception as e:
             print(f"Error al cargar configuración: {e}")
 
+    @permiso_auditoria_configuracion('editar')
     def guardar_cambios(self):
         try:
             # Guardar configuración general
@@ -64,6 +94,7 @@ class ConfiguracionController:
         except Exception as e:
             print(f"Error al guardar cambios: {e}")
 
+    @permiso_auditoria_configuracion('editar')
     def guardar_configuracion_conexion(self):
         try:
             datos = {
@@ -76,6 +107,7 @@ class ConfiguracionController:
         except Exception as e:
             print(f"Error al guardar configuración de conexión: {e}")
 
+    @permiso_auditoria_configuracion('editar')
     def activar_modo_offline(self):
         try:
             self.model.activar_modo_offline()
@@ -83,6 +115,7 @@ class ConfiguracionController:
         except Exception as e:
             print(f"Error al activar el modo offline: {e}")
 
+    @permiso_auditoria_configuracion('editar')
     def desactivar_modo_offline(self):
         try:
             self.model.desactivar_modo_offline()
@@ -90,6 +123,7 @@ class ConfiguracionController:
         except Exception as e:
             print(f"Error al desactivar el modo offline: {e}")
 
+    @permiso_auditoria_configuracion('editar')
     def cambiar_estado_notificaciones(self):
         try:
             estado_actual = self.model.obtener_estado_notificaciones()
@@ -99,6 +133,7 @@ class ConfiguracionController:
         except Exception as e:
             print(f"Error al cambiar estado de notificaciones: {e}")
 
+    @permiso_auditoria_configuracion('editar')
     def toggle_tema(self, estado):
         try:
             modos = {0: "light", 2: "oscuro"}  # Diccionario para evitar condicionales

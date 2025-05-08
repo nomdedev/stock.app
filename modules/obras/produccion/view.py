@@ -8,9 +8,9 @@ class ProduccionView(QWidget):
         super().__init__()
         self.layout = QVBoxLayout()
 
-        self.label = QLabel("Gestión de Producción")
-        self.label.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 20px;")
-        self.layout.addWidget(self.label)
+        self.label_titulo = QLabel("Gestión de Producción")
+        self.label_titulo.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 20px;")
+        self.layout.addWidget(self.label_titulo)
 
         # Formulario de entrada
         self.form_layout = QFormLayout()

@@ -1,4 +1,6 @@
-from PyQt6.QtWidgets import QWidget, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QTabWidget
+from PyQt6.QtWidgets import QWidget, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QTabWidget, QLabel, QLineEdit, QHBoxLayout
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import QSize
 from modules.compras.pedidos.view import PedidosView  # Importar desde el módulo correcto
 
 class ComprasView(QWidget):
@@ -18,8 +20,39 @@ class ComprasView(QWidget):
         self.layout.addWidget(self.tab_widget)
 
     def inicializar_botones(self):
-        self.boton_comparar_presupuestos = QPushButton("Comparar Presupuestos")
-        self.layout.addWidget(self.boton_comparar_presupuestos)
+        # Botones principales como iconos
+        botones_layout = QHBoxLayout()
+        botones = [
+            QPushButton(),  # Nuevo Pedido
+            QPushButton(),  # Comparar Presupuestos
+            QPushButton(),  # Exportar a Excel
+        ]
+        iconos = [
+            ("plus_icon.svg", "Nuevo pedido"),
+            ("search_icon.svg", "Comparar presupuestos"),
+            ("excel_icon.svg", "Exportar pedidos a Excel"),
+        ]
+        for boton, (icono, tooltip) in zip(botones, iconos):
+            boton.setIcon(QIcon(f"img/{icono}"))
+            boton.setIconSize(QSize(32, 32))
+            boton.setToolTip(tooltip)
+            boton.setText("")
+            boton.setFixedSize(48, 48)
+            boton.setStyleSheet("""
+                QPushButton {
+                    background-color: #2563eb;
+                    border-radius: 12px;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #1e40af;
+                }
+                QPushButton:pressed {
+                    background-color: #1e3a8a;
+                }
+            """)
+            botones_layout.addWidget(boton)
+        self.layout.addLayout(botones_layout)
 
     def mostrar_comparacion_presupuestos(self, presupuestos):
         self.tabla_comparacion = QTableWidget()
@@ -33,3 +66,21 @@ class ComprasView(QWidget):
             self.tabla_comparacion.setItem(row_idx, 2, QTableWidgetItem(presupuesto[2]))
 
         self.layout.addWidget(self.tabla_comparacion)
+
+    @property
+    def label(self):
+        if not hasattr(self, '_label_estado'):
+            self._label_estado = QLabel()
+        return self._label_estado
+
+    @property
+    def buscar_input(self):
+        if not hasattr(self, '_buscar_input'):
+            self._buscar_input = QLineEdit()
+        return self._buscar_input
+
+    @property
+    def id_item_input(self):
+        if not hasattr(self, '_id_item_input'):
+            self._id_item_input = QLineEdit()
+        return self._id_item_input

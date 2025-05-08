@@ -109,6 +109,6 @@ class Configuracion(QWidget):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout()
-        self.label = QLabel("Vista de Configuración")
-        self.layout.addWidget(self.label)
+        self.label_titulo = QLabel("Vista de Configuración")
+        self.layout.addWidget(self.label_titulo)
         self.setLayout(self.layout)

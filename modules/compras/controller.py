@@ -1,55 +1,48 @@
-from PyQt6.QtWidgets import QTableWidgetItem, QMessageBox
-import os
-from datetime import datetime
+from modules.usuarios.model import UsuariosModel
+from modules.auditoria.model import AuditoriaModel
+from functools import wraps
+
+class PermisoAuditoria:
+    def __init__(self, modulo):
+        self.modulo = modulo
+    def __call__(self, accion):
+        def decorador(func):
+            @wraps(func)
+            def wrapper(controller, *args, **kwargs):
+                usuario_model = getattr(controller, 'usuarios_model', UsuariosModel())
+                auditoria_model = getattr(controller, 'auditoria_model', AuditoriaModel())
+                usuario = getattr(controller, 'usuario_actual', None)
+                if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                    return None
+                resultado = func(controller, *args, **kwargs)
+                auditoria_model.registrar_evento(usuario, self.modulo, accion)
+                return resultado
+            return wrapper
+        return decorador
+
+permiso_auditoria_compras = PermisoAuditoria('compras')
 
 class ComprasController:
-    def __init__(self, model, view):
+    def __init__(self, model, view, usuario_actual=None):
         self.model = model
         self.view = view
-        self.setup_view_signals()
+        self.usuario_actual = usuario_actual
+        self.usuarios_model = UsuariosModel()
+        self.auditoria_model = AuditoriaModel()
 
-    def setup_view_signals(self):
-        if hasattr(self.view, 'boton_guardar'):
-            self.view.boton_guardar.clicked.connect(self.guardar_pedido)
-        if hasattr(self.view, 'boton_buscar'):
-            self.view.boton_buscar.clicked.connect(self.buscar_pedido)
-        if hasattr(self.view, 'boton_eliminar'):
-            self.view.boton_eliminar.clicked.connect(self.eliminar_pedido)
-        if hasattr(self.view, 'boton_comparar'):
-            # usar ID desde la vista al comparar presupuestos
-            self.view.boton_comparar.clicked.connect(
-                lambda: self.comparar_presupuestos(self.view.obtener_id_pedido())
-            )
+    @permiso_auditoria_compras('ver')
+    def ver_compras(self):
+        # Implementar lógica de visualización de compras
+        pass
 
-    def guardar_pedido(self):
-        pedido = self.view.obtener_datos_pedido()
-        resultado = self.model.guardar_pedido(pedido)
-        if isinstance(resultado, str):  # Mensaje de error
-            self.view.label.setText(resultado)
-        else:
-            self.view.limpiar_formulario()
-            self.view.label.setText("Pedido guardado con éxito")
+    @permiso_auditoria_compras('crear')
+    def crear_compra(self):
+        # Implementar lógica de creación de compra
+        pass
 
-    def buscar_pedido(self):
-        id_pedido = self.view.obtener_id_pedido()
-        pedido = self.model.buscar_pedido(id_pedido)
-        if isinstance(pedido, str):  # Mensaje de error
-            self.view.label.setText(pedido)
-        else:
-            self.view.mostrar_datos_pedido(pedido)
-
-    def eliminar_pedido(self):
-        id_pedido = self.view.obtener_id_pedido()
-        resultado = self.model.eliminar_pedido(id_pedido)
-        if isinstance(resultado, str):  # Mensaje de error
-            self.view.label.setText(resultado)
-        else:
-            self.view.limpiar_formulario()
-            self.view.label.setText("Pedido eliminado con éxito")
-
-    def comparar_presupuestos(self, id_pedido):
-        presupuestos = self.model.obtener_comparacion_presupuestos(id_pedido)
-        if isinstance(presupuestos, str):  # Mensaje de error
-            self.view.label.setText(presupuestos)
-        else:
-            self.view.mostrar_comparacion_presupuestos(presupuestos)
+    @permiso_auditoria_compras('aprobar')
+    def aprobar_compra(self):
+        # Implementar lógica de aprobación de compra
+        pass

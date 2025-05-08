@@ -10,8 +10,8 @@ class VidriosView(QWidget):
         self.layout = QVBoxLayout()
 
         # Encabezado
-        self.label = QLabel("Gestión de Vidrios")
-        self.layout.addWidget(self.label)
+        self.label_titulo = QLabel("Gestión de Vidrios")
+        self.layout.addWidget(self.label_titulo)
 
         # Formulario de entrada
         self.form_layout = self.create_form_layout()

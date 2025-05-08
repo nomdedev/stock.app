@@ -1,5 +1,6 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QTableWidget, QComboBox, QSizePolicy, QPushButton
-from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QTableWidget, QComboBox, QSizePolicy, QPushButton, QHBoxLayout
+from PyQt6.QtCore import QTimer, QSize
+from PyQt6 import QtGui
 from core.ui_components import CustomButton
 
 class UsuariosView(QWidget):
@@ -41,8 +42,8 @@ class UsuariosView(QWidget):
             }
         """)
 
-        self.label = QLabel("Gestión de Usuarios")
-        self.layout.addWidget(self.label)
+        self.label_titulo = QLabel("Gestión de Usuarios")
+        self.layout.addWidget(self.label_titulo)
 
         self.form_layout = QFormLayout()
         self.nombre_input = QLineEdit()
@@ -65,10 +66,39 @@ class UsuariosView(QWidget):
         self.form_layout.addRow("Rol:", self.rol_input)
         self.layout.addLayout(self.form_layout)
 
-        self.boton_agregar = CustomButton("Agregar Usuario")
-        self.boton_agregar.setFixedWidth(100)
-        self.boton_agregar.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-        self.layout.addWidget(self.boton_agregar)
+        # Botones principales como iconos
+        botones_layout = QHBoxLayout()
+        botones = [
+            QPushButton(),  # Nuevo Usuario
+            QPushButton(),  # Buscar Usuario
+            QPushButton(),  # Exportar Usuarios
+        ]
+        iconos = [
+            ("plus_icon.svg", "Agregar nuevo usuario"),
+            ("buscar.png", "Buscar usuario"),
+            ("excel_icon.svg", "Exportar usuarios a Excel"),
+        ]
+        for boton, (icono, tooltip) in zip(botones, iconos):
+            boton.setIcon(QtGui.QIcon(f"img/{icono}"))
+            boton.setIconSize(QSize(32, 32))
+            boton.setToolTip(tooltip)
+            boton.setText("")
+            boton.setFixedSize(48, 48)
+            boton.setStyleSheet("""
+                QPushButton {
+                    background-color: #2563eb;
+                    border-radius: 12px;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #1e40af;
+                }
+                QPushButton:pressed {
+                    background-color: #1e3a8a;
+                }
+            """)
+            botones_layout.addWidget(boton)
+        self.layout.addLayout(botones_layout)
 
         # Tabla principal de usuarios
         self.tabla_usuarios = QTableWidget()
@@ -78,9 +108,6 @@ class UsuariosView(QWidget):
 
         # Ajustar el ancho de las columnas al contenido
         self.tabla_usuarios.resizeColumnsToContents()
-
-        self.boton_nuevo_usuario = CustomButton("Nuevo Usuario")
-        self.layout.addWidget(self.boton_nuevo_usuario)
 
         self.boton_favorito = CustomButton("Marcar como Favorito")
         if self.controller is None:
@@ -180,10 +207,28 @@ class UsuariosView(QWidget):
         self.boton_clonar_permisos = CustomButton("Clonar Permisos")
         self.layout.addWidget(self.boton_clonar_permisos)
 
+    @property
+    def label(self):
+        if not hasattr(self, '_label_estado'):
+            self._label_estado = QLabel()
+        return self._label_estado
+
+    @property
+    def buscar_input(self):
+        if not hasattr(self, '_buscar_input'):
+            self._buscar_input = QLineEdit()
+        return self._buscar_input
+
+    @property
+    def id_item_input(self):
+        if not hasattr(self, '_id_item_input'):
+            self._id_item_input = QLineEdit()
+        return self._id_item_input
+
 class Usuarios(QWidget):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout()
-        self.label = QLabel("Vista de Usuarios")
-        self.layout.addWidget(self.label)
+        self.label_titulo = QLabel("Vista de Usuarios")
+        self.layout.addWidget(self.label_titulo)
         self.setLayout(self.layout)

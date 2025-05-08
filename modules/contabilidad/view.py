@@ -1,13 +1,15 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QHBoxLayout
 from PyQt6.QtCore import QTimer
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import QSize
 
 class ContabilidadView(QWidget):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout()
 
-        self.label = QLabel("Gestión de Contabilidad y Recibos")
-        self.layout.addWidget(self.label)
+        self.label_titulo = QLabel("Gestión de Contabilidad y Recibos")
+        self.layout.addWidget(self.label_titulo)
 
         # Formulario para agregar recibo
         self.form_layout = QFormLayout()
@@ -28,8 +30,39 @@ class ContabilidadView(QWidget):
         self.form_layout.addRow("Destinatario:", self.destinatario_input)
         self.layout.addLayout(self.form_layout)
 
-        self.boton_agregar_recibo = QPushButton("Agregar Recibo")
-        self.layout.addWidget(self.boton_agregar_recibo)
+        # Botones principales como iconos
+        botones_layout = QHBoxLayout()
+        botones = [
+            QPushButton(),  # Nuevo Recibo
+            QPushButton(),  # Exportar a Excel
+            QPushButton(),  # Exportar a PDF
+        ]
+        iconos = [
+            ("plus_icon.svg", "Agregar nuevo recibo"),
+            ("excel_icon.svg", "Exportar recibos a Excel"),
+            ("pdf_icon.svg", "Exportar recibos a PDF"),
+        ]
+        for boton, (icono, tooltip) in zip(botones, iconos):
+            boton.setIcon(QIcon(f"img/{icono}"))
+            boton.setIconSize(QSize(32, 32))
+            boton.setToolTip(tooltip)
+            boton.setText("")
+            boton.setFixedSize(48, 48)
+            boton.setStyleSheet("""
+                QPushButton {
+                    background-color: #2563eb;
+                    border-radius: 12px;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #1e40af;
+                }
+                QPushButton:pressed {
+                    background-color: #1e3a8a;
+                }
+            """)
+            botones_layout.addWidget(boton)
+        self.layout.addLayout(botones_layout)
 
         # Tabla de recibos
         self.tabla_recibos = QTableWidget()
@@ -50,6 +83,24 @@ class ContabilidadView(QWidget):
 
         self.setLayout(self.layout)
         self.controller = None
+
+    @property
+    def label(self):
+        if not hasattr(self, '_label_estado'):
+            self._label_estado = QLabel()
+        return self._label_estado
+
+    @property
+    def buscar_input(self):
+        if not hasattr(self, '_buscar_input'):
+            self._buscar_input = QLineEdit()
+        return self._buscar_input
+
+    @property
+    def id_item_input(self):
+        if not hasattr(self, '_id_item_input'):
+            self._id_item_input = QLineEdit()
+        return self._id_item_input
 
     def inicializar_botones(self):
         self.boton_generar_pdf = QPushButton("Generar Recibo en PDF")

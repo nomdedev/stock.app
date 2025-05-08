@@ -1,15 +1,45 @@
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox
 from PyQt6 import QtCore
+from modules.usuarios.model import UsuariosModel
+from modules.auditoria.model import AuditoriaModel
+from functools import wraps
+
+class PermisoAuditoria:
+    def __init__(self, modulo):
+        self.modulo = modulo
+    def __call__(self, accion):
+        def decorador(func):
+            @wraps(func)
+            def wrapper(controller, *args, **kwargs):
+                usuario_model = getattr(controller, 'usuarios_model', UsuariosModel())
+                auditoria_model = getattr(controller, 'auditoria_model', AuditoriaModel())
+                usuario = getattr(controller, 'usuario_actual', None)
+                if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                    return None
+                resultado = func(controller, *args, **kwargs)
+                auditoria_model.registrar_evento(usuario, self.modulo, accion)
+                return resultado
+            return wrapper
+        return decorador
+
+permiso_auditoria_obras = PermisoAuditoria('obras')
 
 class ObrasController:
-    def __init__(self, model, view):
+    def __init__(self, model, view, usuario_actual=None):
         self.model = model
         self.view = view
+        self.usuario_actual = usuario_actual
+        self.usuarios_model = UsuariosModel()
+        self.auditoria_model = AuditoriaModel()
+        # Conexión de señales de los botones principales
         self.view.boton_agregar.clicked.connect(self.agregar_obra)
         self.view.boton_ver_cronograma.clicked.connect(self.ver_cronograma)
-        self.view.boton_asignar_herrajes.clicked.connect(self.asignar_materiales)
+        # Si tienes más botones, conéctalos aquí
+        # self.view.boton_ver_detalles.clicked.connect(self.ver_detalles)
         self.view.boton_exportar_excel.clicked.connect(lambda: self.exportar_cronograma_seleccionada("excel"))
-        self.view.boton_exportar_pdf.clicked.connect(lambda: self.exportar_cronograma_seleccionada("pdf"))
+        # self.view.boton_exportar_pdf.clicked.connect(lambda: self.exportar_cronograma_seleccionada("pdf"))
         self.cargar_datos_obras()  # Cargar datos al iniciar
 
     def cargar_datos_obras(self):
@@ -48,6 +78,7 @@ class ObrasController:
         except Exception as e:
             self.view.label.setText(f"Error al actualizar calendario: {e}")
 
+    @permiso_auditoria_obras('agregar')
     def agregar_obra(self):
         """Agrega una nueva obra con los datos ingresados."""
         try:
@@ -79,6 +110,7 @@ class ObrasController:
             print(f"Error al agregar obra: {e}")
             self.view.label.setText("Error al agregar la obra.")
 
+    @permiso_auditoria_obras('ver_cronograma')
     def ver_cronograma(self):
         fila_seleccionada = self.view.tabla_obras.currentRow()
         if fila_seleccionada != -1:
@@ -105,6 +137,7 @@ class ObrasController:
         else:
             self.view.label.setText("Seleccione una obra para ver su cronograma.")
 
+    @permiso_auditoria_obras('asignar_materiales')
     def asignar_materiales(self):
         fila_seleccionada = self.view.tabla_obras.currentRow()
         if fila_seleccionada != -1:
@@ -116,10 +149,12 @@ class ObrasController:
             self.model.asignar_material_a_obra((id_obra, id_item, cantidad_necesaria, cantidad_reservada, estado))
             self.view.label.setText(f"Material asignado a la obra {id_obra}.")
 
+    @permiso_auditoria_obras('exportar_cronograma')
     def exportar_cronograma(self, id_obra, formato):
         mensaje = self.model.exportar_cronograma(formato, id_obra)
         self.view.label.setText(mensaje)
 
+    @permiso_auditoria_obras('exportar_cronograma_seleccionada')
     def exportar_cronograma_seleccionada(self, formato):
         fila_seleccionada = self.view.tabla_obras.currentRow()
         if fila_seleccionada != -1:
@@ -128,6 +163,7 @@ class ObrasController:
         else:
             self.view.label.setText("Seleccione una obra para exportar su cronograma.")
 
+    @permiso_auditoria_obras('sincronizar_materiales_con_inventario')
     def sincronizar_materiales_con_inventario(self, id_obra):
         """Sincroniza los materiales de una obra con el inventario."""
         try:

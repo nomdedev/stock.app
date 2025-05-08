@@ -75,6 +75,6 @@ class Auditoria(QWidget):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout()
-        self.label = QLabel("Vista de Auditoría")
-        self.layout.addWidget(self.label)
+        self.label_titulo = QLabel("Vista de Auditoría")
+        self.layout.addWidget(self.label_titulo)
         self.setLayout(self.layout)

@@ -5,8 +5,8 @@ class NotificacionesView(QWidget):
         super().__init__()
         self.layout = QVBoxLayout()
 
-        self.label = QLabel("Gestión de Notificaciones")
-        self.layout.addWidget(self.label)
+        self.label_titulo = QLabel("Gestión de Notificaciones")
+        self.layout.addWidget(self.label_titulo)
 
         self.form_layout = QFormLayout()
         self.mensaje_input = QLineEdit()

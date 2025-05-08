@@ -1,92 +1,53 @@
-from PyQt6.QtWidgets import QTableWidgetItem
+from modules.usuarios.model import UsuariosModel
+from modules.auditoria.model import AuditoriaModel
+from functools import wraps
+
+class PermisoAuditoria:
+    def __init__(self, modulo):
+        self.modulo = modulo
+    def __call__(self, accion):
+        def decorador(func):
+            @wraps(func)
+            def wrapper(controller, *args, **kwargs):
+                usuario_model = getattr(controller, 'usuarios_model', UsuariosModel())
+                auditoria_model = getattr(controller, 'auditoria_model', AuditoriaModel())
+                usuario = getattr(controller, 'usuario_actual', None)
+                if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                    return None
+                resultado = func(controller, *args, **kwargs)
+                auditoria_model.registrar_evento(usuario, self.modulo, accion)
+                return resultado
+            return wrapper
+        return decorador
+
+permiso_auditoria_logistica = PermisoAuditoria('logistica')
 
 class LogisticaController:
-    def __init__(self, model, view):
+    def __init__(self, model, view, usuario_actual=None):
         self.model = model
         self.view = view
-        self.view.boton_agregar.clicked.connect(self.agregar_entrega)
-        self.view.boton_actualizar_estado.clicked.connect(self.actualizar_estado_entrega)
-        self.view.boton_agregar_checklist.clicked.connect(self.agregar_item_checklist)
-        self.cargar_datos_entregas()
+        self.usuario_actual = usuario_actual
+        self.usuarios_model = UsuariosModel()
+        self.auditoria_model = AuditoriaModel()
 
-    def cargar_datos_entregas(self):
-        """Carga los datos de la tabla de entregas en la vista de logística."""
-        try:
-            datos = self.model.obtener_datos_entregas()
-            self.view.tabla_entregas.setRowCount(len(datos))
-            for row_idx, row_data in enumerate(datos):
-                for col_idx, value in enumerate(row_data):
-                    self.view.tabla_entregas.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
-        except Exception as e:
-            self.view.label.setText(f"Error al cargar datos: {e}")
+    @permiso_auditoria_logistica('ver')
+    def ver_entregas(self):
+        # Implementar lógica de visualización de entregas
+        pass
 
-    def agregar_entrega(self):
-        """Agrega una nueva entrega."""
-        try:
-            destino = self.view.destino_input.text()
-            fecha_programada = self.view.fecha_programada_input.text()
-            estado = self.view.estado_input.text()
-            vehiculo = self.view.vehiculo_input.text()
-            chofer = self.view.chofer_input.text()
+    @permiso_auditoria_logistica('editar')
+    def editar_entrega(self):
+        # Implementar lógica de edición de entrega
+        pass
 
-            if not all([destino, fecha_programada, estado, vehiculo, chofer]):
-                self.view.label.setText("Por favor, complete todos los campos.")
-                return
+    @permiso_auditoria_logistica('firmar')
+    def firmar_entrega(self):
+        # Implementar lógica de firma de entrega
+        pass
 
-            self.model.agregar_entrega((destino, fecha_programada, estado, vehiculo, chofer, ""))
-            self.view.label.setText("Entrega agregada exitosamente.")
-        except Exception as e:
-            print(f"Error al agregar entrega: {e}")
-            self.view.label.setText("Error al agregar la entrega.")
-
-    def actualizar_estado_entrega(self):
-        """Actualiza el estado de una entrega seleccionada."""
-        try:
-            fila_seleccionada = self.view.tabla_entregas.currentRow()
-            if fila_seleccionada == -1:
-                self.view.label.setText("Seleccione una entrega para actualizar su estado.")
-                return
-
-            id_entrega = self.view.tabla_entregas.item(fila_seleccionada, 0).text()
-            nuevo_estado = "en ruta"  # Ejemplo, debería obtenerse dinámicamente
-            self.model.actualizar_estado_entrega(id_entrega, nuevo_estado)
-            self.view.label.setText(f"Estado de la entrega {id_entrega} actualizado a {nuevo_estado}.")
-        except Exception as e:
-            print(f"Error al actualizar estado de entrega: {e}")
-            self.view.label.setText("Error al actualizar el estado de la entrega.")
-
-    def agregar_item_checklist(self):
-        fila_seleccionada = self.view.tabla_entregas.currentRow()
-        if fila_seleccionada != -1:
-            id_entrega = self.view.tabla_entregas.item(fila_seleccionada, 0).text()
-            item = "Nuevo Ítem"  # Ejemplo, debería obtenerse dinámicamente
-            estado_item = "pendiente"
-            observaciones = "Sin observaciones"
-            self.model.agregar_item_checklist((id_entrega, item, estado_item, observaciones))
-            self.view.label.setText(f"Ítem agregado al checklist de la entrega {id_entrega}.")
-
-    def registrar_firma_entrega(self, id_entrega, firma_digital):
-        self.model.registrar_firma_entrega(id_entrega, firma_digital)
-        self.view.label.setText("Firma digital registrada exitosamente.")
-
-    def verificar_entregas_vencidas(self):
-        entregas_vencidas = self.model.obtener_entregas_por_estado("pendiente")
-        if entregas_vencidas:
-            mensaje = f"Hay {len(entregas_vencidas)} entregas vencidas."
-            self.notificaciones_controller.enviar_notificacion_automatica(mensaje, "logística")
-            self.view.label.setText(mensaje)
-
-    def generar_hoja_de_ruta(self, id_vehiculo):
-        hoja_de_ruta = self.model.generar_hoja_de_ruta(id_vehiculo)
-        if isinstance(hoja_de_ruta, str):  # Mensaje de error
-            self.view.label.setText(hoja_de_ruta)
-        else:
-            self.view.mostrar_hoja_de_ruta(hoja_de_ruta)
-
-    def exportar_historial_entregas(self, formato):
-        mensaje = self.model.exportar_historial_entregas(formato)
-        self.view.label.setText(mensaje)
-
-    def exportar_acta_entrega(self, id_entrega):
-        mensaje = self.model.exportar_acta_entrega(id_entrega)
-        self.view.label.setText(mensaje)
+    @permiso_auditoria_logistica('reprogramar')
+    def reprogramar_entrega(self):
+        # Implementar lógica de reprogramación de entrega
+        pass

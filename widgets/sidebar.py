@@ -63,7 +63,12 @@ class Sidebar(QWidget):
 
         # Botones de navegación
         for index, section in enumerate(sections):
-            button = QPushButton(section)
+            # Permitir que section sea str o tuple (nombre, ...)
+            if isinstance(section, tuple):
+                section_name = section[0]
+            else:
+                section_name = section
+            button = QPushButton(section_name)
             button.setObjectName("botonMenu")
             button.setFixedHeight(44)
             button.setFixedSize(100, 25)
@@ -85,7 +90,7 @@ class Sidebar(QWidget):
                     color: white;
                 }
             """)
-            icon_path = os.path.join(icons_path, f"{section.lower()}.svg")
+            icon_path = os.path.join(icons_path, f"{section_name.lower()}.svg")
             if os.path.exists(icon_path):
                 button.setIcon(QIcon(icon_path))
                 button.setIconSize(QSize(20, 20))

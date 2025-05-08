@@ -1,10 +1,38 @@
 import hashlib
 from core.base_controller import BaseController
 from PyQt6.QtWidgets import QTableWidgetItem
+from modules.usuarios.model import UsuariosModel
+from modules.auditoria.model import AuditoriaModel
+from functools import wraps
+
+class PermisoAuditoria:
+    def __init__(self, modulo):
+        self.modulo = modulo
+    def __call__(self, accion):
+        def decorador(func):
+            @wraps(func)
+            def wrapper(controller, *args, **kwargs):
+                usuario_model = getattr(controller, 'usuarios_model', UsuariosModel())
+                auditoria_model = getattr(controller, 'auditoria_model', AuditoriaModel())
+                usuario = getattr(controller, 'usuario_actual', None)
+                if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                    return None
+                resultado = func(controller, *args, **kwargs)
+                auditoria_model.registrar_evento(usuario, self.modulo, accion)
+                return resultado
+            return wrapper
+        return decorador
+
+permiso_auditoria_contabilidad = PermisoAuditoria('contabilidad')
 
 class ContabilidadController(BaseController):
-    def __init__(self, model, view):
+    def __init__(self, model, view, usuario_actual=None):
         super().__init__(model, view)
+        self.usuario_actual = usuario_actual
+        self.usuarios_model = UsuariosModel()
+        self.auditoria_model = AuditoriaModel()
 
     def setup_view_signals(self):
         if hasattr(self.view, 'boton_agregar_recibo'):
@@ -12,6 +40,7 @@ class ContabilidadController(BaseController):
         if hasattr(self.view, 'boton_generar_pdf'):
             self.view.boton_generar_pdf.clicked.connect(self.generar_recibo_pdf_desde_vista)
 
+    @permiso_auditoria_contabilidad('agregar_recibo')
     def agregar_recibo(self):
         fecha_emision = self.view.fecha_emision_input.text()
         obra_id = self.view.obra_id_input.text()
@@ -25,6 +54,7 @@ class ContabilidadController(BaseController):
         else:
             self.view.label.setText("Por favor, complete todos los campos.")
 
+    @permiso_auditoria_contabilidad('generar_recibo_pdf')
     def generar_recibo_pdf(self, id_recibo):
         mensaje = self.model.generar_recibo_pdf(id_recibo)
         self.view.label.setText(mensaje)
@@ -37,6 +67,7 @@ class ContabilidadController(BaseController):
         else:
             self.view.label.setText("Seleccione un recibo para generar el PDF.")
 
+    @permiso_auditoria_contabilidad('agregar_movimiento_contable')
     def agregar_movimiento_contable(self, datos):
         self.model.agregar_movimiento_contable(datos)
         if datos[2] > 10000:  # Notificar si el monto es mayor a 10,000
@@ -44,15 +75,18 @@ class ContabilidadController(BaseController):
         else:
             self.view.label.setText("Movimiento registrado.")
 
+    @permiso_auditoria_contabilidad('exportar_balance')
     def exportar_balance(self, formato):
         datos_balance = self.model.obtener_datos_balance()  # Método que debe obtener los datos del balance
         mensaje = self.model.exportar_balance(formato, datos_balance)
         self.view.label.setText(mensaje)
 
+    @permiso_auditoria_contabilidad('generar_firma_digital')
     def generar_firma_digital(self, datos_recibo):
         firma = self.model.generar_firma_digital(datos_recibo)
         self.view.label.setText(f"Firma generada: {firma}")
 
+    @permiso_auditoria_contabilidad('verificar_firma_digital')
     def verificar_firma_digital(self, id_recibo):
         es_valida = self.model.verificar_firma_digital(id_recibo)
         if es_valida == "Recibo no encontrado.":

@@ -6,9 +6,9 @@ class MantenimientoView(QWidget):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
-        self.label = QLabel("Gestión de Mantenimiento")
-        self.label.setStyleSheet("font-size: 24px; font-weight: bold; margin-bottom: 20px;")
-        self.layout.addWidget(self.label)
+        self.label_titulo = QLabel("Gestión de Mantenimiento")
+        self.label_titulo.setStyleSheet("font-size: 24px; font-weight: bold; margin-bottom: 20px;")
+        self.layout.addWidget(self.label_titulo)
 
         # Crear un widget de pestañas
         self.tab_widget = QTabWidget()

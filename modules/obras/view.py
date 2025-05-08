@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QTableWidget, QTabWidget, QCalendarWidget, QPushButton, QHBoxLayout, QComboBox
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtGui import QIcon
 from core.ui_components import CustomButton
 from modules.obras.produccion.view import ProduccionView  # Importar ProduccionView desde el módulo correcto
 
@@ -8,162 +9,49 @@ class ObrasView(QWidget):
         super().__init__()
         self.layout = QVBoxLayout()
 
-        self.label = QLabel("Gestión de Obras")
-        self.label.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 20px;")
-        self.layout.addWidget(self.label)
+        self.label_titulo = QLabel("Gestión de Obras")
+        self.label_titulo.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 20px;")
+        self.layout.addWidget(self.label_titulo)
 
-        # Botones estilizados en una fila
+        # Botones principales como iconos
         botones_layout = QHBoxLayout()
-        botones_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Centrar los botones
-
-        self.boton_agregar = QPushButton("Agregar Obra")
-        self.boton_agregar.setFixedHeight(30)
-        self.boton_agregar.setFixedWidth(150)
-        self.boton_agregar.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                padding: 5px;
-                border-radius: 6px; /* Bordes redondeados */
-                font-size: 12px; /* Tamaño de letra */
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_agregar)
-
-        self.boton_ver_detalles = QPushButton("Ver Detalles de Obra")
-        self.boton_ver_detalles.setFixedHeight(30)
-        self.boton_ver_detalles.setFixedWidth(150)
-        self.boton_ver_detalles.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                padding: 5px;
-                border-radius: 6px; /* Bordes redondeados */
-                font-size: 12px; /* Tamaño de letra */
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_ver_detalles)
-
-        self.boton_ver_cronograma = QPushButton("Ver Cronograma")
-        self.boton_ver_cronograma.setFixedHeight(30)
-        self.boton_ver_cronograma.setFixedWidth(150)
-        self.boton_ver_cronograma.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                padding: 5px;
-                border-radius: 6px; /* Bordes redondeados */
-                font-size: 12px; /* Tamaño de letra */
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_ver_cronograma)
-
-        self.boton_asignar_herrajes = QPushButton("Asignar Herrajes")
-        self.boton_asignar_herrajes.setFixedHeight(30)
-        self.boton_asignar_herrajes.setFixedWidth(150)
-        self.boton_asignar_herrajes.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                padding: 5px;
-                border-radius: 6px; /* Bordes redondeados */
-                font-size: 12px; /* Tamaño de letra */
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_asignar_herrajes)
-
-        self.boton_finalizar = QPushButton("Finalizar Obra")
-        self.boton_finalizar.setFixedHeight(30)
-        self.boton_finalizar.setFixedWidth(150)
-        self.boton_finalizar.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                padding: 5px;
-                border-radius: 6px; /* Bordes redondeados */
-                font-size: 12px; /* Tamaño de letra */
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_finalizar)
-
-        self.boton_exportar_excel = QPushButton("Exportar Excel")
-        self.boton_exportar_excel.setFixedHeight(30)
-        self.boton_exportar_excel.setFixedWidth(150)
-        self.boton_exportar_excel.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                padding: 5px;
-                border-radius: 6px; /* Bordes redondeados */
-                font-size: 12px; /* Tamaño de letra */
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_exportar_excel)
-
-        self.boton_exportar_pdf = QPushButton("Exportar PDF")
-        self.boton_exportar_pdf.setFixedHeight(30)
-        self.boton_exportar_pdf.setFixedWidth(150)
-        self.boton_exportar_pdf.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: white; /* Texto blanco */
-                padding: 5px;
-                border-radius: 6px; /* Bordes redondeados */
-                font-size: 12px; /* Tamaño de letra */
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a; /* Azul aún más oscuro */
-            }
-        """)
-        botones_layout.addWidget(self.boton_exportar_pdf)
-
-        self.layout.addLayout(botones_layout)  # Agregar el layout de botones al layout principal
+        self.boton_agregar = QPushButton()
+        self.boton_ver_detalles = QPushButton()
+        self.boton_ver_cronograma = QPushButton()
+        self.boton_exportar_excel = QPushButton()
+        botones = [
+            self.boton_agregar,
+            self.boton_ver_detalles,
+            self.boton_ver_cronograma,
+            self.boton_exportar_excel,
+        ]
+        iconos = [
+            ("plus_icon.svg", "Agregar nueva obra"),
+            ("search_icon.svg", "Ver detalles de obra"),
+            ("calendar_icon.svg", "Ver cronograma"),
+            ("excel_icon.svg", "Exportar obras a Excel"),
+        ]
+        for boton, (icono, tooltip) in zip(botones, iconos):
+            boton.setIcon(QIcon(f"img/{icono}"))
+            boton.setIconSize(QSize(32, 32))
+            boton.setToolTip(tooltip)
+            boton.setText("")
+            boton.setFixedSize(48, 48)
+            boton.setStyleSheet("""
+                QPushButton {
+                    background-color: #2563eb;
+                    border-radius: 12px;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #1e40af;
+                }
+                QPushButton:pressed {
+                    background-color: #1e3a8a;
+                }
+            """)
+            botones_layout.addWidget(boton)
+        self.layout.addLayout(botones_layout)
 
         # Formulario de entrada
         self.form_layout = QFormLayout()
@@ -212,3 +100,21 @@ class ObrasView(QWidget):
         self.tabs.addTab(self.tab_produccion, "Producción")
 
         self.setLayout(self.layout)
+
+    @property
+    def label(self):
+        if not hasattr(self, '_label_estado'):
+            self._label_estado = QLabel()
+        return self._label_estado
+
+    @property
+    def buscar_input(self):
+        if not hasattr(self, '_buscar_input'):
+            self._buscar_input = QLineEdit()
+        return self._buscar_input
+
+    @property
+    def id_item_input(self):
+        if not hasattr(self, '_id_item_input'):
+            self._id_item_input = QLineEdit()
+        return self._id_item_input

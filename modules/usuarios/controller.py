@@ -3,10 +3,36 @@ from datetime import datetime
 import secrets
 import hashlib
 from core.base_controller import BaseController
+from modules.usuarios.model import UsuariosModel
+from modules.auditoria.model import AuditoriaModel
+from functools import wraps
+
+class PermisoAuditoria:
+    def __init__(self, modulo):
+        self.modulo = modulo
+    def __call__(self, accion):
+        def decorador(func):
+            @wraps(func)
+            def wrapper(controller, *args, **kwargs):
+                usuario_model = getattr(controller, 'usuarios_model', UsuariosModel())
+                auditoria_model = getattr(controller, 'auditoria_model', AuditoriaModel())
+                usuario = getattr(controller, 'usuario_actual', None)
+                if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                    return None
+                resultado = func(controller, *args, **kwargs)
+                auditoria_model.registrar_evento(usuario, self.modulo, accion)
+                return resultado
+            return wrapper
+        return decorador
+
+permiso_auditoria_usuarios = PermisoAuditoria('usuarios')
 
 class UsuariosController(BaseController):
-    def __init__(self, model, view):
+    def __init__(self, model, view, usuario_actual=None):
         super().__init__(model, view)
+        self.usuario_actual = usuario_actual
 
     def setup_view_signals(self):
         # Diccionario para mapear botones a métodos
@@ -37,6 +63,7 @@ class UsuariosController(BaseController):
         if hasattr(self.view, 'tabla_usuarios'):
             self.cargar_usuarios()
 
+    @permiso_auditoria_usuarios('agregar')
     def agregar_usuario(self):
         nombre = self.view.nombre_input.text()
         email = self.view.email_input.text()
@@ -62,6 +89,7 @@ class UsuariosController(BaseController):
         self.view.email_input.setStyleSheet("")
         self.view.nombre_input.setStyleSheet("")
 
+    @permiso_auditoria_usuarios('actualizar')
     def actualizar_usuario(self, id_usuario, datos, fecha_actualizacion):
         try:
             self.model.actualizar_usuario(id_usuario, datos, fecha_actualizacion)
@@ -93,6 +121,7 @@ class UsuariosController(BaseController):
         item = self.view.tabla_usuarios.item(row, 0)
         return int(item.text()) if item else None
 
+    @permiso_auditoria_usuarios('suspender')
     def _suspender_selected(self):
         user_id = self._get_selected_user_id()
         if user_id:
@@ -100,6 +129,7 @@ class UsuariosController(BaseController):
             self.view.label.setText(msg)
             self.cargar_usuarios()
 
+    @permiso_auditoria_usuarios('reactivar')
     def _reactivar_selected(self):
         user_id = self._get_selected_user_id()
         if user_id:
@@ -107,6 +137,7 @@ class UsuariosController(BaseController):
             self.view.label.setText(msg)
             self.cargar_usuarios()
 
+    @permiso_auditoria_usuarios('resetear_password')
     def _resetear_password_selected(self):
         user_id = self._get_selected_user_id()
         if user_id:
@@ -115,6 +146,7 @@ class UsuariosController(BaseController):
             self.model.actualizar_password(user_id, hashed)
             self.view.label.setText(f"Contraseña restablecida: {new_pass}")
 
+    @permiso_auditoria_usuarios('clonar_permisos')
     def _clonar_permisos(self):
         origen = self.view.input_rol_origen.text()
         destino = self.view.input_rol_destino.text()
@@ -144,6 +176,7 @@ class UsuariosController(BaseController):
             btn_reset.clicked.connect(lambda _, r=row: self._resetear_password_selected())
             self.view.tabla_usuarios.setCellWidget(row, cols['reset'], btn_reset)
 
+    @permiso_auditoria_usuarios('editar')
     def editar_usuario(self, usuario):
         dialog = QDialog()
         dialog.setWindowTitle("Editar Usuario")
@@ -151,6 +184,7 @@ class UsuariosController(BaseController):
         layout.addWidget(QLabel(f"Editar usuario: {usuario[0]}"))
         dialog.exec()
 
+    @permiso_auditoria_usuarios('eliminar')
     def eliminar_usuario(self, usuario_id):
         confirmacion = QMessageBox.question(
             self.view,
@@ -163,6 +197,7 @@ class UsuariosController(BaseController):
             self.view.label.setText(f"Usuario con ID {usuario_id} eliminado exitosamente.")
             self.cargar_usuarios()
 
+    @permiso_auditoria_usuarios('cambiar_estado')
     def cambiar_estado_usuario(self, usuario_id, estado_actual):
         nuevo_estado = "Inactivo" if estado_actual == "Activo" else "Activo"
         self.model.actualizar_estado_usuario(usuario_id, nuevo_estado)
@@ -188,6 +223,7 @@ class UsuariosController(BaseController):
                     chk.setChecked(bool(estado))
                     self.view.tabla_roles_permisos.setCellWidget(row, i, chk)
 
+    @permiso_auditoria_usuarios('guardar_permisos')
     def guardar_permisos(self):
         # Recoger permisos desde la tabla y actualizar
         filas = self.view.tabla_roles_permisos.rowCount()
@@ -204,6 +240,7 @@ class UsuariosController(BaseController):
             self.model.actualizar_permisos(rol, {modulo: permisos_a_actualizar[modulo]})
         self.view.label.setText("Permisos guardados exitosamente.")
 
+    @permiso_auditoria_usuarios('exportar_logs')
     def exportar_logs(self):
         logs = self.model.obtener_logs()
         # Lógica para exportar logs a un archivo (ejemplo: CSV o Excel)
