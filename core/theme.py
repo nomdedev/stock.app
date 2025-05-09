@@ -1,7 +1,6 @@
 # core/theme.py
-
-from PyQt5.QtWidgets import QGraphicsDropShadowEffect
-from PyQt5.QtGui import QColor
+from PyQt6.QtWidgets import QGraphicsDropShadowEffect
+from PyQt6.QtGui import QColor
 
 # Paleta de colores minimalista y moderna
 PRIMARY_COLOR = "#ffffff"  # Blanco puro para fondo
