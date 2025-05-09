@@ -145,30 +145,6 @@ class ContabilidadView(QWidget):
             widget.setGraphicsEffect(sombra)
         aplicar_sombra(self.boton_accion)
 
-        # Ajustar estilos de QPushButton
-        for button in [
-            self.boton_nuevo_recibo,
-            self.boton_exportar_excel,
-            self.boton_exportar_pdf,
-            self.boton_accion
-        ]:
-            button.setStyleSheet(
-                """
-                QPushButton {
-                    background-color: #0078d7;
-                    color: white;
-                    border-radius: 5px;
-                    padding: 8px 16px;
-                }
-                QPushButton:hover {
-                    background-color: #005a9e;
-                }
-                QPushButton:pressed {
-                    background-color: #003f73;
-                }
-                """
-            )
-
         # Asegurar espaciado y alineación
         self.layout.setSpacing(10)
         self.form_layout.setHorizontalSpacing(12)
