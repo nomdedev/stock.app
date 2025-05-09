@@ -10,52 +10,16 @@ class ConfiguracionView(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(32, 32, 32, 32)
         self.layout.setSpacing(0)
-        self.setStyleSheet("""
-            #configuracionView {
-                background-color: #232B36;
-                border-radius: 24px;
-            }
-            QLabel {
-                color: #fff;
-                font-family: 'Inter', 'Segoe UI', sans-serif;
-                font-size: 32px;
-                font-weight: 700;
-                letter-spacing: 1px;
-                margin-bottom: 24px;
-            }
-            QTabWidget::pane {
-                border: none;
-                border-radius: 16px;
-                background: #232B36;
-            }
-            QTabBar::tab {
-                background: #232B36;
-                color: #fff;
-                font-size: 18px;
-                font-family: 'Inter', 'Segoe UI', sans-serif;
-                font-weight: 600;
-                border: none;
-                border-radius: 16px 16px 0 0;
-                min-width: 160px;
-                min-height: 48px;
-                margin-right: 8px;
-                padding: 8px 24px;
-            }
-            QTabBar::tab:selected {
-                background: #2E3742;
-                color: #3DE6B1;
-                font-weight: 700;
-            }
-            QLineEdit, QComboBox, QCheckBox {
-                background-color: #232B36;
-                border: 1.5px solid #2E3742;
-                border-radius: 12px;
-                padding: 8px 12px;
-                color: #fff;
-                font-size: 16px;
-                font-family: 'Inter', 'Segoe UI', sans-serif;
-            }
-        """)
+        try:
+            import json
+            with open("themes/config.json", "r", encoding="utf-8") as f:
+                config = json.load(f)
+            tema = config.get("tema", "claro")
+            archivo_qss = f"themes/{tema}.qss"
+            with open(archivo_qss, "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except Exception as e:
+            print(f"No se pudo cargar el archivo de estilos de Configuración según el tema: {e}")
         # Título
         self.label_titulo = QLabel("SETTINGS")
         self.layout.addWidget(self.label_titulo)
@@ -89,32 +53,29 @@ class ConfiguracionView(QWidget):
             botones_layout = QHBoxLayout()
             self.boton_guardar = QPushButton()
             self.boton_guardar.setIcon(QIcon("img/plus_icon.svg"))
-            self.boton_guardar.setIconSize(QSize(12, 12))
+            self.boton_guardar.setIconSize(QSize(24, 24))
             self.boton_guardar.setToolTip("Guardar configuración")
             self.boton_guardar.setText("")
-            self.boton_guardar.setFixedSize(15, 15)
-            self.boton_guardar.setStyleSheet("""
-                QPushButton {
-                    background-color: #2563eb;
-                    border-radius: 6px;
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #1e40af;
-                }
-                QPushButton:pressed {
-                    background-color: #1e3a8a;
-                }
-            """)
+            self.boton_guardar.setFixedSize(48, 48)
+            self.boton_guardar.setStyleSheet("")
             self.boton_restaurar = QPushButton()
             self.boton_restaurar.setIcon(QIcon("img/refresh_icon.svg"))
-            self.boton_restaurar.setIconSize(QSize(12, 12))
+            self.boton_restaurar.setIconSize(QSize(24, 24))
             self.boton_restaurar.setToolTip("Restaurar valores predeterminados")
             self.boton_restaurar.setText("")
-            self.boton_restaurar.setFixedSize(15, 15)
-            self.boton_restaurar.setStyleSheet(self.boton_guardar.styleSheet())
+            self.boton_restaurar.setFixedSize(48, 48)
+            self.boton_restaurar.setStyleSheet("")
             botones_layout.addWidget(self.boton_guardar)
             botones_layout.addWidget(self.boton_restaurar)
+            # Botón para activar modo offline (compacto, solo icono)
+            self.boton_activar_offline = QPushButton()
+            self.boton_activar_offline.setIcon(QIcon("img/offline_icon.svg"))
+            self.boton_activar_offline.setIconSize(QSize(24, 24))
+            self.boton_activar_offline.setToolTip("Activar Modo Offline")
+            self.boton_activar_offline.setText("")
+            self.boton_activar_offline.setFixedSize(48, 48)
+            self.boton_activar_offline.setStyleSheet("")
+            botones_layout.addWidget(self.boton_activar_offline)
             botones_layout.addStretch()
             self.layout.addLayout(botones_layout)
 
@@ -161,20 +122,6 @@ class ConfiguracionView(QWidget):
             self.tabs.addTab(self.general_tab, "General")
             self.tabs.addTab(self.database_tab, "Base de Datos")
             self.layout.addWidget(self.tabs)
-
-            # Botón para activar modo offline (compacto, solo icono)
-            self.boton_activar_offline = QPushButton()
-            self.boton_activar_offline.setIcon(QIcon("img/offline_icon.svg"))
-            self.boton_activar_offline.setIconSize(QSize(12, 12))
-            self.boton_activar_offline.setToolTip("Activar Modo Offline")
-            self.boton_activar_offline.setText("")
-            self.boton_activar_offline.setFixedSize(15, 15)
-            self.boton_activar_offline.setStyleSheet(self.boton_guardar.styleSheet())
-            offline_layout = QHBoxLayout()
-            offline_layout.addWidget(self.boton_activar_offline)
-            offline_layout.addWidget(QLabel("Modo Offline"))
-            offline_layout.addStretch()
-            self.layout.addLayout(offline_layout)
 
             self.setLayout(self.layout)
         except Exception as e:

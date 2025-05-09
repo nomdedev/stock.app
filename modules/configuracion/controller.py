@@ -2,6 +2,7 @@ from utils.theme_manager import aplicar_tema, guardar_modo_tema
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
+from PyQt6.QtWidgets import QApplication
 
 class PermisoAuditoria:
     def __init__(self, modulo):
@@ -140,5 +141,9 @@ class ConfiguracionController:
             nuevo_modo = modos.get(estado, "light")
             aplicar_tema(QApplication.instance(), nuevo_modo)
             guardar_modo_tema(nuevo_modo)
+            # Llamar a recargar_tema en la ventana principal si está disponible
+            app = QApplication.instance()
+            if hasattr(app, 'main_window'):
+                app.main_window.recargar_tema()
         except Exception as e:
             print(f"Error al cambiar tema: {e}")

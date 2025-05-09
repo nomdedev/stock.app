@@ -1,16 +1,25 @@
 import pandas as pd  # Asegúrate de tener pandas instalado
 from fpdf import FPDF  # Asegúrate de tener fpdf instalado
+from core.database import DatabaseConnection
 
 class InventarioModel:
-    def __init__(self, db_connection):
-        self.db = db_connection
+    def __init__(self, db_connection=None):
+        self.db = db_connection or DatabaseConnection()
+        self.db.conectar_a_base("inventario")
 
     def obtener_items(self):
         query = """
         SELECT id, codigo, descripcion, proveedor, necesarias, stock, faltan, ped_min, emba, pedido, importe
-        FROM inventario
+        FROM inventario_items
+        WHERE tipo_material = 'PVC'
         """
-        return self.db.ejecutar_query(query)
+        try:
+            resultados = self.db.ejecutar_query(query)
+            print(f"Resultados obtenidos: {resultados}")  # Registro de depuración
+            return resultados
+        except Exception as e:
+            print(f"Error al obtener ítems: {e}")
+            raise
 
     def obtener_items_por_lotes(self, offset=0, limite=500):
         query = """

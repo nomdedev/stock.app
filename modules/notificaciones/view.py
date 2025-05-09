@@ -41,4 +41,11 @@ class NotificacionesView(QWidget):
         """)
         self.layout.addWidget(self.boton_agregar)
 
+        # Cargar el stylesheet visual moderno para Notificaciones
+        try:
+            with open("styles/inventario_styles.qss", "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except Exception as e:
+            print(f"No se pudo cargar inventario_styles.qss: {e}")
+
         self.setLayout(self.layout)

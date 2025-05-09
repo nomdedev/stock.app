@@ -1,4 +1,6 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTabWidget
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTabWidget, QHBoxLayout, QPushButton, QGraphicsDropShadowEffect
+from PyQt6.QtGui import QIcon, QColor
+from PyQt6.QtCore import QSize
 
 class MantenimientoView(QWidget):
     def __init__(self):
@@ -6,9 +8,56 @@ class MantenimientoView(QWidget):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
+        # Cargar el stylesheet visual moderno para Mantenimiento
+        try:
+            with open("styles/inventario_styles.qss", "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except Exception as e:
+            print(f"No se pudo cargar inventario_styles.qss: {e}")
+
         self.label_titulo = QLabel("Gestión de Mantenimiento")
         self.label_titulo.setStyleSheet("font-size: 10px; font-weight: bold; margin-bottom: 10px;")
         self.layout.addWidget(self.label_titulo)
+
+        # Botones principales como iconos
+        botones_layout = QHBoxLayout()
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/plus_icon.svg"))
+        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setToolTip("Agregar mantenimiento")
+        self.boton_agregar.setText("")
+        self.boton_agregar.setFixedSize(48, 48)
+        self.boton_agregar.setStyleSheet("")
+        self.boton_historial = QPushButton()
+        self.boton_historial.setIcon(QIcon("img/search_icon.svg"))
+        self.boton_historial.setIconSize(QSize(24, 24))
+        self.boton_historial.setToolTip("Ver historial")
+        self.boton_historial.setText("")
+        self.boton_historial.setFixedSize(48, 48)
+        self.boton_historial.setStyleSheet("")
+        botones_layout.addWidget(self.boton_agregar)
+        botones_layout.addWidget(self.boton_historial)
+        botones_layout.addStretch()
+        self.layout.addLayout(botones_layout)
+
+        # Botón principal de acción estándar (para compatibilidad con el controlador)
+        self.boton_accion = QPushButton()
+        self.boton_accion.setIcon(QIcon("utils/mantenimiento.svg"))
+        self.boton_accion.setToolTip("Agregar mantenimiento")
+        self.boton_accion.setFixedSize(48, 48)
+        self.boton_accion.setIconSize(QSize(32, 32))
+        self.boton_accion.setObjectName("boton_accion")
+        self.layout.addWidget(self.boton_accion)
+
+        # Sombra visual profesional para el botón principal
+        def aplicar_sombra(widget):
+            sombra = QGraphicsDropShadowEffect()
+            sombra.setBlurRadius(15)
+            sombra.setXOffset(0)
+            sombra.setYOffset(4)
+            sombra.setColor(QColor(0, 0, 0, 160))
+            widget.setGraphicsEffect(sombra)
+        aplicar_sombra(self.boton_accion)
 
         # Crear un widget de pestañas
         self.tab_widget = QTabWidget()

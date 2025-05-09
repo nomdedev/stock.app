@@ -11,6 +11,13 @@ class VidriosView(QWidget):
         self.setWindowTitle("Gestión de Vidrios")
         self.layout = QVBoxLayout()
 
+        # Cargar el stylesheet visual moderno para Vidrios
+        try:
+            with open("styles/inventario_styles.qss", "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except Exception as e:
+            print(f"No se pudo cargar inventario_styles.qss: {e}")
+
         # Encabezado
         self.label_titulo = QLabel("Gestión de Vidrios")
         self.layout.addWidget(self.label_titulo)

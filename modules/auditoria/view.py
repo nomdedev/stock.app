@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QSizePolicy, QHBoxLayout
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QSizePolicy, QHBoxLayout, QGraphicsDropShadowEffect
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon, QColor
 
 class AuditoriaView(QWidget):
     def __init__(self):
@@ -8,6 +8,13 @@ class AuditoriaView(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.setSpacing(20)
+
+        # Cargar el stylesheet visual moderno para Auditoría según el tema activo
+        try:
+            with open("themes/light.qss", "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except Exception as e:
+            print(f"No se pudo cargar el archivo de estilos: {e}")
 
         # Botones principales como iconos
         botones_layout = QHBoxLayout()
@@ -27,21 +34,28 @@ class AuditoriaView(QWidget):
             boton.setToolTip(tooltip)
             boton.setText("")
             boton.setFixedSize(48, 48)
-            boton.setStyleSheet("""
-                QPushButton {
-                    background-color: #2563eb;
-                    border-radius: 12px;
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #1e40af;
-                }
-                QPushButton:pressed {
-                    background-color: #1e3a8a;
-                }
-            """)
             botones_layout.addWidget(boton)
+        botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
+
+        # Botón principal de acción estándar (para compatibilidad con el controlador)
+        self.boton_accion = QPushButton()
+        self.boton_accion.setIcon(QIcon("utils/auditoria.svg"))
+        self.boton_accion.setToolTip("Ver logs de auditoría")
+        self.boton_accion.setFixedSize(48, 48)
+        self.boton_accion.setIconSize(QSize(32, 32))
+        self.boton_accion.setObjectName("boton_accion")
+        self.layout.addWidget(self.boton_accion)
+
+        # Sombra visual profesional para el botón principal
+        def aplicar_sombra(widget):
+            sombra = QGraphicsDropShadowEffect()
+            sombra.setBlurRadius(15)
+            sombra.setXOffset(0)
+            sombra.setYOffset(4)
+            sombra.setColor(QColor(0, 0, 0, 160))
+            widget.setGraphicsEffect(sombra)
+        aplicar_sombra(self.boton_accion)
 
         # Tabla de logs (placeholder)
         self.tabla_logs = QTableWidget()

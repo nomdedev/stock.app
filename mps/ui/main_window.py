@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QStackedWidget, QSizePolicy
 from PyQt6.QtCore import Qt
 import os, json
@@ -91,3 +95,18 @@ class MainWindow(QMainWindow):
                 json.dump(config, f, indent=2, ensure_ascii=False)
         except Exception:
             pass
+
+    def recargar_tema(self):
+        config = self._load_config()
+        self._apply_theme(config.get("tema", "oscuro"))
+        # Forzar recarga de estilos en todas las vistas activas
+        for v in self.views:
+            if hasattr(v, 'setStyleSheet'):
+                try:
+                    tema = config.get("tema", "claro")
+                    archivo_qss = os.path.join("styles", f"inventario_{tema}.qss")
+                    if os.path.exists(archivo_qss):
+                        with open(archivo_qss, "r", encoding="utf-8") as f:
+                            v.setStyleSheet(f.read())
+                except Exception as e:
+                    print(f"No se pudo recargar el QSS en la vista {v}: {e}")

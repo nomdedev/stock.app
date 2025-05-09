@@ -1,5 +1,8 @@
 # core/theme.py
 
+from PyQt5.QtWidgets import QGraphicsDropShadowEffect
+from PyQt5.QtGui import QColor
+
 # Paleta de colores minimalista y moderna
 PRIMARY_COLOR = "#ffffff"  # Blanco puro para fondo
 SECONDARY_COLOR = "#f5f5f5"  # Gris claro para secciones
@@ -61,3 +64,21 @@ QLabel {{
     font-size: 14px;
 }}
 '''
+
+# Function to apply shadow effect globally to QPushButton
+
+def apply_shadow_to_button(button):
+    shadow = QGraphicsDropShadowEffect()
+    shadow.setBlurRadius(15)
+    shadow.setXOffset(0)
+    shadow.setYOffset(4)
+    shadow.setColor(QColor(0, 0, 0, 160))
+    button.setGraphicsEffect(shadow)
+
+def aplicar_sombra_css():
+    """Devuelve un estilo CSS para aplicar sombra a los botones."""
+    return """
+    QPushButton {
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    """

@@ -6,6 +6,12 @@ class LogisticaView(QWidget):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout(self)
+        # Cargar el stylesheet visual moderno para Logística
+        try:
+            with open("styles/inventario_styles.qss", "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except Exception as e:
+            print(f"No se pudo cargar inventario_styles.qss: {e}")
         # Botones principales como iconos
         botones_layout = QHBoxLayout()
         botones = [

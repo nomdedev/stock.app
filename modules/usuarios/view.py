@@ -1,7 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QTableWidget, QComboBox, QSizePolicy, QPushButton, QHBoxLayout
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QTableWidget, QComboBox, QSizePolicy, QPushButton, QHBoxLayout, QGraphicsDropShadowEffect
 from PyQt6.QtCore import QTimer, QSize
 from PyQt6 import QtGui
-from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon, QColor
 import os
 from core.ui_components import CustomButton
 
@@ -11,43 +11,35 @@ class UsuariosView(QWidget):
         self.controller = controller
         self.layout = QVBoxLayout(self)
 
-        # Ajustar estilo general de la vista
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #f0f0f0;
-                color: #000000;
-                font-family: Arial, sans-serif;
-                font-size: 10px;
-            }
-            QLabel {
-                font-size: 10px;
-                font-weight: bold;
-                color: #333333;
-            }
-            QTableWidget {
-                border: 1px solid #000000;
-                background-color: #ffffff;
-                font-size: 10px;
-                gridline-color: #000000;
-            }
-            QTableWidget::item {
-                background-color: #ffffff;
-            }
-            QTableWidget::item:selected {
-                background-color: #d1d5db;
-                color: #000000;
-            }
-            QHeaderView::section {
-                background-color: #dbeafe;
-                color: #000000;
-                font-weight: bold;
-                border: 1px solid #000000;
-                font-size: 10px;
-            }
-        """)
+        # Cargar el stylesheet visual moderno para Usuarios
+        try:
+            with open("styles/inventario_styles.qss", "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except Exception as e:
+            print(f"No se pudo cargar inventario_styles.qss: {e}")
 
         self.label_titulo = QLabel("Gestión de Usuarios")
         self.layout.addWidget(self.label_titulo)
+
+        # Botón principal de acción estándar
+        self.boton_accion = QPushButton()
+        icon_path = os.path.join(os.path.dirname(__file__), '../../utils/users.svg')
+        self.boton_accion.setIcon(QIcon(icon_path))
+        self.boton_accion.setToolTip("Agregar usuario")
+        self.boton_accion.setFixedSize(48, 48)
+        self.boton_accion.setIconSize(QSize(32, 32))
+        self.boton_accion.setObjectName("boton_accion")
+        self.layout.addWidget(self.boton_accion)
+
+        # Sombra visual profesional para el botón principal
+        def aplicar_sombra(widget):
+            sombra = QGraphicsDropShadowEffect()
+            sombra.setBlurRadius(15)
+            sombra.setXOffset(0)
+            sombra.setYOffset(4)
+            sombra.setColor(QColor(0, 0, 0, 160))
+            widget.setGraphicsEffect(sombra)
+        aplicar_sombra(self.boton_accion)
 
         self.form_layout = QFormLayout()
         self.nombre_input = QLineEdit()
@@ -152,43 +144,31 @@ class UsuariosView(QWidget):
         # Botón Suspender (icono)
         self.boton_suspender = QPushButton()
         self.boton_suspender.setIcon(QtGui.QIcon('img/usuarios.svg'))
-        self.boton_suspender.setIconSize(QSize(12, 12))
+        self.boton_suspender.setIconSize(QSize(24, 24))
         self.boton_suspender.setToolTip('Suspender cuenta de usuario')
         self.boton_suspender.setText("")
-        self.boton_suspender.setFixedSize(15, 15)
-        self.boton_suspender.setStyleSheet("""
-            QPushButton {
-                background-color: #2563eb;
-                border-radius: 12px;
-                border: none;
-            }
-            QPushButton:hover {
-                background-color: #1e40af;
-            }
-            QPushButton:pressed {
-                background-color: #1e3a8a;
-            }
-        """)
+        self.boton_suspender.setFixedSize(48, 48)
+        self.boton_suspender.setStyleSheet("")
         botones_layout.addWidget(self.boton_suspender)
         # Botón Reactivar (icono)
         self.boton_reactivar = QPushButton()
         self.boton_reactivar.setIcon(QtGui.QIcon('img/sync.svg'))
-        self.boton_reactivar.setIconSize(QSize(12, 12))
+        self.boton_reactivar.setIconSize(QSize(24, 24))
         self.boton_reactivar.setToolTip('Reactivar cuenta de usuario')
         self.boton_reactivar.setText("")
-        self.boton_reactivar.setFixedSize(15, 15)
-        self.boton_reactivar.setStyleSheet(self.boton_suspender.styleSheet())
+        self.boton_reactivar.setFixedSize(48, 48)
+        self.boton_reactivar.setStyleSheet("")
         botones_layout.addWidget(self.boton_reactivar)
         # Botón Clonar Permisos (icono)
         self.boton_clonar_permisos = QPushButton()
         self.boton_clonar_permisos.setIcon(QtGui.QIcon('img/copy_icon.svg'))
-        self.boton_clonar_permisos.setIconSize(QSize(12, 12))
+        self.boton_clonar_permisos.setIconSize(QSize(24, 24))
         self.boton_clonar_permisos.setToolTip('Clonar permisos entre roles')
         self.boton_clonar_permisos.setText("")
-        self.boton_clonar_permisos.setFixedSize(15, 15)
-        self.boton_clonar_permisos.setStyleSheet(self.boton_suspender.styleSheet())
+        self.boton_clonar_permisos.setFixedSize(48, 48)
+        self.boton_clonar_permisos.setStyleSheet("")
         botones_layout.addWidget(self.boton_clonar_permisos)
-        # Agregar layout de botones debajo de la tabla principal
+        botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
         # Inputs para clonado de permisos
         self.label_rol_origen = QLabel("Rol Origen:")

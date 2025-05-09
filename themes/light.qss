@@ -1,31 +1,59 @@
-/* Tema claro tipo MPS refinado y compacto */
+/* --- Fondo global para todos los módulos principales --- */
 QMainWindow, QWidget {
-    background-color: #f9f9f9;
+    background-color: #F4F4F6;
     color: #333333;
     font-family: "Segoe UI", sans-serif;
     font-size: 11px;
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
+/* --- Botones --- */
 QPushButton {
-    background-color: #E4ECF7;
+    background-color: #E4ECF7; /* Color claro definido para el fondo */
     border: none;
-    border-radius: 6px;
-    padding: 4px 6px;
-    color: #333;
-    min-width: 28px;
-    min-height: 28px;
-    max-width: 28px;
-    max-height: 28px;
-    font-size: 11px;
-    font-weight: normal;
+    border-radius: 12px;
+    padding: 8px 12px;
+    color: #333; /* Color del texto */
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
 }
 QPushButton:hover {
-    background-color: #D3E0F2;
+    background-color: #D3E0F2; /* Color más claro al pasar el mouse */
 }
 QPushButton:checked {
-    background-color: #C0D4EB;
+    background-color: #C0D4EB; /* Color para botones seleccionados */
     font-weight: bold;
+}
+
+/* Asegurarse de que no haya estilos heredados que sobrescriban */
+QPushButton {
+    background: none;
+}
+
+/* Sidebar solo íconos */
+#Sidebar {
+    background: #1A1A2E;
+    border: none;
+}
+#Sidebar QPushButton {
+    background: transparent;
+    border: none;
+    color: #E0E0E0;
+    border-radius: 10px;
+    margin: 4px 0;
+}
+#Sidebar QPushButton:hover, #Sidebar QPushButton:checked {
+    background: rgba(109,253,195,0.08);
+    color: #6DFDC3;
+}
+
+/* Separadores sutiles en sidebar */
+#Sidebar QFrame {
+    background: #232344;
+    max-height: 1px;
+    min-height: 1px;
+    margin: 8px 0;
 }
 
 #TopBar {
@@ -36,33 +64,89 @@ QPushButton:checked {
     font-weight: bold;
 }
 
+/* --- Tablas --- */
 QTableWidget {
-    background-color: white;
-    alternate-background-color: #f1f1f1;
-    border: 1px solid #ccc;
-    selection-background-color: #CCE4F7;
-    selection-color: black;
-    gridline-color: #ccc;
-    font-size: 11px;
+    background-color: #FFFFFF;
+    alternate-background-color: #F9F9F9;
+    border: 1px solid #E0E0E0;
+    selection-background-color: #D3E0F2;
+    selection-color: #333333;
+    gridline-color: #E0E0E0;
+    font-size: 12px;
+    border-radius: 12px;
 }
 QHeaderView::section {
-    background-color: #F3F6FA;
+    background-color: #E4ECF7;
     border: none;
-    padding: 3px;
-    font-weight: bold;
-    color: #444;
-    font-size: 11px;
-}
-QLabel {
     color: #333333;
-    font-size: 13px;
+    font-weight: bold;
+    padding: 8px;
+    border-radius: 10px;
+}
+
+/* --- Etiquetas --- */
+QLabel {
+    color: #1F2937;
+    font-size: 14px;
     font-weight: bold;
 }
+
+/* --- Entradas de texto y selectores --- */
 QLineEdit, QComboBox, QSpinBox {
     background-color: #fff;
     border: 1px solid #E5E7EB;
-    border-radius: 6px;
-    padding: 4px 8px;
+    border-radius: 12px;
+    padding: 8px 12px;
     color: #232B36;
+    font-size: 12px;
+}
+
+/* Botones inferiores neumórficos Inventario (solo botones, no tabla) */
+#InventarioView QPushButton.inventario-bottom {
+    background-color: #1E1E2F;
+    color: #EDEDED;
+    border-radius: 14px;
+    border: 2px solid #6DFDC3;
+    padding: 12px 24px;
+    font-size: 14px;
+    qproperty-iconSize: 20px 20px;
+    text-align: left;
+    font-weight: 500;
+}
+#InventarioView QPushButton.inventario-bottom:hover {
+    background-color: #232344;
+    border: 2.5px solid #6DFDC3;
+}
+
+/* --- Estilos específicos para Contabilidad y Recibos --- */
+QLineEdit.contabilidad-input {
+    background-color: #F9FAFB;
+    color: #111827;
+    border-radius: 10px;
+    border: 1px solid #CBD5E1;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+QLabel.contabilidad-titulo {
+    color: #1F2937;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+QToolTip {
+    background-color: #1E293B;
+    color: white;
+    border-radius: 6px;
+    padding: 6px;
+}
+QTableWidget#tabla_recibos, QTableWidget#tabla_movimientos {
+    border-radius: 10px;
+}
+QHeaderView::section {
+    background-color: #F3F6FA;
+    color: #444;
+    font-weight: bold;
+    border: none;
+    padding: 3px;
     font-size: 11px;
 }

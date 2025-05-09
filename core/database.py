@@ -3,6 +3,7 @@ import pyodbc
 from datetime import datetime
 from core.logger import Logger
 from core.config import DB_SERVER, DB_USERNAME, DB_PASSWORD
+import logging
 
 class BaseDatabaseConnection:
     def __init__(self, database):
@@ -114,21 +115,22 @@ class DatabaseConnection:
         self.password = password
         self.driver = BaseDatabaseConnection.detectar_driver_odbc()
         self.database = None  # Inicializar la base de datos como None
+        self.logger = logging.getLogger(__name__)  # Agregar logger
 
     def conectar_a_base(self, database):
         try:
-            bases_validas = ["inventario", "users", "auditoria"]
+            bases_validas = ["inventario", "users", "auditoria", "pedidos"]
             if database not in bases_validas:
                 raise ValueError(f"La base de datos '{database}' no es válida. Bases disponibles: {bases_validas}")
             self.database = database
             print(f"Conexión establecida con la base de datos '{database}'.")
         except ValueError as e:
             print(f"Error de validación: {e}")
-            self.logger.error(f"Error de validación: {e}")  # Corregir Logger() a self.logger
+            self.logger.error(f"Error de validación: {e}")  # Usar logger
             raise
         except Exception as e:
             print(f"Error inesperado al conectar a la base de datos: {e}")
-            self.logger.error(f"Error inesperado al conectar a la base de datos: {e}")  # Corregir Logger() a self.logger
+            self.logger.error(f"Error inesperado al conectar a la base de datos: {e}")  # Usar logger
             raise
 
     def ejecutar_query(self, query, parametros=None):

@@ -1,24 +1,22 @@
-/* Tema oscuro refinado, compacto y no invasivo */
+/* --- Fondo global para todos los módulos principales --- */
 QMainWindow, QWidget {
     background-color: #232B36;
     color: #F0F0F0;
     font-family: "Segoe UI", sans-serif;
     font-size: 11px;
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
+/* --- Botones --- */
 QPushButton {
     background-color: #2E3742;
     border: none;
-    border-radius: 6px;
-    padding: 4px 6px;
+    border-radius: 12px;
+    padding: 8px 12px;
     color: #F0F0F0;
-    min-width: 28px;
-    min-height: 28px;
-    max-width: 28px;
-    max-height: 28px;
-    font-size: 11px;
-    font-weight: normal;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
 }
 QPushButton:hover {
     background-color: #3C4652;
@@ -38,6 +36,7 @@ QPushButton:checked {
     color: #fff;
 }
 
+/* --- Tablas --- */
 QTableWidget {
     background-color: #232B36;
     alternate-background-color: #2E3742;
@@ -45,26 +44,82 @@ QTableWidget {
     selection-background-color: #3DE6B1;
     selection-color: #232B36;
     gridline-color: #3C4652;
-    font-size: 11px;
+    font-size: 12px;
+    border-radius: 12px;
 }
 QHeaderView::section {
     background-color: #2E3742;
     border: none;
-    padding: 3px;
+    padding: 8px;
     font-weight: bold;
     color: #fff;
-    font-size: 11px;
+    font-size: 12px;
+    border-radius: 12px;
 }
+
+/* --- Etiquetas --- */
 QLabel {
     color: #fff;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: bold;
 }
+
+/* --- Entradas de texto y selectores --- */
 QLineEdit, QComboBox, QSpinBox {
     background-color: #232B36;
     border: 1px solid #3C4652;
-    border-radius: 6px;
-    padding: 4px 8px;
+    border-radius: 12px;
+    padding: 8px 12px;
     color: #fff;
-    font-size: 11px;
+    font-size: 12px;
+}
+
+/* Botones inferiores neumórficos Inventario (solo botones, no tabla) */
+#InventarioView QPushButton.inventario-bottom {
+    background-color: #1E1E2F;
+    color: #EDEDED;
+    border-radius: 14px;
+    border: 2px solid #6DFDC3;
+    padding: 12px 24px;
+    font-size: 14px;
+    qproperty-iconSize: 20px 20px;
+    text-align: left;
+    font-weight: 500;
+}
+#InventarioView QPushButton.inventario-bottom:hover {
+    background-color: #232344;
+    border: 2.5px solid #6DFDC3;
+}
+
+/* Sidebar solo íconos */
+#Sidebar {
+    background: #1A1A2E;
+    border: none;
+}
+#Sidebar QPushButton {
+    background: transparent;
+    border: none;
+    color: #E0E0E0;
+    border-radius: 10px;
+    margin: 4px 0;
+}
+#Sidebar QPushButton:hover, #Sidebar QPushButton:checked {
+    background: rgba(109,253,195,0.08);
+    color: #6DFDC3;
+}
+
+#Sidebar QFrame {
+    background: #232344;
+    max-height: 1px;
+    min-height: 1px;
+    margin: 8px 0;
+}
+
+/* Status online QLabel */
+QLabel#statusOnline {
+    background-color: #C6F6D5;
+    color: #1B4332;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
 }

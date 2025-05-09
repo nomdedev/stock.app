@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout
 from PyQt6.QtCore import Qt, QSize
 from PyQt6 import QtGui, QtCore
 from core.ui_components import CustomButton
+import json
 
 class Pedidos(QWidget):
     def __init__(self):
@@ -17,6 +18,17 @@ class PedidosView(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.setSpacing(20)
+
+        # Cargar el stylesheet visual moderno para Pedidos según el tema activo
+        try:
+            with open("config/config.json", "r", encoding="utf-8") as f:
+                config = json.load(f)
+            tema = config.get("tema", "claro")
+            archivo_qss = f"styles/inventario_{tema}.qss"
+            with open(archivo_qss, "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except Exception as e:
+            print(f"No se pudo cargar el archivo de estilos de Pedidos según el tema: {e}")
 
         # Botones principales como iconos
         botones_layout = QHBoxLayout()

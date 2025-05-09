@@ -9,6 +9,13 @@ class ObrasView(QWidget):
         super().__init__()
         self.layout = QVBoxLayout()
 
+        # Cargar el stylesheet visual moderno para Obras
+        try:
+            with open("styles/inventario_styles.qss", "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except Exception as e:
+            print(f"No se pudo cargar inventario_styles.qss: {e}")
+
         self.label_titulo = QLabel("Gestión de Obras")
         self.label_titulo.setStyleSheet("font-size: 10px; font-weight: bold; margin-bottom: 10px;")
         self.layout.addWidget(self.label_titulo)
@@ -62,41 +69,38 @@ class ObrasView(QWidget):
         # Botones principales como iconos
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/plus_icon.svg"))
+        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setToolTip("Agregar nueva obra")
+        self.boton_agregar.setText("")
+        self.boton_agregar.setFixedSize(48, 48)
+        self.boton_agregar.setStyleSheet("")
         self.boton_ver_detalles = QPushButton()
+        self.boton_ver_detalles.setIcon(QIcon("img/search_icon.svg"))
+        self.boton_ver_detalles.setIconSize(QSize(24, 24))
+        self.boton_ver_detalles.setToolTip("Ver detalles de obra")
+        self.boton_ver_detalles.setText("")
+        self.boton_ver_detalles.setFixedSize(48, 48)
+        self.boton_ver_detalles.setStyleSheet("")
         self.boton_ver_cronograma = QPushButton()
+        self.boton_ver_cronograma.setIcon(QIcon("img/calendar_icon.svg"))
+        self.boton_ver_cronograma.setIconSize(QSize(24, 24))
+        self.boton_ver_cronograma.setToolTip("Ver cronograma")
+        self.boton_ver_cronograma.setText("")
+        self.boton_ver_cronograma.setFixedSize(48, 48)
+        self.boton_ver_cronograma.setStyleSheet("")
         self.boton_exportar_excel = QPushButton()
-        botones = [
-            self.boton_agregar,
-            self.boton_ver_detalles,
-            self.boton_ver_cronograma,
-            self.boton_exportar_excel,
-        ]
-        iconos = [
-            ("plus_icon.svg", "Agregar nueva obra"),
-            ("search_icon.svg", "Ver detalles de obra"),
-            ("calendar_icon.svg", "Ver cronograma"),
-            ("excel_icon.svg", "Exportar obras a Excel"),
-        ]
-        for boton, (icono, tooltip) in zip(botones, iconos):
-            boton.setIcon(QIcon(f"img/{icono}"))
-            boton.setIconSize(QSize(12, 12))
-            boton.setToolTip(tooltip)
-            boton.setText("")
-            boton.setFixedSize(15, 15)
-            boton.setStyleSheet("""
-                QPushButton {
-                    background-color: #2563eb;
-                    border-radius: 4px;
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #1e40af;
-                }
-                QPushButton:pressed {
-                    background-color: #1e3a8a;
-                }
-            """)
-            botones_layout.addWidget(boton)
+        self.boton_exportar_excel.setIcon(QIcon("img/excel_icon.svg"))
+        self.boton_exportar_excel.setIconSize(QSize(24, 24))
+        self.boton_exportar_excel.setToolTip("Exportar obras a Excel")
+        self.boton_exportar_excel.setText("")
+        self.boton_exportar_excel.setFixedSize(48, 48)
+        self.boton_exportar_excel.setStyleSheet("")
+        botones_layout.addWidget(self.boton_agregar)
+        botones_layout.addWidget(self.boton_ver_detalles)
+        botones_layout.addWidget(self.boton_ver_cronograma)
+        botones_layout.addWidget(self.boton_exportar_excel)
+        botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
 
         self.setLayout(self.layout)

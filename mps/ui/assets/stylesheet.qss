@@ -1,0 +1,52 @@
+/* --- Estilos modernos para la app (sin box-shadow) --- */
+QPushButton {
+    background-color: #1E1E2F;
+    border: 2px solid #6DFDC3;
+    color: #EDEDED;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: #2A2A3D;
+    border: 2px solid #83FFD1;
+}
+
+QLineEdit {
+    background-color: #2A2A3D;
+    color: #EAEAEA;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    border: none;
+}
+
+QCheckBox::indicator {
+    width: 40px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: #555;
+    border: 1px solid #888;
+}
+QCheckBox::indicator:checked {
+    background-color: #4ADE80;
+    border: 1px solid #4ADE80;
+}
+
+QHeaderView::section {
+    background-color: #2A2A3D;
+    color: #EDEDED;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    padding: 8px;
+}
+
+QLabel#estadoConexion {
+    background-color: #D1FAE5;
+    color: #065F46;
+    padding: 5px 12px;
+    border-radius: 16px;
+    font-weight: bold;
+}

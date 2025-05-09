@@ -1,0 +1,14 @@
+/* --- Solo estilos específicos de Inventario, sin tablas/cabeceras --- */
+
+QPushButton {
+    background-color: #E2E8F0;
+    color: #111827;
+    border: 2px solid #60A5FA;
+    border-radius: 12px;
+    padding: 10px 24px;
+    font-weight: 500;
+}
+QPushButton:hover {
+    background-color: #D1D5DB;
+    border: 2px solid #3B82F6;
+}

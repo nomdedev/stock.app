@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, 
     QPushButton, QStackedWidget, QMessageBox
 )
-from PyQt6.QtGui import QPalette, QColor
+from PyQt6.QtGui import QPalette, QColor, QIcon
 from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal, QSize
 from utils.icon_loader import get_icon
 from utils.theme_manager import aplicar_tema, cargar_modo_tema
@@ -30,6 +30,7 @@ from modules.configuracion.view import ConfiguracionView
 from modules.mantenimiento.view import MantenimientoView
 from modules.contabilidad.view import ContabilidadView
 from modules.herrajes.view import HerrajesView
+from modules.pedidos.view import PedidosView
 
 # Importar controladores
 from modules.inventario.controller import InventarioController
@@ -41,6 +42,7 @@ from modules.usuarios.controller import UsuariosController
 from modules.auditoria.controller import AuditoriaController
 from modules.configuracion.controller import ConfiguracionController
 from modules.herrajes.controller import HerrajesController
+from modules.pedidos.controller import PedidosController
 
 # Importar modelos
 from modules.inventario.model import InventarioModel
@@ -117,9 +119,8 @@ class MainWindow(QMainWindow):
 
         # Inicializar el módulo Pedidos dentro de Compras
         self.pedidos_view = PedidosView()
-        self.pedidos_controller = PedidosController(
-            model=self.pedidos_model, view=self.pedidos_view, db_connection=self.db_connection_inventario
-        )
+        self.pedidos_controller = PedidosController(self.pedidos_view)
+        self.pedidos_controller.cargar_pedidos()
 
         # Crear instancias de controladores antes de las vistas
         self.usuarios_controller = UsuariosController(
@@ -206,6 +207,9 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    # Aplicar el stylesheet neumórfico global
+    with open("mps/ui/assets/stylesheet.qss", "r", encoding="utf-8") as f:
+        app.setStyleSheet(f.read())
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec())

@@ -102,3 +102,10 @@ class ContabilidadController(BaseController):
         for row, recibo in enumerate(recibos):
             for col, value in enumerate(recibo[:6]):
                 self.view.tabla_recibos.setItem(row, col, QTableWidgetItem(str(value)))
+
+    def crear_recibo(self, obra_id, monto_total, concepto, destinatario):
+        try:
+            self.model.generar_recibo(obra_id, monto_total, concepto, destinatario)
+            self.view.label.setText("Recibo creado exitosamente.")
+        except Exception as e:
+            self.view.label.setText(f"Error al crear el recibo: {e}")
