@@ -1,49 +1,68 @@
-/* Tema claro */
-QWidget {
-    background-color: #FFFFFF;
-    color: #1C1C1C;
-    font-family: 'Segoe UI', 'Inter', sans-serif;
-    font-size: 14px;
-}
-
-/* Aplicar bordes redondeados globalmente */
-QWidget, QDialog, QFrame, QPushButton, QTableWidget, QLabel {
-    border-radius: 12px; /* Bordes redondeados */
+/* Tema claro tipo MPS refinado y compacto */
+QMainWindow, QWidget {
+    background-color: #f9f9f9;
+    color: #333333;
+    font-family: "Segoe UI", sans-serif;
+    font-size: 11px;
+    border-radius: 10px;
 }
 
 QPushButton {
-    background-color: #F5F5DC; /* Fondo crema */
-    color: #333333; /* Texto gris oscuro */
-    border: 1px solid #E0E0D1; /* Borde crema más claro */
-    border-radius: 8px;
-    font-size: 10px;
-    font-weight: bold;
-    width: 100px;
-    height: 25px;
+    background-color: #E4ECF7;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 6px;
+    color: #333;
+    min-width: 28px;
+    min-height: 28px;
+    max-width: 28px;
+    max-height: 28px;
+    font-size: 11px;
+    font-weight: normal;
 }
-
 QPushButton:hover {
-    background-color: #FAFAD2; /* Crema más claro al pasar el mouse */
+    background-color: #D3E0F2;
+}
+QPushButton:checked {
+    background-color: #C0D4EB;
+    font-weight: bold;
 }
 
-QPushButton:pressed {
-    background-color: #FFFFE0; /* Crema aún más claro al presionar */
+#TopBar {
+    background-color: white;
+    border-bottom: 1px solid #DDD;
+    padding: 6px 12px;
+    font-size: 15px;
+    font-weight: bold;
 }
 
 QTableWidget {
-    background-color: #F8F9FA;
-    color: #1C1C1C;
-    gridline-color: #D1D5DB;
-    border: 1px solid #E5E7EB;
+    background-color: white;
+    alternate-background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    selection-background-color: #CCE4F7;
+    selection-color: black;
+    gridline-color: #ccc;
+    font-size: 11px;
 }
-
 QHeaderView::section {
-    background-color: #E5E7EB;
-    color: #1C1C1C;
+    background-color: #F3F6FA;
+    border: none;
+    padding: 3px;
     font-weight: bold;
-    border: 1px solid #D1D5DB;
+    color: #444;
+    font-size: 11px;
 }
-
 QLabel {
-    color: #000000; /* Texto negro */
+    color: #333333;
+    font-size: 13px;
+    font-weight: bold;
+}
+QLineEdit, QComboBox, QSpinBox {
+    background-color: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #232B36;
+    font-size: 11px;
 }

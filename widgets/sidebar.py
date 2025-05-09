@@ -66,19 +66,21 @@ class Sidebar(QWidget):
             # Permitir que section sea str o tuple (nombre, ...)
             if isinstance(section, tuple):
                 section_name = section[0]
+                icon_file = section[1] if len(section) > 1 else None
             else:
                 section_name = section
-            button = QPushButton(section_name)
+                icon_file = None
+            button = QPushButton()
             button.setObjectName("botonMenu")
-            button.setFixedHeight(44)
-            button.setFixedSize(100, 25)
+            button.setFixedHeight(25)
+            button.setFixedSize(44, 25)
             button.setStyleSheet("""
                 QPushButton#botonMenu {
                     background-color: white;
                     color: #1f2937;
                     border-radius: 8px;
-                    padding: 8px 16px;
-                    font-size: 14px;
+                    padding: 4px 4px;
+                    font-size: 10px;
                     font-weight: 500;
                     text-align: center;
                 }
@@ -90,7 +92,11 @@ class Sidebar(QWidget):
                     color: white;
                 }
             """)
-            icon_path = os.path.join(icons_path, f"{section_name.lower()}.svg")
+            # Usar SVG de utils si existe
+            icon_path = os.path.join('utils', f"{section_name.lower()}.svg")
+            if not os.path.exists(icon_path):
+                # Fallback: buscar en img/
+                icon_path = os.path.join('img', f"{section_name.lower()}.svg")
             if os.path.exists(icon_path):
                 button.setIcon(QIcon(icon_path))
                 button.setIconSize(QSize(20, 20))

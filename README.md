@@ -331,3 +331,37 @@ layout.addLayout(botones_layout)
 ```
 
 > Aplica este patrón en todos los módulos para mantener la coherencia visual y de interacción.
+
+## Sidebar visual solo con íconos SVG
+
+A partir de la versión 1.0.4, el sidebar de la aplicación muestra únicamente los íconos SVG ubicados en la carpeta `utils/`, sin nombres de módulos ni texto. Esto permite una navegación visual, minimalista y moderna, siguiendo el estándar de diseño de la app.
+
+**Implementación:**
+- El sidebar se genera automáticamente usando la siguiente lista de íconos, en el orden de los módulos principales:
+
+```python
+svg_dir = os.path.join(os.path.dirname(__file__), 'utils')
+svg_icons = [
+    'inventario.svg',    # Inventario
+    'obras.svg',         # Obras
+    'produccion.svg',    # Producción
+    'logistica.svg',     # Logística
+    'compras.svg',       # Compras
+    'users.svg',         # Usuarios
+    'auditoria.svg',     # Auditoría
+    'configuracion.svg', # Configuración
+    'mantenimiento.svg', # Mantenimiento
+    'contabilidad.svg',  # Contabilidad
+    'vidrios.svg'        # Vidrios
+]
+sections = [(icon.split('.')[0].capitalize(), os.path.join(svg_dir, icon)) for icon in svg_icons]
+self.sidebar = Sidebar("utils", sections)
+self.sidebar.pageChanged.connect(self.module_stack.setCurrentIndex)
+main_layout.addWidget(self.sidebar)
+```
+
+- Cada ícono representa una sección o módulo principal, y el orden es fijo según la lista anterior.
+- No se muestran nombres ni etiquetas de texto, solo los íconos.
+- Para agregar o quitar módulos del sidebar, basta con agregar o eliminar el archivo SVG correspondiente en `utils/` y ajustar la lista `svg_icons`.
+
+> El sidebar es completamente visual y se adapta automáticamente a los íconos SVG presentes en la carpeta `utils/` según el orden definido.

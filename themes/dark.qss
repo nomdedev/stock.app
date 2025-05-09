@@ -1,52 +1,70 @@
-/* Estilo general de la app */
+/* Tema oscuro refinado, compacto y no invasivo */
 QMainWindow, QWidget {
-    background-color: #1A1A2E;
+    background-color: #232B36;
     color: #F0F0F0;
     font-family: "Segoe UI", sans-serif;
-    font-size: 13px;
+    font-size: 11px;
+    border-radius: 10px;
 }
 
-/* Botones */
 QPushButton {
-    background-color: #324A5F;
-    border-radius: 10px;
-    color: white;
-    padding: 6px 12px;
-    border: 1px solid #506680;
+    background-color: #2E3742;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 6px;
+    color: #F0F0F0;
+    min-width: 28px;
+    min-height: 28px;
+    max-width: 28px;
+    max-height: 28px;
+    font-size: 11px;
+    font-weight: normal;
 }
 QPushButton:hover {
-    background-color: #3C5C70;
+    background-color: #3C4652;
 }
-QPushButton:pressed {
-    background-color: #2A3E4F;
+QPushButton:checked {
+    background-color: #3DE6B1;
+    color: #232B36;
+    font-weight: bold;
 }
 
-/* Tabla */
+#TopBar {
+    background-color: #232B36;
+    border-bottom: 1px solid #3C4652;
+    padding: 6px 12px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #fff;
+}
+
 QTableWidget {
-    background-color: #1F1F2E;
-    alternate-background-color: #2A2A3C;
-    gridline-color: #3C3C50;
-    selection-background-color: #3D6E70;
-    selection-color: white;
-    border: none;
+    background-color: #232B36;
+    alternate-background-color: #2E3742;
+    border: 1px solid #3C4652;
+    selection-background-color: #3DE6B1;
+    selection-color: #232B36;
+    gridline-color: #3C4652;
+    font-size: 11px;
 }
 QHeaderView::section {
-    background-color: #2F2F40;
-    color: white;
+    background-color: #2E3742;
     border: none;
-    padding: 4px;
+    padding: 3px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 11px;
 }
-
-/* Inputs */
+QLabel {
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+}
 QLineEdit, QComboBox, QSpinBox {
-    background-color: #2A2A3A;
-    border: 1px solid #3F3F5F;
+    background-color: #232B36;
+    border: 1px solid #3C4652;
     border-radius: 6px;
-    padding: 4px;
-    color: white;
-}
-
-/* Switch (ejemplo personalizado si tenés uno) */
-QCheckBox::indicator:checked {
-    background-color: #70D8FF;
+    padding: 4px 8px;
+    color: #fff;
+    font-size: 11px;
 }

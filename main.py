@@ -69,54 +69,8 @@ class MainWindow(QMainWindow):
         self.resize(1280, 720)  # Tamaño inicial razonable
         self.setMinimumSize(1024, 600)  # Tamaño mínimo para evitar errores
 
-        # Aplicar estilo global para tablas con encabezados azul crema y letras en negrita
-        self.setStyleSheet("""
-            QMainWindow {
-                background-color: #1e3a8a; /* Azul oscuro */
-                color: #FFFFFF; /* Texto blanco */
-            }
-            QPushButton {
-                background-color: #2563eb; /* Azul */
-                color: #FFFFFF; /* Texto blanco */
-                border: none;
-                border-radius: 8px;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1e40af; /* Azul más oscuro */
-            }
-            QPushButton:pressed {
-                background-color: #14274e; /* Azul aún más oscuro */
-            }
-            QLabel {
-                color: #d1d5db; /* Texto gris claro */
-            }
-            QFrame {
-                border: 1px solid #14274e; /* Bordes azul más oscuro */
-            }
-            QTableWidget {
-                background-color: #f0f0f0; /* Gris claro */
-                color: #000000; /* Texto negro */
-                border: 1px solid #000000; /* Bordes negros */
-                font-size: 12px;
-                gridline-color: #000000; /* Color de las líneas de la cuadrícula */
-            }
-            QTableWidget::item {
-                background-color: #f0f0f0; /* Gris claro */
-            }
-            QTableWidget::item:selected {
-                background-color: #d1d5db; /* Gris más oscuro */
-                color: #000000; /* Texto negro */
-            }
-            QHeaderView::section {
-                background-color: #dbeafe; /* Azul crema */
-                color: #000000; /* Texto negro */
-                font-weight: bold; /* Letras en negrita */
-                border: 1px solid #000000; /* Bordes negros */
-            }
-        """)
-
+        # Eliminar estilos embebidos para evitar mezcla de temas
+        # self.setStyleSheet(...)
         self.initUI()
 
     def initUI(self):
@@ -227,21 +181,24 @@ class MainWindow(QMainWindow):
         self.module_stack.addWidget(self.usuarios_view)     # index 9
         self.module_stack.addWidget(self.configuracion_view)# index 10
 
-        # Crear el sidebar con los módulos
-        sections = [
-            ("Inventario", "img/inventario.svg"),
-            ("Obras", "img/obras.svg"),
-            ("Producción", "img/produccion.svg"),
-            ("Logística", "img/logistica.svg"),
-            ("Compras", "img/compras.svg"),
-            ("Usuarios", "img/users.svg"),
-            ("Auditoría", "img/auditoria.svg"),
-            ("Configuración", "img/configuracion.svg"),
-            ("Mantenimiento", "img/mantenimiento.svg"),
-            ("Contabilidad", "img/contabilidad.svg"),
-            ("Vidrios", "img/vidrios.svg")
+        # Crear el sidebar SOLO con los íconos SVG de utils (sin nombres de módulos)
+        svg_dir = os.path.join(os.path.dirname(__file__), 'utils')
+        # Ordenar los íconos según el orden de los módulos en module_stack
+        svg_icons = [
+            'inventario.svg',    # Inventario (index 0)
+            'obras.svg',         # Obras (index 1)
+            'produccion.svg',    # Producción (index 2)
+            'logistica.svg',     # Logística (index 3)
+            'compras.svg',       # Pedidos/Compras (index 4)
+            'mantenimiento.svg', # Mantenimiento (index 5)
+            'contabilidad.svg',  # Contabilidad (index 6)
+            'herrajes.svg',      # Herrajes (index 7)
+            'auditoria.svg',     # Auditoría (index 8)
+            'users.svg',         # Usuarios (index 9)
+            'configuracion.svg'  # Configuración (index 10)
         ]
-        self.sidebar = Sidebar("img", sections)
+        sections = [(icon.split('.')[0].capitalize(), os.path.join(svg_dir, icon)) for icon in svg_icons]
+        self.sidebar = Sidebar("utils", sections)
         self.sidebar.pageChanged.connect(self.module_stack.setCurrentIndex)
         main_layout.addWidget(self.sidebar)
 
