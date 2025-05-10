@@ -86,7 +86,11 @@ CREATE TABLE obras (
     direccion TEXT,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     estado_general VARCHAR(50),
-    observaciones TEXT
+    observaciones TEXT,
+    nombre VARCHAR(100),
+    cliente VARCHAR(100),
+    estado VARCHAR(50),
+    fecha DATE
 );
 
 CREATE TABLE cronograma_obras (

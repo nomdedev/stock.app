@@ -3,21 +3,27 @@ from PyQt6.QtGui import QIcon, QColor
 from PyQt6.QtCore import Qt, QSize
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+import json
 
 class ProduccionView(QWidget):
     def __init__(self):
         super().__init__()
-        self.layout = QVBoxLayout()
+        self.layout = QVBoxLayout(self)
+        self.layout.setContentsMargins(20, 20, 20, 20)
+        self.layout.setSpacing(20)
 
-        # Cargar el stylesheet visual moderno para Producción
+        # Cargar el stylesheet visual moderno para Producción según el tema activo
         try:
-            with open("styles/inventario_styles.qss", "r", encoding="utf-8") as f:
+            with open("themes/config.json", "r", encoding="utf-8") as f:
+                config = json.load(f)
+            tema = config.get("tema", "claro")
+            archivo_qss = f"themes/{tema}.qss"
+            with open(archivo_qss, "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
         except Exception as e:
-            print(f"No se pudo cargar inventario_styles.qss: {e}")
+            print(f"No se pudo cargar el archivo de estilos: {e}")
 
         self.label_titulo = QLabel("Gestión de Producción")
-        self.label_titulo.setStyleSheet("font-size: 10px; font-weight: bold; margin-bottom: 10px;")
         self.layout.addWidget(self.label_titulo)
 
         self.label = self.label_titulo  # Para compatibilidad con controladores
@@ -38,68 +44,65 @@ class ProduccionView(QWidget):
         self.tabla_aberturas = QTableWidget()
         self.tabla_aberturas.setColumnCount(5)
         self.tabla_aberturas.setHorizontalHeaderLabels(["ID", "Código", "Tipo", "Estado", "Fecha Inicio"])
-        self.tabla_aberturas.setStyleSheet("border: 1px solid #e5e7eb; border-radius: 8px;")
-        self.tabla_aberturas.horizontalHeader().setStyleSheet("")
         self.layout.addWidget(self.tabla_aberturas)
 
         # Tabla de etapas de fabricación (para detalles y finalizar etapa)
         self.tabla_etapas = QTableWidget()
         self.tabla_etapas.setColumnCount(5)
         self.tabla_etapas.setHorizontalHeaderLabels(["ID", "Etapa", "Estado", "Fecha Inicio", "Fecha Fin"])
-        self.tabla_etapas.setStyleSheet("border: 1px solid #e5e7eb; border-radius: 8px;")
-        self.tabla_etapas.horizontalHeader().setStyleSheet("")
         self.layout.addWidget(self.tabla_etapas)
 
-        # Botones principales como iconos (ahora como atributos de instancia)
+        # Botón principal de acción (Agregar)
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/add-etapa.svg"))
+        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setToolTip("Agregar producción")
+        self.boton_agregar.setText("")
+        self.boton_agregar.setFixedSize(48, 48)
+        self.boton_agregar.setStyleSheet("")
+        sombra = QGraphicsDropShadowEffect()
+        sombra.setBlurRadius(15)
+        sombra.setXOffset(0)
+        sombra.setYOffset(4)
+        sombra.setColor(QColor(0, 0, 0, 50))
+        self.boton_agregar.setGraphicsEffect(sombra)
+        botones_layout.addWidget(self.boton_agregar)
+
+        # Botón Ver Detalles
         self.boton_ver_detalles = QPushButton()
+        self.boton_ver_detalles.setIcon(QIcon("img/viewdetails.svg"))
+        self.boton_ver_detalles.setIconSize(QSize(24, 24))
+        self.boton_ver_detalles.setToolTip("Ver detalles de la abertura seleccionada")
+        self.boton_ver_detalles.setText("")
+        self.boton_ver_detalles.setFixedSize(48, 48)
+        self.boton_ver_detalles.setStyleSheet("")
+        sombra_detalles = QGraphicsDropShadowEffect()
+        sombra_detalles.setBlurRadius(15)
+        sombra_detalles.setXOffset(0)
+        sombra_detalles.setYOffset(4)
+        sombra_detalles.setColor(QColor(0, 0, 0, 50))
+        self.boton_ver_detalles.setGraphicsEffect(sombra_detalles)
+        botones_layout.addWidget(self.boton_ver_detalles)
+
+        # Botón Finalizar Etapa
         self.boton_finalizar_etapa = QPushButton()
-        botones = [
-            (self.boton_agregar, "plus_icon.svg", "Agregar etapa"),
-            (self.boton_ver_detalles, "search_icon.svg", "Ver detalles de abertura"),
-            (self.boton_finalizar_etapa, "refresh_icon.svg", "Finalizar etapa"),
-        ]
-        for boton, icono, tooltip in botones:
-            boton.setIcon(QIcon(f"img/{icono}"))
-            boton.setIconSize(QSize(12, 12))
-            boton.setToolTip(tooltip)
-            boton.setText("")
-            boton.setFixedSize(15, 15)
-            boton.setStyleSheet("""
-                QPushButton {
-                    background-color: #2563eb;
-                    border-radius: 4px;
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #1e40af;
-                }
-                QPushButton:pressed {
-                    background-color: #1e3a8a;
-                }
-            """)
-            botones_layout.addWidget(boton)
+        self.boton_finalizar_etapa.setIcon(QIcon("img/finish-check.svg"))
+        self.boton_finalizar_etapa.setIconSize(QSize(24, 24))
+        self.boton_finalizar_etapa.setToolTip("Finalizar etapa seleccionada")
+        self.boton_finalizar_etapa.setText("")
+        self.boton_finalizar_etapa.setFixedSize(48, 48)
+        self.boton_finalizar_etapa.setStyleSheet("")
+        sombra_finalizar = QGraphicsDropShadowEffect()
+        sombra_finalizar.setBlurRadius(15)
+        sombra_finalizar.setXOffset(0)
+        sombra_finalizar.setYOffset(4)
+        sombra_finalizar.setColor(QColor(0, 0, 0, 50))
+        self.boton_finalizar_etapa.setGraphicsEffect(sombra_finalizar)
+        botones_layout.addWidget(self.boton_finalizar_etapa)
+
+        botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
-
-        # Botón principal de acción estándar (para compatibilidad con el controlador)
-        self.boton_accion = QPushButton()
-        self.boton_accion.setIcon(QIcon("utils/produccion.svg"))
-        self.boton_accion.setToolTip("Agregar etapa")
-        self.boton_accion.setFixedSize(48, 48)
-        self.boton_accion.setIconSize(QSize(32, 32))
-        self.boton_accion.setObjectName("boton_accion")
-        self.layout.addWidget(self.boton_accion)
-
-        # Sombra visual profesional para el botón principal
-        def aplicar_sombra(widget):
-            sombra = QGraphicsDropShadowEffect()
-            sombra.setBlurRadius(15)
-            sombra.setXOffset(0)
-            sombra.setYOffset(4)
-            sombra.setColor(QColor(0, 0, 0, 160))
-            widget.setGraphicsEffect(sombra)
-        aplicar_sombra(self.boton_accion)
 
         self.setLayout(self.layout)
 

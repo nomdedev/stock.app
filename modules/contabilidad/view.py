@@ -103,7 +103,7 @@ class ContabilidadView(QWidget):
         botones_layout = QHBoxLayout()
         botones_layout.setSpacing(12)
         self.boton_nuevo_recibo = QPushButton()
-        self.boton_nuevo_recibo.setIcon(QIcon("img/plus_icon.svg"))
+        self.boton_nuevo_recibo.setIcon(QIcon("img/archivo-excel.png"))
         self.boton_nuevo_recibo.setIconSize(QSize(24, 24))
         self.boton_nuevo_recibo.setToolTip("Agregar recibo")
         self.boton_nuevo_recibo.setText("")
@@ -125,25 +125,6 @@ class ContabilidadView(QWidget):
         botones_layout.addWidget(self.boton_exportar_pdf)
         botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
-
-        # Botón principal de acción estándar (para compatibilidad con el controlador)
-        self.boton_accion = QPushButton()
-        self.boton_accion.setIcon(QIcon("utils/contabilidad.svg"))
-        self.boton_accion.setToolTip("Agregar nuevo recibo")
-        self.boton_accion.setFixedSize(48, 48)
-        self.boton_accion.setIconSize(QSize(32, 32))
-        self.boton_accion.setObjectName("boton_accion")
-        self.layout.addWidget(self.boton_accion)
-
-        # Sombra visual profesional para el botón principal
-        def aplicar_sombra(widget):
-            sombra = QGraphicsDropShadowEffect()
-            sombra.setBlurRadius(15)
-            sombra.setXOffset(0)
-            sombra.setYOffset(4)
-            sombra.setColor(QColor(0, 0, 0, 160))
-            widget.setGraphicsEffect(sombra)
-        aplicar_sombra(self.boton_accion)
 
         # Asegurar espaciado y alineación
         self.layout.setSpacing(10)

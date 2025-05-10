@@ -1,5 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QFormLayout, QLineEdit, QComboBox, QPushButton, QLabel, QHBoxLayout
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QFormLayout, QLineEdit, QComboBox, QPushButton, QLabel, QHBoxLayout, QGraphicsDropShadowEffect
+from PyQt6.QtGui import QIcon, QColor
+from PyQt6.QtCore import Qt, QSize
+import json
 
 class PedidosView(QWidget):
     def __init__(self):
@@ -7,9 +9,13 @@ class PedidosView(QWidget):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
-        # Aplicar estilos globales desde los temas
+        # Cargar el stylesheet visual moderno para Pedidos según el tema activo
         try:
-            with open("themes/light.qss", "r", encoding="utf-8") as f:
+            with open("themes/config.json", "r", encoding="utf-8") as f:
+                config = json.load(f)
+            tema = config.get("tema", "claro")
+            archivo_qss = f"themes/{tema}.qss"
+            with open(archivo_qss, "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
         except Exception as e:
             print(f"No se pudo cargar el archivo de estilos: {e}")
@@ -32,18 +38,23 @@ class PedidosView(QWidget):
         self.form_layout.addRow("Observaciones:", self.observaciones_input)
         self.layout.addLayout(self.form_layout)
 
-        # Botones
+        # Botón principal de acción (Agregar pedido)
         self.botones_layout = QHBoxLayout()
-        self.boton_nuevo = QPushButton("+")
-        self.boton_eliminar = QPushButton("🗑️")
-        self.boton_actualizar = QPushButton("🔄")
-        self.boton_aprobar = QPushButton("✔️")
-        self.boton_rechazar = QPushButton("❌")
+        self.boton_nuevo = QPushButton()
+        self.boton_nuevo.setIcon(QIcon("img/add-entrega.svg"))
+        self.boton_nuevo.setIconSize(QSize(24, 24))
+        self.boton_nuevo.setToolTip("Agregar pedido")
+        self.boton_nuevo.setText("")
+        self.boton_nuevo.setFixedSize(48, 48)
+        self.boton_nuevo.setStyleSheet("")
+        sombra = QGraphicsDropShadowEffect()
+        sombra.setBlurRadius(15)
+        sombra.setXOffset(0)
+        sombra.setYOffset(4)
+        sombra.setColor(QColor(0, 0, 0, 50))
+        self.boton_nuevo.setGraphicsEffect(sombra)
         self.botones_layout.addWidget(self.boton_nuevo)
-        self.botones_layout.addWidget(self.boton_eliminar)
-        self.botones_layout.addWidget(self.boton_actualizar)
-        self.botones_layout.addWidget(self.boton_aprobar)
-        self.botones_layout.addWidget(self.boton_rechazar)
+        self.botones_layout.addStretch()
         self.layout.addLayout(self.botones_layout)
 
         # Ajustar espaciado y alineación para asegurar visibilidad
@@ -56,10 +67,6 @@ class PedidosView(QWidget):
 
         # Señales
         self.boton_nuevo.clicked.connect(self.crear_pedido)
-        self.boton_eliminar.clicked.connect(self.eliminar_pedido)
-        self.boton_actualizar.clicked.connect(self.cargar_pedidos)
-        self.boton_aprobar.clicked.connect(self.aprobar_pedido)
-        self.boton_rechazar.clicked.connect(self.rechazar_pedido)
 
     def crear_pedido(self):
         pass

@@ -5,11 +5,6 @@ class AuditoriaController:
     def __init__(self, model, view):
         self.model = model
         self.view = view
-        try:
-            # Conectar el botón al método
-            self.view.boton_accion.clicked.connect(self.ejecutar_accion)
-        except AttributeError as e:
-            print(f"Error en AuditoriaController: {e}")
 
     def ejecutar_accion(self):
         try:

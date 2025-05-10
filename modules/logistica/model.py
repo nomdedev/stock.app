@@ -1,3 +1,20 @@
+"""
+FLUJO PASO A PASO DEL MÓDULO LOGÍSTICA
+
+1. Programar entrega: programar_entrega(id_obra, fecha_programada, vehiculo_asignado, chofer_asignado)
+2. Visualizar entregas y su estado: obtener_datos_entregas(), obtener_entregas(), obtener_entregas_por_estado(estado)
+3. Actualizar estado de entrega: actualizar_estado_entrega(id_entrega, nuevo_estado)
+4. Checklist de entrega: obtener_checklist_por_entrega(id_entrega), agregar_item_checklist(datos)
+5. Registrar firma digital: registrar_firma_entrega(id_entrega, firma_digital)
+6. Generar hoja de ruta: generar_hoja_de_ruta(id_vehiculo)
+7. Exportar historial y acta de entrega: exportar_historial_entregas(formato), exportar_acta_entrega(id_entrega)
+8. Eliminar entrega: eliminar_entrega(id_entrega)
+9. Estadísticas de entregas: obtener_estadisticas_entregas()
+10. Auditoría: todas las acciones relevantes quedan registradas (controlador)
+11. Decorador de permisos aplicado en el controlador
+12. Checklist funcional y visual cubierto
+"""
+
 import pandas as pd
 from fpdf import FPDF
 from core.database import LogisticaDatabaseConnection  # Importar la clase correcta

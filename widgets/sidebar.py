@@ -11,6 +11,9 @@ class Sidebar(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(10, 20, 10, 10)
         self.layout.setSpacing(8)
+        self._expanded = False
+        self._sections = sections
+        self._buttons = []
 
         # Fondo blanco para el modo claro
         self.setStyleSheet("""
@@ -61,44 +64,40 @@ class Sidebar(QWidget):
         """)
         self.layout.addWidget(self.estado_label)
 
-        # Botones de navegación
-        for index, section in enumerate(sections):
-            # Permitir que section sea str o tuple (nombre, ...)
+        self._create_buttons()
+
+    def _create_buttons(self):
+        # Limpiar botones existentes
+        for btn in getattr(self, '_buttons', []):
+            self.layout.removeWidget(btn)
+            btn.deleteLater()
+        self._buttons = []
+        for index, section in enumerate(self._sections):
             if isinstance(section, tuple):
                 section_name = section[0]
                 icon_file = section[1] if len(section) > 1 else None
             else:
                 section_name = section
                 icon_file = None
-            button = QPushButton()
+            button = QPushButton(section_name if self._expanded else "")
             button.setObjectName("botonMenu")
-            button.setFixedHeight(25)
-            button.setFixedSize(44, 25)
-            button.setStyleSheet("""
-                QPushButton#botonMenu {
-                    background-color: white;
-                    color: #1f2937;
-                    border-radius: 8px;
-                    padding: 4px 4px;
-                    font-size: 10px;
-                    font-weight: 500;
-                    text-align: center;
-                }
-                QPushButton#botonMenu:hover {
-                    background-color: #f3f4f6;
-                }
-                QPushButton#botonMenuActivo {
-                    background-color: #2563eb;
-                    color: white;
-                }
-            """)
+            button.setFixedHeight(40)
+            if self._expanded:
+                button.setFixedWidth(180)
+            else:
+                button.setFixedSize(44, 40)
             # Usar SVG de utils si existe
-            icon_path = os.path.join('utils', f"{section_name.lower()}.svg")
+            icon_path = icon_file or os.path.join('utils', f"{section_name.lower()}.svg")
             if not os.path.exists(icon_path):
-                # Fallback: buscar en img/
                 icon_path = os.path.join('img', f"{section_name.lower()}.svg")
             if os.path.exists(icon_path):
                 button.setIcon(QIcon(icon_path))
-                button.setIconSize(QSize(20, 20))
+                button.setIconSize(QSize(24, 24))
             button.clicked.connect(lambda _, idx=index: self.pageChanged.emit(idx))
             self.layout.addWidget(button)
+            self._buttons.append(button)
+
+    def set_expanded(self, expanded: bool):
+        if self._expanded != expanded:
+            self._expanded = expanded
+            self._create_buttons()

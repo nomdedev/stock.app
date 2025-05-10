@@ -16,7 +16,7 @@ QPushButton {
     color: #333; /* Color del texto */
     font-size: 12px;
     font-weight: bold;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    /* box-shadow eliminado para compatibilidad Qt */
 }
 QPushButton:hover {
     background-color: #D3E0F2; /* Color más claro al pasar el mouse */

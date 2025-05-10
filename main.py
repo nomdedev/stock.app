@@ -71,8 +71,6 @@ class MainWindow(QMainWindow):
         self.resize(1280, 720)  # Tamaño inicial razonable
         self.setMinimumSize(1024, 600)  # Tamaño mínimo para evitar errores
 
-        # Eliminar estilos embebidos para evitar mezcla de temas
-        # self.setStyleSheet(...)
         self.initUI()
 
     def initUI(self):
@@ -126,7 +124,7 @@ class MainWindow(QMainWindow):
         self.usuarios_controller = UsuariosController(
             model=self.usuarios_model, view=None
         )
-        self.usuarios_view = UsuariosView(controller=self.usuarios_controller)
+        self.usuarios_view = UsuariosView()
         self.usuarios_controller.view = self.usuarios_view
 
         try:
@@ -182,28 +180,40 @@ class MainWindow(QMainWindow):
         self.module_stack.addWidget(self.usuarios_view)     # index 9
         self.module_stack.addWidget(self.configuracion_view)# index 10
 
-        # Crear el sidebar SOLO con los íconos SVG de utils (sin nombres de módulos)
+        # Crear el sidebar con los íconos SVG y nombres descriptivos de módulos
         svg_dir = os.path.join(os.path.dirname(__file__), 'utils')
-        # Ordenar los íconos según el orden de los módulos en module_stack
-        svg_icons = [
-            'inventario.svg',    # Inventario (index 0)
-            'obras.svg',         # Obras (index 1)
-            'produccion.svg',    # Producción (index 2)
-            'logistica.svg',     # Logística (index 3)
-            'compras.svg',       # Pedidos/Compras (index 4)
-            'mantenimiento.svg', # Mantenimiento (index 5)
-            'contabilidad.svg',  # Contabilidad (index 6)
-            'herrajes.svg',      # Herrajes (index 7)
-            'auditoria.svg',     # Auditoría (index 8)
-            'users.svg',         # Usuarios (index 9)
-            'configuracion.svg'  # Configuración (index 10)
+        sidebar_sections = [
+            ("Inventario", os.path.join(svg_dir, 'inventario.svg')),
+            ("Obras", os.path.join(svg_dir, 'obras.svg')),
+            ("Producción", os.path.join(svg_dir, 'produccion.svg')),
+            ("Logística", os.path.join(svg_dir, 'logistica.svg')),
+            ("Compras / Pedidos", os.path.join(svg_dir, 'compras.svg')),
+            ("Mantenimiento", os.path.join(svg_dir, 'mantenimiento.svg')),
+            ("Contabilidad", os.path.join(svg_dir, 'contabilidad.svg')),
+            ("Herrajes", os.path.join(svg_dir, 'herrajes.svg')),
+            ("Auditoría", os.path.join(svg_dir, 'auditoria.svg')),
+            ("Usuarios", os.path.join(svg_dir, 'users.svg')),
+            ("Configuración", os.path.join(svg_dir, 'configuracion.svg'))
         ]
-        sections = [(icon.split('.')[0].capitalize(), os.path.join(svg_dir, icon)) for icon in svg_icons]
-        self.sidebar = Sidebar("utils", sections)
+        self.sidebar = Sidebar("utils", sidebar_sections)
         self.sidebar.pageChanged.connect(self.module_stack.setCurrentIndex)
         main_layout.addWidget(self.sidebar)
-
         main_layout.addWidget(self.module_stack)
+        self._ajustar_sidebar()
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self._ajustar_sidebar()
+
+    def changeEvent(self, event):
+        super().changeEvent(event)
+        if event.type() == QtCore.QEvent.Type.WindowStateChange:
+            self._ajustar_sidebar()
+
+    def _ajustar_sidebar(self):
+        # Si la ventana está maximizada o pantalla completa, expandir sidebar
+        expanded = self.isMaximized() or self.isFullScreen() or self.width() > 1400
+        self.sidebar.set_expanded(expanded)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

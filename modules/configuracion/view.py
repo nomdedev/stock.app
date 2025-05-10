@@ -1,7 +1,8 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QComboBox, QCheckBox, QPushButton, QSizePolicy, QTabWidget, QHBoxLayout
-from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QComboBox, QCheckBox, QPushButton, QSizePolicy, QTabWidget, QHBoxLayout, QGraphicsDropShadowEffect
+from PyQt6.QtGui import QIcon, QColor
 from PyQt6.QtCore import QSize
 from themes.theme_manager import aplicar_tema, guardar_preferencia_tema, cargar_preferencia_tema
+import json
 
 class ConfiguracionView(QWidget):
     def __init__(self):
@@ -10,8 +11,8 @@ class ConfiguracionView(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(32, 32, 32, 32)
         self.layout.setSpacing(0)
+        # Cargar el stylesheet visual moderno para Configuración según el tema activo
         try:
-            import json
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
             tema = config.get("tema", "claro")
@@ -49,33 +50,22 @@ class ConfiguracionView(QWidget):
             switch_layout.addStretch()
             self.layout.addLayout(switch_layout)
 
-            # Botones principales solo icono
+            # Botón principal de acción (Guardar)
             botones_layout = QHBoxLayout()
             self.boton_guardar = QPushButton()
-            self.boton_guardar.setIcon(QIcon("img/plus_icon.svg"))
+            self.boton_guardar.setIcon(QIcon("img/settings_icon.svg"))
             self.boton_guardar.setIconSize(QSize(24, 24))
             self.boton_guardar.setToolTip("Guardar configuración")
             self.boton_guardar.setText("")
             self.boton_guardar.setFixedSize(48, 48)
             self.boton_guardar.setStyleSheet("")
-            self.boton_restaurar = QPushButton()
-            self.boton_restaurar.setIcon(QIcon("img/refresh_icon.svg"))
-            self.boton_restaurar.setIconSize(QSize(24, 24))
-            self.boton_restaurar.setToolTip("Restaurar valores predeterminados")
-            self.boton_restaurar.setText("")
-            self.boton_restaurar.setFixedSize(48, 48)
-            self.boton_restaurar.setStyleSheet("")
+            sombra = QGraphicsDropShadowEffect()
+            sombra.setBlurRadius(15)
+            sombra.setXOffset(0)
+            sombra.setYOffset(4)
+            sombra.setColor(QColor(0, 0, 0, 50))
+            self.boton_guardar.setGraphicsEffect(sombra)
             botones_layout.addWidget(self.boton_guardar)
-            botones_layout.addWidget(self.boton_restaurar)
-            # Botón para activar modo offline (compacto, solo icono)
-            self.boton_activar_offline = QPushButton()
-            self.boton_activar_offline.setIcon(QIcon("img/offline_icon.svg"))
-            self.boton_activar_offline.setIconSize(QSize(24, 24))
-            self.boton_activar_offline.setToolTip("Activar Modo Offline")
-            self.boton_activar_offline.setText("")
-            self.boton_activar_offline.setFixedSize(48, 48)
-            self.boton_activar_offline.setStyleSheet("")
-            botones_layout.addWidget(self.boton_activar_offline)
             botones_layout.addStretch()
             self.layout.addLayout(botones_layout)
 

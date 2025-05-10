@@ -1,50 +1,50 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit
-from PyQt6 import QtGui
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTableWidget, QGraphicsDropShadowEffect
+from PyQt6.QtGui import QIcon, QColor
 from PyQt6.QtCore import QSize
+import json
 
 class LogisticaView(QWidget):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout(self)
-        # Cargar el stylesheet visual moderno para Logística
+        self.layout.setContentsMargins(20, 20, 20, 20)
+        self.layout.setSpacing(20)
+
+        # Cargar el stylesheet visual moderno para Logística según el tema activo
         try:
-            with open("styles/inventario_styles.qss", "r", encoding="utf-8") as f:
+            with open("themes/config.json", "r", encoding="utf-8") as f:
+                config = json.load(f)
+            tema = config.get("tema", "claro")
+            archivo_qss = f"themes/{tema}.qss"
+            with open(archivo_qss, "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
         except Exception as e:
-            print(f"No se pudo cargar inventario_styles.qss: {e}")
-        # Botones principales como iconos
+            print(f"No se pudo cargar el archivo de estilos: {e}")
+
+        # Botón principal de acción (Agregar)
         botones_layout = QHBoxLayout()
-        botones = [
-            QPushButton(),  # Nueva Entrega
-            QPushButton(),  # Ver Hoja de Ruta
-            QPushButton(),  # Exportar a Excel
-        ]
-        iconos = [
-            ("plus_icon.svg", "Agregar nueva entrega"),
-            ("proceso.png", "Ver hoja de ruta"),
-            ("excel_icon.svg", "Exportar entregas a Excel"),
-        ]
-        for boton, (icono, tooltip) in zip(botones, iconos):
-            boton.setIcon(QtGui.QIcon(f"img/{icono}"))
-            boton.setIconSize(QSize(32, 32))
-            boton.setToolTip(tooltip)
-            boton.setText("")
-            boton.setFixedSize(48, 48)
-            boton.setStyleSheet("""
-                QPushButton {
-                    background-color: #2563eb;
-                    border-radius: 12px;
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #1e40af;
-                }
-                QPushButton:pressed {
-                    background-color: #1e3a8a;
-                }
-            """)
-            botones_layout.addWidget(boton)
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/hoja-de-ruta.svg"))  # Icono específico de logística
+        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setToolTip("Agregar envío")
+        self.boton_agregar.setText("")
+        self.boton_agregar.setFixedSize(48, 48)
+        self.boton_agregar.setStyleSheet("")
+        sombra = QGraphicsDropShadowEffect()
+        sombra.setBlurRadius(15)
+        sombra.setXOffset(0)
+        sombra.setYOffset(4)
+        sombra.setColor(QColor(0, 0, 0, 160))
+        self.boton_agregar.setGraphicsEffect(sombra)
+        botones_layout.addWidget(self.boton_agregar)
+        botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
+
+        # Tabla de envíos (placeholder)
+        self.tabla_envios = QTableWidget()
+        self.layout.addWidget(self.tabla_envios)
+
+        self.setLayout(self.layout)
 
     @property
     def label(self):

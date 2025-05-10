@@ -1,7 +1,8 @@
-from PyQt6.QtWidgets import QWidget, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QTabWidget, QLabel, QLineEdit, QHBoxLayout
-from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QWidget, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QTabWidget, QLabel, QLineEdit, QHBoxLayout, QGraphicsDropShadowEffect
+from PyQt6.QtGui import QIcon, QColor
 from PyQt6.QtCore import QSize
 from modules.compras.pedidos.view import PedidosView  # Importar desde el módulo correcto
+import json
 
 class ComprasView(QWidget):
     def __init__(self):
@@ -11,11 +12,10 @@ class ComprasView(QWidget):
 
         # Cargar el stylesheet visual moderno para Compras según el tema activo
         try:
-            import json
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
             tema = config.get("tema", "claro")
-            archivo_qss = f"styles/inventario_{tema}.qss"
+            archivo_qss = f"themes/{tema}.qss"
             with open(archivo_qss, "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
         except Exception as e:
@@ -32,32 +32,22 @@ class ComprasView(QWidget):
         self.layout.addWidget(self.tab_widget)
 
     def inicializar_botones(self):
-        # Botones principales como iconos
+        # Botón principal de acción (Nuevo pedido)
         botones_layout = QHBoxLayout()
         self.boton_nuevo = QPushButton()
-        self.boton_nuevo.setIcon(QIcon("img/plus_icon.svg"))
+        self.boton_nuevo.setIcon(QIcon("img/add-entrega.svg"))
         self.boton_nuevo.setIconSize(QSize(24, 24))
         self.boton_nuevo.setToolTip("Nuevo pedido")
         self.boton_nuevo.setText("")
         self.boton_nuevo.setFixedSize(48, 48)
         self.boton_nuevo.setStyleSheet("")
-        self.boton_comparar = QPushButton()
-        self.boton_comparar.setIcon(QIcon("img/search_icon.svg"))
-        self.boton_comparar.setIconSize(QSize(24, 24))
-        self.boton_comparar.setToolTip("Comparar presupuestos")
-        self.boton_comparar.setText("")
-        self.boton_comparar.setFixedSize(48, 48)
-        self.boton_comparar.setStyleSheet("")
-        self.boton_exportar_excel = QPushButton()
-        self.boton_exportar_excel.setIcon(QIcon("img/excel_icon.svg"))
-        self.boton_exportar_excel.setIconSize(QSize(24, 24))
-        self.boton_exportar_excel.setToolTip("Exportar pedidos a Excel")
-        self.boton_exportar_excel.setText("")
-        self.boton_exportar_excel.setFixedSize(48, 48)
-        self.boton_exportar_excel.setStyleSheet("")
+        sombra = QGraphicsDropShadowEffect()
+        sombra.setBlurRadius(15)
+        sombra.setXOffset(0)
+        sombra.setYOffset(4)
+        sombra.setColor(QColor(0, 0, 0, 50))
+        self.boton_nuevo.setGraphicsEffect(sombra)
         botones_layout.addWidget(self.boton_nuevo)
-        botones_layout.addWidget(self.boton_comparar)
-        botones_layout.addWidget(self.boton_exportar_excel)
         botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
 

@@ -46,89 +46,29 @@ class InventarioView(QWidget):
         top_btns_layout = QHBoxLayout()
         top_btns_layout.addStretch()
         iconos = [
-            ("plus_icon.svg", "Agregar nuevo ítem"),
-            ("excel_icon.svg", "Exportar a Excel"),
-            ("pdf_icon.svg", "Exportar a PDF"),
-            ("search_icon.svg", "Buscar ítem"),
-            ("qr_icon.svg", "Generar código QR"),
+            ("add-material.svg", "Agregar nuevo ítem", self.nuevo_item_signal),
+            ("excel_icon.svg", "Exportar a Excel", self.exportar_excel_signal),
+            ("pdf_icon.svg", "Exportar a PDF", self.exportar_pdf_signal),
+            ("search_icon.svg", "Buscar ítem", self.buscar_signal),
+            ("qr_icon.svg", "Generar código QR", self.generar_qr_signal),
         ]
-        for icono, tooltip in iconos:
+        for icono, tooltip, signal in iconos:
             btn = QPushButton()
             btn.setIcon(QtGui.QIcon(f"img/{icono}"))
             btn.setIconSize(QSize(24, 24))
             btn.setToolTip(tooltip)
             btn.setText("")
+            btn.clicked.connect(signal.emit)
             top_btns_layout.addWidget(btn)
         self.layout.insertLayout(1, top_btns_layout)
 
-        # Botones grandes debajo de la tabla
-        bottom_btns_layout = QHBoxLayout()
-        bottom_btns_layout.setSpacing(20)
-        bottom_btns_layout.setContentsMargins(40, 10, 40, 40)
-
-        def aplicar_sombra(widget):
-            sombra = QGraphicsDropShadowEffect()
-            sombra.setBlurRadius(15)
-            sombra.setXOffset(0)
-            sombra.setYOffset(4)
-            sombra.setColor(QColor(0, 0, 0, 50))
-            widget.setGraphicsEffect(sombra)
-
-        # Botón Refresh (solo icono)
-        self.boton_refresh = QPushButton()
-        self.boton_refresh.setIcon(QtGui.QIcon("img/refresh_icon.svg"))
-        self.boton_refresh.setIconSize(QSize(24, 24))
-        self.boton_refresh.setToolTip("Recargar la tabla de inventario")
-        self.boton_refresh.setText("")
-        self.boton_refresh.setFixedSize(48, 48)
-        self.boton_refresh.setStyleSheet("")
-        aplicar_sombra(self.boton_refresh)
-        self.boton_refresh.clicked.connect(self.actualizar_signal.emit)
-        bottom_btns_layout.addWidget(self.boton_refresh)
-
-        # Botón Adjust Stock (solo icono)
-        self.boton_ajustar_stock = QPushButton()
-        self.boton_ajustar_stock.setIcon(QtGui.QIcon("img/settings_icon.svg"))
-        self.boton_ajustar_stock.setIconSize(QSize(24, 24))
-        self.boton_ajustar_stock.setToolTip("Ajustar stock manualmente")
-        self.boton_ajustar_stock.setText("")
-        self.boton_ajustar_stock.setFixedSize(48, 48)
-        self.boton_ajustar_stock.setStyleSheet("")
-        aplicar_sombra(self.boton_ajustar_stock)
-        self.boton_ajustar_stock.clicked.connect(self.ajustar_stock_signal.emit)
-        bottom_btns_layout.addWidget(self.boton_ajustar_stock)
-
-        # Botón View Details (solo icono)
-        self.boton_ver_detalles = QPushButton()
-        self.boton_ver_detalles.setIcon(QtGui.QIcon("img/search_icon.svg"))
-        self.boton_ver_detalles.setIconSize(QSize(24, 24))
-        self.boton_ver_detalles.setToolTip("Ver detalles del ítem seleccionado")
-        self.boton_ver_detalles.setText("")
-        self.boton_ver_detalles.setFixedSize(48, 48)
-        self.boton_ver_detalles.setStyleSheet("")
-        aplicar_sombra(self.boton_ver_detalles)
-        self.boton_ver_detalles.clicked.connect(self.ver_movimientos_signal.emit)
-        bottom_btns_layout.addWidget(self.boton_ver_detalles)
-
-        # Botón Reserve (solo icono)
-        self.boton_reservar = QPushButton()
-        self.boton_reservar.setIcon(QtGui.QIcon("img/calendar-plus.svg"))
-        self.boton_reservar.setIconSize(QSize(24, 24))
-        self.boton_reservar.setToolTip("Reservar ítem para obra")
-        self.boton_reservar.setText("")
-        self.boton_reservar.setFixedSize(48, 48)
-        self.boton_reservar.setStyleSheet("")
-        aplicar_sombra(self.boton_reservar)
-        self.boton_reservar.clicked.connect(self.reservar_signal.emit)
-        bottom_btns_layout.addWidget(self.boton_reservar)
-
-        bottom_btns_layout.addStretch()
-        self.layout.addSpacing(24)
-        self.layout.addLayout(bottom_btns_layout)
-
         # Cargar el stylesheet visual moderno para Inventario según el tema activo
         try:
-            with open("themes/light.qss", "r", encoding="utf-8") as f:
+            with open("themes/config.json", "r", encoding="utf-8") as f:
+                config = json.load(f)
+            tema = config.get("tema", "claro")
+            archivo_qss = f"themes/{tema}.qss"
+            with open(archivo_qss, "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
         except Exception as e:
             print(f"No se pudo cargar el archivo de estilos: {e}")

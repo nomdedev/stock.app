@@ -1,11 +1,27 @@
+"""
+FLUJO PASO A PASO DEL MÓDULO INVENTARIO
+
+1. Alta de ítem/material: agregar_item(datos)
+2. Edición/eliminación: métodos asociados en el controlador
+3. Reserva de material: registrar_reserva(datos)
+4. Visualización de inventario: obtener_items(), obtener_items_por_lotes()
+5. Visualización de movimientos: obtener_movimientos(id_item)
+6. Exportación: exportar_inventario(formato)
+7. Auditoría: todas las acciones relevantes quedan registradas
+8. Decorador de permisos aplicado en el controlador
+9. Checklist funcional y visual cubierto
+"""
+
 import pandas as pd  # Asegúrate de tener pandas instalado
 from fpdf import FPDF  # Asegúrate de tener fpdf instalado
 from core.database import DatabaseConnection
 
 class InventarioModel:
     def __init__(self, db_connection=None):
-        self.db = db_connection or DatabaseConnection()
-        self.db.conectar_a_base("inventario")
+        self.db = db_connection if db_connection is not None else DatabaseConnection()
+        # Solo conectar si la conexión fue creada aquí
+        if db_connection is None:
+            self.db.conectar_a_base("inventario")
 
     def obtener_items(self):
         query = """

@@ -21,10 +21,10 @@ class PedidosView(QWidget):
 
         # Cargar el stylesheet visual moderno para Pedidos según el tema activo
         try:
-            with open("config/config.json", "r", encoding="utf-8") as f:
+            with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
             tema = config.get("tema", "claro")
-            archivo_qss = f"styles/inventario_{tema}.qss"
+            archivo_qss = f"themes/{tema}.qss"
             with open(archivo_qss, "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
         except Exception as e:
@@ -36,29 +36,17 @@ class PedidosView(QWidget):
         self.boton_ver_detalles = QPushButton()
         self.boton_cargar_presupuesto = QPushButton()
         botones = [
-            (self.boton_crear, "plus_icon.svg", "Crear nuevo pedido"),
+            (self.boton_crear, "add-entrega.svg", "Crear nuevo pedido"),
             (self.boton_ver_detalles, "search_icon.svg", "Ver detalles del pedido"),
             (self.boton_cargar_presupuesto, "excel_icon.svg", "Cargar presupuesto"),
         ]
         for boton, icono, tooltip in botones:
             boton.setIcon(QtGui.QIcon(f"img/{icono}"))
-            boton.setIconSize(QSize(12, 12))
+            boton.setIconSize(QSize(24, 24))
             boton.setToolTip(tooltip)
             boton.setText("")
-            boton.setFixedSize(15, 15)
-            boton.setStyleSheet("""
-                QPushButton {
-                    background-color: #2563eb;
-                    border-radius: 4px;
-                    border: none;
-                }
-                QPushButton:hover {
-                    background-color: #1e40af;
-                }
-                QPushButton:pressed {
-                    background-color: #1e3a8a;
-                }
-            """)
+            boton.setFixedSize(48, 48)
+            boton.setStyleSheet("")
             botones_layout.addWidget(boton)
         self.layout.addLayout(botones_layout)
 

@@ -132,6 +132,256 @@ El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de qu
 
 Si necesitas agregar más información o realizar cambios en las bases de datos, por favor consulta con el equipo antes de proceder.
 
+## Resumen de Flujo, Estructura y Relaciones de Datos (2025)
+
+### Estructura General del Sistema
+- **Arquitectura modular**: cada módulo (Inventario, Obras, Usuarios, Logística, Compras, etc.) tiene su propio modelo, vista y controlador.
+- **Conexión a base de datos centralizada**: se crea una única conexión persistente por base de datos y se inyecta en los modelos, evitando conexiones redundantes.
+- **Auditoría y permisos**: todas las acciones relevantes pasan por un decorador que valida permisos y registra auditoría.
+- **Interfaz visual unificada**: cada módulo tiene un solo botón principal de acción, con icono SVG y sombra, y el sidebar es visual y minimalista.
+
+### Flujo de Trabajo Digitalizado
+1. **Inventario**: permite alta, ajuste, reserva y consulta de materiales/herrajes. Cada movimiento queda registrado en auditoría.
+2. **Obras**: permite crear obras, asociar materiales, y visualizar el cronograma tipo Kanban. El usuario puede agregar obras, asignar materiales y ver el estado de avance.
+3. **Asociación de materiales a obras**: desde el módulo Obras, se pueden asignar materiales a cada obra, especificando cantidades y estado. Esto se refleja en la tabla `materiales_por_obra`.
+4. **Cronograma Kanban**: cada obra tiene una fecha de medición y una fecha de entrega (editable, por defecto 90 días). El Kanban muestra visualmente el avance y permite identificar fechas clave.
+5. **Exportación y reportes**: los módulos permiten exportar datos a Excel y PDF.
+6. **Gestión de usuarios y permisos**: los roles definen qué acciones puede realizar cada usuario.
+
+### Principales Tablas y Relaciones
+- **inventario_items**: ítems/materiales disponibles en stock.
+- **movimientos_stock**: historial de movimientos de stock (ingresos, egresos, ajustes, reservas).
+- **reservas_stock**: reservas de materiales para obras.
+- **obras**: datos principales de cada obra (nombre, cliente, estado, fecha de medición, fecha de entrega).
+- **materiales_por_obra**: relación N a N entre obras y materiales, con cantidades y estado.
+- **cronograma_obras**: etapas y fechas programadas/realizadas para cada obra.
+- **usuarios**: usuarios del sistema y sus roles.
+- **auditorias_sistema**: registro de todas las acciones relevantes.
+
+#### Relación de datos clave
+- Una obra puede tener muchos materiales asociados (`materiales_por_obra`).
+- Cada material puede estar asociado a muchas obras.
+- El cronograma de cada obra se almacena en `cronograma_obras`.
+- Los movimientos de stock y reservas se vinculan a obras y usuarios.
+
+### Lógica de Asociación y Cronograma
+- Al crear una obra, se puede definir la fecha de entrega (por defecto 90 días desde la medición, editable).
+- Al asignar materiales, se crea un registro en `materiales_por_obra`.
+- El Kanban se alimenta de la tabla `obras` y muestra nombre, cliente, fecha de medición y fecha de entrega.
+- El usuario puede editar la fecha de entrega y los materiales asociados desde la interfaz.
+
+### Ejemplo de SQL relevante
+```sql
+CREATE TABLE obras (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100),
+    cliente VARCHAR(100),
+    estado VARCHAR(50),
+    fecha DATE, -- fecha de medición
+    fecha_entrega DATE -- fecha de entrega (editable)
+);
+
+CREATE TABLE materiales_por_obra (
+    id SERIAL PRIMARY KEY,
+    id_obra INT REFERENCES obras(id),
+    id_item INT,
+    cantidad_necesaria DECIMAL,
+    cantidad_reservada DECIMAL,
+    estado VARCHAR(30)
+);
+```
+
+### Notas sobre la implementación
+- El sistema evita conexiones redundantes a la base de datos.
+- Todas las acciones importantes quedan registradas en auditoría.
+- El flujo de trabajo es digital, modular y auditable.
+- La interfaz es moderna, con botones principales únicos y sidebar visual.
+
+---
+
+## Funcionalidad: Asociación de materiales a obras y cronograma Kanban
+
+### Asociación de materiales a obras
+- Cada obra puede tener múltiples materiales asociados.
+- La relación se almacena en la tabla `materiales_por_obra`:
+  - `id`: clave primaria.
+  - `id_obra`: referencia a la obra.
+  - `id_item`: identificador del material.
+  - `cantidad_necesaria`, `cantidad_reservada`, `estado`: detalles de la asociación.
+- Desde la interfaz del módulo Obras, el usuario puede asociar materiales a una obra mediante un diálogo específico.
+- La visualización y edición de materiales asociados se realiza desde la misma interfaz, permitiendo agregar, modificar o quitar materiales de la obra seleccionada.
+
+### Cronograma y tablero Kanban de obras
+- En la pestaña de cronograma del módulo Obras se visualiza un tablero Kanban.
+- Cada tarjeta Kanban representa una obra y muestra:
+  - Nombre de la obra
+  - Fecha de medición
+  - Fecha de entrega (calculada por defecto a 90 días desde la medición, editable por el usuario)
+- El usuario puede modificar la fecha de entrega al crear o editar una obra.
+- El Kanban permite identificar visualmente las fechas clave y el estado de cada obra en el cronograma.
+
+### Estructura y relaciones de tablas relevantes
+- `obras`: almacena los datos principales de cada obra, incluyendo `nombre`, `cliente`, `estado`, `fecha` (de medición) y `fecha_entrega` (editable, por defecto 90 días después de la medición).
+- `materiales_por_obra`: relación N a N entre obras y materiales.
+- `cronograma_obras`: almacena etapas y fechas programadas/realizadas para cada obra (opcional para futuras ampliaciones).
+
+#### Ejemplo de relación de datos:
+- Una obra tiene una fecha de medición (`fecha`) y una fecha de entrega (`fecha_entrega`).
+- Al asociar materiales, se crean registros en `materiales_por_obra` vinculados por `id_obra`.
+- El Kanban se alimenta de la tabla `obras`, mostrando las fechas y permitiendo editar la fecha de entrega.
+
+### Detalles de implementación
+- Al crear una obra, el campo de fecha de entrega se inicializa automáticamente a 90 días después de la fecha de medición, pero el usuario puede modificarlo.
+- La interfaz permite ver y editar los materiales asociados a cada obra.
+- El cronograma Kanban se actualiza dinámicamente al modificar obras o fechas.
+
+### SQL relevante (extracto):
+```sql
+CREATE TABLE obras (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100),
+    cliente VARCHAR(100),
+    estado VARCHAR(50),
+    fecha DATE, -- fecha de medición
+    fecha_entrega DATE -- fecha de entrega (editable)
+);
+
+CREATE TABLE materiales_por_obra (
+    id SERIAL PRIMARY KEY,
+    id_obra INT REFERENCES obras(id),
+    id_item INT,
+    cantidad_necesaria DECIMAL,
+    cantidad_reservada DECIMAL,
+    estado VARCHAR(30)
+);
+```
+
+> Para más detalles sobre la lógica y la experiencia de usuario, ver los módulos `modules/obras/view.py` y `modules/obras/controller.py`.
+
+---
+
+## Ejemplo completo: Alta de obra, asociación de perfiles/materiales y visualización en Kanban
+
+A continuación se muestra un ejemplo práctico de cómo se cargan los datos en las tablas principales, se asocian materiales/perfiles a una obra y cómo se visualiza en el cronograma Kanban.
+
+### 1. Inserción de una obra con todos los campos
+
+```sql
+INSERT INTO obras (nombre, cliente, estado, fecha, fecha_entrega)
+VALUES ('Edificio Central', 'Constructora Sur', 'En ejecución', '2025-05-10', '2025-08-08');
+-- Suponiendo que el id generado es 1
+```
+
+### 2. Asociación de perfiles/materiales a la obra
+
+```sql
+-- Ejemplo de perfiles/materiales asociados a la obra con id=1
+INSERT INTO materiales_por_obra (id_obra, id_item, cantidad_necesaria, cantidad_reservada, estado)
+VALUES
+  (1, 101, 50, 50, 'Reservado'),   -- Perfil U 100x50x3
+  (1, 102, 30, 20, 'Parcial'),     -- Perfil C 80x40x2
+  (1, 103, 100, 100, 'Reservado'); -- Tornillo autoperforante
+```
+
+### 3. Visualización de la obra en el Kanban (cronograma)
+
+```
+| Fecha de medición |==================== Barra de progreso ====================| Fecha de entrega |
+2025-05-10         [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■]   2025-08-08
+Obra: Edificio Central | Cliente: Constructora Sur | Estado: En ejecución
+Perfiles asociados: Perfil U 100x50x3 (50), Perfil C 80x40x2 (30), Tornillo autoperforante (100)
+```
+
+- La barra muestra el avance desde la fecha de medición hasta la fecha de entrega.
+- Se visualizan los perfiles/materiales asociados y su estado.
+- El usuario puede editar la fecha de entrega y los materiales desde la interfaz.
+
+### 4. Ejemplo de consulta para ver la obra y sus materiales asociados
+
+```sql
+SELECT o.id, o.nombre, o.cliente, o.estado, o.fecha, o.fecha_entrega,
+       m.id_item, m.cantidad_necesaria, m.cantidad_reservada, m.estado
+FROM obras o
+LEFT JOIN materiales_por_obra m ON o.id = m.id_obra
+WHERE o.id = 1;
+```
+
+### 5. Reflejo en la interfaz
+- En la tabla de obras, se muestra la obra con su cliente, estado, fechas y un resumen de materiales asociados.
+- En el Kanban, la obra aparece como una tarjeta con barra de progreso y fechas clave.
+- En el diálogo de materiales, se pueden ver, editar o eliminar los perfiles/materiales asociados.
+
+---
+
+## Ejemplo Visual de Barra Kanban para Obras
+
+A continuación se muestra un ejemplo visual de cómo se representa una obra en el cronograma Kanban:
+
+```
+| Fecha de medición |==================== Barra de progreso ====================| Fecha de entrega |
+2025-05-01         [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■]   2025-07-30
+```
+
+- La barra muestra el avance desde la fecha de medición hasta la fecha de entrega.
+- El color y el largo de la barra indican el porcentaje de tiempo transcurrido.
+- El usuario puede ver rápidamente cuántos días faltan y en qué etapa está cada obra.
+
+---
+
+## Flujo paso a paso del proceso de Obras
+
+A continuación se detalla el flujo completo y correcto del proceso de gestión de obras en el sistema, desde la creación hasta la visualización y edición en Kanban:
+
+1. **Creación de una nueva obra**
+   - El usuario accede al módulo Obras y presiona el botón principal (icono SVG con sombra).
+   - Se abre un diálogo para ingresar los datos de la obra: nombre, cliente, estado, fecha de medición y fecha de entrega (editable, por defecto 90 días).
+   - Al confirmar, se inserta el registro en la tabla `obras`.
+
+2. **Asociación de materiales/perfiles a la obra**
+   - Desde la vista de la obra, el usuario accede al diálogo de materiales asociados.
+   - Selecciona materiales/perfiles, define cantidades y estado (reservado, parcial, etc.).
+   - Se insertan los registros en la tabla `materiales_por_obra`.
+
+3. **Visualización y edición de materiales asociados**
+   - En la tabla de obras, cada obra muestra un resumen de materiales asociados y su estado.
+   - El usuario puede ver, editar o eliminar materiales desde la interfaz.
+
+4. **Visualización en Kanban (cronograma de obras)**
+   - El usuario accede a la pestaña Kanban del módulo Obras.
+   - Cada obra aparece como una tarjeta con barra de progreso, fechas de medición y entrega, y materiales asociados.
+   - El usuario puede editar la fecha de entrega y arrastrar la tarjeta para cambiar de etapa (próximamente drag & drop).
+
+5. **Auditoría y registro de acciones**
+   - Todas las acciones (alta, edición, asociación de materiales, cambios de fechas) quedan registradas en la tabla de auditoría.
+
+6. **Checklist de visualización y funcionamiento**
+   - El usuario puede verificar que todos los puntos del checklist funcional y visual se cumplen para cada obra y material asociado.
+
+> Este flujo asegura que el proceso es digital, auditable y visualmente coherente en todos los pasos, desde la creación hasta la gestión avanzada de obras.
+
+---
+
+## Checklist de Visualización y Funcionamiento para Tablas Principales
+
+Para asegurar la calidad y trazabilidad, cada tabla principal del sistema debe cumplir con los siguientes requisitos:
+
+### Requisitos para cada tabla principal (`inventario_items`, `obras`, `materiales_por_obra`, etc.)
+
+- [ ] Visualización clara y completa de todos los registros.
+- [ ] Permitir agregar, editar y eliminar registros desde la interfaz.
+- [ ] Exportar los datos a Excel y PDF correctamente.
+- [ ] Mostrar los datos relacionados (por ejemplo, materiales asociados a una obra) en la misma vista o mediante diálogo.
+- [ ] Reflejar en tiempo real los cambios realizados (alta, baja, edición, asignación, etc.).
+- [ ] Registrar en auditoría cada acción relevante sobre la tabla.
+- [ ] Permitir búsqueda y filtrado eficiente de registros.
+- [ ] Validar que los datos se muestran correctamente después de cada ajuste o acción.
+- [ ] Visualizar el estado y fechas clave (por ejemplo, barra Kanban en obras).
+- [ ] Permitir adjuntar documentos o imágenes si corresponde.
+
+> Antes de dar por finalizada una funcionalidad, verifica que todos los puntos anteriores se cumplen para cada tabla y módulo.
+
+---
+
 ## Buenas Prácticas de Programación
 
 ### Evitar el uso excesivo de condicionales `if`
@@ -191,7 +441,7 @@ class PermisoAuditoria:
                 usuario_model = getattr(self, 'usuarios_model', UsuariosModel())
                 auditoria_model = getattr(self, 'auditoria_model', AuditoriaModel())
                 usuario = getattr(self, 'usuario_actual', None)
-                if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
+                if not usuario o not usuario_model.tiene_permiso(usuario, self.modulo, accion):
                     if hasattr(self, 'view') and hasattr(self.view, 'label'):
                         self.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
                     return None
@@ -225,7 +475,7 @@ class PermisoAuditoria:
                 usuario_model = getattr(controller, 'usuarios_model', UsuariosModel())
                 auditoria_model = getattr(controller, 'auditoria_model', AuditoriaModel())
                 usuario = getattr(controller, 'usuario_actual', None)
-                if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
+                if not usuario o no usuario_model.tiene_permiso(usuario, self.modulo, accion):
                     # Mostrar mensaje o lanzar excepción
                     return None
                 resultado = func(controller, *args, **kwargs)
