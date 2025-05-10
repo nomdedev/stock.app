@@ -168,34 +168,40 @@ class MainWindow(QMainWindow):
 
         # Crear QStackedWidget para la navegación entre secciones
         self.module_stack = QStackedWidget()
-        self.module_stack.addWidget(self.inventario_view)   # index 0
-        self.module_stack.addWidget(self.obras_view)        # index 1
-        self.module_stack.addWidget(self.produccion_view)   # index 2
-        self.module_stack.addWidget(self.logistica_view)    # index 3
-        self.module_stack.addWidget(self.pedidos_view)      # index 4
-        self.module_stack.addWidget(self.mantenimiento_view)  # index 5
-        self.module_stack.addWidget(self.contabilidad_view)  # index 6
-        self.module_stack.addWidget(self.herrajes_view)      # index 7
+        self.module_stack.addWidget(self.obras_view)        # index 0
+        self.module_stack.addWidget(self.inventario_view)   # index 1
+        self.module_stack.addWidget(self.pedidos_view)      # index 2
+        self.module_stack.addWidget(self.herrajes_view)     # index 3
+        try:
+            from modules.vidrios.view import VidriosView
+            self.vidrios_view = VidriosView()
+            self.module_stack.addWidget(self.vidrios_view)  # index 4
+        except Exception:
+            pass
+        self.module_stack.addWidget(self.logistica_view)    # index 5
+        self.module_stack.addWidget(self.mantenimiento_view)  # index 6
+        self.module_stack.addWidget(self.contabilidad_view)  # index 7
         self.module_stack.addWidget(self.auditoria_view)    # index 8
         self.module_stack.addWidget(self.usuarios_view)     # index 9
         self.module_stack.addWidget(self.configuracion_view)# index 10
 
-        # Crear el sidebar con los íconos SVG y nombres descriptivos de módulos
+        # Crear el sidebar con los íconos SVG y nombres descriptivos de módulos, en orden de flujo real de trabajo
         svg_dir = os.path.join(os.path.dirname(__file__), 'utils')
         sidebar_sections = [
-            ("Inventario", os.path.join(svg_dir, 'inventario.svg')),
             ("Obras", os.path.join(svg_dir, 'obras.svg')),
+            ("Inventario", os.path.join(svg_dir, 'inventario.svg')),
             ("Producción", os.path.join(svg_dir, 'produccion.svg')),
-            ("Logística", os.path.join(svg_dir, 'logistica.svg')),
             ("Compras / Pedidos", os.path.join(svg_dir, 'compras.svg')),
+            ("Herrajes", os.path.join(svg_dir, 'herrajes.svg')),
+            ("Vidrios", os.path.join(svg_dir, 'vidrios.svg')),
+            ("Logística", os.path.join(svg_dir, 'logistica.svg')),
             ("Mantenimiento", os.path.join(svg_dir, 'mantenimiento.svg')),
             ("Contabilidad", os.path.join(svg_dir, 'contabilidad.svg')),
-            ("Herrajes", os.path.join(svg_dir, 'herrajes.svg')),
             ("Auditoría", os.path.join(svg_dir, 'auditoria.svg')),
             ("Usuarios", os.path.join(svg_dir, 'users.svg')),
             ("Configuración", os.path.join(svg_dir, 'configuracion.svg'))
         ]
-        self.sidebar = Sidebar("utils", sidebar_sections)
+        self.sidebar = Sidebar("utils", sidebar_sections, mostrar_nombres=True)
         self.sidebar.pageChanged.connect(self.module_stack.setCurrentIndex)
         main_layout.addWidget(self.sidebar)
         main_layout.addWidget(self.module_stack)

@@ -1360,3 +1360,24 @@
 2025-05-09 12:10:20,689 - INFO - Aplicación iniciada
 2025-05-09 12:38:25,286 - INFO - Aplicación iniciada
 2025-05-09 15:32:08,885 - INFO - Aplicación iniciada
+2025-05-10 13:17:06,878 - INFO - Aplicación iniciada
+2025-05-10 13:19:19,753 - INFO - Aplicación iniciada
+2025-05-10 13:20:56,872 - INFO - Aplicación iniciada
+2025-05-10 13:28:30,344 - INFO - Aplicación iniciada
+2025-05-10 13:30:09,227 - INFO - Aplicación iniciada
+2025-05-10 13:53:17,292 - INFO - Aplicación iniciada
+2025-05-10 13:55:13,093 - INFO - Aplicación iniciada
+2025-05-10 13:58:26,930 - INFO - Aplicación iniciada
+2025-05-10 13:59:16,396 - ERROR - Error al ejecutar la consulta: ('28000', "[28000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Error de inicio de sesión del usuario 'sa'. (18456) (SQLDriverConnect); [28000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede abrir la base de datos 'obras' solicitada por el inicio de sesión. Error de inicio de sesión. (4060); [28000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Error de inicio de sesión del usuario 'sa'. (18456); [28000] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede abrir la base de datos 'obras' solicitada por el inicio de sesión. Error de inicio de sesión. (4060)")
+2025-05-10 14:00:39,059 - INFO - Conexión establecida con la base de datos 'inventario'.
+2025-05-10 14:00:44,638 - INFO - Conexión establecida con la base de datos 'inventario'.
+2025-05-10 19:00:04,773 - INFO - Aplicación iniciada
+2025-05-10 19:01:00,841 - INFO - Aplicación iniciada
+2025-05-10 19:16:03,282 - INFO - Aplicación iniciada
+2025-05-10 19:18:05,390 - INFO - Aplicación iniciada
+2025-05-10 19:21:16,029 - INFO - Aplicación iniciada
+2025-05-10 19:29:34,417 - INFO - Aplicación iniciada
+2025-05-10 19:46:04,614 - INFO - Aplicación iniciada
+2025-05-10 19:49:20,270 - INFO - Aplicación iniciada
+2025-05-10 20:12:39,464 - INFO - Aplicación iniciada
+2025-05-10 20:19:12,286 - INFO - Aplicación iniciada

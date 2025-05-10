@@ -123,6 +123,15 @@ El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de qu
 
 ---
 
+### Conexión persistente a la Base de Datos
+
+- Todas las operaciones de base de datos utilizan ahora la clase `BaseDatabaseConnection` y sus derivadas para mantener una única conexión persistente.
+- Se ha descontinuado el uso de la clase `DatabaseConnection`, que abría y cerraba conexiones por cada consulta.
+- Cada módulo debe instanciar su propia conexión específica (por ejemplo, `InventarioDatabaseConnection`, `ObrasDatabaseConnection`, etc.).
+- Esto evita conexiones duplicadas, reduce la sobrecarga y mejora el rendimiento general del sistema.
+
+---
+
 ### Notas Importantes
 1. **Nombres de Tablas**: Solo se deben usar los nombres de tablas existentes. No se deben crear tablas con nombres diferentes sin previa consulta y aprobación.
 2. **Creación de Nuevas Tablas**: Si se necesita crear una nueva tabla, consulta primero y espera la aprobación antes de proceder.
@@ -382,6 +391,45 @@ Para asegurar la calidad y trazabilidad, cada tabla principal del sistema debe c
 
 ---
 
+## Cuadro visual e interactivo de estado de pedidos en Obras
+
+A partir de la versión 1.1, la vista de detalle de obra incluye un cuadro visual interactivo que muestra el estado de los pedidos de **Materiales**, **Herrajes** y **Vidrios** asociados a la obra. Este cuadro permite:
+
+- Ver rápidamente si cada pedido está **Cargado** o **Pendiente**.
+- Si un pedido está pendiente, hacer clic para navegar al módulo correspondiente y realizar la carga.
+- Si el pedido está cargado, ver el detalle desde la misma vista.
+
+### Ejemplo visual:
+
+```
++-------------------------------------------------------------+
+| Obra: Edificio Central   Estado: En ejecución               |
+|-------------------------------------------------------------|
+| [Materiales]   [Herrajes]   [Vidrios]                      |
+|   Pendiente      Cargado      Pendiente                     |
+|   (Ir a carga)   (Ver)        (Ir a carga)                  |
++-------------------------------------------------------------+
+```
+
+### Integración técnica
+- El controlador de obras expone un método para consultar el estado de los tres pedidos asociados a la obra seleccionada.
+- La vista de obras muestra el cuadro visual y conecta los botones a la navegación o visualización de detalles.
+- La lógica de consulta de estado se implementa en el modelo de obras, integrando los módulos de materiales, herrajes y vidrios.
+
+### Navegación y experiencia de usuario
+- El usuario puede acceder a la carga o detalle de cada pedido sin salir del contexto de la obra.
+- Cada acción queda registrada en auditoría.
+
+### Checklist de integración
+- [x] Consulta de estado de pedidos desde la vista de obra
+- [x] Cuadro visual interactivo en la interfaz
+- [x] Navegación directa a módulos de carga o detalle
+- [x] Registro en auditoría de cada acción
+
+> Esta funcionalidad mejora la trazabilidad y la experiencia de usuario, permitiendo gestionar y visualizar el avance de los pedidos de manera centralizada y visual.
+
+---
+
 ## Buenas Prácticas de Programación
 
 ### Evitar el uso excesivo de condicionales `if`
@@ -615,3 +663,34 @@ main_layout.addWidget(self.sidebar)
 - Para agregar o quitar módulos del sidebar, basta con agregar o eliminar el archivo SVG correspondiente en `utils/` y ajustar la lista `svg_icons`.
 
 > El sidebar es completamente visual y se adapta automáticamente a los íconos SVG presentes en la carpeta `utils/` según el orden definido.
+
+---
+
+## SQL Server: Estructura y datos de ejemplo para el módulo Obras (Gantt)
+
+Para asegurar la compatibilidad del módulo Obras (cronograma Gantt y edición de fechas), ejecuta el siguiente script en la base de datos **mps.app-inventario** de SQL Server:
+
+```sql
+-- 1. Agregar columna fecha_entrega si no existe
+IF COL_LENGTH('obras', 'fecha_entrega') IS NULL
+BEGIN
+    ALTER TABLE obras ADD fecha_entrega DATE NULL;
+END
+GO
+
+-- 2. Eliminar datos actuales (opcional, solo si quieres limpiar la tabla)
+-- DELETE FROM obras;
+
+-- 3. Insertar datos de ejemplo compatibles con el Gantt
+INSERT INTO obras (nombre, cliente, estado, fecha, fecha_entrega) VALUES
+('Edificio Central', 'Constructora Sur', 'Medición', DATEADD(DAY, -10, CAST(GETDATE() AS DATE)), DATEADD(DAY, 30, CAST(GETDATE() AS DATE))),
+('Torre Norte', 'Desarrollos Río', 'Fabricación', DATEADD(DAY, -20, CAST(GETDATE() AS DATE)), DATEADD(DAY, 15, CAST(GETDATE() AS DATE))),
+('Residencial Sur', 'Grupo Delta', 'Entrega', DATEADD(DAY, -40, CAST(GETDATE() AS DATE)), DATEADD(DAY, 5, CAST(GETDATE() AS DATE)));
+GO
+```
+
+- Si la tabla tiene un campo IDENTITY obligatorio, omite la columna id en el insert.
+- Si la tabla ya tiene datos, los inserts pueden fallar por duplicidad de nombre/cliente.
+- El script también está disponible en `scripts/obras_sqlserver_ejemplo.sql`.
+
+---

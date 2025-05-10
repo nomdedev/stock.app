@@ -60,8 +60,8 @@ class ObrasModel:
         self.db_connection = db_connection
 
     def obtener_datos_obras(self):
-        """Obtiene los datos de la tabla de obras desde la base de datos."""
-        query = "SELECT id, nombre, cliente, estado, fecha FROM obras"
+        """Obtiene los datos de la tabla de obras desde la base de datos inventario."""
+        query = "SELECT id, nombre, cliente, estado, fecha, fecha_entrega FROM obras"
         return self.db_connection.ejecutar_query(query)
 
     def obtener_obras(self):
@@ -69,20 +69,18 @@ class ObrasModel:
         return self.db_connection.ejecutar_query(query)
 
     def agregar_obra(self, datos):
-        """Agrega una nueva obra a la base de datos. El estado inicial siempre es 'medida'."""
+        """Agrega una nueva obra a la base de datos. El estado inicial es el que recibe el formulario."""
         try:
             datos = list(datos)
-            # Si no se define estado, forzar 'medida'
-            if len(datos) < 3 or not datos[2]:
-                if len(datos) < 3:
-                    datos.append("medida")
-                else:
-                    datos[2] = "medida"
-            else:
-                datos[2] = "medida"
+            if len(datos) == 4:
+                # Si no se pasa fecha_entrega, calcular +90 días desde fecha
+                from datetime import datetime, timedelta
+                fecha = datetime.strptime(datos[3], "%Y-%m-%d")
+                fecha_entrega = fecha + timedelta(days=90)
+                datos.append(fecha_entrega.strftime("%Y-%m-%d"))
             query = """
-                INSERT INTO obras (nombre, cliente, estado, fecha)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO obras (nombre, cliente, estado, fecha, fecha_entrega)
+                VALUES (?, ?, ?, ?, ?)
             """
             self.db_connection.ejecutar_query(query, tuple(datos))
         except Exception as e:
@@ -90,7 +88,7 @@ class ObrasModel:
             raise
 
     def verificar_obra_existente(self, nombre, cliente):
-        """Verifica si ya existe una obra con el mismo nombre y cliente."""
+        """Verifica si ya existe una obra con el mismo nombre y cliente en la base inventario."""
         query = "SELECT COUNT(*) FROM obras WHERE nombre = ? AND cliente = ?"
         resultado = self.db_connection.ejecutar_query(query, (nombre, cliente))
         return resultado[0][0] > 0
@@ -178,3 +176,16 @@ class ObrasModel:
         """Marca los materiales de la obra como 'reservados' en la tabla materiales_por_obra."""
         query = "UPDATE materiales_por_obra SET estado = 'reservado' WHERE id_obra = ?"
         self.db_connection.ejecutar_query(query, (id_obra,))
+
+    def obtener_obra_por_id(self, id_obra):
+        query = "SELECT id, nombre, cliente, estado, fecha, fecha_entrega FROM obras WHERE id = ?"
+        res = self.db_connection.ejecutar_query(query, (id_obra,))
+        return res[0] if res else None
+
+    def actualizar_obra(self, id_obra, nombre, cliente, estado, fecha_entrega=None):
+        if fecha_entrega:
+            query = "UPDATE obras SET nombre = ?, cliente = ?, estado = ?, fecha_entrega = ? WHERE id = ?"
+            self.db_connection.ejecutar_query(query, (nombre, cliente, estado, fecha_entrega, id_obra))
+        else:
+            query = "UPDATE obras SET nombre = ?, cliente = ?, estado = ? WHERE id = ?"
+            self.db_connection.ejecutar_query(query, (nombre, cliente, estado, id_obra))

@@ -6,7 +6,7 @@ import os
 class Sidebar(QWidget):
     pageChanged = pyqtSignal(int)  # Señal para cambiar página del stackedWidget
 
-    def __init__(self, icons_path, sections, parent=None):
+    def __init__(self, icons_path, sections, parent=None, mostrar_nombres=False):
         super().__init__(parent)
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(10, 20, 10, 10)
@@ -14,6 +14,7 @@ class Sidebar(QWidget):
         self._expanded = False
         self._sections = sections
         self._buttons = []
+        self._mostrar_nombres = mostrar_nombres
 
         # Fondo blanco para el modo claro
         self.setStyleSheet("""
@@ -79,13 +80,13 @@ class Sidebar(QWidget):
             else:
                 section_name = section
                 icon_file = None
-            button = QPushButton(section_name if self._expanded else "")
+            button = QPushButton()
             button.setObjectName("botonMenu")
             button.setFixedHeight(40)
             if self._expanded:
                 button.setFixedWidth(180)
             else:
-                button.setFixedSize(44, 40)
+                button.setFixedSize(180 if self._mostrar_nombres else 44, 40)
             # Usar SVG de utils si existe
             icon_path = icon_file or os.path.join('utils', f"{section_name.lower()}.svg")
             if not os.path.exists(icon_path):
@@ -93,6 +94,9 @@ class Sidebar(QWidget):
             if os.path.exists(icon_path):
                 button.setIcon(QIcon(icon_path))
                 button.setIconSize(QSize(24, 24))
+            if self._mostrar_nombres:
+                button.setText(section_name)
+                button.setStyleSheet("text-align: left; padding-left: 12px;")
             button.clicked.connect(lambda _, idx=index: self.pageChanged.emit(idx))
             self.layout.addWidget(button)
             self._buttons.append(button)
