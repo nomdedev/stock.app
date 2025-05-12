@@ -243,3 +243,90 @@ CREATE TABLE materiales_por_obra (
   ```
 
 > **Estas reglas son obligatorias para todos los módulos y vistas del proyecto.**
+
+## Requerimiento obligatorio de tablas
+
+Todas las tablas del sistema (QTableWidget) deben permitir:
+- Mostrar/ocultar columnas mediante menú contextual en el encabezado.
+- Ajustar el ancho de columnas manualmente y autoajustar con doble clic.
+- Persistir las preferencias de visibilidad y ancho de columnas por usuario/sesión (archivo JSON).
+
+Este patrón debe aplicarse a todos los módulos que presenten tablas.
+
+---
+
+## Módulo Contabilidad
+
+El módulo de Contabilidad centraliza la gestión financiera y administrativa del sistema, permitiendo un control integral de movimientos, pagos y recibos asociados a las obras y operaciones generales.
+
+### Mejoras técnicas y de UX implementadas
+
+- **Sincronización dinámica de headers**: Las tablas de Balance y Recibos obtienen sus columnas directamente de la base de datos, adaptándose automáticamente a cambios en la estructura.
+- **Selector de obra en formularios**: Al agregar un recibo o movimiento, se utiliza un selector desplegable que muestra todas las obras disponibles, facilitando la asociación precisa.
+- **Filtros y búsqueda rápida**: Todas las tablas del módulo (Balance, Pagos, Recibos) cuentan con un campo de búsqueda rápida que filtra resultados en tiempo real por cualquier columna.
+- **Mejoras visuales y tooltips**: Botones de acción flotantes, tooltips descriptivos y estilos modernos aseguran una experiencia clara y profesional.
+- **Alta de recibos**: El botón para agregar recibo está en la esquina superior derecha de la pestaña Recibos. Al pulsarlo, se abre un diálogo con los campos requeridos y un selector de obra. El recibo se persiste en la base de datos y se refleja inmediatamente en la tabla.
+- **Persistencia y actualización**: Todos los cambios (alta de recibos, movimientos, etc.) se reflejan en la base de datos y en la interfaz de manera inmediata.
+
+### Pestañas principales
+
+1. **Balance General (Entradas y Salidas)**
+   - Tabla con todos los movimientos de dinero (ingresos y egresos), con columna de tipo (entrada/salida).
+   - Botón flotante para agregar movimiento: abre ventana para registrar ingreso o salida, con selector de obra, campos requeridos y persistencia automática.
+   - Exportar a Excel/PDF, menú de columnas, QR, filtros y búsqueda rápida.
+
+2. **Seguimiento de Pagos por Obra**
+   - Tabla con estado de pagos de cada obra: monto total, pagado, pendiente, monto para colocador, etc.
+   - Integración con otras tablas para obtener datos de obras y pagos.
+   - Permite agregar o actualizar pagos realizados.
+   - Filtros, exportación, menú de columnas, QR, etc.
+
+3. **Recibos**
+   - Tabla con todos los recibos generados, mostrando datos clave (obra, monto, concepto, destinatario, fecha, estado).
+   - Botón flotante para agregar recibo (esquina superior derecha): abre diálogo con selector de obra y campos requeridos.
+   - Opción de imprimir o guardar el recibo como PDF.
+   - Exportación, menú de columnas, QR, filtros y búsqueda rápida.
+
+4. **Estadísticas**
+   - Gráfico de barras de ingresos vs egresos (Entradas vs Salidas).
+   - Resumen de totales: entradas, salidas y saldo neto.
+   - Preparado para filtros por fecha, obra y tipo de movimiento.
+   - Visualización moderna y tooltips.
+
+### Integración con Obras
+
+- Desde el módulo Obras, cualquier usuario puede cargar una nueva obra (sin restricciones de permisos para alta de obra).
+- Los movimientos y recibos pueden asociarse a obras existentes mediante el selector en los formularios.
+
+### Estándar UX en Tablas
+
+- Todas las tablas del módulo incluyen:
+  - Menú de columnas (mostrar/ocultar).
+  - Persistencia de configuración de columnas.
+  - Ajuste de ancho de columnas.
+  - Exportar a Excel/PDF.
+  - Visualización de QR al seleccionar fila.
+  - Filtros y búsqueda rápida.
+  - Tooltips y feedback visual en acciones.
+
+---
+
+## Contabilidad
+
+El módulo de Contabilidad cuenta con una interfaz de pestañas (QTabWidget) con las siguientes secciones:
+
+- **Balance**: muestra todos los movimientos de entrada y salida de dinero. Permite agregar nuevos movimientos mediante un diálogo y persiste los datos en la base de datos.
+- **Seguimiento de Pagos**: permite visualizar el estado de pagos por obra, montos adeudados, montos pagados y detalles por colocador. Los datos se obtienen de las tablas relacionadas.
+- **Recibos**: muestra todos los recibos, permite agregar nuevos recibos mediante un formulario, y generar/guardar/imprimir el PDF del recibo seleccionado.
+- **Estadísticas**: proporciona visualizaciones gráficas de ingresos vs egresos, resumen de totales y filtros avanzados.
+
+Todas las tablas de este módulo implementan el patrón UX universal:
+- Menú de mostrar/ocultar columnas (clic izquierdo en el encabezado)
+- Persistencia de preferencias de columnas por usuario/sesión
+- Ajuste manual y automático de ancho de columnas
+- Generación y visualización de código QR al seleccionar una fila (con opción de guardar/imprimir como PDF)
+
+**Requisito obligatorio:** Este patrón UX es obligatorio y debe estar presente en todos los módulos que utilicen QTableWidget.
+
+---
+````

@@ -96,7 +96,7 @@ class MainWindow(QMainWindow):
 
         # Crear instancias de modelos con la conexión correspondiente
         self.inventario_model = InventarioModel(db_connection=self.db_connection_inventario)
-        self.inventario_model.actualizar_qr_por_codigo()  # <-- Agrega esta línea
+        self.inventario_model.actualizar_qr_y_campos_por_descripcion()  # Actualiza QR, tipo, acabado y longitud automáticamente
         self.obras_model = ObrasModel(db_connection=self.db_connection_inventario)
         self.produccion_model = ProduccionModel(db_connection=self.db_connection_produccion)
         self.logistica_model = LogisticaModel(db_connection=self.db_connection_inventario)

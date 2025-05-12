@@ -28,36 +28,37 @@ class PermisoAuditoria:
 permiso_auditoria_contabilidad = PermisoAuditoria('contabilidad')
 
 class ContabilidadController(BaseController):
-    def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None):
+    def __init__(self, model, view, db_connection, usuarios_model, obras_model=None, usuario_actual=None):
         super().__init__(model, view)
         self.usuario_actual = usuario_actual
         self.usuarios_model = usuarios_model
         self.auditoria_model = AuditoriaModel(db_connection)
+        self.obras_model = obras_model
+        self.setup_view_signals()
 
     def setup_view_signals(self):
         if hasattr(self.view, 'boton_agregar_recibo'):
-            self.view.boton_agregar_recibo.clicked.connect(self.agregar_recibo)
+            self.view.boton_agregar_recibo.clicked.connect(self.abrir_dialogo_nuevo_recibo)
+        if hasattr(self.view, 'boton_agregar_balance'):
+            self.view.boton_agregar_balance.clicked.connect(self.abrir_dialogo_nuevo_movimiento)
         if hasattr(self.view, 'boton_generar_pdf'):
             self.view.boton_generar_pdf.clicked.connect(self.generar_recibo_pdf_desde_vista)
 
-    @permiso_auditoria_contabilidad('agregar_recibo')
-    def agregar_recibo(self):
-        fecha_emision = self.view.fecha_emision_input.text()
-        obra_id = self.view.obra_id_input.text()
-        monto_total = self.view.monto_total_input.text()
-        concepto = self.view.concepto_input.text()
-        destinatario = self.view.destinatario_input.text()
-        if fecha_emision and obra_id and monto_total and concepto and destinatario:
-            firma_digital = hashlib.sha256(f"{fecha_emision}{obra_id}{monto_total}{concepto}{destinatario}".encode()).hexdigest()
-            self.model.agregar_recibo((fecha_emision, obra_id, monto_total, concepto, destinatario, firma_digital, 1, "emitido", "archivo.pdf"))
-            self.view.label.setText("Recibo agregado exitosamente.")
-        else:
-            self.view.label.setText("Por favor, complete todos los campos.")
+    def abrir_dialogo_nuevo_recibo(self):
+        self.view.abrir_dialogo_nuevo_recibo(self)
 
-    @permiso_auditoria_contabilidad('generar_recibo_pdf')
-    def generar_recibo_pdf(self, id_recibo):
-        mensaje = self.model.generar_recibo_pdf(id_recibo)
-        self.view.label.setText(mensaje)
+    @permiso_auditoria_contabilidad('agregar_recibo')
+    def agregar_recibo(self, datos):
+        # datos: [fecha, obra_id, monto, concepto, destinatario, estado]
+        if not all(datos[:-1]):
+            self.view.label_titulo.setText("Complete todos los campos.")
+            return
+        try:
+            self.model.agregar_recibo((datos[0], datos[1], datos[2], datos[3], datos[4], '', 1, datos[5], ''))
+            self.actualizar_tabla_recibos()
+            self.view.label_titulo.setText("Recibo agregado exitosamente.")
+        except Exception as e:
+            self.view.label_titulo.setText(f"Error al agregar recibo: {e}")
 
     def generar_recibo_pdf_desde_vista(self):
         fila_seleccionada = self.view.tabla_recibos.currentRow()
@@ -67,13 +68,40 @@ class ContabilidadController(BaseController):
         else:
             self.view.label.setText("Seleccione un recibo para generar el PDF.")
 
+    @permiso_auditoria_contabilidad('generar_recibo_pdf')
+    def generar_recibo_pdf(self, id_recibo):
+        mensaje = self.model.generar_recibo_pdf(id_recibo)
+        self.view.label.setText(mensaje)
+
+    def actualizar_tabla_recibos(self):
+        recibos = self.model.obtener_recibos()
+        self.view.tabla_recibos.setRowCount(len(recibos))
+        for row, recibo in enumerate(recibos):
+            for col, value in enumerate(recibo):
+                self.view.tabla_recibos.setItem(row, col, QTableWidgetItem(str(value)))
+
+    def abrir_dialogo_nuevo_movimiento(self):
+        self.view.abrir_dialogo_nuevo_movimiento(self)
+
     @permiso_auditoria_contabilidad('agregar_movimiento_contable')
     def agregar_movimiento_contable(self, datos):
-        self.model.agregar_movimiento_contable(datos)
-        if datos[2] > 10000:  # Notificar si el monto es mayor a 10,000
-            self.view.label.setText("Movimiento elevado registrado. Notificación enviada.")
-        else:
-            self.view.label.setText("Movimiento registrado.")
+        # datos: [fecha, tipo, monto, concepto, referencia, observaciones]
+        if not all(datos):
+            self.view.label_titulo.setText("Complete todos los campos.")
+            return
+        try:
+            self.model.agregar_movimiento_contable(tuple(datos))
+            self.actualizar_tabla_balance()
+            self.view.label_titulo.setText("Movimiento agregado exitosamente.")
+        except Exception as e:
+            self.view.label_titulo.setText(f"Error al agregar movimiento: {e}")
+
+    def actualizar_tabla_balance(self):
+        movimientos = self.model.obtener_movimientos_contables()
+        self.view.tabla_balance.setRowCount(len(movimientos))
+        for row, mov in enumerate(movimientos):
+            for col, value in enumerate(mov):
+                self.view.tabla_balance.setItem(row, col, QTableWidgetItem(str(value)))
 
     @permiso_auditoria_contabilidad('exportar_balance')
     def exportar_balance(self, formato):
@@ -96,16 +124,54 @@ class ContabilidadController(BaseController):
         else:
             self.view.label.setText("La firma digital no es válida.")
 
-    def actualizar_tabla_recibos(self):
-        recibos = self.model.obtener_recibos()
-        self.view.tabla_recibos.setRowCount(len(recibos))
-        for row, recibo in enumerate(recibos):
-            for col, value in enumerate(recibo[:6]):
-                self.view.tabla_recibos.setItem(row, col, QTableWidgetItem(str(value)))
-
     def crear_recibo(self, obra_id, monto_total, concepto, destinatario):
         try:
             self.model.generar_recibo(obra_id, monto_total, concepto, destinatario)
             self.view.label.setText("Recibo creado exitosamente.")
         except Exception as e:
             self.view.label.setText(f"Error al crear el recibo: {e}")
+
+    def mostrar_estadistica_personalizada(self, config):
+        '''Procesa y muestra una estadística personalizada según la configuración guardada.'''
+        # 1. Obtener todos los movimientos contables
+        datos = self.model.obtener_movimientos_contables()
+        if not datos:
+            self.view.label_resumen.setText("No hay datos para mostrar.")
+            return
+        # Obtener headers dinámicos
+        headers = self.view.balance_headers if hasattr(self.view, 'balance_headers') else []
+        if not headers:
+            headers = ["tipo", "monto", "moneda", "obra", "fecha"]
+        # Convertir a lista de dicts
+        datos_dict = [dict(zip(headers, row)) for row in datos]
+        columna = config.get("columna")
+        filtro = config.get("filtro")
+        metrica = config.get("metrica")
+        tipo_grafico = config.get("tipo_grafico", "Barra")
+        # Agrupar y calcular métrica
+        grupos = {}
+        for d in datos_dict:
+            clave = d.get(columna, "Sin valor")
+            if filtro and filtro in d and d[filtro]:
+                clave_filtro = f"{clave} - {d[filtro]}"
+            else:
+                clave_filtro = clave
+            if clave_filtro not in grupos:
+                grupos[clave_filtro] = []
+            try:
+                monto = float(d.get("monto", 0))
+            except Exception:
+                monto = 0
+            grupos[clave_filtro].append(monto)
+        # Calcular métrica
+        etiquetas = list(grupos.keys())
+        if metrica == "Suma":
+            valores = [sum(grupos[k]) for k in etiquetas]
+        elif metrica == "Promedio":
+            valores = [sum(grupos[k])/len(grupos[k]) if grupos[k] else 0 for k in etiquetas]
+        elif metrica == "Conteo":
+            valores = [len(grupos[k]) for k in etiquetas]
+        else:
+            valores = [sum(grupos[k]) for k in etiquetas]
+        # Llamar a la vista para graficar
+        self.view.mostrar_grafico_personalizado(etiquetas, valores, config)

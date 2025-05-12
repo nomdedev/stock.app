@@ -1,9 +1,10 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QTabWidget, QDialog, QMessageBox, QInputDialog, QCheckBox, QScrollArea, QHeaderView, QMenu, QSizePolicy, QGraphicsDropShadowEffect
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QTabWidget, QDialog, QMessageBox, QInputDialog, QCheckBox, QScrollArea, QHeaderView, QMenu, QSizePolicy, QGraphicsDropShadowEffect, QFileDialog
 from PyQt6.QtGui import QColor, QAction, QIcon
 from PyQt6.QtCore import Qt, pyqtSignal, QSize
 import json
 import os
 import pyodbc
+import pandas as pd
 from functools import partial
 from modules.vidrios.view import VidriosView
 
@@ -67,7 +68,11 @@ class InventarioView(QWidget):
         self.tabla_inventario.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.tabla_inventario.setMinimumHeight(500)  # <-- Aumenta la altura mínima de la tabla
         self.tabla_inventario.setMinimumWidth(1200)  # <-- Aumenta el ancho mínimo de la tabla
-        self.tabla_inventario.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)  # <-- Hace que las columnas ocupen todo el ancho
+        self.tabla_inventario.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+        self.tabla_inventario.horizontalHeader().sectionDoubleClicked.connect(self.autoajustar_columna)
+        self.tabla_inventario.horizontalHeader().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.tabla_inventario.horizontalHeader().customContextMenuRequested.connect(self.mostrar_menu_header)
+        self.tabla_inventario.horizontalHeader().sectionClicked.connect(self.mostrar_menu_columnas_header)
         self.layout.addWidget(self.tabla_inventario)
 
         self.layout.addStretch()  # Asegura que la tabla se vea correctamente
@@ -91,6 +96,9 @@ class InventarioView(QWidget):
                 self.setStyleSheet(f.read())
         except Exception as e:
             print(f"No se pudo cargar el archivo de estilos: {e}")
+
+        # Conectar la señal exportar_excel_signal al método exportar_tabla_a_excel
+        self.exportar_excel_signal.connect(self.exportar_tabla_a_excel)
 
     def obtener_headers_desde_db(self, tabla):
         if self.db_connection:
@@ -139,6 +147,20 @@ class InventarioView(QWidget):
         self.tabla_inventario.setColumnHidden(idx, not checked)
         self.guardar_config_columnas()
 
+    def mostrar_menu_header(self, pos):
+        menu = QMenu(self)
+        accion_autoajustar = QAction("Autoajustar todas las columnas", self)
+        accion_autoajustar.triggered.connect(self.autoajustar_todas_columnas)
+        menu.addAction(accion_autoajustar)
+        menu.exec(self.tabla_inventario.horizontalHeader().mapToGlobal(pos))
+
+    def autoajustar_columna(self, idx):
+        self.tabla_inventario.resizeColumnToContents(idx)
+
+    def autoajustar_todas_columnas(self):
+        for idx in range(self.tabla_inventario.columnCount()):
+            self.tabla_inventario.resizeColumnToContents(idx)
+
     def obtener_id_item_seleccionado(self):
         # Devuelve el ID del ítem seleccionado en la tabla (stub para pruebas)
         fila = self.tabla_inventario.currentRow()
@@ -153,3 +175,30 @@ class InventarioView(QWidget):
             for columna, header in enumerate(self.inventario_headers):
                 valor = item.get(header, "")
                 self.tabla_inventario.setItem(fila, columna, QTableWidgetItem(str(valor)))
+
+    def exportar_tabla_a_excel(self):
+        # Abrir diálogo para elegir ubicación
+        file_path, _ = QFileDialog.getSaveFileName(self, "Exportar a Excel", "inventario.xlsx", "Archivos Excel (*.xlsx)")
+        if not file_path:
+            return
+        # Obtener datos de la tabla
+        data = []
+        for row in range(self.tabla_inventario.rowCount()):
+            row_data = {}
+            for col, header in enumerate(self.inventario_headers):
+                item = self.tabla_inventario.item(row, col)
+                row_data[header] = item.text() if item else ""
+            data.append(row_data)
+        df = pd.DataFrame(data)
+        try:
+            df.to_excel(file_path, index=False)
+            QMessageBox.information(self, "Éxito", f"Inventario exportado correctamente a {file_path}")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"No se pudo exportar: {e}")
+
+    def mostrar_menu_columnas_header(self, idx):
+        # Muestra el menú de selección de columnas al hacer click izquierdo en el header
+        pos = self.tabla_inventario.horizontalHeader().sectionPosition(idx)
+        header = self.tabla_inventario.horizontalHeader()
+        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        self.mostrar_menu_columnas(global_pos)

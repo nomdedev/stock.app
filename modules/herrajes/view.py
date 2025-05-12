@@ -1,7 +1,9 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QHBoxLayout, QGraphicsDropShadowEffect
-from PyQt6.QtGui import QIcon, QColor
-from PyQt6.QtCore import QSize
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox
+from PyQt6.QtGui import QIcon, QColor, QAction
+from PyQt6.QtCore import QSize, Qt
 import json
+import os
+from functools import partial
 
 class HerrajesView(QWidget):
     def __init__(self):
@@ -71,8 +73,9 @@ class HerrajesView(QWidget):
         return self._id_item_input
 
 class MaterialesView(QWidget):
-    def __init__(self):
+    def __init__(self, usuario_actual="default"):
         super().__init__()
+        self.usuario_actual = usuario_actual
         self.layout = QVBoxLayout()
 
         # Tabla de materiales
@@ -82,6 +85,22 @@ class MaterialesView(QWidget):
             "id", "codigo", "descripcion", "cantidad", "ubicacion", "fecha_ingreso", "observaciones"
         ])
         self.layout.addWidget(self.tabla_materiales)
+
+        # Configuración de columnas
+        self.config_path = f"config_materiales_columns_{self.usuario_actual}.json"
+        self.materiales_headers = ["id", "codigo", "descripcion", "cantidad", "ubicacion", "fecha_ingreso", "observaciones"]
+        self.columnas_visibles = self.cargar_config_columnas()
+        self.aplicar_columnas_visibles()
+
+        # Menú contextual en el header
+        header = self.tabla_materiales.horizontalHeader()
+        header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
+        header.sectionDoubleClicked.connect(self.auto_ajustar_columna)
+        header.setSectionsMovable(True)
+        header.setSectionsClickable(True)
+        header.sectionClicked.connect(self.mostrar_menu_columnas_header)
+        self.tabla_materiales.setHorizontalHeader(header)
 
         # Botón principal de acción (Agregar)
         botones_layout = QHBoxLayout()
@@ -103,3 +122,43 @@ class MaterialesView(QWidget):
         self.layout.addLayout(botones_layout)
 
         self.setLayout(self.layout)
+
+    def cargar_config_columnas(self):
+        if os.path.exists(self.config_path):
+            with open(self.config_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {header: True for header in self.materiales_headers}
+
+    def guardar_config_columnas(self):
+        with open(self.config_path, "w", encoding="utf-8") as f:
+            json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
+        QMessageBox.information(self, "Configuración guardada", "La configuración de columnas se ha guardado correctamente.")
+
+    def aplicar_columnas_visibles(self):
+        for idx, header in enumerate(self.materiales_headers):
+            visible = self.columnas_visibles.get(header, True)
+            self.tabla_materiales.setColumnHidden(idx, not visible)
+
+    def mostrar_menu_columnas(self, pos):
+        menu = QMenu(self)
+        for idx, header in enumerate(self.materiales_headers):
+            accion = QAction(header, self)
+            accion.setCheckable(True)
+            accion.setChecked(self.columnas_visibles.get(header, True))
+            accion.toggled.connect(partial(self.toggle_columna, idx, header))
+            menu.addAction(accion)
+        menu.exec(self.tabla_materiales.horizontalHeader().mapToGlobal(pos))
+
+    def mostrar_menu_columnas_header(self, idx):
+        pos = self.tabla_materiales.horizontalHeader().sectionPosition(idx)
+        header = self.tabla_materiales.horizontalHeader()
+        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        self.mostrar_menu_columnas(global_pos)
+
+    def toggle_columna(self, idx, header, checked):
+        self.columnas_visibles[header] = checked
+        self.tabla_materiales.setColumnHidden(idx, not checked)
+        self.guardar_config_columnas()
+
+    def auto_ajustar_columna(self, idx):
+        self.tabla_materiales.resizeColumnToContents(idx)

@@ -1,7 +1,12 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTabWidget, QHBoxLayout, QPushButton, QGraphicsDropShadowEffect, QTableWidget
-from PyQt6.QtGui import QIcon, QColor
-from PyQt6.QtCore import QSize
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTabWidget, QHBoxLayout, QPushButton, QGraphicsDropShadowEffect, QTableWidget, QMenu, QFileDialog, QDialog
+from PyQt6.QtGui import QIcon, QColor, QPixmap, QPainter, QAction
+from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtPrintSupport import QPrinter
 import json
+import os
+import tempfile
+import qrcode
+from functools import partial
 
 class MantenimientoView(QWidget):
     def __init__(self):
@@ -40,8 +45,116 @@ class MantenimientoView(QWidget):
         botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
 
-        # Tabla de tareas (placeholder)
+        # Tabla de tareas
         self.tabla_tareas = QTableWidget()
         self.layout.addWidget(self.tabla_tareas)
 
+        self.tareas_headers = [self.tabla_tareas.horizontalHeaderItem(i).text() if self.tabla_tareas.columnCount() > 0 else f"Columna {i+1}" for i in range(self.tabla_tareas.columnCount())]
+        if not self.tareas_headers:
+            self.tareas_headers = ["id", "tarea", "responsable", "fecha", "estado"]
+            self.tabla_tareas.setColumnCount(len(self.tareas_headers))
+            self.tabla_tareas.setHorizontalHeaderLabels(self.tareas_headers)
+        self.config_path_tareas = f"config_mantenimiento_tareas_columns.json"
+        self.columnas_visibles_tareas = self.cargar_config_columnas(self.config_path_tareas, self.tareas_headers)
+        self.aplicar_columnas_visibles(self.tabla_tareas, self.tareas_headers, self.columnas_visibles_tareas)
+        header_tareas = self.tabla_tareas.horizontalHeader()
+        header_tareas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        header_tareas.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_tareas, self.tareas_headers, self.columnas_visibles_tareas, self.config_path_tareas))
+        header_tareas.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_tareas))
+        header_tareas.setSectionsMovable(True)
+        header_tareas.setSectionsClickable(True)
+        header_tareas.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_tareas, self.tareas_headers, self.columnas_visibles_tareas, self.config_path_tareas))
+        self.tabla_tareas.setHorizontalHeader(header_tareas)
+        self.tabla_tareas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_tareas))
+
         self.setLayout(self.layout)
+
+    def cargar_config_columnas(self, config_path, headers):
+        if os.path.exists(config_path):
+            try:
+                with open(config_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return {header: True for header in headers}
+
+    def guardar_config_columnas(self, config_path, columnas_visibles):
+        try:
+            with open(config_path, "w", encoding="utf-8") as f:
+                json.dump(columnas_visibles, f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
+
+    def aplicar_columnas_visibles(self, tabla, headers, columnas_visibles):
+        for idx, header in enumerate(headers):
+            visible = columnas_visibles.get(header, True)
+            tabla.setColumnHidden(idx, not visible)
+
+    def mostrar_menu_columnas(self, tabla, headers, columnas_visibles, config_path, pos):
+        menu = QMenu(self)
+        for idx, header in enumerate(headers):
+            accion = QAction(header, self)
+            accion.setCheckable(True)
+            accion.setChecked(columnas_visibles.get(header, True))
+            accion.toggled.connect(partial(self.toggle_columna, tabla, idx, header, columnas_visibles, config_path))
+            menu.addAction(accion)
+        menu.exec(tabla.horizontalHeader().mapToGlobal(pos))
+
+    def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
+        header = tabla.horizontalHeader()
+        pos = header.sectionPosition(idx)
+        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
+
+    def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):
+        columnas_visibles[header] = checked
+        tabla.setColumnHidden(idx, not checked)
+        self.guardar_config_columnas(config_path, columnas_visibles)
+
+    def auto_ajustar_columna(self, tabla, idx):
+        tabla.resizeColumnToContents(idx)
+
+    def mostrar_qr_item_seleccionado(self, tabla):
+        selected = tabla.selectedItems()
+        if not selected:
+            return
+        row = selected[0].row()
+        codigo = tabla.item(row, 0).text()  # Usar el primer campo como dato QR
+        if not codigo:
+            return
+        qr = qrcode.QRCode(version=1, box_size=6, border=2)
+        qr.add_data(codigo)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
+        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+            img.save(tmp.name)
+            pixmap = QPixmap(tmp.name)
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Código QR para {codigo}")
+        vbox = QVBoxLayout(dialog)
+        qr_label = QLabel()
+        qr_label.setPixmap(pixmap)
+        vbox.addWidget(qr_label)
+        btns = QHBoxLayout()
+        btn_guardar = QPushButton("Guardar QR como imagen")
+        btn_pdf = QPushButton("Exportar QR a PDF")
+        btns.addWidget(btn_guardar)
+        btns.addWidget(btn_pdf)
+        vbox.addLayout(btns)
+        def guardar():
+            file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
+            if file_path:
+                img.save(file_path)
+        def exportar_pdf():
+            file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
+            if file_path:
+                printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+                printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
+                printer.setOutputFileName(file_path)
+                painter = QPainter(printer)
+                pixmap_scaled = pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio)
+                painter.drawPixmap(100, 100, pixmap_scaled)
+                painter.end()
+        btn_guardar.clicked.connect(guardar)
+        btn_pdf.clicked.connect(exportar_pdf)
+        dialog.exec()

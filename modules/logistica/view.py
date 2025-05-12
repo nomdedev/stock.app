@@ -1,11 +1,14 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTableWidget, QGraphicsDropShadowEffect
-from PyQt6.QtGui import QIcon, QColor
-from PyQt6.QtCore import QSize
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTableWidget, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox
+from PyQt6.QtGui import QIcon, QColor, QAction
+from PyQt6.QtCore import QSize, Qt
 import json
+import os
+from functools import partial
 
 class LogisticaView(QWidget):
-    def __init__(self):
+    def __init__(self, usuario_actual="default"):
         super().__init__()
+        self.usuario_actual = usuario_actual
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.setSpacing(20)
@@ -40,11 +43,67 @@ class LogisticaView(QWidget):
         botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
 
-        # Tabla de envíos (placeholder)
+        # Tabla de envíos
         self.tabla_envios = QTableWidget()
         self.layout.addWidget(self.tabla_envios)
 
+        # Configuración de columnas
+        self.config_path = f"config_envios_columns_{self.usuario_actual}.json"
+        self.envios_headers = ["id", "destino", "fecha_envio", "estado", "observaciones"] if self.tabla_envios.columnCount() == 5 else [f"col_{i}" for i in range(self.tabla_envios.columnCount())]
+        self.columnas_visibles = self.cargar_config_columnas()
+        self.aplicar_columnas_visibles()
+
+        # Menú contextual en el header
+        header = self.tabla_envios.horizontalHeader()
+        header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
+        header.sectionDoubleClicked.connect(self.auto_ajustar_columna)
+        header.setSectionsMovable(True)
+        header.setSectionsClickable(True)
+        header.sectionClicked.connect(self.mostrar_menu_columnas_header)
+        self.tabla_envios.setHorizontalHeader(header)
+
         self.setLayout(self.layout)
+
+    def cargar_config_columnas(self):
+        if os.path.exists(self.config_path):
+            with open(self.config_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {header: True for header in self.envios_headers}
+
+    def guardar_config_columnas(self):
+        with open(self.config_path, "w", encoding="utf-8") as f:
+            json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
+        QMessageBox.information(self, "Configuración guardada", "La configuración de columnas se ha guardado correctamente.")
+
+    def aplicar_columnas_visibles(self):
+        for idx, header in enumerate(self.envios_headers):
+            visible = self.columnas_visibles.get(header, True)
+            self.tabla_envios.setColumnHidden(idx, not visible)
+
+    def mostrar_menu_columnas(self, pos):
+        menu = QMenu(self)
+        for idx, header in enumerate(self.envios_headers):
+            accion = QAction(header, self)
+            accion.setCheckable(True)
+            accion.setChecked(self.columnas_visibles.get(header, True))
+            accion.toggled.connect(partial(self.toggle_columna, idx, header))
+            menu.addAction(accion)
+        menu.exec(self.tabla_envios.horizontalHeader().mapToGlobal(pos))
+
+    def mostrar_menu_columnas_header(self, idx):
+        pos = self.tabla_envios.horizontalHeader().sectionPosition(idx)
+        header = self.tabla_envios.horizontalHeader()
+        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        self.mostrar_menu_columnas(global_pos)
+
+    def toggle_columna(self, idx, header, checked):
+        self.columnas_visibles[header] = checked
+        self.tabla_envios.setColumnHidden(idx, not checked)
+        self.guardar_config_columnas()
+
+    def auto_ajustar_columna(self, idx):
+        self.tabla_envios.resizeColumnToContents(idx)
 
     @property
     def label(self):

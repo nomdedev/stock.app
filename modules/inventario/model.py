@@ -192,32 +192,63 @@ class InventarioModel:
     def extraer_datos_descripcion(self, descripcion):
         """
         Extrae tipo, acabado (color) y longitud desde la descripción del perfil.
-        Ejemplo de descripción: "Marco 64 Euro-Design 60 Blanco Pres. 5,8 m."
+        Ejemplo de descripción: "Marco 64 Euro-Design 60 Mar-Rob/Rob Pres. 5,8 m."
+        Devuelve: tipo, acabado, longitud
         """
         tipo = ""
         acabado = ""
         longitud = ""
-        # Buscar tipo (ej: Euro-Design 60)
-        tipo_match = re.search(r'(Euro-Design\s*\d+|A40|A30|A20|A3|A2|A1|A4|A6|A8|A12|A16|A18|A22|A24|A28|A32|A36|A40|A44|A48|A52|A56|A60|A64|A68|A72|A76|A80|A84|A88|A92|A96|A100)', descripcion, re.IGNORECASE)
+        # Buscar tipo (ej: "Marco 64")
+        tipo_match = re.search(r"^(.*?)\s*Euro-Design", descripcion, re.IGNORECASE)
         if tipo_match:
-            tipo = tipo_match.group(1)
-        # Buscar acabado/color (ej: Blanco, Negro, Gris, etc.)
-        acabado_match = re.search(r'(Blanco|Negro|Gris|Natural|Madera|Nogal|Roble|Cerezo|Bronce|Dorado|Champagne|Anodizado)', descripcion, re.IGNORECASE)
+            tipo = tipo_match.group(1).strip()
+        # Buscar acabado (ej: "Mar-Rob/Rob")
+        acabado_match = re.search(r"Euro-Design\s*\d+\s*([\w\-/]+)", descripcion, re.IGNORECASE)
         if acabado_match:
-            acabado = acabado_match.group(1)
-        # Buscar longitud (ej: 5,8 o 6.0)
-        longitud_match = re.search(r'(\d+[.,]\d+)\s*m', descripcion)
+            acabado = acabado_match.group(1).strip()
+        # Buscar longitud (ej: "5,8 m" o "5.8 m")
+        longitud_match = re.search(r"([\d,.]+)\s*m", descripcion)
         if longitud_match:
-            longitud = longitud_match.group(1).replace(',', '.')
+            longitud = longitud_match.group(1).replace(",", ".")
         return tipo, acabado, longitud
 
-    def actualizar_campos_desde_descripcion(self):
+    def actualizar_qr_y_campos_por_descripcion(self):
         """
-        Lee todas las descripciones y actualiza tipo, acabado y longitud en la tabla inventario_perfiles.
+        Recorre todos los perfiles, extrae tipo, acabado y longitud de la descripción,
+        y actualiza la tabla inventario_perfiles con esos datos y el QR.
         """
-        query_select = "SELECT id, descripcion FROM inventario_perfiles"
-        perfiles = self.db.ejecutar_query(query_select)
+        perfiles = self.db.ejecutar_query("SELECT id, codigo, descripcion FROM inventario_perfiles")
         for perfil in perfiles:
-            id_perfil = perfil['id'] if isinstance(perfil, dict) else perfil[0]
-            descripcion = perfil['descripcion'] if isinstance(perfil, dict) else perfil[1]
-            tipo, acabado, longitud = self.extraer_datos_descripcion(descripcion or "")
+            id_item = perfil[0]
+            codigo = perfil[1]
+            descripcion = perfil[2] or ""
+            tipo, acabado, longitud = self.extraer_datos_descripcion(descripcion)
+            qr = f"QR-{codigo}" if codigo else None
+            query = """
+                UPDATE inventario_perfiles
+                SET tipo = ?, acabado = ?, longitud = ?, qr = ?
+                WHERE id = ?
+            """
+            self.db.ejecutar_query(query, (tipo, acabado, longitud, qr, id_item))
+
+    def test_y_corregir_campos_tipo_acabado_longitud(self):
+        """
+        Verifica cuántos registros de inventario_perfiles tienen tipo, acabado o longitud vacíos o nulos.
+        Si encuentra registros incompletos, los corrige usando extraer_datos_descripcion y actualiza la tabla.
+        Devuelve la cantidad de registros corregidos.
+        """
+        perfiles = self.db.ejecutar_query("SELECT id, descripcion, tipo, acabado, longitud, codigo FROM inventario_perfiles")
+        faltantes = []
+        for perfil in perfiles:
+            id_item, descripcion, tipo, acabado, longitud, codigo = perfil
+            if not tipo or not acabado or not longitud:
+                tipo_n, acabado_n, longitud_n = self.extraer_datos_descripcion(descripcion or "")
+                qr = f"QR-{codigo}" if codigo else None
+                query = """
+                    UPDATE inventario_perfiles
+                    SET tipo = ?, acabado = ?, longitud = ?, qr = ?
+                    WHERE id = ?
+                """
+                self.db.ejecutar_query(query, (tipo_n, acabado_n, longitud_n, qr, id_item))
+                faltantes.append(id_item)
+        return len(faltantes)
