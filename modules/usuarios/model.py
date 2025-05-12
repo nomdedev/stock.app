@@ -58,8 +58,8 @@ NOTAS:
 from core.database import UsuariosDatabaseConnection  # Importar la clase correcta
 
 class UsuariosModel:
-    def __init__(self, db_connection=None):
-        self.db = db_connection or UsuariosDatabaseConnection()  # Usar UsuariosDatabaseConnection
+    def __init__(self, db_connection):
+        self.db = db_connection
 
     def obtener_usuarios(self):
         query = "SELECT * FROM usuarios"
@@ -175,6 +175,50 @@ class UsuariosModel:
         resultado = self.db.ejecutar_query(query, (email, usuario))
         return resultado[0][0] > 0
 
+    def obtener_modulos_permitidos(self, usuario):
+        # Si es admin o supervisor, devuelve todos los módulos
+        if usuario['rol'] in ('admin', 'supervisor'):
+            query = "SELECT DISTINCT modulo FROM roles_permisos"
+            resultado = self.db.ejecutar_query(query)
+            return [r[0] for r in resultado]
+        else:
+            # Devuelve solo los módulos permitidos explícitamente (por username)
+            query = "SELECT modulo FROM permisos_usuario WHERE username = ?"
+            resultado = self.db.ejecutar_query(query, (usuario['username'],))
+            return [r[0] for r in resultado]
+
     def tiene_permiso(self, usuario, modulo, accion):
-        # Permite todo en modo test, o implementar lógica real aquí
-        return True
+        # Admin y supervisor tienen acceso total
+        if usuario['rol'] in ('admin', 'supervisor'):
+            return True
+        # Usuarios normales: verificar si tiene el módulo permitido
+        modulos = self.obtener_modulos_permitidos(usuario)
+        if modulo not in modulos:
+            return False
+        # Verificar permisos específicos por acción (ver, editar, etc.)
+        query = '''
+        SELECT permiso_ver, permiso_editar, permiso_aprobar, permiso_eliminar
+        FROM roles_permisos
+        WHERE rol = (SELECT rol FROM usuarios WHERE id = ?) AND modulo = ?
+        '''
+        resultado = self.db.ejecutar_query(query, (usuario['id'], modulo))
+        if not resultado:
+            return False
+        permisos = {
+            'ver': resultado[0][0],
+            'editar': resultado[0][1],
+            'aprobar': resultado[0][2],
+            'eliminar': resultado[0][3]
+        }
+        return bool(permisos.get(accion, 0))
+
+    def obtener_todos_los_modulos(self):
+        query = "SELECT DISTINCT modulo FROM roles_permisos"
+        resultado = self.db.ejecutar_query(query)
+        return [r[0] for r in resultado]
+
+    def actualizar_permisos_usuario(self, username, modulos):
+        # Borra los permisos actuales y asigna los nuevos
+        self.db.ejecutar_query("DELETE FROM permisos_usuario WHERE username = ?", (username,))
+        for modulo in modulos:
+            self.db.ejecutar_query("INSERT INTO permisos_usuario (username, modulo) VALUES (?, ?)", (username, modulo))

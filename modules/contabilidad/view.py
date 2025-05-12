@@ -85,7 +85,9 @@ class ContabilidadView(QWidget):
         # Tabla de recibos
         self.tabla_recibos = QTableWidget()
         self.tabla_recibos.setColumnCount(6)
-        self.tabla_recibos.setHorizontalHeaderLabels(["ID", "Fecha", "Obra", "Monto", "Concepto", "Estado"])
+        self.tabla_recibos.setHorizontalHeaderLabels([
+            "id", "fecha", "obra", "monto", "concepto", "estado"
+        ])
         self.tabla_recibos.setObjectName("tabla_recibos")
         self.layout.addWidget(self.tabla_recibos)
 
@@ -95,7 +97,9 @@ class ContabilidadView(QWidget):
         # Tabla de movimientos contables
         self.tabla_movimientos = QTableWidget()
         self.tabla_movimientos.setColumnCount(5)
-        self.tabla_movimientos.setHorizontalHeaderLabels(["Fecha", "Tipo", "Monto", "Concepto", "Observaciones"])
+        self.tabla_movimientos.setHorizontalHeaderLabels([
+            "fecha", "tipo", "monto", "concepto", "observaciones"
+        ])
         self.tabla_movimientos.setObjectName("tabla_movimientos")
         self.layout.addWidget(self.tabla_movimientos)
 

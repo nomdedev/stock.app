@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS inventario_items (
     imagen_referencia TEXT              -- Ruta o URL de la imagen del ítem
 );
 
+ALTER TABLE inventario_items
+ADD COLUMN qr TEXT; -- Código QR basado en el código del ítem
+
 -- Crear tabla movimientos_stock
 CREATE TABLE IF NOT EXISTS movimientos_stock (
     id SERIAL PRIMARY KEY,

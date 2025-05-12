@@ -55,7 +55,9 @@ class ComprasView(QWidget):
         self.tabla_comparacion = QTableWidget()
         self.tabla_comparacion.setRowCount(len(presupuestos))
         self.tabla_comparacion.setColumnCount(3)
-        self.tabla_comparacion.setHorizontalHeaderLabels(["Proveedor", "Precio Total", "Comentarios"])
+        self.tabla_comparacion.setHorizontalHeaderLabels([
+            "proveedor", "precio_total", "comentarios"
+        ])
 
         for row_idx, presupuesto in enumerate(presupuestos):
             self.tabla_comparacion.setItem(row_idx, 0, QTableWidgetItem(presupuesto[0]))

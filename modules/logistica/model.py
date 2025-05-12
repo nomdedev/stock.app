@@ -169,7 +169,7 @@ class LogisticaModel:
 
     def obtener_datos_inventario(self):
         """Obtiene los datos de la tabla de inventario desde la base de datos."""
-        query = "SELECT destino, fecha_programada, estado, vehiculo, chofer FROM inventario"
+        query = "SELECT * FROM inventario_perfiles"
         return self.db.ejecutar_query(query)
 
     def agregar_entrega(self, datos):

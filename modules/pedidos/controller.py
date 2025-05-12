@@ -1,9 +1,9 @@
 from modules.pedidos.model import PedidosModel
 
 class PedidosController:
-    def __init__(self, view):
+    def __init__(self, view, db_connection):
         self.view = view
-        self.model = PedidosModel()
+        self.model = PedidosModel(db_connection)
 
     def cargar_pedidos(self):
         pedidos = self.model.obtener_pedidos()

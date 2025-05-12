@@ -23,7 +23,9 @@ class PedidosView(QWidget):
         # Tabla de pedidos
         self.tabla_pedidos = QTableWidget()
         self.tabla_pedidos.setColumnCount(5)
-        self.tabla_pedidos.setHorizontalHeaderLabels(["ID", "Obra", "Fecha", "Estado", "Observaciones"])
+        self.tabla_pedidos.setHorizontalHeaderLabels([
+            "id", "obra", "fecha", "estado", "observaciones"
+        ])
         self.layout.addWidget(self.tabla_pedidos)
 
         # Formulario para nuevo pedido

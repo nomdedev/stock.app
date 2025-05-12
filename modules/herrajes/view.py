@@ -79,7 +79,7 @@ class MaterialesView(QWidget):
         self.tabla_materiales = QTableWidget()
         self.tabla_materiales.setColumnCount(7)
         self.tabla_materiales.setHorizontalHeaderLabels([
-            "ID", "Código", "Descripción", "Cantidad", "Ubicación", "Fecha Ingreso", "Observaciones"
+            "id", "codigo", "descripcion", "cantidad", "ubicacion", "fecha_ingreso", "observaciones"
         ])
         self.layout.addWidget(self.tabla_materiales)
 

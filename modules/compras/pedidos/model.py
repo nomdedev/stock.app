@@ -1,8 +1,8 @@
 from core.database import PedidosDatabaseConnection  # Importar la clase correcta
 
 class PedidosModel:
-    def __init__(self, db_connection=None):
-        self.db = db_connection or PedidosDatabaseConnection()  # Usar PedidosDatabaseConnection
+    def __init__(self, db_connection):
+        self.db = db_connection
 
     def obtener_pedidos(self):
         query = "SELECT * FROM pedidos"

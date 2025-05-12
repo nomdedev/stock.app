@@ -1,3 +1,4 @@
+import datetime
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox, QLineEdit, QComboBox, QWidget, QHBoxLayout
 from PyQt6.QtGui import QIcon
 from PyQt6 import QtCore
@@ -10,11 +11,21 @@ class PermisoAuditoria:
         self.modulo = modulo
     def __call__(self, accion):
         def decorador(func):
+            from functools import wraps
             @wraps(func)
             def wrapper(controller, *args, **kwargs):
-                usuario_model = getattr(controller, 'usuarios_model', UsuariosModel())
-                auditoria_model = getattr(controller, 'auditoria_model', AuditoriaModel())
+                usuario_model = getattr(controller, 'usuarios_model', None)
+                auditoria_model = getattr(controller, 'auditoria_model', None)
                 usuario = getattr(controller, 'usuario_actual', None)
+                if usuario_model is None or auditoria_model is None:
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText("Error interno: modelo de usuario o auditoría no disponible.")
+                    return None
+                # Permitir siempre a admin y supervisor
+                if usuario and usuario.get('rol') in ('admin', 'supervisor'):
+                    resultado = func(controller, *args, **kwargs)
+                    auditoria_model.registrar_evento(usuario, self.modulo, accion)
+                    return resultado
                 if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
                     if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                         controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
@@ -28,12 +39,12 @@ class PermisoAuditoria:
 permiso_auditoria_obras = PermisoAuditoria('obras')
 
 class ObrasController:
-    def __init__(self, model, view, usuario_actual=None):
+    def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None):
         self.model = model
         self.view = view
         self.usuario_actual = usuario_actual
-        self.usuarios_model = UsuariosModel()
-        self.auditoria_model = AuditoriaModel()
+        self.usuarios_model = usuarios_model
+        self.auditoria_model = AuditoriaModel(db_connection)
         self.view.boton_agregar.clicked.connect(self.agregar_obra)
         self.view.gantt_on_bar_clicked = self.editar_fecha_entrega
         # Conexión del botón de verificación manual (si existe en la vista)
@@ -104,16 +115,27 @@ class ObrasController:
     def agregar_obra(self):
         """Abre un diálogo para cargar los datos clave de la obra y la registra."""
         try:
+            usuario = self.usuario_actual
             dialog = QDialog(self.view)
             dialog.setWindowTitle("Agregar nueva obra")
             layout = QVBoxLayout(dialog)
             label = QLabel("Ingrese los datos de la nueva obra:")
+            label.setStyleSheet("font-weight: bold; font-size: 15px; margin-bottom: 8px;")
             layout.addWidget(label)
+
+            # Usuario actual visible, destacado
+            if usuario and 'username' in usuario:
+                usuario_label = QLabel(f"<b>Usuario cargando: <span style='color:#2563eb'>{usuario['username']} ({usuario.get('rol','')})</span></b>")
+                usuario_label.setStyleSheet("font-size: 13px; margin-bottom: 8px; background: #f1f5f9; border-radius: 8px; padding: 4px 8px;")
+                layout.addWidget(usuario_label)
 
             nombre_input = QLineEdit()
             cliente_input = QLineEdit()
             estado_input = QComboBox()
             estado_input.addItems(["Medición", "Fabricación", "Entrega"])
+
+            nombre_input.setPlaceholderText("Nombre de la obra")
+            cliente_input.setPlaceholderText("Cliente")
 
             layout.addWidget(QLabel("Nombre:"))
             layout.addWidget(nombre_input)
@@ -122,17 +144,28 @@ class ObrasController:
             layout.addWidget(QLabel("Estado:"))
             layout.addWidget(estado_input)
 
-            btn_guardar = QPushButton("Guardar")
-            btn_cancelar = QPushButton("Cancelar")
+            # Botones con estilo visual consistente
+            btns_layout = QHBoxLayout()
+            btn_guardar = QPushButton()
+            btn_guardar.setIcon(QIcon("img/plus_icon.svg"))
+            btn_guardar.setToolTip("Guardar obra")
+            btn_guardar.setFixedSize(48, 48)
+            btn_guardar.setStyleSheet("background-color: #2563eb; border-radius: 12px; border: none;")
             btn_guardar.clicked.connect(dialog.accept)
+            btn_cancelar = QPushButton()
+            btn_cancelar.setIcon(QIcon("img/reject.svg"))
+            btn_cancelar.setToolTip("Cancelar")
+            btn_cancelar.setFixedSize(48, 48)
+            btn_cancelar.setStyleSheet("background-color: #e5e7eb; border-radius: 12px; border: none;")
             btn_cancelar.clicked.connect(dialog.reject)
-            layout.addWidget(btn_guardar)
-            layout.addWidget(btn_cancelar)
+            btns_layout.addWidget(btn_guardar)
+            btns_layout.addWidget(btn_cancelar)
+            layout.addLayout(btns_layout)
 
             dialog.setLayout(layout)
             if dialog.exec() == QDialog.DialogCode.Accepted:
-                nombre = nombre_input.text()
-                cliente = cliente_input.text()
+                nombre = nombre_input.text().strip()
+                cliente = cliente_input.text().strip()
                 estado = estado_input.currentText()
                 if not (nombre and cliente and estado):
                     self.view.label.setText("Por favor, complete todos los campos.")
@@ -183,7 +216,28 @@ class ObrasController:
 
     def mostrar_gantt(self):
         datos = self.model.obtener_datos_obras()
-        self.view.mostrar_gantt(datos)
+        if hasattr(self.view, 'cronograma_view'):
+            self.view.cronograma_view.set_obras([
+                {
+                    'id': d[0],
+                    'nombre': d[1],
+                    'cliente': d[2],
+                    'estado': d[3],
+                    'fecha': d[4] if isinstance(d[4], (datetime.date, datetime.datetime)) else self._parse_fecha(d[4]),
+                    'fecha_entrega': d[5] if isinstance(d[5], (datetime.date, datetime.datetime)) else self._parse_fecha(d[5]),
+                }
+                for d in datos if d[4] and d[5]
+            ])
+
+    @staticmethod
+    def _parse_fecha(fecha_str):
+        import datetime
+        if not fecha_str:
+            return None
+        try:
+            return datetime.datetime.strptime(str(fecha_str), "%Y-%m-%d").date()
+        except Exception:
+            return None
 
     def actualizar_calendario(self):
         """Actualiza el calendario con las fechas del cronograma."""

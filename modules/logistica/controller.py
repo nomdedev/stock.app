@@ -25,12 +25,12 @@ class PermisoAuditoria:
 permiso_auditoria_logistica = PermisoAuditoria('logistica')
 
 class LogisticaController:
-    def __init__(self, model, view, usuario_actual=None):
+    def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None):
         self.model = model
         self.view = view
         self.usuario_actual = usuario_actual
-        self.usuarios_model = UsuariosModel()
-        self.auditoria_model = AuditoriaModel()
+        self.usuarios_model = usuarios_model
+        self.auditoria_model = AuditoriaModel(db_connection)
 
     @permiso_auditoria_logistica('ver')
     def ver_entregas(self):

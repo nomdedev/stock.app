@@ -37,6 +37,7 @@ class BaseDatabaseConnection:
                 f"PWD={self.password};"
                 f"TrustServerCertificate=yes;"
             )
+            print(f"Conectando a la base de datos '{self.database}' como usuario '{self.username}'")  # Mostrar usuario actual
             self.connection = pyodbc.connect(connection_string, timeout=10)
             self.logger.info(f"Conexión establecida con la base de datos '{self.database}'.")
         except pyodbc.OperationalError as e:
@@ -78,7 +79,7 @@ class BaseDatabaseConnection:
 
 class InventarioDatabaseConnection(BaseDatabaseConnection):
     def __init__(self):
-        super().__init__("mps.app-inventario")  # Actualizar el nombre de la base de datos
+        super().__init__("inventario")  # Usar el nombre correcto de la base de datos
 
 class UsuariosDatabaseConnection(BaseDatabaseConnection):
     def __init__(self):
@@ -124,6 +125,7 @@ class DatabaseConnection:
                 raise ValueError(f"La base de datos '{database}' no es válida. Bases disponibles: {bases_validas}")
             self.database = database
             print(f"Conexión establecida con la base de datos '{database}'.")
+            print(f"Usuario actual: '{self.username}'")  # Mostrar usuario actual
         except ValueError as e:
             print(f"Error de validación: {e}")
             self.logger.error(f"Error de validación: {e}")  # Usar logger
@@ -241,7 +243,7 @@ class DataAccessLayer:
             problemas.append(f"Pedidos sin productos: {len(pedidos_sin_productos)}")
 
         # Verificar productos sin código válido
-        query_productos = "SELECT id FROM inventario WHERE codigo IS NULL OR codigo = ''"
+        query_productos = "SELECT id FROM inventario_perfiles WHERE codigo IS NULL OR codigo = ''"
         productos_sin_codigo = self.db.ejecutar_query(query_productos)
         if productos_sin_codigo:
             problemas.append(f"Productos sin código válido: {len(productos_sin_codigo)}")
@@ -298,3 +300,22 @@ class DataAccessLayer:
         except Exception as e:
             Logger().error(f"Error al detectar plugins: {e}")
         return plugins
+
+    def obtener_productos(self):
+        query = "SELECT * FROM inventario_perfiles"
+        connection_string = (
+            f"DRIVER={{{self.db.driver}}};"
+            f"SERVER=localhost\\SQLEXPRESS;"
+            f"DATABASE={self.db.database};"
+            f"UID={self.db.username};"
+            f"PWD={self.db.password};"
+            f"TrustServerCertificate=yes;"
+        )
+        with pyodbc.connect(connection_string, timeout=10) as conn:
+            cursor = conn.cursor()
+            cursor.execute(query)
+            resultados = cursor.fetchall()
+            columnas = [column[0] for column in cursor.description]
+            lista_diccionarios = [dict(zip(columnas, row)) for row in resultados]
+            print("Datos obtenidos de inventario_perfiles:", lista_diccionarios)  # Depuración
+            return lista_diccionarios

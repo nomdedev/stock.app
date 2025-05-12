@@ -1,8 +1,8 @@
 from core.database import ConfiguracionDatabaseConnection  # Importar la clase correcta
 
 class ConfiguracionModel:
-    def __init__(self, db_connection=None):
-        self.db = db_connection or ConfiguracionDatabaseConnection()  # Usar ConfiguracionDatabaseConnection
+    def __init__(self, db_connection):
+        self.db = db_connection
 
     def obtener_configuracion(self):
         query = "SELECT clave, valor, descripcion FROM configuracion_sistema"

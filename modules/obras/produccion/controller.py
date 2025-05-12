@@ -1,7 +1,12 @@
+from modules.auditoria.model import AuditoriaModel
+from PyQt6.QtWidgets import QTableWidgetItem
+
 class ProduccionController:
-    def __init__(self, model, view):
+    def __init__(self, model, view, db_connection, usuario_actual=None):
         self.model = model
         self.view = view
+        self.usuario_actual = usuario_actual
+        self.auditoria_model = AuditoriaModel(db_connection)
         self.view.boton_agregar.clicked.connect(self.agregar_etapa)
         self.view.boton_ver_detalles.clicked.connect(self.ver_detalles_abertura)
         self.view.boton_finalizar_etapa.clicked.connect(self.finalizar_etapa)

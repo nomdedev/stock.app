@@ -90,6 +90,6 @@ class VidriosView(QWidget):
         table = QTableWidget()
         table.setColumnCount(6)
         table.setHorizontalHeaderLabels([
-            "Tipo", "Ancho", "Alto", "Cantidad", "Proveedor", "Fecha de Entrega"
+            "tipo", "ancho", "alto", "cantidad", "proveedor", "fecha_entrega"
         ])
         return table

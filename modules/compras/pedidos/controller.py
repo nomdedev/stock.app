@@ -11,9 +11,13 @@ class PermisoAuditoria:
         def decorador(func):
             @wraps(func)
             def wrapper(controller, *args, **kwargs):
-                usuario_model = getattr(controller, 'usuarios_model', UsuariosModel())
-                auditoria_model = getattr(controller, 'auditoria_model', AuditoriaModel())
+                usuario_model = getattr(controller, 'usuarios_model', None)
+                auditoria_model = getattr(controller, 'auditoria_model', None)
                 usuario = getattr(controller, 'usuario_actual', None)
+                if usuario_model is None or auditoria_model is None:
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText("Error interno: modelo de usuario o auditoría no disponible.")
+                    return None
                 if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
                     if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                         controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
@@ -26,13 +30,13 @@ class PermisoAuditoria:
 
 permiso_auditoria_compras = PermisoAuditoria('compras')
 
-class PedidosController:
-    def __init__(self, model, view, db_connection, usuario_actual=None):
+class ComprasPedidosController:
+    def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None):
         self.model = model
         self.view = view
         self.usuario_actual = usuario_actual
-        self.usuarios_model = UsuariosModel()
-        self.auditoria_model = AuditoriaModel()
+        self.auditoria_model = AuditoriaModel(db_connection)
+        self.usuarios_model = usuarios_model
         self.dal = DataAccessLayer(db_connection)
         self.view.boton_crear.clicked.connect(self.crear_pedido)
         self.view.boton_ver_detalles.clicked.connect(self.ver_detalles_pedido)

@@ -26,11 +26,11 @@ class PermisoAuditoria:
 permiso_auditoria_mantenimiento = PermisoAuditoria('mantenimiento')
 
 class MantenimientoController(BaseController):
-    def __init__(self, model, view, usuario_actual=None):
+    def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None):
         super().__init__(model, view)
         self.usuario_actual = usuario_actual
-        self.usuarios_model = UsuariosModel()
-        self.auditoria_model = AuditoriaModel()
+        self.usuarios_model = usuarios_model
+        self.auditoria_model = AuditoriaModel(db_connection)
 
     def setup_view_signals(self):
         if hasattr(self.view, 'boton_agregar_mantenimiento'):

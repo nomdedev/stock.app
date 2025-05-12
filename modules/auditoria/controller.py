@@ -2,9 +2,10 @@ import csv
 from PyQt6.QtWidgets import QTableWidgetItem
 
 class AuditoriaController:
-    def __init__(self, model, view):
+    def __init__(self, model, view, db_connection, usuario_actual=None):
         self.model = model
         self.view = view
+        self.usuario_actual = usuario_actual
 
     def ejecutar_accion(self):
         try:

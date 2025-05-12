@@ -26,12 +26,12 @@ class PermisoAuditoria:
 permiso_auditoria_herrajes = PermisoAuditoria('herrajes')
 
 class HerrajesController:
-    def __init__(self, model, view, usuario_actual=None):
+    def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None):
         self.model = model
         self.view = view
         self.usuario_actual = usuario_actual
-        self.usuarios_model = UsuariosModel()
-        self.auditoria_model = AuditoriaModel()
+        self.usuarios_model = usuarios_model
+        self.auditoria_model = AuditoriaModel(db_connection)
         self.view.boton_agregar.clicked.connect(self.agregar_material)
 
     @permiso_auditoria_herrajes('editar')

@@ -20,7 +20,7 @@ if __name__ == "__main__":
     server = "DESKTOP-QHMPTG0\\SQLEXPRESS"
     username = "sa"
     password = "mps.1887"
-    database = "inventario"
+    database = "inventario_perfiles"
 
     # Lista de controladores a probar
     drivers = ["ODBC Driver 18 for SQL Server", "ODBC Driver 17 for SQL Server"]

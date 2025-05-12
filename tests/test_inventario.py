@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../'
 
 class MockDB:
     def ejecutar_query(self, query, params=None):
-        if "SELECT * FROM inventario_items" in query:
+        if "SELECT * FROM inventario_perfiles" in query:
             return [
                 (1, "123456.789", "Material A", "PVC", "unidad", 100, 10, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg"),
                 (2, "987654.321", "Material B", "Aluminio", "kg", 50, 5, "Almacén 2", "Descripción B", "QR987", "imagen_b.jpg")
@@ -37,8 +37,8 @@ class TestInventarioModel(unittest.TestCase):
         qr_code = self.inventario_model.generar_qr(id_item)
 
         # Verificar que ambas consultas se realizaron correctamente
-        self.mock_db.ejecutar_query.assert_any_call("SELECT codigo FROM inventario_items WHERE id = ?", (id_item,))
-        self.mock_db.ejecutar_query.assert_any_call("UPDATE inventario_items SET qr_code = ? WHERE id = ?", ("QR-123456.789", id_item))
+        self.mock_db.ejecutar_query.assert_any_call("SELECT codigo FROM inventario_perfiles WHERE id = ?", (id_item,))
+        self.mock_db.ejecutar_query.assert_any_call("UPDATE inventario_perfiles SET qr_code = ? WHERE id = ?", ("QR-123456.789", id_item))
         self.assertEqual(qr_code, "QR-123456.789")
 
     def test_exportar_inventario_excel(self):

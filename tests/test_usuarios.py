@@ -26,6 +26,13 @@ class MockDBConnection:
     def ejecutar_query(self, query, params=None):
         self.last_query = query
         self.last_params = params
+        # Simular respuesta para obtener_modulos_permitidos (admin/supervisor)
+        if "SELECT DISTINCT modulo FROM roles_permisos" in query:
+            return self.query_result
+        # Simular respuesta para obtener_modulos_permitidos (usuario normal)
+        if "SELECT modulo FROM permisos_usuario WHERE username = ?" in query:
+            return self.query_result
+        # Simular usuarios activos
         if "SELECT * FROM usuarios WHERE estado = 'activo'" in query:
             return [
                 (1, "Juan", "Pérez", "juan.perez@example.com", "admin", "activo"),
@@ -43,9 +50,10 @@ class TestUsuariosModel(unittest.TestCase):
     def test_crear_usuario(self):
         try:
             # Probar creación de un usuario utilizando el método correcto
-            self.usuarios_model.agregar_usuario(("Juan", "juan.perez@example.com", "admin"))
-            self.assertEqual(self.mock_db.last_query, "INSERT INTO usuarios (nombre, email, rol) VALUES (?, ?, ?)")
-            self.assertEqual(self.mock_db.last_params, ("Juan", "juan.perez@example.com", "admin"))
+            datos = ("Juan", "Pérez", "juan.perez@example.com", "juan", "hash", "admin")
+            self.usuarios_model.agregar_usuario(datos)
+            self.assertIn("INSERT INTO usuarios (nombre, apellido, email, usuario, password_hash, rol, estado)", self.mock_db.last_query)
+            self.assertEqual(self.mock_db.last_params, datos)
         except Exception as e:
             self.fail(f"Error en test_crear_usuario: {e}")
 
@@ -70,6 +78,29 @@ class TestUsuariosModel(unittest.TestCase):
             self.assertEqual(usuarios[0][1], "Juan")
         except Exception as e:
             self.fail(f"Error en test_obtener_usuarios_activos: {e}")
+
+    def test_obtener_modulos_permitidos(self):
+        # Caso admin: debe devolver todos los módulos
+        usuario_admin = {'username': 'admin', 'rol': 'admin'}
+        # Simular que el query para admin devuelve módulos
+        self.mock_db.query_result = [('Obras',), ('Inventario',), ('Producción',), ('Compras / Pedidos',)]
+        modulos = self.usuarios_model.obtener_modulos_permitidos(usuario_admin)
+        self.assertIn('Obras', modulos)
+        self.assertIn('Inventario', modulos)
+        self.assertIn('Producción', modulos)
+        self.assertIn('Compras / Pedidos', modulos)
+
+        # Caso usuario normal: solo módulos permitidos
+        usuario_normal = {'username': 'ana', 'rol': 'usuario'}
+        self.mock_db.query_result = [('Inventario',), ('Herrajes',)]
+        modulos = self.usuarios_model.obtener_modulos_permitidos(usuario_normal)
+        self.assertEqual(modulos, ['Inventario', 'Herrajes'])
+
+        # Caso usuario sin permisos: lista vacía
+        usuario_sin_permisos = {'username': 'sinmodulos', 'rol': 'usuario'}
+        self.mock_db.query_result = []
+        modulos = self.usuarios_model.obtener_modulos_permitidos(usuario_sin_permisos)
+        self.assertEqual(modulos, [])
 
 if __name__ == "__main__":
     # Evitar que SystemExit detenga el script

@@ -11,15 +11,27 @@ class PermisoAuditoria:
         def decorador(func):
             @wraps(func)
             def wrapper(controller, *args, **kwargs):
-                usuario_model = getattr(controller, 'usuarios_model', UsuariosModel())
-                auditoria_model = getattr(controller, 'auditoria_model', AuditoriaModel())
+                usuario_model = getattr(controller, 'usuarios_model', None)
+                auditoria_model = getattr(controller, 'auditoria_model', None)
                 usuario = getattr(controller, 'usuario_actual', None)
-                if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
+                # Nueva validación: solo admin/supervisor o usuarios con permiso al módulo
+                if not usuario or not usuario_model:
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                    return None
+                if usuario['rol'] not in ('admin', 'supervisor'):
+                    modulos_permitidos = usuario_model.obtener_modulos_permitidos(usuario)
+                    if self.modulo not in modulos_permitidos:
+                        if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                            controller.view.label.setText(f"No tiene permiso para acceder al módulo: {self.modulo}")
+                        return None
+                if not usuario_model.tiene_permiso(usuario, self.modulo, accion):
                     if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                         controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
                     return None
                 resultado = func(controller, *args, **kwargs)
-                auditoria_model.registrar_evento(usuario, self.modulo, accion)
+                if auditoria_model:
+                    auditoria_model.registrar_evento(usuario, self.modulo, accion)
                 return resultado
             return wrapper
         return decorador
@@ -27,12 +39,13 @@ class PermisoAuditoria:
 permiso_auditoria_inventario = PermisoAuditoria('inventario')
 
 class InventarioController:
-    def __init__(self, model, view, usuario_actual=None):
+    def __init__(self, model, view, db_connection, usuario_actual=None):
         self.model = model
         self.view = view
         self.usuario_actual = usuario_actual  # dict con id, nombre, rol, ip, etc.
-        self.usuarios_model = UsuariosModel()
-        self.auditoria_model = AuditoriaModel()
+        self.usuarios_model = UsuariosModel(db_connection)
+        self.auditoria_model = AuditoriaModel(db_connection)
+        self.db_connection = db_connection
 
         # Conexión de señales de la vista a métodos del controlador
         self.view.nuevo_item_signal.connect(self.agregar_item)
@@ -42,19 +55,35 @@ class InventarioController:
         self.view.exportar_pdf_signal.connect(lambda: self.exportar_inventario("pdf"))
         self.view.buscar_signal.connect(self.buscar_item)
         self.view.generar_qr_signal.connect(self.generar_qr_para_item)
+        self.view.generar_qr_signal.connect(self.ver_qr_item_seleccionado)
+        self.view.generar_qr_signal.connect(self.asociar_qr_a_perfil)
         self.view.actualizar_signal.connect(self.actualizar_inventario)
         self.view.ajustar_stock_signal.connect(self.ajustar_stock)
 
         self.actualizar_inventario()
+        self.cargar_productos()
+
+    def cargar_productos(self):
+        productos = self.model.obtener_productos()  # Debe devolver lista de dicts con los headers correctos
+        self.view.cargar_items(productos)
 
     @permiso_auditoria_inventario('ver')
-    def actualizar_inventario(self, offset=0, limite=500):
-        datos = self.model.obtener_items_por_lotes(offset, limite)
+    def actualizar_inventario(self):
+        datos = self.model.obtener_items()
+        print(f"[DEBUG] Registros obtenidos de inventario: {len(datos)}")
         self.view.tabla_inventario.setRowCount(len(datos))
+        self.view.tabla_inventario.setColumnCount(18)  # Ajusta según las columnas de inventario_perfiles
+        if not datos:
+            self.view.label_titulo.setText("No hay datos de inventario para mostrar.")
+        else:
+            self.view.label_titulo.setText("INVENTORY")
         for row, item in enumerate(datos):
             for col, value in enumerate(item):
                 self.view.tabla_inventario.setItem(row, col, QTableWidgetItem(str(value)))
-        self.resaltar_items_bajo_stock(datos)
+
+    def cargar_datos_inventario(self, offset=0, limite=500):
+        items = self.model.obtener_items_por_lotes(offset, limite)
+        self.view.cargar_items(items)
 
     @permiso_auditoria_inventario('editar')
     def agregar_item(self):
@@ -183,6 +212,34 @@ class InventarioController:
                 self.view.label.setText("Error al generar el código QR.")
         except Exception as e:
             self.view.label.setText(f"Error al generar QR: {e}")
+
+    @permiso_auditoria_inventario('editar')
+    def asociar_qr_a_perfil(self):
+        id_item = self.view.obtener_id_item_seleccionado()
+        if not id_item:
+            QMessageBox.warning(self.view, "QR", "Seleccione un perfil para asociar QR.")
+            return
+        item = self.model.obtener_item_por_id(id_item)
+        if not item or "codigo" not in item:
+            QMessageBox.warning(self.view, "QR", "No se encontró el código para este perfil.")
+            return
+        codigo = item["codigo"]
+        qr_code = f"QR-{codigo}"
+        self.model.actualizar_qr_code(id_item, qr_code)
+        QMessageBox.information(self.view, "QR asociado", f"QR '{qr_code}' asociado al perfil con código '{codigo}'.")
+        self.actualizar_inventario()
+
+    def ver_qr_item_seleccionado(self):
+        id_item = self.view.obtener_id_item_seleccionado()
+        if not id_item:
+            QMessageBox.warning(self.view, "QR", "Seleccione un perfil para ver su QR.")
+            return
+        item = self.model.obtener_item_por_id(id_item)
+        if item and ("qr" in item or "qr_code" in item):
+            qr_valor = item.get("qr") or item.get("qr_code")
+            QMessageBox.information(self.view, "QR del perfil", f"QR asociado: {qr_valor}")
+        else:
+            QMessageBox.warning(self.view, "QR", "No se encontró el QR para este perfil.")
 
     def resaltar_items_bajo_stock(self, datos):
         try:

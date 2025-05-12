@@ -14,15 +14,26 @@ class PermisoAuditoria:
         def decorador(func):
             @wraps(func)
             def wrapper(controller, *args, **kwargs):
-                usuario_model = getattr(controller, 'usuarios_model', UsuariosModel())
-                auditoria_model = getattr(controller, 'auditoria_model', AuditoriaModel())
+                usuario_model = getattr(controller, 'usuarios_model', None)
+                auditoria_model = getattr(controller, 'auditoria_model', None)
                 usuario = getattr(controller, 'usuario_actual', None)
-                if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
+                if not usuario or not usuario_model:
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                    return None
+                if usuario['rol'] not in ('admin', 'supervisor'):
+                    modulos_permitidos = usuario_model.obtener_modulos_permitidos(usuario)
+                    if self.modulo not in modulos_permitidos:
+                        if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                            controller.view.label.setText(f"No tiene permiso para acceder al módulo: {self.modulo}")
+                        return None
+                if not usuario_model.tiene_permiso(usuario, self.modulo, accion):
                     if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                         controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
                     return None
                 resultado = func(controller, *args, **kwargs)
-                auditoria_model.registrar_evento(usuario, self.modulo, accion)
+                if auditoria_model:
+                    auditoria_model.registrar_evento(usuario, self.modulo, accion)
                 return resultado
             return wrapper
         return decorador
@@ -30,9 +41,16 @@ class PermisoAuditoria:
 permiso_auditoria_usuarios = PermisoAuditoria('usuarios')
 
 class UsuariosController(BaseController):
-    def __init__(self, model, view, usuario_actual=None):
+    def __init__(self, model, view, db_connection, usuario_actual=None):
         super().__init__(model, view)
         self.usuario_actual = usuario_actual
+        self.auditoria_model = AuditoriaModel(db_connection)
+
+    def inicializar_vista(self):
+        # Llamar esto tras login o al inicializar la vista
+        self.mostrar_tab_permisos_si_admin()
+        self.setup_view_signals()
+        self.cargar_usuarios()
 
     def setup_view_signals(self):
         # Diccionario para mapear botones a métodos
@@ -264,3 +282,57 @@ class UsuariosController(BaseController):
     def clonar_permisos(self, rol_origen, rol_destino):
         mensaje = self.model.clonar_permisos(rol_origen, rol_destino)
         self.view.label.setText(mensaje)
+
+    def mostrar_tab_permisos_si_admin(self):
+        # Solo el admin puede ver la pestaña de permisos
+        if hasattr(self, 'usuario_actual') and self.usuario_actual and self.usuario_actual.get('rol') == 'admin':
+            self.view.mostrar_tab_permisos(True)
+            self.cargar_gestion_permisos_modulos()
+        else:
+            self.view.mostrar_tab_permisos(False)
+
+    def cargar_gestion_permisos_modulos(self):
+        # Llenar combo con usuarios normales
+        usuarios = self.model.obtener_usuarios()
+        usuarios_normales = [u for u in usuarios if u[2] == 'usuario']  # Suponiendo col 2 es rol
+        self.view.combo_usuario.clear()
+        for u in usuarios_normales:
+            self.view.combo_usuario.addItem(f"{u[0]}", u[0])  # username como display y data
+        # Cargar módulos disponibles
+        modulos = self.model.obtener_todos_los_modulos() if hasattr(self.model, 'obtener_todos_los_modulos') else []
+        self.view.tabla_permisos_modulos.setRowCount(len(modulos))
+        self.view.tabla_permisos_modulos.setColumnCount(2)
+        self.view.tabla_permisos_modulos.setHorizontalHeaderLabels(["Módulo", "Permitido"])
+        for row, modulo in enumerate(modulos):
+            self.view.tabla_permisos_modulos.setItem(row, 0, QTableWidgetItem(modulo))
+            chk = QCheckBox()
+            self.view.tabla_permisos_modulos.setCellWidget(row, 1, chk)
+        # Cargar permisos actuales al cambiar usuario
+        self.view.combo_usuario.currentIndexChanged.connect(self.actualizar_permisos_modulos_usuario)
+        self.view.boton_guardar_permisos.clicked.connect(self.guardar_permisos_modulos_usuario)
+        self.actualizar_permisos_modulos_usuario()
+
+    def actualizar_permisos_modulos_usuario(self):
+        username = self.view.combo_usuario.currentData()
+        if not username:
+            return
+        # Obtener módulos permitidos actuales
+        modulos_permitidos = self.model.obtener_modulos_permitidos({'username': username, 'rol': 'usuario'})
+        for row in range(self.view.tabla_permisos_modulos.rowCount()):
+            modulo = self.view.tabla_permisos_modulos.item(row, 0).text()
+            chk = self.view.tabla_permisos_modulos.cellWidget(row, 1)
+            chk.setChecked(modulo in modulos_permitidos)
+
+    def guardar_permisos_modulos_usuario(self):
+        username = self.view.combo_usuario.currentData()
+        if not username:
+            return
+        nuevos_permisos = []
+        for row in range(self.view.tabla_permisos_modulos.rowCount()):
+            modulo = self.view.tabla_permisos_modulos.item(row, 0).text()
+            chk = self.view.tabla_permisos_modulos.cellWidget(row, 1)
+            if chk.isChecked():
+                nuevos_permisos.append(modulo)
+        # Guardar en la tabla permisos_usuario usando username
+        self.model.actualizar_permisos_usuario(username, nuevos_permisos)
+        QMessageBox.information(self.view, "Permisos actualizados", "Los permisos de módulos han sido actualizados para el usuario seleccionado.")
