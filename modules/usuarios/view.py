@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QHBoxLayout, QGraphicsDropShadowEffect, QTabWidget, QComboBox, QMenu, QHeaderView, QMessageBox, QDialog, QFileDialog)
 from PyQt6.QtGui import QIcon, QColor, QAction, QPixmap
-from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtCore import QSize, Qt, QPoint
 import json
 import os
 from functools import partial
@@ -8,8 +8,9 @@ import qrcode
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import tempfile
+from core.table_responsive_mixin import TableResponsiveMixin
 
-class UsuariosView(QWidget):
+class UsuariosView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default"):
         super().__init__()
         self.usuario_actual = usuario_actual
@@ -55,6 +56,7 @@ class UsuariosView(QWidget):
         botones_layout.addStretch()
         tab_usuarios_layout.addLayout(botones_layout)
         self.tabla_usuarios = QTableWidget()
+        self.make_table_responsive(self.tabla_usuarios)
         tab_usuarios_layout.addWidget(self.tabla_usuarios)
 
         # Configuración de columnas
@@ -76,6 +78,7 @@ class UsuariosView(QWidget):
         self.combo_usuario = QComboBox()
         tab_permisos_layout.addWidget(self.combo_usuario)
         self.tabla_permisos_modulos = QTableWidget()
+        self.make_table_responsive(self.tabla_permisos_modulos)
         tab_permisos_layout.addWidget(self.tabla_permisos_modulos)
         self.boton_guardar_permisos = QPushButton("Guardar permisos")
         tab_permisos_layout.addWidget(self.boton_guardar_permisos)
@@ -128,7 +131,7 @@ class UsuariosView(QWidget):
     def mostrar_menu_columnas_header(self, idx):
         pos = self.tabla_usuarios.horizontalHeader().sectionPosition(idx)
         header = self.tabla_usuarios.horizontalHeader()
-        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
         self.mostrar_menu_columnas(global_pos)
 
     def toggle_columna(self, idx, header, checked):

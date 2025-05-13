@@ -10,8 +10,10 @@ class AuditoriaModel:
         query = "SELECT * FROM auditorias_sistema"
         if filtros:
             query += " WHERE " + " AND ".join([f"{campo} = ?" for campo in filtros.keys()])
-            return self.db.ejecutar_query(query, tuple(filtros.values()))
-        return self.db.ejecutar_query(query)
+            result = self.db.ejecutar_query(query, tuple(filtros.values()))
+            return result if result is not None else []
+        result = self.db.ejecutar_query(query)
+        return result if result is not None else []
 
     def obtener_errores(self, filtros=None):
         query = "SELECT * FROM errores_sistema"
@@ -74,7 +76,8 @@ class AuditoriaModel:
 
     def obtener_logs(self, modulo_afectado):
         query = "SELECT * FROM auditorias_sistema WHERE modulo_afectado = ?"
-        return self.db.ejecutar_query(query, (modulo_afectado,))
+        result = self.db.ejecutar_query(query, (modulo_afectado,))
+        return result if result is not None else []
 
     def consultar_auditoria(self, fecha_inicio, fecha_fin, usuario):
         query = "SELECT * FROM auditoria WHERE fecha >= ? AND fecha <= ? AND usuario LIKE ?"

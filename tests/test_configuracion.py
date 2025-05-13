@@ -20,6 +20,7 @@ class MockDBConnection:
 
     def ejecutar_query(self, query, params=None):
         self.execute(query, params)
+        return self.query_result
 
 class TestConfiguracionModel(unittest.TestCase):
 

@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QSizePolicy, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QFileDialog, QDialog
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QPoint
 from PyQt6.QtGui import QIcon, QColor, QPixmap, QAction
 from PyQt6.QtPrintSupport import QPrinter
 from PyQt6.QtGui import QPainter
@@ -8,8 +8,9 @@ import os
 import tempfile
 import qrcode
 from functools import partial
+from core.table_responsive_mixin import TableResponsiveMixin
 
-class AuditoriaView(QWidget):
+class AuditoriaView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout(self)
@@ -48,6 +49,7 @@ class AuditoriaView(QWidget):
 
         # Tabla de logs (placeholder)
         self.tabla_logs = QTableWidget()
+        self.make_table_responsive(self.tabla_logs)
         self.layout.addWidget(self.tabla_logs)
 
         self.logs_headers = [self.tabla_logs.horizontalHeaderItem(i).text() if self.tabla_logs.columnCount() > 0 else f"Columna {i+1}" for i in range(self.tabla_logs.columnCount())]
@@ -104,7 +106,7 @@ class AuditoriaView(QWidget):
     def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
         header = tabla.horizontalHeader()
         pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
         self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
 
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):

@@ -17,6 +17,10 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 # Importar utilidades principales
 from core.logger import Logger
 from core.database import DatabaseConnection, InventarioDatabaseConnection
+from core.startup_update_checker import check_and_update_critical_packages
+
+# Verificar y actualizar paquetes críticos antes de continuar
+check_and_update_critical_packages()
 
 # Importar vistas
 from modules.inventario.view import InventarioView

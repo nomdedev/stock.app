@@ -4,7 +4,7 @@ import tempfile
 import qrcode
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QScrollArea, QFrame, QHBoxLayout, QSizePolicy, QGraphicsDropShadowEffect, QMenu, QFileDialog, QDialog
 from PyQt6.QtGui import QIcon, QColor, QPixmap, QPainter, QAction
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QPoint
 from PyQt6.QtPrintSupport import QPrinter
 from functools import partial
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -136,6 +136,10 @@ class ProduccionView(QWidget):
         self.boton_finalizar_etapa.setGraphicsEffect(sombra_finalizar)
         botones_layout.addWidget(self.boton_finalizar_etapa)
 
+        self.boton_agregar.clicked.connect(self.accion_agregar_produccion)
+        self.boton_ver_detalles.clicked.connect(self.accion_ver_detalles)
+        self.boton_finalizar_etapa.clicked.connect(self.accion_finalizar_etapa)
+
         botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
 
@@ -212,7 +216,7 @@ class ProduccionView(QWidget):
     def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
         header = tabla.horizontalHeader()
         pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
         self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
 
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):
@@ -267,6 +271,18 @@ class ProduccionView(QWidget):
         btn_guardar.clicked.connect(guardar)
         btn_pdf.clicked.connect(exportar_pdf)
         dialog.exec()
+
+    def accion_agregar_produccion(self):
+        from PyQt6.QtWidgets import QMessageBox
+        QMessageBox.information(self, "Agregar Producción", "Acción de agregar producción ejecutada.")
+
+    def accion_ver_detalles(self):
+        from PyQt6.QtWidgets import QMessageBox
+        QMessageBox.information(self, "Ver Detalles", "Acción de ver detalles ejecutada.")
+
+    def accion_finalizar_etapa(self):
+        from PyQt6.QtWidgets import QMessageBox
+        QMessageBox.information(self, "Finalizar Etapa", "Acción de finalizar etapa ejecutada.")
 
 class Produccion(QWidget):
     def __init__(self):

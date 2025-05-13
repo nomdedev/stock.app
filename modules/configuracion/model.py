@@ -6,7 +6,8 @@ class ConfiguracionModel:
 
     def obtener_configuracion(self):
         query = "SELECT clave, valor, descripcion FROM configuracion_sistema"
-        return self.db.ejecutar_query(query)
+        result = self.db.ejecutar_query(query)
+        return result if result is not None else []
 
     def actualizar_configuracion(self, clave, valor):
         query = "UPDATE configuracion_sistema SET valor = ? WHERE clave = ?"

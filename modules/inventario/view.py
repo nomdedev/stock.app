@@ -1,14 +1,15 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QTabWidget, QDialog, QMessageBox, QInputDialog, QCheckBox, QScrollArea, QHeaderView, QMenu, QSizePolicy, QGraphicsDropShadowEffect, QFileDialog
 from PyQt6.QtGui import QColor, QAction, QIcon
-from PyQt6.QtCore import Qt, pyqtSignal, QSize
+from PyQt6.QtCore import Qt, pyqtSignal, QSize, QPoint
 import json
 import os
 import pyodbc
 import pandas as pd
 from functools import partial
 from modules.vidrios.view import VidriosView
+from core.table_responsive_mixin import TableResponsiveMixin
 
-class InventarioView(QWidget):
+class InventarioView(QWidget, TableResponsiveMixin):
     # Señales para acciones principales
     nuevo_item_signal = pyqtSignal()
     ver_movimientos_signal = pyqtSignal()
@@ -59,6 +60,7 @@ class InventarioView(QWidget):
         self.tabla_inventario = QTableWidget()
         self.tabla_inventario.setColumnCount(len(self.inventario_headers))
         self.tabla_inventario.setHorizontalHeaderLabels(self.inventario_headers)
+        self.make_table_responsive(self.tabla_inventario)
         self.tabla_inventario.setAlternatingRowColors(True)
         self.tabla_inventario.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabla_inventario.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -197,8 +199,7 @@ class InventarioView(QWidget):
             QMessageBox.critical(self, "Error", f"No se pudo exportar: {e}")
 
     def mostrar_menu_columnas_header(self, idx):
-        # Muestra el menú de selección de columnas al hacer click izquierdo en el header
-        pos = self.tabla_inventario.horizontalHeader().sectionPosition(idx)
         header = self.tabla_inventario.horizontalHeader()
-        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        pos = header.sectionPosition(idx)
+        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
         self.mostrar_menu_columnas(global_pos)

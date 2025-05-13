@@ -3,15 +3,16 @@ import json
 import tempfile
 import qrcode
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QFileDialog, QDialog, QTabWidget, QMessageBox, QTableWidgetItem, QComboBox
-from PyQt6.QtCore import QTimer, Qt
+from PyQt6.QtCore import QTimer, Qt, QPoint
 from PyQt6.QtGui import QIcon, QColor, QPixmap, QPainter, QAction
 from PyQt6.QtCore import QSize
 from PyQt6.QtPrintSupport import QPrinter
 from functools import partial
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from core.table_responsive_mixin import TableResponsiveMixin
 
-class ContabilidadView(QWidget):
+class ContabilidadView(QWidget, TableResponsiveMixin):
     def __init__(self, db_connection=None, obras_model=None):
         super().__init__()
         self.db_connection = db_connection
@@ -46,6 +47,7 @@ class ContabilidadView(QWidget):
         self.tab_balance_layout.addWidget(self.filtro_balance)
         self.tabla_balance = QTableWidget()
         self.tabla_balance.setObjectName("tabla_balance")
+        self.make_table_responsive(self.tabla_balance)
         self.tab_balance_layout.addWidget(self.tabla_balance)
         self.boton_agregar_balance = QPushButton()
         self.boton_agregar_balance.setIcon(QIcon("img/plus_icon.svg"))
@@ -70,6 +72,7 @@ class ContabilidadView(QWidget):
         self.tab_pagos_layout.addWidget(self.filtro_pagos)
         self.tabla_pagos = QTableWidget()
         self.tabla_pagos.setObjectName("tabla_pagos")
+        self.make_table_responsive(self.tabla_pagos)
         self.tab_pagos_layout.addWidget(self.tabla_pagos)
         self.tabs.addTab(self.tab_pagos, "Seguimiento de Pagos")
 
@@ -96,6 +99,7 @@ class ContabilidadView(QWidget):
         # Tabla de recibos
         self.tabla_recibos = QTableWidget()
         self.tabla_recibos.setObjectName("tabla_recibos")
+        self.make_table_responsive(self.tabla_recibos)
         self.tab_recibos_layout.addWidget(self.tabla_recibos)
         self.tabs.addTab(self.tab_recibos, "Recibos")
 
@@ -248,6 +252,12 @@ class ContabilidadView(QWidget):
             menu.addAction(accion)
         menu.exec(tabla.horizontalHeader().mapToGlobal(pos))
 
+    def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
+        header = tabla.horizontalHeader()
+        pos = header.sectionPosition(idx)
+        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+        self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
+
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):
         columnas_visibles[header] = checked
         tabla.setColumnHidden(idx, not checked)
@@ -354,6 +364,10 @@ class ContabilidadView(QWidget):
         btn_agregar.clicked.connect(agregar_recibo)
         btn_cancelar.clicked.connect(dialog.reject)
         dialog.exec()
+
+    def abrir_dialogo_nuevo_movimiento(self, *args, **kwargs):
+        # TODO: Implementar el diálogo real de nuevo movimiento
+        print("Diálogo de nuevo movimiento contable (stub)")
 
     def abrir_dialogo_estadistica_personalizada(self):
         dialog = QDialog(self)

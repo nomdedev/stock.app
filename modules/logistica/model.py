@@ -21,12 +21,12 @@ from core.database import LogisticaDatabaseConnection  # Importar la clase corre
 
 class LogisticaModel:
     def __init__(self, db_connection):
-        self.db_connection = db_connection
+        self.db = db_connection
 
     def obtener_datos_entregas(self):
         """Obtiene los datos de la tabla de entregas desde la base de datos."""
         query = "SELECT destino, fecha_programada, estado, vehiculo, chofer FROM entregas"
-        return self.db_connection.ejecutar_query(query)
+        return self.db.ejecutar_query(query)
 
     def obtener_entregas(self):
         query = "SELECT * FROM entregas_obras"

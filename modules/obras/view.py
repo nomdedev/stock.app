@@ -6,8 +6,9 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from modules.obras.cronograma.view import CronogramaView
 from modules.obras.cronograma.controller import CronogramaController
+from core.table_responsive_mixin import TableResponsiveMixin
 
-class ObrasView(QWidget):
+class ObrasView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout(self)
@@ -74,6 +75,8 @@ class ObrasView(QWidget):
         botones_layout.addWidget(self.boton_verificar_obra)
         botones_layout.addStretch()
         self.tab_cronograma_layout.addLayout(botones_layout)
+        self.boton_agregar.clicked.connect(self.accion_agregar_obra)
+        self.boton_verificar_obra.clicked.connect(self.accion_verificar_obra)
         # Pestaña de Calendario
         self.tab_calendario = QWidget()
         self.tab_calendario_layout = QVBoxLayout()
@@ -83,7 +86,16 @@ class ObrasView(QWidget):
         self.tab_calendario.setLayout(self.tab_calendario_layout)
         self.tabs.addTab(self.tab_calendario, "Calendario")
         self.setLayout(self.layout)
+        # NOTA: Este módulo no tiene QTableWidget principal, por lo que no aplica make_table_responsive aquí.
 
     @property
     def label(self):
         return self.label_estado
+
+    def accion_agregar_obra(self):
+        from PyQt6.QtWidgets import QMessageBox
+        QMessageBox.information(self, "Agregar Obra", "Acción de agregar obra ejecutada.")
+
+    def accion_verificar_obra(self):
+        from PyQt6.QtWidgets import QMessageBox
+        QMessageBox.information(self, "Verificar Obra", "Acción de verificar obra ejecutada.")

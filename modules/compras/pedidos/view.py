@@ -1,10 +1,11 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QScrollArea, QFrame, QTableWidget, QTableWidgetItem, QPushButton, QSizePolicy, QHBoxLayout, QMenu, QFileDialog, QDialog
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QPoint
 from PyQt6 import QtGui, QtCore
 from PyQt6.QtGui import QPixmap, QAction
 from PyQt6.QtPrintSupport import QPrinter
 from PyQt6.QtGui import QPainter
 from core.ui_components import CustomButton
+from core.table_responsive_mixin import TableResponsiveMixin
 import json
 import os
 import tempfile
@@ -19,7 +20,7 @@ class Pedidos(QWidget):
         self.layout.addWidget(self.label_titulo)
         self.setLayout(self.layout)
 
-class PedidosView(QWidget):
+class PedidosView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout(self)
@@ -57,8 +58,14 @@ class PedidosView(QWidget):
             botones_layout.addWidget(boton)
         self.layout.addLayout(botones_layout)
 
+        # Tabla principal de pedidos (si existe)
+        self.tabla_pedidos = QTableWidget()
+        self.make_table_responsive(self.tabla_pedidos)
+        self.layout.addWidget(self.tabla_pedidos)
+
         # Si tienes una tabla principal, aplica el patrón universal
         if hasattr(self, 'tabla_pedidos'):
+            self.make_table_responsive(self.tabla_pedidos)
             self.pedidos_headers = [self.tabla_pedidos.horizontalHeaderItem(i).text() if self.tabla_pedidos.columnCount() > 0 else f"Columna {i+1}" for i in range(self.tabla_pedidos.columnCount())]
             if not self.pedidos_headers:
                 self.pedidos_headers = ["id", "proveedor", "fecha", "estado", "total"]
@@ -116,7 +123,7 @@ class PedidosView(QWidget):
     def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
         header = tabla.horizontalHeader()
         pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
         self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
 
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):

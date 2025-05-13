@@ -1,17 +1,108 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTableWidget, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTableWidget, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QTabWidget, QTextEdit
 from PyQt6.QtGui import QIcon, QColor, QAction
-from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtCore import QSize, Qt, QPoint
 import json
 import os
 from functools import partial
+from core.table_responsive_mixin import TableResponsiveMixin
 
-class LogisticaView(QWidget):
+try:
+    from PyQt6.QtWebEngineWidgets import QWebEngineView
+    WEBENGINE_AVAILABLE = True
+except ImportError:
+    WEBENGINE_AVAILABLE = False
+
+class LogisticaView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default"):
         super().__init__()
         self.usuario_actual = usuario_actual
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.setSpacing(20)
+
+        # Tabs principales
+        self.tabs = QTabWidget()
+        self.layout.addWidget(self.tabs)
+
+        # --- Pestaña 1: Obras y Direcciones ---
+        self.tab_obras = QWidget()
+        tab_obras_layout = QVBoxLayout(self.tab_obras)
+        self.tabla_obras = QTableWidget()
+        self.tabla_obras.setColumnCount(5)
+        self.tabla_obras.setHorizontalHeaderLabels(["ID", "Obra", "Dirección", "Estado", "Cliente"])
+        self.make_table_responsive(self.tabla_obras)
+        tab_obras_layout.addWidget(self.tabla_obras)
+        self.tabs.addTab(self.tab_obras, "Obras y Direcciones")
+
+        # --- Pestaña 2: Envíos y Materiales ---
+        self.tab_envios = QWidget()
+        tab_envios_layout = QVBoxLayout(self.tab_envios)
+        self.tabla_envios = QTableWidget()
+        self.tabla_envios.setColumnCount(5)
+        self.tabla_envios.setHorizontalHeaderLabels(["ID", "Obra", "Material", "Cantidad", "Estado"])
+        self.make_table_responsive(self.tabla_envios)
+        tab_envios_layout.addWidget(self.tabla_envios)
+        self.tabs.addTab(self.tab_envios, "Envíos y Materiales")
+
+        # --- Pestaña 3: Servicios (Service) ---
+        self.tab_servicios = QWidget()
+        tab_servicios_layout = QVBoxLayout(self.tab_servicios)
+        self.tabla_servicios = QTableWidget()
+        self.tabla_servicios.setColumnCount(7)
+        self.tabla_servicios.setHorizontalHeaderLabels([
+            "ID", "Obra", "Dirección", "Tarea", "Presupuestado", "Pagado", "Observaciones"
+        ])
+        self.make_table_responsive(self.tabla_servicios)
+        tab_servicios_layout.addWidget(self.tabla_servicios)
+        self.tabs.addTab(self.tab_servicios, "Servicios")
+
+        # --- Pestaña 4: Mapa (Google Maps) ---
+        self.tab_mapa = QWidget()
+        tab_mapa_layout = QVBoxLayout(self.tab_mapa)
+        if WEBENGINE_AVAILABLE:
+            self.webview = QWebEngineView()
+            # HTML básico con Google Maps y pines de ejemplo (requiere API key real para producción)
+            html = '''
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Mapa de Obras</title>
+                <style>html, body, #map {{ height: 100%; margin: 0; padding: 0; }}</style>
+                <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+                <script>
+                function initMap() {{
+                    var map = new google.maps.Map(document.getElementById('map'), {{
+                        zoom: 10,
+                        center: {{lat: -34.6037, lng: -58.3816}} // Buenos Aires ejemplo
+                    }});
+                    var obras = [
+                        {{lat: -34.6037, lng: -58.3816, nombre: 'Obra 1'}},
+                        {{lat: -34.6090, lng: -58.3840, nombre: 'Obra 2'}}
+                    ];
+                    obras.forEach(function(obra) {{
+                        var marker = new google.maps.Marker({{
+                            position: {{lat: obra.lat, lng: obra.lng}},
+                            map: map,
+                            title: obra.nombre
+                        }});
+                    }});
+                }}
+                </script>
+            </head>
+            <body onload="initMap()">
+                <div id="map" style="width:100%;height:100vh;"></div>
+            </body>
+            </html>
+            '''
+            self.webview.setHtml(html)
+            tab_mapa_layout.addWidget(self.webview)
+        else:
+            self.mapa_placeholder = QTextEdit()
+            self.mapa_placeholder.setReadOnly(True)
+            self.mapa_placeholder.setText("[Aquí se mostrará el mapa con los pines de cada obra. Instala PyQt6-WebEngine para habilitar Google Maps]")
+            tab_mapa_layout.addWidget(self.mapa_placeholder)
+        self.tabs.addTab(self.tab_mapa, "Mapa")
 
         # Cargar el stylesheet visual moderno para Logística según el tema activo
         try:
@@ -42,26 +133,6 @@ class LogisticaView(QWidget):
         botones_layout.addWidget(self.boton_agregar)
         botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
-
-        # Tabla de envíos
-        self.tabla_envios = QTableWidget()
-        self.layout.addWidget(self.tabla_envios)
-
-        # Configuración de columnas
-        self.config_path = f"config_envios_columns_{self.usuario_actual}.json"
-        self.envios_headers = ["id", "destino", "fecha_envio", "estado", "observaciones"] if self.tabla_envios.columnCount() == 5 else [f"col_{i}" for i in range(self.tabla_envios.columnCount())]
-        self.columnas_visibles = self.cargar_config_columnas()
-        self.aplicar_columnas_visibles()
-
-        # Menú contextual en el header
-        header = self.tabla_envios.horizontalHeader()
-        header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
-        header.sectionDoubleClicked.connect(self.auto_ajustar_columna)
-        header.setSectionsMovable(True)
-        header.setSectionsClickable(True)
-        header.sectionClicked.connect(self.mostrar_menu_columnas_header)
-        self.tabla_envios.setHorizontalHeader(header)
 
         self.setLayout(self.layout)
 
@@ -94,7 +165,7 @@ class LogisticaView(QWidget):
     def mostrar_menu_columnas_header(self, idx):
         pos = self.tabla_envios.horizontalHeader().sectionPosition(idx)
         header = self.tabla_envios.horizontalHeader()
-        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
         self.mostrar_menu_columnas(global_pos)
 
     def toggle_columna(self, idx, header, checked):

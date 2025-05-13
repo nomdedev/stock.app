@@ -255,6 +255,61 @@ Este patrón debe aplicarse a todos los módulos que presenten tablas.
 
 ---
 
+## Patrón universal de tablas responsive (QTableWidget)
+
+Todas las tablas principales de la aplicación (QTableWidget) deben aplicar el mixin `TableResponsiveMixin` y el método `make_table_responsive` para garantizar que la tabla se expanda y adapte correctamente al modo fullscreen o maximizado, tanto en ancho como en alto.
+
+**Ejemplo de uso:**
+
+```python
+from core.table_responsive_mixin import TableResponsiveMixin
+
+class MiVista(QWidget, TableResponsiveMixin):
+    def __init__(self):
+        super().__init__()
+        self.tabla = QTableWidget()
+        self.make_table_responsive(self.tabla)
+        # ...
+```
+
+Esto asegura una experiencia de usuario moderna y consistente en todos los módulos.
+
+---
+
+## Integración UI + Base de Datos: verificación automática
+
+Cada operación relevante sobre datos (agregar, editar, eliminar, exportar, etc.) debe reflejarse tanto en la base de datos como en la UI (tabla principal). Esto se verifica mediante tests de integración automáticos que:
+
+- Simulan operaciones sobre el modelo (mock DB).
+- Simulan la actualización de la tabla en la vista (mock UI).
+- Verifican que los datos insertados/actualizados/eliminados aparecen correctamente en ambos lugares.
+
+**Ejemplo de test de integración:**
+
+```python
+class MockDBConnection:
+    # ... implementación ...
+
+class MockVista:
+    def actualizar_tabla(self, data):
+        self.tabla_data = data
+
+class TestModuloIntegracion(unittest.TestCase):
+    def setUp(self):
+        self.mock_db = MockDBConnection()
+        self.model = MiModelo(self.mock_db)
+        self.view = MockVista()
+    def test_agregar_y_reflejar(self):
+        self.model.agregar_algo(datos)
+        items = self.mock_db.ejecutar_query("SELECT * FROM tabla")
+        self.view.actualizar_tabla(items)
+        self.assertEqual(self.view.tabla_data, items)
+```
+
+Este patrón es obligatorio para todos los módulos y garantiza robustez y trazabilidad en la experiencia del usuario y la integridad de los datos.
+
+---
+
 ## Módulo Contabilidad
 
 El módulo de Contabilidad centraliza la gestión financiera y administrativa del sistema, permitiendo un control integral de movimientos, pagos y recibos asociados a las obras y operaciones generales.
@@ -329,4 +384,3 @@ Todas las tablas de este módulo implementan el patrón UX universal:
 **Requisito obligatorio:** Este patrón UX es obligatorio y debe estar presente en todos los módulos que utilicen QTableWidget.
 
 ---
-````

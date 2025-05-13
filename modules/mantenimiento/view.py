@@ -1,14 +1,15 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTabWidget, QHBoxLayout, QPushButton, QGraphicsDropShadowEffect, QTableWidget, QMenu, QFileDialog, QDialog
 from PyQt6.QtGui import QIcon, QColor, QPixmap, QPainter, QAction
-from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtCore import QSize, Qt, QPoint
 from PyQt6.QtPrintSupport import QPrinter
 import json
 import os
 import tempfile
 import qrcode
 from functools import partial
+from core.table_responsive_mixin import TableResponsiveMixin
 
-class MantenimientoView(QWidget):
+class MantenimientoView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout(self)
@@ -47,6 +48,7 @@ class MantenimientoView(QWidget):
 
         # Tabla de tareas
         self.tabla_tareas = QTableWidget()
+        self.make_table_responsive(self.tabla_tareas)
         self.layout.addWidget(self.tabla_tareas)
 
         self.tareas_headers = [self.tabla_tareas.horizontalHeaderItem(i).text() if self.tabla_tareas.columnCount() > 0 else f"Columna {i+1}" for i in range(self.tabla_tareas.columnCount())]
@@ -103,7 +105,7 @@ class MantenimientoView(QWidget):
     def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
         header = tabla.horizontalHeader()
         pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
         self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
 
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):

@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QDateEdit, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QDialog, QFileDialog
 from PyQt6.QtGui import QIcon, QColor, QAction, QPixmap
-from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtCore import QSize, Qt, QPoint
 import json
 import os
 from functools import partial
@@ -8,8 +8,9 @@ import qrcode
 import tempfile
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+from core.table_responsive_mixin import TableResponsiveMixin
 
-class VidriosView(QWidget):
+class VidriosView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default"):
         super().__init__()
         self.usuario_actual = usuario_actual
@@ -29,6 +30,7 @@ class VidriosView(QWidget):
 
         # Tabla para mostrar los vidrios
         self.tabla_vidrios = self.create_table()
+        self.make_table_responsive(self.tabla_vidrios)
         self.layout.addWidget(self.tabla_vidrios)
 
         # Configuración de columnas
@@ -146,9 +148,9 @@ class VidriosView(QWidget):
         menu.exec(self.tabla_vidrios.horizontalHeader().mapToGlobal(pos))
 
     def mostrar_menu_columnas_header(self, idx):
-        pos = self.tabla_vidrios.horizontalHeader().sectionPosition(idx)
         header = self.tabla_vidrios.horizontalHeader()
-        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        pos = header.sectionPosition(idx)
+        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
         self.mostrar_menu_columnas(global_pos)
 
     def toggle_columna(self, idx, header, checked):

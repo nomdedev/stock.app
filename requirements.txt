@@ -1,8 +1,15 @@
-PyQt6==6.10.0
-pandas==2.2.4
-fpdf==1.7.2
-logger==1.4
-DataAccessLayer==0.1.0
-matplotlib==3.7.1
-PyQt5==5.15.11
-pyodbc==4.0.35
+PyQt6==6.9.0  # Última instalada, disponible 6.10.0
+pandas
+fpdf
+logger
+DataAccessLayer
+matplotlib==3.10.1  # Última disponible: 3.10.3
+PyQt5
+pyodbc
+pytest==8.3.5
+pytest-qt==4.4.0
+numpy==2.2.4  # Última disponible: 2.2.5
+qrcode==8.1  # Última disponible: 8.2
+PyQt6-WebEngine  # Para mapa de Google Maps en logística
+PyQt6-WebEngine>=6.4.0  # Para soporte de mapas en logística (Google Maps)
+# Sugerencia: para actualizar, cambiar a la versión más reciente indicada en el comentario

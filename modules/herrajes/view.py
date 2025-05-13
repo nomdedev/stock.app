@@ -1,11 +1,12 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox
 from PyQt6.QtGui import QIcon, QColor, QAction
-from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtCore import QSize, Qt, QPoint
 import json
 import os
 from functools import partial
+from core.table_responsive_mixin import TableResponsiveMixin
 
-class HerrajesView(QWidget):
+class HerrajesView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout()
@@ -21,6 +22,11 @@ class HerrajesView(QWidget):
         self.form_layout.addRow("Cantidad:", self.cantidad_input)
         self.form_layout.addRow("Proveedor:", self.proveedor_input)
         self.layout.addLayout(self.form_layout)
+
+        # Tabla principal de herrajes
+        self.tabla_herrajes = QTableWidget()
+        self.make_table_responsive(self.tabla_herrajes)
+        self.layout.addWidget(self.tabla_herrajes)
 
         # Botón principal de acción (Agregar)
         botones_layout = QHBoxLayout()
@@ -72,7 +78,7 @@ class HerrajesView(QWidget):
             self._id_item_input = QLineEdit()
         return self._id_item_input
 
-class MaterialesView(QWidget):
+class MaterialesView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default"):
         super().__init__()
         self.usuario_actual = usuario_actual
@@ -80,10 +86,7 @@ class MaterialesView(QWidget):
 
         # Tabla de materiales
         self.tabla_materiales = QTableWidget()
-        self.tabla_materiales.setColumnCount(7)
-        self.tabla_materiales.setHorizontalHeaderLabels([
-            "id", "codigo", "descripcion", "cantidad", "ubicacion", "fecha_ingreso", "observaciones"
-        ])
+        self.make_table_responsive(self.tabla_materiales)
         self.layout.addWidget(self.tabla_materiales)
 
         # Configuración de columnas
@@ -152,7 +155,7 @@ class MaterialesView(QWidget):
     def mostrar_menu_columnas_header(self, idx):
         pos = self.tabla_materiales.horizontalHeader().sectionPosition(idx)
         header = self.tabla_materiales.horizontalHeader()
-        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
+        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
         self.mostrar_menu_columnas(global_pos)
 
     def toggle_columna(self, idx, header, checked):

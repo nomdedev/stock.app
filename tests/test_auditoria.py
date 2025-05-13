@@ -26,6 +26,18 @@ class MockDBConnection:
 
     def ejecutar_query(self, query, params=None):
         self.execute(query, params)
+        # Simular filtro por módulo para obtener_logs
+        if "WHERE modulo_afectado = ?" in query and params:
+            modulo = params[0]
+            return [row for row in self.query_result if len(row) > 2 and row[2] == modulo]
+        # Simular filtro por filtros en obtener_auditorias
+        if "WHERE" in query and params:
+            campo = query.split("WHERE ")[1].split(" = ")[0].strip()
+            valor = params[0]
+            # Ajuste: 'modulo_afectado' está en la posición 2
+            idx = 2 if campo == "modulo_afectado" else 0
+            return [row for row in self.query_result if row[idx] == valor]
+        return self.query_result
 
 class TestAuditoriaModel(unittest.TestCase):
 
@@ -53,21 +65,21 @@ class TestAuditoriaModel(unittest.TestCase):
     def test_obtener_auditorias(self):
         # Simular datos de auditoría
         self.mock_db.query_result = [
-            ("admin", "inventario", "inserción", "Agregó un nuevo ítem", "2025-04-14 10:00:00"),
-            ("user1", "logística", "modificación", "Actualizó estado de entrega", "2025-04-14 11:00:00")
+            ("2025-04-14 10:00:00", "admin", "inventario", "inserción", "Agregó un nuevo ítem", "192.168.1.1"),
+            ("2025-04-14 11:00:00", "user1", "logística", "modificación", "Actualizó estado de entrega", "192.168.1.2")
         ]
         filtros = {"modulo_afectado": "inventario"}
         auditorias = self.auditoria_model.obtener_auditorias(filtros)
         self.assertEqual(self.mock_db.last_query, "SELECT * FROM auditorias_sistema WHERE modulo_afectado = ?")
         self.assertEqual(self.mock_db.last_params, ("inventario",))
-        self.assertEqual(len(auditorias), 2)
-        self.assertEqual(auditorias[0][0], "admin")
+        self.assertEqual(len(auditorias), 1)
+        self.assertEqual(auditorias[0][1], "admin")
 
     def test_exportar_auditorias(self):
         # Simular exportación de auditorías
         self.mock_db.query_result = [
-            ("admin", "inventario", "inserción", "Agregó un nuevo ítem", "2025-04-14 10:00:00"),
-            ("user1", "logística", "modificación", "Actualizó estado de entrega", "2025-04-14 11:00:00")
+            ("2025-04-14 10:00:00", "admin", "inventario", "inserción", "Agregó un nuevo ítem", "192.168.1.1"),
+            ("2025-04-14 11:00:00", "user1", "logística", "modificación", "Actualizó estado de entrega", "192.168.1.2")
         ]
         resultado = self.auditoria_model.exportar_auditorias("excel")
         self.assertEqual(resultado, "Auditorías exportadas a Excel.")

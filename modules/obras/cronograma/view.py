@@ -3,6 +3,8 @@ from PyQt6.QtGui import QBrush, QColor, QPen, QFont, QLinearGradient, QPainter
 from PyQt6.QtCore import Qt, QRectF
 import datetime
 
+# NOTA: Este módulo no utiliza QTableWidget principal, por lo que no aplica TableResponsiveMixin aquí.
+
 ESTADO_COLORES = {
     "Medición": QColor(100, 181, 246),      # Azul claro
     "Fabricación": QColor(255, 202, 40),    # Amarillo
