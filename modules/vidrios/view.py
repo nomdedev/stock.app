@@ -9,6 +9,7 @@ import tempfile
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from core.table_responsive_mixin import TableResponsiveMixin
+from core.ui_components import estilizar_boton_icono
 
 class VidriosView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default"):
@@ -64,14 +65,14 @@ class VidriosView(QWidget, TableResponsiveMixin):
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
-        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setIconSize(QSize(20, 20))
         self.boton_agregar.setToolTip("Agregar vidrio")
         self.boton_agregar.setText("")
         self.boton_agregar.setFixedSize(48, 48)
         self.boton_agregar.setStyleSheet("")
         self.boton_buscar = QPushButton()
         self.boton_buscar.setIcon(QIcon("img/search_icon.svg"))
-        self.boton_buscar.setIconSize(QSize(24, 24))
+        self.boton_buscar.setIconSize(QSize(20, 20))
         self.boton_buscar.setToolTip("Buscar vidrio")
         self.boton_buscar.setText("")
         self.boton_buscar.setFixedSize(48, 48)
@@ -83,6 +84,9 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.boton_exportar_excel.setText("")
         self.boton_exportar_excel.setFixedSize(48, 48)
         self.boton_exportar_excel.setStyleSheet("")
+        estilizar_boton_icono(self.boton_agregar)
+        estilizar_boton_icono(self.boton_buscar)
+        estilizar_boton_icono(self.boton_exportar_excel)
         botones_layout.addWidget(self.boton_agregar)
         botones_layout.addWidget(self.boton_buscar)
         botones_layout.addWidget(self.boton_exportar_excel)

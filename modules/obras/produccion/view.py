@@ -9,6 +9,7 @@ from PyQt6.QtPrintSupport import QPrinter
 from functools import partial
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from core.ui_components import estilizar_boton_icono
 
 class ProduccionView(QWidget):
     def __init__(self):
@@ -91,7 +92,7 @@ class ProduccionView(QWidget):
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("img/add-etapa.svg"))
-        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setIconSize(QSize(20, 20))
         self.boton_agregar.setToolTip("Agregar producción")
         self.boton_agregar.setText("")
         self.boton_agregar.setFixedSize(48, 48)
@@ -102,6 +103,7 @@ class ProduccionView(QWidget):
         sombra.setYOffset(4)
         sombra.setColor(QColor(0, 0, 0, 50))
         self.boton_agregar.setGraphicsEffect(sombra)
+        estilizar_boton_icono(self.boton_agregar)
         botones_layout.addWidget(self.boton_agregar)
 
         # Botón Ver Detalles
@@ -118,6 +120,7 @@ class ProduccionView(QWidget):
         sombra_detalles.setYOffset(4)
         sombra_detalles.setColor(QColor(0, 0, 0, 50))
         self.boton_ver_detalles.setGraphicsEffect(sombra_detalles)
+        estilizar_boton_icono(self.boton_ver_detalles)
         botones_layout.addWidget(self.boton_ver_detalles)
 
         # Botón Finalizar Etapa
@@ -134,6 +137,7 @@ class ProduccionView(QWidget):
         sombra_finalizar.setYOffset(4)
         sombra_finalizar.setColor(QColor(0, 0, 0, 50))
         self.boton_finalizar_etapa.setGraphicsEffect(sombra_finalizar)
+        estilizar_boton_icono(self.boton_finalizar_etapa)
         botones_layout.addWidget(self.boton_finalizar_etapa)
 
         self.boton_agregar.clicked.connect(self.accion_agregar_produccion)

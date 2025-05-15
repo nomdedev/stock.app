@@ -11,14 +11,22 @@ import tempfile
 from core.table_responsive_mixin import TableResponsiveMixin
 
 class UsuariosView(QWidget, TableResponsiveMixin):
-    def __init__(self, usuario_actual="default"):
+    def __init__(self, usuario_actual="default", controller=None):
         super().__init__()
         self.usuario_actual = usuario_actual
+        self.controller = controller  # Permite inyectar lógica de negocio/mock para testeo
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.setSpacing(20)
 
-        # Cargar el stylesheet visual moderno para Usuarios según el tema activo
+        self._cargar_stylesheet()
+        self._init_tabs()
+        self._init_tab_usuarios()
+        self._init_tab_permisos()
+        self.setLayout(self.layout)
+
+    def _cargar_stylesheet(self):
+        """Carga el stylesheet visual moderno para Usuarios según el tema activo."""
         try:
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
@@ -29,7 +37,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         except Exception as e:
             print(f"No se pudo cargar el archivo de estilos: {e}")
 
-        # Tabs principales
+    def _init_tabs(self):
         self.tabs = QTabWidget()
         self.tab_usuarios = QWidget()
         self.tab_permisos = QWidget()
@@ -37,12 +45,12 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.tabs.addTab(self.tab_permisos, "Permisos de módulos")
         self.layout.addWidget(self.tabs)
 
-        # --- Tab Usuarios ---
+    def _init_tab_usuarios(self):
         tab_usuarios_layout = QVBoxLayout(self.tab_usuarios)
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("img/agregar-user.svg"))
-        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setIconSize(QSize(20, 20))
         self.boton_agregar.setToolTip("Agregar usuario")
         self.boton_agregar.setText("")
         self.boton_agregar.setFixedSize(48, 48)
@@ -58,7 +66,6 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.tabla_usuarios = QTableWidget()
         self.make_table_responsive(self.tabla_usuarios)
         tab_usuarios_layout.addWidget(self.tabla_usuarios)
-
         # Configuración de columnas
         self.config_path = f"config_usuarios_columns_{self.usuario_actual}.json"
         self.usuarios_headers = self.obtener_headers_desde_db("usuarios") or self.obtener_headers_fallback()
@@ -71,7 +78,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         header.sectionClicked.connect(self.mostrar_menu_columnas_header)
         self.tabla_usuarios.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
 
-        # --- Tab Permisos (solo admin) ---
+    def _init_tab_permisos(self):
         tab_permisos_layout = QVBoxLayout(self.tab_permisos)
         self.label_permisos = QLabel("Asignar módulos permitidos a usuarios normales:")
         tab_permisos_layout.addWidget(self.label_permisos)
@@ -83,10 +90,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.boton_guardar_permisos = QPushButton("Guardar permisos")
         tab_permisos_layout.addWidget(self.boton_guardar_permisos)
 
-        self.setLayout(self.layout)
-
     def mostrar_tab_permisos(self, visible):
-        # Muestra u oculta la pestaña de permisos según el rol
         idx = self.tabs.indexOf(self.tab_permisos)
         if visible and idx == -1:
             self.tabs.addTab(self.tab_permisos, "Permisos de módulos")
@@ -99,19 +103,24 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         return None
 
     def obtener_headers_fallback(self):
-        # Fallback si no hay conexión a DB
         return ["id", "usuario", "nombre", "rol", "email", "estado"]
 
     def cargar_config_columnas(self):
-        if os.path.exists(self.config_path):
-            with open(self.config_path, "r", encoding="utf-8") as f:
-                return json.load(f)
+        try:
+            if os.path.exists(self.config_path):
+                with open(self.config_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+        except Exception as e:
+            print(f"Error cargando configuración de columnas: {e}")
         return {header: True for header in self.usuarios_headers}
 
     def guardar_config_columnas(self):
-        with open(self.config_path, "w", encoding="utf-8") as f:
-            json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
-        QMessageBox.information(self, "Configuración guardada", "La configuración de columnas se ha guardado correctamente.")
+        try:
+            with open(self.config_path, "w", encoding="utf-8") as f:
+                json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
+            QMessageBox.information(self, "Configuración guardada", "La configuración de columnas se ha guardado correctamente.")
+        except Exception as e:
+            QMessageBox.warning(self, "Error", f"No se pudo guardar la configuración: {e}")
 
     def aplicar_columnas_visibles(self):
         for idx, header in enumerate(self.usuarios_headers):

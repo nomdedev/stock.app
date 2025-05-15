@@ -59,6 +59,7 @@ class InventarioController:
         self.view.generar_qr_signal.connect(self.asociar_qr_a_perfil)
         self.view.actualizar_signal.connect(self.actualizar_inventario)
         self.view.ajustar_stock_signal.connect(self.ajustar_stock)
+        self.view.reservar_signal.connect(self.abrir_reserva_lote_perfiles)
 
         self.actualizar_inventario()
         self.cargar_productos()
@@ -87,23 +88,62 @@ class InventarioController:
 
     @permiso_auditoria_inventario('editar')
     def agregar_item(self):
+        # Validación de permisos
+        if not self.usuarios_model.tiene_permiso(self.usuario_actual, 'inventario', 'editar'):
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje("No tiene permiso para realizar esta acción.")
+            else:
+                self.view.label.setText("No tiene permiso para realizar esta acción.")
+            return
         try:
             datos = self.view.abrir_formulario_nuevo_item()
-            if not datos or not all(datos.values()):
-                QMessageBox.warning(self.view, "Error", "Todos los campos son obligatorios para agregar un ítem.")
+            campos_obligatorios = ["codigo", "nombre", "tipo_material", "unidad", "stock_actual", "stock_minimo", "ubicacion", "descripcion"]
+            if not datos or not all(datos.get(campo) for campo in campos_obligatorios):
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje("Todos los campos son obligatorios para agregar un ítem.")
+                else:
+                    self.view.label.setText("Todos los campos son obligatorios para agregar un ítem.")
                 return
             codigo = datos.get("codigo")
-            if not codigo:
-                QMessageBox.warning(self.view, "Error", "El código del ítem es obligatorio.")
+            if not isinstance(codigo, str) or not codigo.strip():
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje("El código del ítem es obligatorio y debe ser texto.")
+                else:
+                    self.view.label.setText("El código del ítem es obligatorio y debe ser texto.")
                 return
             if self.model.obtener_item_por_codigo(codigo):
-                QMessageBox.warning(self.view, "Error", "Ya existe un ítem con el mismo código.")
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje("Ya existe un ítem con ese código.")
+                else:
+                    self.view.label.setText("Ya existe un ítem con el mismo código.")
                 return
-            self.model.agregar_item(datos)
+            try:
+                self.model.agregar_item(tuple(datos.get(campo, None) for campo in ["codigo", "nombre", "tipo_material", "unidad", "stock_actual", "stock_minimo", "ubicacion", "descripcion", "qr", "imagen_referencia"]))
+            except Exception as e:
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(f"Error al agregar ítem en la base de datos: {e}")
+                else:
+                    self.view.label.setText(f"Error al agregar ítem en la base de datos: {e}")
+                self.auditoria_model.registrar_evento("inventario", "error", f"Error al agregar ítem: {e}", self.usuario_actual.get("ip", ""))
+                return
+            try:
+                item_row = self.model.obtener_item_por_codigo(codigo)
+                if item_row:
+                    self.model.registrar_movimiento((item_row[0][0], "alta", datos["stock_actual"], self.usuario_actual["nombre"], "Alta inicial de ítem", None))
+            except Exception as e:
+                self.auditoria_model.registrar_evento("inventario", "error", f"Error al registrar movimiento de alta: {e}", self.usuario_actual.get("ip", ""))
+            self.auditoria_model.registrar_evento("inventario", "alta", f"Ítem agregado: {codigo}", self.usuario_actual.get("ip", ""))
             self.actualizar_inventario()
-            self.mostrar_mensaje_confirmacion()
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Ítem '{codigo}' agregado correctamente.")
+            else:
+                self.view.label.setText(f"Ítem '{codigo}' agregado correctamente.")
         except Exception as e:
-            QMessageBox.critical(self.view, "Error", f"Error al agregar ítem: {e}")
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error al agregar ítem: {e}")
+            else:
+                self.view.label.setText(f"Error al agregar ítem: {e}")
+            self.auditoria_model.registrar_evento("inventario", "error", f"Error al agregar ítem: {e}", self.usuario_actual.get("ip", ""))
 
     @permiso_auditoria_inventario('ver')
     def ver_movimientos(self):
@@ -122,34 +162,74 @@ class InventarioController:
     def reservar_item(self):
         try:
             dialog = QDialog(self.view)
-            dialog.setWindowTitle("Reservar Ítem")
-
+            dialog.setWindowTitle("Reservar material para obra")
             layout = QVBoxLayout()
-
             form_layout = QFormLayout()
             obra_input = QLineEdit()
+            id_item_input = QLineEdit()
             cantidad_input = QLineEdit()
-
-            form_layout.addRow("Obra:", obra_input)
-            form_layout.addRow("Cantidad:", cantidad_input)
-
+            codigo_reserva_input = QLineEdit()
+            form_layout.addRow("Obra (ID o nombre):", obra_input)
+            form_layout.addRow("ID de material:", id_item_input)
+            form_layout.addRow("Cantidad a reservar:", cantidad_input)
+            form_layout.addRow("Código de reserva único:", codigo_reserva_input)
             layout.addLayout(form_layout)
-
             botones_layout = QHBoxLayout()
             reservar_button = QPushButton("Reservar")
             cancelar_button = QPushButton("Cancelar")
             botones_layout.addWidget(reservar_button)
             botones_layout.addWidget(cancelar_button)
-
             layout.addLayout(botones_layout)
             dialog.setLayout(layout)
-
-            reservar_button.clicked.connect(lambda: self.procesar_reserva(dialog, obra_input.text(), cantidad_input.text()))
+            def on_reservar():
+                obra = obra_input.text().strip()
+                id_item = id_item_input.text().strip()
+                cantidad = cantidad_input.text().strip()
+                codigo_reserva = codigo_reserva_input.text().strip()
+                if not (obra and id_item and cantidad and codigo_reserva):
+                    self.view.mostrar_mensaje("Complete todos los campos para reservar.")
+                    return
+                try:
+                    cantidad_int = int(cantidad)
+                    if cantidad_int <= 0:
+                        self.view.mostrar_mensaje("La cantidad debe ser mayor a cero.")
+                        return
+                except Exception:
+                    self.view.mostrar_mensaje("Ingrese un número válido para la cantidad.")
+                    return
+                item_row = self.model.obtener_item_por_codigo(id_item) if not id_item.isdigit() else self.model.db.ejecutar_query("SELECT * FROM inventario_perfiles WHERE id = ?", (id_item,))
+                if not item_row:
+                    self.view.mostrar_mensaje("No se encontró el material especificado.")
+                    return
+                stock_actual = item_row[0][5] if len(item_row[0]) > 5 else None
+                if stock_actual is None or int(stock_actual) < cantidad_int:
+                    self.view.mostrar_mensaje("Stock insuficiente para reservar la cantidad solicitada.")
+                    return
+                reservas_existentes = self.model.db.ejecutar_query(
+                    "SELECT COUNT(*) FROM reservas_materiales WHERE (codigo_reserva = ? OR (referencia_obra = ? AND id_item = ?)) AND estado = 'activa'",
+                    (codigo_reserva, obra, id_item)
+                )
+                if reservas_existentes and reservas_existentes[0][0] > 0:
+                    self.view.mostrar_mensaje("Ya existe una reserva activa para este material y obra, o el código ya está en uso.")
+                    return
+                try:
+                    self.model.db.ejecutar_query(
+                        "INSERT INTO reservas_materiales (id_item, cantidad_reservada, referencia_obra, estado, codigo_reserva) VALUES (?, ?, ?, ?, ?)",
+                        (id_item, cantidad_int, obra, 'activa', codigo_reserva)
+                    )
+                except Exception as e:
+                    self.view.mostrar_mensaje(f"Error al registrar la reserva: {e}")
+                    self.auditoria_model.registrar_evento(self.usuario_actual, 'inventario', f'error reserva material {id_item} para obra {obra} (código: {codigo_reserva}): {e}')
+                    return
+                self.auditoria_model.registrar_evento(self.usuario_actual, 'inventario', f'reserva material {id_item} para obra {obra} (código: {codigo_reserva})')
+                self.actualizar_inventario()
+                self.view.mostrar_mensaje(f"Reserva realizada correctamente para obra {obra}.")
+                dialog.accept()
+            reservar_button.clicked.connect(on_reservar)
             cancelar_button.clicked.connect(dialog.reject)
-
             dialog.exec()
         except Exception as e:
-            QMessageBox.critical(self.view, "Error", f"Error al abrir la ventana de reserva: {e}")
+            self.view.mostrar_mensaje(f"Error al abrir la ventana de reserva: {e}")
 
     @permiso_auditoria_inventario('editar')
     def ajustar_stock(self):
@@ -160,17 +240,18 @@ class InventarioController:
                 for ajuste in datos_ajuste:
                     codigo = ajuste["codigo"]
                     cantidad = ajuste["cantidad"]
-
                     if not codigo or cantidad is None:
-                        QMessageBox.warning(self.view, "Error", "Datos incompletos en el ajuste de stock.")
+                        self.view.label.setText("Datos incompletos en el ajuste de stock.")
                         continue
-
-                    self.model.ajustar_stock(codigo, cantidad)
-
+                    try:
+                        self.model.ajustar_stock(codigo, cantidad)
+                        self.view.label.setText(f"Stock ajustado para {codigo} (+{cantidad}).")
+                    except Exception as e:
+                        self.view.label.setText(f"Error al ajustar stock de {codigo}: {e}")
+                        self.auditoria_model.registrar_evento("inventario", "error", f"Error al ajustar stock: {e}", self.usuario_actual.get("ip", ""))
                 self.actualizar_inventario()
-                self.mostrar_mensaje_confirmacion()
         except Exception as e:
-            QMessageBox.critical(self.view, "Error", f"Error al ajustar el stock: {e}")
+            self.view.label.setText(f"Error al ajustar el stock: {e}")
 
     @permiso_auditoria_inventario('ver')
     def buscar_item(self):
@@ -255,3 +336,25 @@ class InventarioController:
 
     def mostrar_mensaje_confirmacion(self):
         QMessageBox.information(self.view, "Inventario actualizado", "La tabla de inventario se ha actualizado correctamente.")
+
+    def abrir_reserva_lote_perfiles(self):
+        self.view.abrir_reserva_lote_perfiles()
+
+    def mostrar_feedback_entrega(self, exito, mensaje):
+        if exito:
+            self.view.label.setText(f"Entrega realizada correctamente: {mensaje}")
+        else:
+            self.view.label.setText(f"Error en la entrega: {mensaje}")
+
+    @permiso_auditoria_inventario('editar')
+    def transformar_reserva_en_entrega(self, id_reserva):
+        try:
+            resultado = self.model.transformar_reserva_en_entrega(id_reserva)
+            if resultado is True:
+                self.view.mostrar_mensaje("Entrega realizada correctamente.")
+            elif resultado is False:
+                self.view.mostrar_mensaje("Stock insuficiente para entregar la cantidad solicitada.")
+            else:
+                self.view.mostrar_mensaje("No se pudo entregar la reserva (verifique el estado o los datos).")
+        except Exception as e:
+            self.view.mostrar_mensaje(f"Error al entregar reserva: {e}")

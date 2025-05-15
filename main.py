@@ -1,3 +1,9 @@
+import os
+# Refuerzo para evitar errores de OpenGL/Skia/Chromium en Windows
+os.environ['QT_OPENGL'] = 'software'
+os.environ['QT_QUICK_BACKEND'] = 'software'
+os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--disable-gpu --disable-software-rasterizer'
+
 from PyQt6 import QtWidgets, QtGui, QtCore
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, 
@@ -11,6 +17,9 @@ from functools import partial
 import ctypes
 import sys, os
 
+# Forzar aceleración por software de Qt/OpenGL
+os.environ['QT_OPENGL'] = 'software'
+
 # Configurar el path para importar módulos locales
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -18,6 +27,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from core.logger import Logger
 from core.database import DatabaseConnection, InventarioDatabaseConnection
 from core.startup_update_checker import check_and_update_critical_packages
+from core.splash_screen import SplashScreen
 
 # Verificar y actualizar paquetes críticos antes de continuar
 check_and_update_critical_packages()
@@ -83,6 +93,44 @@ class MainWindow(QMainWindow):
         self.usuario_label.setText("")
         self.statusBar().addPermanentWidget(self.usuario_label, 1)
 
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+        """Muestra un mensaje visual en la barra de estado y, si es error, también un QMessageBox."""
+        colores = {
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "advertencia": "#fbbf24",
+            "error": "#ef4444"
+        }
+        color = colores.get(tipo, "#2563eb")
+        # Fondo sutil y texto destacado para feedback moderno
+        self.statusBar().setStyleSheet(f"background: #f1f5f9; color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 4px 12px;")
+        self.statusBar().showMessage(mensaje, duracion)
+        if tipo == "error":
+            QMessageBox.critical(self, "Error", mensaje)
+        elif tipo == "advertencia":
+            QMessageBox.warning(self, "Advertencia", mensaje)
+        elif tipo == "exito":
+            QMessageBox.information(self, "Éxito", mensaje)
+
+    def actualizar_usuario_label(self, usuario):
+        """Actualiza el label de usuario actual con color según el rol y estilo moderno."""
+        rol = usuario.get('rol', '').lower()
+        colores = {
+            'admin': '#2563eb',
+            'supervisor': '#fbbf24',
+            'usuario': '#22c55e'
+        }
+        color = colores.get(rol, '#1e293b')
+        # Fondo sutil, borde y color de texto por rol, consistente con feedback
+        self.usuario_label.setStyleSheet(
+            f"background: #e0e7ef; color: {color}; font-size: 13px; font-weight: bold; border-radius: 8px; padding: 4px 12px; margin-right: 8px; border: 1.5px solid {color};"
+        )
+        self.usuario_label.setText(f"Usuario: {usuario['username']} ({usuario['rol']})")
+
+    def on_modulo_cambiado(self, index):
+        nombre_modulo = self.sidebar.sections[index][0] if index < len(self.sidebar.sections) else ""
+        self.mostrar_mensaje(f"Módulo activo: {nombre_modulo}", tipo="info", duracion=2500)
+
     def initUI(self):
         # Crear conexiones persistentes a las bases de datos (una sola instancia por base)
         self.db_connection_inventario = DatabaseConnection()
@@ -118,7 +166,7 @@ class MainWindow(QMainWindow):
 
         self.obras_view = ObrasView()
         self.obras_controller = ObrasController(
-            model=self.obras_model, view=self.obras_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
+            model=self.obras_model, view=self.obras_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model, logistica_controller=None  # Se setea después
         )
 
         self.produccion_view = ProduccionView()
@@ -130,6 +178,8 @@ class MainWindow(QMainWindow):
         self.logistica_controller = LogisticaController(
             model=self.logistica_model, view=self.logistica_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
         )
+        # Enlazar referencia cruzada para sincronización
+        self.obras_controller.logistica_controller = self.logistica_controller
 
         # Inicializar el módulo Pedidos dentro de Compras
         self.compras_pedidos_view = ComprasPedidosView()
@@ -259,6 +309,7 @@ class MainWindow(QMainWindow):
         ]
         self.sidebar = Sidebar("utils", sidebar_sections, mostrar_nombres=True)
         self.sidebar.pageChanged.connect(self.module_stack.setCurrentIndex)
+        self.sidebar.pageChanged.connect(self.on_modulo_cambiado)
         main_layout.addWidget(self.sidebar)
         main_layout.addWidget(self.module_stack)
         self._ajustar_sidebar()
@@ -343,8 +394,8 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'herrajes_controller'):
             self.herrajes_controller.usuario_actual = usuario_admin
         # Mostrar el usuario actual de forma visualmente destacado en la barra de estado
-        self.usuario_label.setText(f"Usuario: {usuario_admin['username']} ({usuario_admin['rol']})")
-        self.statusBar().showMessage(f"Usuario actual: {usuario_admin['username']} ({usuario_admin['rol']})")
+        self.actualizar_usuario_label(usuario_admin)
+        self.mostrar_mensaje(f"Usuario actual: {usuario_admin['username']} ({usuario_admin['rol']})", tipo="info", duracion=4000)
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -365,6 +416,11 @@ if __name__ == "__main__":
     # Aplicar el stylesheet neumórfico global
     with open("mps/ui/assets/stylesheet.qss", "r", encoding="utf-8") as f:
         app.setStyleSheet(f.read())
-    main_window = MainWindow()
-    main_window.show()
+    
+    def start_main_window():
+        main_window = MainWindow()
+        main_window.show()
+    
+    splash = SplashScreen(message="Cargando módulos y base de datos...", duration=2200)
+    splash.show_and_finish(start_main_window)
     sys.exit(app.exec())

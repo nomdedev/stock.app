@@ -9,6 +9,7 @@ import tempfile
 import qrcode
 from functools import partial
 from core.table_responsive_mixin import TableResponsiveMixin
+from core.ui_components import estilizar_boton_icono
 
 class AuditoriaView(QWidget, TableResponsiveMixin):
     def __init__(self):
@@ -43,6 +44,7 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
         sombra.setYOffset(4)
         sombra.setColor(QColor(0, 0, 0, 160))
         self.boton_ver_logs.setGraphicsEffect(sombra)
+        estilizar_boton_icono(self.boton_ver_logs)
         botones_layout.addWidget(self.boton_ver_logs)
         botones_layout.addStretch()
         self.layout.addLayout(botones_layout)

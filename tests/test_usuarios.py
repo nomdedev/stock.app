@@ -48,36 +48,27 @@ class TestUsuariosModel(unittest.TestCase):
         self.usuarios_model = UsuariosModel(self.mock_db)
 
     def test_crear_usuario(self):
-        try:
-            # Probar creación de un usuario utilizando el método correcto
-            datos = ("Juan", "Pérez", "juan.perez@example.com", "juan", "hash", "admin")
-            self.usuarios_model.agregar_usuario(datos)
-            self.assertIn("INSERT INTO usuarios (nombre, apellido, email, usuario, password_hash, rol, estado)", self.mock_db.last_query)
-            self.assertEqual(self.mock_db.last_params, datos)
-        except Exception as e:
-            self.fail(f"Error en test_crear_usuario: {e}")
+        # Probar creación de un usuario utilizando el método correcto
+        datos = ("Juan", "Pérez", "juan.perez@example.com", "juan", "hash", "admin")
+        self.usuarios_model.agregar_usuario(datos)
+        self.assertIn("INSERT INTO usuarios (nombre, apellido, email, usuario, password_hash, rol, estado)", self.mock_db.last_query)
+        self.assertEqual(self.mock_db.last_params, datos)
 
     def test_actualizar_estado_usuario(self):
-        try:
-            # Probar actualización del estado de un usuario
-            self.usuarios_model.actualizar_estado_usuario(1, "suspendido")
-            self.assertEqual(self.mock_db.last_query, "UPDATE usuarios SET estado = ? WHERE id = ?")
-            self.assertEqual(self.mock_db.last_params, ("suspendido", 1))
-        except Exception as e:
-            self.fail(f"Error en test_actualizar_estado_usuario: {e}")
+        # Probar actualización del estado de un usuario
+        self.usuarios_model.actualizar_estado_usuario(1, "suspendido")
+        self.assertEqual(self.mock_db.last_query, "UPDATE usuarios SET estado = ? WHERE id = ?")
+        self.assertEqual(self.mock_db.last_params, ("suspendido", 1))
 
     def test_obtener_usuarios_activos(self):
-        try:
-            # Probar obtención de usuarios activos
-            self.mock_db.set_query_result([
-                (1, "Juan", "Pérez", "juan.perez@example.com", "admin", "activo"),
-                (2, "Ana", "Gómez", "ana.gomez@example.com", "compras", "activo")
-            ])
-            usuarios = self.usuarios_model.obtener_usuarios_activos()
-            self.assertEqual(len(usuarios), 2)
-            self.assertEqual(usuarios[0][1], "Juan")
-        except Exception as e:
-            self.fail(f"Error en test_obtener_usuarios_activos: {e}")
+        # Probar obtención de usuarios activos
+        self.mock_db.set_query_result([
+            (1, "Juan", "Pérez", "juan.perez@example.com", "admin", "activo"),
+            (2, "Ana", "Gómez", "ana.gomez@example.com", "compras", "activo")
+        ])
+        usuarios = self.usuarios_model.obtener_usuarios_activos()
+        self.assertEqual(len(usuarios), 2)
+        self.assertEqual(usuarios[0][1], "Juan")
 
     def test_obtener_modulos_permitidos(self):
         # Caso admin: debe devolver todos los módulos

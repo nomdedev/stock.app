@@ -8,6 +8,7 @@ import pandas as pd
 from functools import partial
 from modules.vidrios.view import VidriosView
 from core.table_responsive_mixin import TableResponsiveMixin
+from core.ui_components import estilizar_boton_icono
 
 class InventarioView(QWidget, TableResponsiveMixin):
     # Señales para acciones principales
@@ -52,8 +53,25 @@ class InventarioView(QWidget, TableResponsiveMixin):
             btn.setToolTip(tooltip)
             btn.setText("")
             btn.clicked.connect(signal.emit)
+            estilizar_boton_icono(btn)
             top_btns_layout.addWidget(btn)
         self.layout.addLayout(top_btns_layout)  # Cambiar insertLayout por addLayout para asegurar el orden
+
+        # Botón para ver obras pendientes de este material
+        self.btn_ver_obras_pendientes = QPushButton("Ver obras pendientes de este material")
+        self.btn_ver_obras_pendientes.setIcon(QIcon("img/viewdetails.svg"))
+        self.btn_ver_obras_pendientes.setIconSize(QSize(20, 20))
+        self.btn_ver_obras_pendientes.setToolTip("Mostrar obras a las que les falta este material")
+        self.btn_ver_obras_pendientes.clicked.connect(self.ver_obras_pendientes_material)
+        self.layout.addWidget(self.btn_ver_obras_pendientes)
+
+        # Botón para abrir reserva avanzada por lote
+        self.btn_reserva_lote = QPushButton("Reserva avanzada por lote")
+        self.btn_reserva_lote.setIcon(QIcon("img/batchreserve.svg"))
+        self.btn_reserva_lote.setIconSize(QSize(20, 20))
+        self.btn_reserva_lote.setToolTip("Abrir ventana de reserva avanzada por lote")
+        self.btn_reserva_lote.clicked.connect(self.abrir_reserva_lote_perfiles)
+        self.layout.addWidget(self.btn_reserva_lote)
 
         # Obtener headers desde la base de datos
         self.inventario_headers = self.obtener_headers_desde_db("inventario_perfiles")
@@ -75,6 +93,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.tabla_inventario.horizontalHeader().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tabla_inventario.horizontalHeader().customContextMenuRequested.connect(self.mostrar_menu_header)
         self.tabla_inventario.horizontalHeader().sectionClicked.connect(self.mostrar_menu_columnas_header)
+        self.tabla_inventario.cellClicked.connect(self.toggle_expandir_fila)
+        self.filas_expandidas = set()
         self.layout.addWidget(self.tabla_inventario)
 
         self.layout.addStretch()  # Asegura que la tabla se vea correctamente
@@ -203,3 +223,220 @@ class InventarioView(QWidget, TableResponsiveMixin):
         pos = header.sectionPosition(idx)
         global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
         self.mostrar_menu_columnas(global_pos)
+
+    def ver_obras_pendientes_material(self):
+        id_item = self.obtener_id_item_seleccionado()
+        if not id_item:
+            QMessageBox.warning(self, "Sin selección", "Seleccione un material en la tabla.")
+            return
+        # Buscar reservas activas o pendientes para este material
+        try:
+            # Conexión directa a la base (usa el mismo método que cargar_headers)
+            query = "SELECT referencia_obra, cantidad_reservada, estado, codigo_reserva FROM reservas_materiales WHERE id_item = ? AND estado IN ('activa', 'pendiente')"
+            connection_string = (
+                f"DRIVER={{{self.db_connection.driver}}};"
+                f"SERVER=localhost\\SQLEXPRESS;"
+                f"DATABASE={self.db_connection.database};"
+                f"UID={self.db_connection.username};"
+                f"PWD={self.db_connection.password};"
+                f"TrustServerCertificate=yes;"
+            )
+            with pyodbc.connect(connection_string, timeout=10) as conn:
+                cursor = conn.cursor()
+                cursor.execute(query, (id_item,))
+                reservas = cursor.fetchall()
+                columnas = [column[0] for column in cursor.description]
+                reservas = [dict(zip(columnas, row)) for row in reservas]
+            if not reservas:
+                QMessageBox.information(self, "Sin reservas", "No hay obras pendientes para este material.")
+                return
+            # Mostrar en ventana modal
+            dialog = QDialog(self)
+            dialog.setWindowTitle("Obras pendientes de este material")
+            layout = QVBoxLayout(dialog)
+            for r in reservas:
+                obra = r.get("referencia_obra", "")
+                cantidad = r.get("cantidad_reservada", "")
+                estado = r.get("estado", "")
+                codigo = r.get("codigo_reserva", "")
+                label = QLabel(f"Obra: <b>{obra}</b> | Cantidad: <b>{cantidad}</b> | Estado: <b>{estado}</b> | Código: <b>{codigo}</b>")
+                layout.addWidget(label)
+            btn_cerrar = QPushButton("Cerrar")
+            btn_cerrar.clicked.connect(dialog.accept)
+            layout.addWidget(btn_cerrar)
+            dialog.setLayout(layout)
+            dialog.exec()
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Error al consultar reservas: {e}")
+
+    def toggle_expandir_fila(self, row, col):
+        id_item = self.tabla_inventario.item(row, 0).text()
+        if (row, id_item) in self.filas_expandidas:
+            self.colapsar_fila(row)
+            self.filas_expandidas.remove((row, id_item))
+        else:
+            self.expandir_fila(row, id_item)
+            self.filas_expandidas.add((row, id_item))
+
+    def expandir_fila(self, row, id_item):
+        # Consultar reservas activas/pendientes para este material
+        try:
+            query = "SELECT referencia_obra, cantidad_reservada, estado, codigo_reserva FROM reservas_materiales WHERE id_item = ? AND estado IN ('activa', 'pendiente')"
+            connection_string = (
+                f"DRIVER={{{self.db_connection.driver}}};"
+                f"SERVER=localhost\\SQLEXPRESS;"
+                f"DATABASE={self.db_connection.database};"
+                f"UID={self.db_connection.username};"
+                f"PWD={self.db_connection.password};"
+                f"TrustServerCertificate=yes;"
+            )
+            with pyodbc.connect(connection_string, timeout=10) as conn:
+                cursor = conn.cursor()
+                cursor.execute(query, (id_item,))
+                reservas = cursor.fetchall()
+                columnas = [column[0] for column in cursor.description]
+                reservas = [dict(zip(columnas, row)) for row in reservas]
+            if not reservas:
+                return
+            # Insertar filas debajo de la seleccionada
+            insert_at = row + 1
+            for r in reservas:
+                self.tabla_inventario.insertRow(insert_at)
+                self.tabla_inventario.setSpan(insert_at, 0, 1, self.tabla_inventario.columnCount())
+                obra = r.get("referencia_obra", "")
+                cantidad = r.get("cantidad_reservada", "")
+                estado = r.get("estado", "")
+                codigo = r.get("codigo_reserva", "")
+                label = QLabel(f"<b>Obra:</b> {obra} | <b>Cantidad:</b> {cantidad} | <b>Estado:</b> {estado} | <b>Código:</b> {codigo}")
+                label.setStyleSheet("background:#f1f5f9; color:#222; padding:6px; border-radius:8px; font-size:13px;")
+                self.tabla_inventario.setCellWidget(insert_at, 0, label)
+                insert_at += 1
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Error al consultar reservas: {e}")
+
+    def colapsar_fila(self, row):
+        # Elimina todas las filas expandidas debajo de la fila seleccionada
+        while self.tabla_inventario.rowCount() > row + 1:
+            widget = self.tabla_inventario.cellWidget(row + 1, 0)
+            if widget:
+                self.tabla_inventario.removeRow(row + 1)
+            else:
+                break
+
+    def abrir_pedido_material_obra(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Pedido de material por obra")
+        dialog.setMinimumSize(800, 600)
+        layout = QVBoxLayout()
+        form_layout = QFormLayout()
+        codigo_proveedor_input = QLineEdit()
+        form_layout.addRow("Código de proveedor:", codigo_proveedor_input)
+        layout.addLayout(form_layout)
+        tabla_perfiles = QTableWidget()
+        tabla_perfiles.setColumnCount(5)
+        tabla_perfiles.setHorizontalHeaderLabels([
+            "Código", "Descripción", "Stock", "Cantidad a pedir", "Faltan"
+        ])
+        tabla_perfiles.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        layout.addWidget(tabla_perfiles)
+        btn_buscar = QPushButton()
+        btn_buscar.setIcon(QIcon("img/search_icon.svg"))
+        btn_buscar.setToolTip("Buscar perfiles")
+        estilizar_boton_icono(btn_buscar)
+        btn_reservar = QPushButton()
+        btn_reservar.setIcon(QIcon("img/add-material.svg"))
+        btn_reservar.setToolTip("Pedir material seleccionado")
+        estilizar_boton_icono(btn_reservar)
+        btn_cancelar = QPushButton()
+        btn_cancelar.setIcon(QIcon("img/close.svg"))
+        btn_cancelar.setToolTip("Cancelar")
+        estilizar_boton_icono(btn_cancelar)
+        btns = QHBoxLayout()
+        btns.addStretch()
+        btns.addWidget(btn_buscar)
+        btns.addWidget(btn_reservar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        dialog.setLayout(layout)
+        perfiles_encontrados = []
+        def buscar_perfiles():
+            codigo = codigo_proveedor_input.text().strip()
+            if not codigo:
+                QMessageBox.warning(dialog, "Falta código", "Ingrese un código de proveedor.")
+                return
+            query = "SELECT id, codigo, descripcion, stock_actual FROM inventario_perfiles WHERE codigo LIKE ?"
+            connection_string = (
+                f"DRIVER={{{self.db_connection.driver}}};"
+                f"SERVER=localhost\\SQLEXPRESS;"
+                f"DATABASE={self.db_connection.database};"
+                f"UID={self.db_connection.username};"
+                f"PWD={self.db_connection.password};"
+                f"TrustServerCertificate=yes;"
+            )
+            import pyodbc
+            with pyodbc.connect(connection_string, timeout=10) as conn:
+                cursor = conn.cursor()
+                cursor.execute(query, (f"%{codigo}%",))
+                perfiles = cursor.fetchall()
+                perfiles_encontrados.clear()
+                tabla_perfiles.setRowCount(0)
+                for i, row in enumerate(perfiles):
+                    id_item, cod, desc, stock = row
+                    tabla_perfiles.insertRow(i)
+                    tabla_perfiles.setItem(i, 0, QTableWidgetItem(str(cod)))
+                    tabla_perfiles.setItem(i, 1, QTableWidgetItem(str(desc)))
+                    tabla_perfiles.setItem(i, 2, QTableWidgetItem(str(stock)))
+                    cantidad_pedir = QLineEdit()
+                    faltan_label = QLabel("0")
+                    tabla_perfiles.setCellWidget(i, 3, cantidad_pedir)
+                    tabla_perfiles.setCellWidget(i, 4, faltan_label)
+                    perfiles_encontrados.append({"id": id_item, "codigo": cod, "desc": desc, "stock": stock, "input": cantidad_pedir, "faltan": faltan_label})
+                    def actualizar_faltan(idx=i):
+                        try:
+                            val = int(perfiles_encontrados[idx]["input"].text())
+                        except Exception:
+                            val = 0
+                        faltan = max(0, val - int(perfiles_encontrados[idx]["stock"]))
+                        perfiles_encontrados[idx]["faltan"].setText(str(faltan))
+                    cantidad_pedir.textChanged.connect(actualizar_faltan)
+        def pedir_lote():
+            pedidos = []
+            for perfil in perfiles_encontrados:
+                try:
+                    cantidad = int(perfil["input"].text())
+                except Exception:
+                    cantidad = 0
+                if cantidad <= 0:
+                    continue
+                stock = int(perfil["stock"])
+                a_pedir = min(cantidad, stock)
+                faltan = max(0, cantidad - stock)
+                if a_pedir > 0:
+                    pedidos.append((perfil["id"], a_pedir, "pendiente" if faltan else "activa"))
+            if not pedidos:
+                QMessageBox.warning(dialog, "Nada para pedir", "No hay cantidades válidas para pedir.")
+                return
+            connection_string = (
+                f"DRIVER={{{self.db_connection.driver}}};"
+                f"SERVER=localhost\\SQLEXPRESS;"
+                f"DATABASE={self.db_connection.database};"
+                f"UID={self.db_connection.username};"
+                f"PWD={self.db_connection.password};"
+                f"TrustServerCertificate=yes;"
+            )
+            import pyodbc
+            with pyodbc.connect(connection_string, timeout=10) as conn:
+                cursor = conn.cursor()
+                for id_item, cantidad, estado in pedidos:
+                    cursor.execute("INSERT INTO reservas_materiales (id_item, cantidad_reservada, referencia_obra, estado) VALUES (?, ?, ?, ?)", (id_item, cantidad, "OBRA", estado))
+                conn.commit()
+            QMessageBox.information(dialog, "Pedido registrado", "Pedido de material realizado correctamente.")
+            dialog.accept()
+            self.actualizar_signal.emit()
+        btn_buscar.clicked.connect(buscar_perfiles)
+        btn_reservar.clicked.connect(pedir_lote)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
+
+    # Reemplazar la función antigua por la nueva
+    abrir_reserva_lote_perfiles = abrir_pedido_material_obra

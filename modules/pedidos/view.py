@@ -4,6 +4,7 @@ from PyQt6.QtCore import Qt, QSize
 import json
 import os
 from functools import partial
+from core.ui_components import estilizar_boton_icono
 
 class PedidosView(QWidget):
     def __init__(self, usuario_actual="default"):
@@ -66,7 +67,7 @@ class PedidosView(QWidget):
         self.botones_layout = QHBoxLayout()
         self.boton_nuevo = QPushButton()
         self.boton_nuevo.setIcon(QIcon("img/add-entrega.svg"))
-        self.boton_nuevo.setIconSize(QSize(24, 24))
+        self.boton_nuevo.setIconSize(QSize(20, 20))
         self.boton_nuevo.setToolTip("Agregar pedido")
         self.boton_nuevo.setText("")
         self.boton_nuevo.setFixedSize(48, 48)
@@ -77,6 +78,7 @@ class PedidosView(QWidget):
         sombra.setYOffset(4)
         sombra.setColor(QColor(0, 0, 0, 50))
         self.boton_nuevo.setGraphicsEffect(sombra)
+        estilizar_boton_icono(self.boton_nuevo)
         self.botones_layout.addWidget(self.boton_nuevo)
         self.botones_layout.addStretch()
         self.layout.addLayout(self.botones_layout)

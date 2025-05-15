@@ -11,6 +11,7 @@ from functools import partial
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from core.table_responsive_mixin import TableResponsiveMixin
+from core.ui_components import estilizar_boton_icono
 
 class ContabilidadView(QWidget, TableResponsiveMixin):
     def __init__(self, db_connection=None, obras_model=None):
@@ -51,10 +52,8 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.tab_balance_layout.addWidget(self.tabla_balance)
         self.boton_agregar_balance = QPushButton()
         self.boton_agregar_balance.setIcon(QIcon("img/plus_icon.svg"))
-        self.boton_agregar_balance.setIconSize(QSize(22, 22))
         self.boton_agregar_balance.setToolTip("Agregar movimiento contable")
-        self.boton_agregar_balance.setFixedSize(38, 38)
-        self.boton_agregar_balance.setStyleSheet("border-radius: 19px; background: #2563eb; color: white;")
+        estilizar_boton_icono(self.boton_agregar_balance)
         btn_balance_layout = QHBoxLayout()
         btn_balance_layout.addStretch()
         btn_balance_layout.addWidget(self.boton_agregar_balance)
@@ -90,10 +89,8 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         top_btn_layout.addStretch()
         self.boton_agregar_recibo = QPushButton()
         self.boton_agregar_recibo.setIcon(QIcon("img/plus_icon.svg"))
-        self.boton_agregar_recibo.setIconSize(QSize(24, 24))
         self.boton_agregar_recibo.setToolTip("Agregar nuevo recibo")
-        self.boton_agregar_recibo.setFixedSize(40, 40)
-        self.boton_agregar_recibo.setStyleSheet("border-radius: 20px; background: #2563eb; color: white;")
+        estilizar_boton_icono(self.boton_agregar_recibo)
         top_btn_layout.addWidget(self.boton_agregar_recibo)
         self.tab_recibos_layout.addLayout(top_btn_layout)
         # Tabla de recibos
@@ -134,9 +131,11 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         controles_layout.addWidget(self.input_dolar)
         self.boton_actualizar_grafico = QPushButton("Actualizar gráfico")
         self.boton_actualizar_grafico.setToolTip("Actualizar estadísticas con los filtros seleccionados")
+        estilizar_boton_icono(self.boton_actualizar_grafico)
         controles_layout.addWidget(self.boton_actualizar_grafico)
         self.boton_estadistica_personalizada = QPushButton("Estadística Personalizada")
         self.boton_estadistica_personalizada.setToolTip("Crear y guardar una estadística personalizada")
+        estilizar_boton_icono(self.boton_estadistica_personalizada)
         controles_layout.addWidget(self.boton_estadistica_personalizada)
         self.boton_estadistica_personalizada.clicked.connect(self.abrir_dialogo_estadistica_personalizada)
         # Combo para estadísticas personalizadas
@@ -442,6 +441,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         if not hasattr(self, 'boton_exportar_grafico'):
             self.boton_exportar_grafico = QPushButton("Exportar gráfico")
             self.boton_exportar_grafico.setToolTip("Exportar gráfico a imagen o PDF")
+            estilizar_boton_icono(self.boton_exportar_grafico)
             self.boton_exportar_grafico.clicked.connect(self.exportar_grafico)
             self.tab_estadisticas_layout.addWidget(self.boton_exportar_grafico)
 
@@ -602,23 +602,49 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         ax = fig.add_subplot(111)
         tipo_grafico = config.get("tipo_grafico", "Barra")
         titulo = config.get("nombre", "Estadística Personalizada")
-        if not etiquetas or not valores or all(v == 0 for v in valores):
-            ax.text(0.5, 0.5, "Sin datos para mostrar", ha='center', va='center', fontsize=14, color='gray', transform=ax.transAxes)
-            ax.set_title(titulo)
+        color = config.get("color", "#2563eb")
+        # Validación robusta de datos
+        if not etiquetas or not valores or any(v is None for v in valores):
+            ax.text(0.5, 0.5, "Sin datos para mostrar", ha='center', va='center', fontsize=16, color='#ef4444', fontweight='bold', bbox=dict(facecolor='#f3f4f6', edgecolor='#ef4444', boxstyle='round,pad=0.5'), transform=ax.transAxes)
+            ax.set_title(titulo, fontsize=14, color='#ef4444')
             fig.tight_layout()
             self.grafico_canvas.draw()
+            self.label_resumen.setStyleSheet("color: #ef4444; font-weight: bold;")
             self.label_resumen.setText(f"{titulo}: Sin datos para mostrar")
             return
+        # Intentar convertir valores a float para evitar errores de graficado
+        try:
+            valores = [float(v) for v in valores]
+        except Exception:
+            ax.text(0.5, 0.5, "Datos inválidos", ha='center', va='center', fontsize=16, color='#ef4444', fontweight='bold', bbox=dict(facecolor='#f3f4f6', edgecolor='#ef4444', boxstyle='round,pad=0.5'), transform=ax.transAxes)
+            ax.set_title(titulo, fontsize=14, color='#ef4444')
+            fig.tight_layout()
+            self.grafico_canvas.draw()
+            self.label_resumen.setStyleSheet("color: #ef4444; font-weight: bold;")
+            self.label_resumen.setText(f"{titulo}: Error en los datos")
+            return
+        # Si todos los valores son cero, mostrar mensaje especial
+        if all(v == 0 for v in valores):
+            ax.text(0.5, 0.5, "Sin datos para mostrar", ha='center', va='center', fontsize=16, color='#ef4444', fontweight='bold', bbox=dict(facecolor='#f3f4f6', edgecolor='#ef4444', boxstyle='round,pad=0.5'), transform=ax.transAxes)
+            ax.set_title(titulo, fontsize=14, color='#ef4444')
+            fig.tight_layout()
+            self.grafico_canvas.draw()
+            self.label_resumen.setStyleSheet("color: #ef4444; font-weight: bold;")
+            self.label_resumen.setText(f"{titulo}: Sin datos para mostrar")
+            return
+        # Personalización de colores
+        colores = config.get("colores")
         if tipo_grafico == "Barra":
-            ax.bar(etiquetas, valores, color="#2563eb")
+            ax.bar(etiquetas, valores, color=colores or color)
         elif tipo_grafico == "Torta":
-            ax.pie(valores, labels=etiquetas, autopct='%1.1f%%', colors=None)
+            ax.pie(valores, labels=etiquetas, autopct='%1.1f%%', colors=colores)
         elif tipo_grafico == "Línea":
-            ax.plot(etiquetas, valores, marker='o', color="#2563eb")
-        ax.set_title(titulo)
+            ax.plot(etiquetas, valores, marker='o', color=color, linewidth=2)
+        ax.set_title(titulo, fontsize=14, color='#2563eb')
         if tipo_grafico != "Torta":
-            ax.set_ylabel(config.get("metrica", ""))
-            ax.set_xlabel(config.get("columna", ""))
+            ax.set_ylabel(config.get("metrica", ""), fontsize=11)
+            ax.set_xlabel(config.get("columna", ""), fontsize=11)
+        self.label_resumen.setStyleSheet("color: #2563eb; font-weight: bold;")
         self.label_resumen.setText(f"{titulo}: {config.get('metrica','')} de {config.get('columna','')}")
         fig.tight_layout()
         self.grafico_canvas.draw()

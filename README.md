@@ -384,3 +384,260 @@ Todas las tablas de este módulo implementan el patrón UX universal:
 **Requisito obligatorio:** Este patrón UX es obligatorio y debe estar presente en todos los módulos que utilicen QTableWidget.
 
 ---
+
+## Flujo de integración e interacción entre módulos (estilo SAP)
+
+### Visión general del flujo
+
+1. **Inventario**
+   - Alta, ajuste, reserva y consulta de materiales/herrajes.
+   - Cada movimiento (alta, ajuste, reserva, entrega, eliminación) queda registrado en auditoría.
+   - Las reservas y entregas de materiales impactan en Obras y Logística.
+   - Exportación de inventario y generación de QR disponibles.
+
+2. **Obras**
+   - Creación y edición de obras, asignación de materiales desde Inventario.
+   - El avance de obra (Kanban) depende de la disponibilidad y entrega de materiales.
+   - Los cambios de estado de obra (medición, producción, colocación, finalizada) se reflejan en Logística y Contabilidad.
+   - Toda acción relevante se audita.
+
+3. **Logística**
+   - Planificación y registro de entregas de materiales a obras.
+   - El estado de las entregas depende de la reserva y disponibilidad en Inventario.
+   - Al finalizar una entrega, se actualiza el stock y se registra en auditoría.
+   - Generación de actas de entrega y exportación a PDF.
+
+4. **Compras y Pedidos**
+   - Generación de pedidos de compra cuando el stock es insuficiente.
+   - Los pedidos impactan en Inventario al ser recibidos.
+   - Auditoría de todo el ciclo de compra y recepción.
+
+5. **Contabilidad**
+   - Registro de movimientos financieros asociados a obras y compras.
+   - Los pagos y recibos se asocian a obras y quedan disponibles para consulta cruzada.
+
+6. **Usuarios y Permisos**
+   - Control de acceso a acciones críticas mediante roles y permisos.
+   - Todo intento de acción sin permiso queda registrado y muestra feedback visual.
+
+7. **Auditoría**
+   - Registro centralizado de todas las acciones relevantes de todos los módulos.
+   - Permite filtrar por usuario, módulo, fecha y tipo de acción.
+
+8. **Mantenimiento, Notificaciones, Herrajes, Vidrios, Configuración**
+   - Integrados al flujo general: cualquier acción relevante (alta, edición, exportación, mantenimiento programado, notificación enviada, etc.) se audita y puede impactar en Inventario, Obras o Logística según el caso.
+
+### Ejemplo de interacción típica entre módulos
+
+- Un usuario reserva materiales en Inventario para una obra → se crea una reserva, se descuenta stock, se registra en auditoría y se refleja en la vista de Obras.
+- Logística programa la entrega de esos materiales → al finalizar la entrega, se actualiza el estado en Inventario y Obras, y se genera un acta de entrega.
+- Si falta stock, Compras genera un pedido → al recibir el pedido, se actualiza Inventario y se notifica a Obras y Logística.
+- Todo el ciclo queda registrado en Auditoría y puede ser consultado por usuario, obra o material.
+
+### Diagrama de flujo de integración
+
+![Diagrama de flujo de integración](img/diagrama-de-flujo-detallado.png)
+
+---
+
+> **Este flujo asegura que cada módulo no es un silo, sino parte de un sistema integrado, donde cada acción tiene impacto y trazabilidad global, replicando la lógica de integración de SAP.**
+
+---
+
+## Flujo de integración e interacción entre módulos (estilo SAP)
+
+### Visión general
+El sistema está diseñado para que todos los módulos interactúen de forma integrada, con trazabilidad y feedback visual en cada paso. Cada acción relevante en un módulo puede impactar en otros, y todo queda registrado en auditoría. El flujo es digital, auditable y visualmente unificado.
+
+### Ejemplo de flujo típico y relaciones entre módulos
+
+1. **Alta de obra (Obras)**
+   - El usuario crea una nueva obra desde el módulo Obras.
+   - Se registra en la tabla `obras` y se audita la acción.
+   - La obra queda disponible para ser seleccionada en otros módulos (Inventario, Logística, Contabilidad, Pedidos).
+
+2. **Asignación de materiales a obra (Obras ↔ Inventario)**
+   - Desde Obras, se asignan materiales/perfiles a la obra (tabla `materiales_por_obra`).
+   - El sistema consulta el stock en Inventario y permite reservar materiales.
+   - Si hay stock suficiente, se descuenta y se registra el movimiento en Inventario (`movimientos_stock` y `reservas_stock`).
+   - Si falta stock, se genera una reserva pendiente y puede disparar un pedido de compra (módulo Compras).
+   - Todo el proceso queda auditado.
+
+3. **Reserva y entrega de materiales (Inventario ↔ Logística ↔ Obras)**
+   - Cuando se reserva material para una obra, Logística puede programar la entrega (tabla `entregas_obras`).
+   - El estado de la entrega se refleja en la obra y en el inventario.
+   - El usuario puede ver el avance y los pendientes desde Obras y Logística.
+
+4. **Pedidos y compras (Obras/Inventario ↔ Compras)**
+   - Si hay faltantes, el sistema permite generar un pedido desde Inventario o desde Obras.
+   - El pedido se gestiona en Compras, y al recibir el material, se actualiza el stock y se notifica a los módulos involucrados.
+   - Todo el ciclo queda registrado y auditado.
+
+5. **Movimientos contables y recibos (Obras ↔ Contabilidad)**
+   - Los movimientos de avance de obra, pagos y cobros se reflejan en Contabilidad.
+   - Los recibos y movimientos contables se asocian a obras y quedan disponibles para consulta cruzada.
+
+6. **Auditoría y permisos (Todos los módulos)**
+   - Cada acción relevante (alta, edición, reserva, entrega, exportación, cambio de estado, etc.) queda registrada en el módulo de Auditoría, con usuario, fecha, IP y detalle.
+   - Los permisos se validan en cada acción sensible, y los intentos fallidos también se auditan.
+
+7. **Feedback visual y sincronización (Todos los módulos)**
+   - Cada acción muestra feedback inmediato y claro en la UI (barra de estado, mensajes, tooltips, colores por tipo de mensaje/rol).
+   - Las tablas se sincronizan dinámicamente con la base de datos y persisten la configuración de columnas por usuario.
+   - Los cambios en un módulo se reflejan en tiempo real en los módulos relacionados.
+
+### Diagrama de flujo y navegación
+- Ver `img/diagrama-de-flujo-detallado.png` para el diagrama visual de integración.
+- El usuario puede navegar entre módulos y ver el impacto de cada acción en tiempo real.
+
+### Resumen de integración
+- **Obras** es el eje central: conecta con Inventario, Logística, Compras y Contabilidad.
+- **Inventario** gestiona stock y reservas, y se integra con Obras, Compras y Logística.
+- **Logística** coordina entregas y refleja el estado en Obras e Inventario.
+- **Compras** gestiona pedidos y abastece Inventario y Obras.
+- **Contabilidad** refleja los movimientos económicos asociados a Obras y Pedidos.
+- **Auditoría** y **Permisos** son transversales a todo el sistema.
+
+> **Este flujo integrado garantiza trazabilidad, robustez y una experiencia SAP-like, donde cada módulo es parte de un todo y la información fluye de manera transparente y auditable.**
+
+---
+
+## Visión SAP: Integración Total y Experiencia Unificada
+
+### Objetivo: Un sistema integrado, robusto y auditable, con experiencia SAP
+
+El objetivo de este sistema es lograr una integración total de todos los módulos (Inventario, Obras, Logística, Producción, Compras, Usuarios, Auditoría, Mantenimiento, Notificaciones, Herrajes, Vidrios, Configuración, Contabilidad, Pedidos) bajo una experiencia unificada y robusta, similar a SAP. Esto implica:
+
+- **Integración real de datos y flujos**: Todas las acciones y movimientos de cada módulo impactan y se reflejan en los demás módulos relevantes, garantizando trazabilidad y consistencia global.
+- **Auditoría centralizada**: Cada acción relevante (alta, edición, eliminación, exportación, reserva, entrega, cambio de estado, etc.) queda registrada en el módulo de auditoría, con usuario, fecha, IP y detalle.
+- **Permisos y roles**: Todas las acciones sensibles están protegidas por validación de permisos (decorador PermisoAuditoria), con feedback visual claro y registro de intentos fallidos.
+- **Feedback visual y UX consistente**: Todas las acciones muestran feedback inmediato y claro en la UI (barra de estado, mensajes, tooltips, colores por tipo de mensaje/rol), siguiendo el estándar visual moderno (botones 32x32, icono 20x20, label de usuario estilizado).
+- **Sincronización dinámica de tablas**: Todas las tablas obtienen headers y estructura directamente de la base de datos, y persisten la configuración de columnas por usuario.
+- **Exportación y QR**: Todos los módulos con datos tabulares permiten exportar a Excel/PDF y generar códigos QR donde aplique.
+- **Robustez ante errores**: El sistema nunca crashea por errores de base de datos; muestra avisos claros y mantiene la funcionalidad posible.
+- **Pruebas automáticas**: Cada módulo cuenta con tests unitarios e integración que verifican la correcta integración UI+DB, feedback visual y registro en auditoría.
+- **Checklist y documentación**: Cada módulo tiene checklist funcional y visual, y la documentación describe flujos, permisos, feedback, integración y casos de error.
+
+### Estándares visuales y de feedback (UX SAP-like)
+- Todos los botones principales de acción usan el utilitario `estilizar_boton_icono` (icono SVG 20x20, botón 32x32, estilo moderno, padding y border-radius).
+- El label de usuario en la barra de estado muestra color y borde según el rol, con fondo sutil y tipografía moderna.
+- Todos los mensajes de feedback usan el método `mostrar_mensaje`, con colores y duración según tipo (info, éxito, advertencia, error).
+- Tooltips descriptivos y consistentes en todos los botones y acciones.
+- Las tablas usan el mixin `TableResponsiveMixin` y persisten configuración de columnas y anchos por usuario.
+
+### Integración y trazabilidad total (estilo SAP)
+- Cada alta, edición, reserva, entrega, exportación, etc. se refleja en la base de datos, la UI y el log de auditoría.
+- Los cambios en inventario impactan en obras, logística y pedidos; los movimientos de obras se reflejan en contabilidad y logística; los cambios de usuarios y permisos se auditan y afectan la experiencia global.
+- El sistema permite navegar entre módulos y ver el impacto de cada acción en tiempo real, con feedback visual y trazabilidad completa.
+
+### Pruebas y checklist de integración
+- Todos los módulos cuentan con tests de integración que simulan operaciones y verifican reflejo en UI, DB y auditoría.
+- El archivo `cosas por hacer.txt` y los docstrings de cada modelo/controlador mantienen el checklist actualizado.
+- El README documenta los flujos, casos de error, feedback visual, integración y estándares SAP-like.
+
+---
+
+> **Este sistema busca replicar la robustez, integración y experiencia de usuario de SAP, adaptado a la realidad PyQt6 y a la gestión de inventarios, obras y logística. Cada módulo es parte de un todo integrado, auditable y visualmente moderno.**
+
+---
+
+## Ejemplo de ciclo completo de integración entre módulos
+
+A continuación se describe un flujo típico de trabajo que atraviesa varios módulos, mostrando cómo cada acción impacta en el sistema y cómo se refleja en la UI, la base de datos y la auditoría, siguiendo la lógica SAP-like:
+
+### 1. Reserva de material desde Inventario para una obra
+- El usuario selecciona un material en el módulo Inventario y realiza una reserva para una obra específica.
+- El sistema valida stock, descuenta la cantidad reservada y registra la reserva en la tabla `reservas_materiales`.
+- Se muestra feedback visual inmediato (mensaje de éxito o advertencia) y se actualiza la tabla en la UI.
+- Se registra la acción en el módulo de Auditoría (usuario, acción, cantidad, obra, fecha, IP).
+- La reserva queda visible en el módulo Obras (materiales pendientes de entrega).
+
+### 2. Programación y entrega desde Logística
+- Logística visualiza las reservas pendientes asociadas a obras.
+- Se programa la entrega de los materiales reservados.
+- Al finalizar la entrega, se actualiza el estado de la reserva y se descuenta el stock real en Inventario.
+- Se genera un acta de entrega (PDF) y se registra la acción en Auditoría.
+- El estado de la obra se actualiza automáticamente si se completan todas las entregas.
+
+### 3. Recepción de materiales por Compras
+- Si el stock es insuficiente, el sistema sugiere generar un pedido de compra desde Compras.
+- Al recibir el pedido, se actualiza el stock en Inventario y se notifica a Obras y Logística.
+- Todo el ciclo de compra queda registrado en Auditoría.
+
+### 4. Impacto en Contabilidad
+- Los movimientos de materiales y entregas se reflejan en los costos de obra y en los reportes de Contabilidad.
+- Los pagos a proveedores y recibos asociados quedan vinculados a la obra y al movimiento de materiales.
+- Exportación de balances y reportes disponible.
+
+### 5. Auditoría y trazabilidad
+- Cada paso (reserva, entrega, compra, pago) queda registrado en el módulo de Auditoría.
+- Se puede consultar el historial completo por usuario, obra, material o módulo.
+- Los intentos fallidos (por permisos, errores, etc.) también quedan registrados y muestran feedback visual.
+
+---
+
+> **Este ejemplo ilustra cómo el sistema integra todos los módulos en un flujo continuo, con trazabilidad, feedback visual y robustez, asegurando que cada acción tenga impacto real y auditable en todo el sistema.**
+
+---
+
+## Tabla resumen de impactos cruzados entre módulos
+
+| Módulo origen   | Acción/Evento                | Módulos impactados         | Efecto/Reflejo principal                                                                                 |
+|-----------------|------------------------------|----------------------------|---------------------------------------------------------------------------------------------------------|
+| Inventario      | Reserva de material          | Obras, Logística, Auditoría| Reserva registrada, stock descontado, visible en Obras y Logística, auditado                            |
+| Inventario      | Ajuste/entrega de stock      | Obras, Logística, Auditoría| Stock actualizado, entregas reflejadas en Obras y Logística, auditado                                    |
+| Inventario      | Baja/alta de material        | Obras, Auditoría           | Material disponible/no disponible para asignar a obras, auditado                                         |
+| Obras           | Cambio de estado (Kanban)    | Logística, Contabilidad, Auditoría| Estado de obra actualizado, puede disparar entregas o pagos, auditado                           |
+| Obras           | Asignación de materiales     | Inventario, Logística, Auditoría| Reserva automática en Inventario, visible en Logística, auditado                                  |
+| Logística       | Programar/finalizar entrega  | Inventario, Obras, Auditoría| Stock descontado, estado de obra actualizado, acta de entrega generada, auditado                        |
+| Compras         | Pedido recibido              | Inventario, Obras, Auditoría| Stock incrementado, notificación a Obras de disponibilidad, auditado                                     |
+| Contabilidad    | Pago/recibo                  | Obras, Compras, Auditoría  | Estado financiero de obra/pedido actualizado, auditado                                                   |
+| Usuarios        | Cambio de permisos/roles     | Todos                      | Acceso a acciones críticas, feedback visual y registro de intentos fallidos en Auditoría                 |
+| Auditoría       | Registro de acción           | Todos                      | Trazabilidad y consulta de historial por usuario, módulo, acción                                         |
+| Mantenimiento   | Mantenimiento programado     | Inventario, Logística, Auditoría| Estado de herramientas/vehículos actualizado, puede afectar entregas, auditado                   |
+| Notificaciones  | Envío/recepción de alerta    | Todos                      | Feedback visual, registro en Auditoría                                                                   |
+
+---
+
+> **Esta tabla resume cómo cada módulo puede afectar a otros, asegurando integración real, feedback visual y trazabilidad total en el sistema.**
+
+---
+
+## Ejemplos visuales de feedback y trazabilidad en la UI
+
+### Feedback visual inmediato en la UI
+
+- **Acción exitosa:**
+  - Mensaje en barra de estado con fondo sutil y color verde (éxito):
+    - Ejemplo: `Inventario exportado correctamente a inventario.xlsx` (color: #22c55e)
+  - Tooltip en el botón de acción.
+  - Icono de éxito en el mensaje emergente (QMessageBox).
+
+- **Advertencia o error:**
+  - Mensaje en barra de estado con fondo sutil y color rojo o amarillo:
+    - Ejemplo: `No hay stock suficiente para reservar` (color: #ef4444)
+    - Ejemplo: `Ingrese un código de proveedor` (color: #fbbf24)
+  - Mensaje emergente (QMessageBox) con icono de advertencia o error.
+
+- **Permiso denegado:**
+  - Mensaje en barra de estado con color rojo y texto claro: `No tiene permiso para realizar esta acción`.
+  - Registro automático en Auditoría del intento fallido.
+
+- **Visualización de usuario y rol:**
+  - Label de usuario en la barra de estado con color y borde según el rol (azul para admin, amarillo para supervisor, verde para usuario).
+
+### Ejemplo visual (captura de pantalla)
+
+![Ejemplo feedback visual](img/Captura%20de%20pantalla%202025-04-12%20180806.png)
+
+### Consulta de trazabilidad en Auditoría
+
+- El módulo Auditoría permite filtrar por usuario, módulo, acción, fecha y resultado (éxito/error).
+- Cada acción muestra:
+  - Usuario, fecha/hora, IP, módulo, tipo de acción, detalle, resultado.
+  - Ejemplo: `Usuario: admin | Módulo: Inventario | Acción: Reserva | Detalle: Reservó 10 perfiles para Obra X | Resultado: Éxito`
+- Los intentos fallidos (por permisos, errores, etc.) también quedan registrados y pueden ser auditados.
+
+---
+
+> **Estos ejemplos visuales y de trazabilidad aseguran que el usuario siempre sepa el resultado de sus acciones y que todo sea auditable, cumpliendo el estándar SAP-like.**

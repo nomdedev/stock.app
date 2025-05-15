@@ -7,6 +7,7 @@ from matplotlib.figure import Figure
 from modules.obras.cronograma.view import CronogramaView
 from modules.obras.cronograma.controller import CronogramaController
 from core.table_responsive_mixin import TableResponsiveMixin
+from core.ui_components import estilizar_boton_icono
 
 class ObrasView(QWidget, TableResponsiveMixin):
     def __init__(self):
@@ -59,11 +60,11 @@ class ObrasView(QWidget, TableResponsiveMixin):
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("img/add-etapa.svg"))
-        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setIconSize(QSize(20, 20))
         self.boton_agregar.setToolTip("Agregar obra")
         self.boton_agregar.setText("")
         self.boton_agregar.setFixedSize(48, 48)
-        self.boton_agregar.setStyleSheet("background-color: #f0f0f0; border-radius: 5px;")
+        self.boton_agregar.setStyleSheet("")
         botones_layout.addWidget(self.boton_agregar)
         self.boton_verificar_obra = QPushButton()
         self.boton_verificar_obra.setIcon(QIcon("img/search_icon.svg"))
@@ -71,10 +72,12 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.boton_verificar_obra.setToolTip("Verificar obra en SQL")
         self.boton_verificar_obra.setText("")
         self.boton_verificar_obra.setFixedSize(48, 48)
-        self.boton_verificar_obra.setStyleSheet("background-color: #f0f0f0; border-radius: 5px;")
+        self.boton_verificar_obra.setStyleSheet("")
         botones_layout.addWidget(self.boton_verificar_obra)
         botones_layout.addStretch()
         self.tab_cronograma_layout.addLayout(botones_layout)
+        estilizar_boton_icono(self.boton_agregar)
+        estilizar_boton_icono(self.boton_verificar_obra)
         self.boton_agregar.clicked.connect(self.accion_agregar_obra)
         self.boton_verificar_obra.clicked.connect(self.accion_verificar_obra)
         # Pestaña de Calendario

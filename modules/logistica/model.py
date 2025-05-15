@@ -142,9 +142,13 @@ class LogisticaModel:
         pdf.output(f"acta_entrega_{id_entrega}.pdf")
         return f"Acta de entrega exportada como acta_entrega_{id_entrega}.pdf."
 
-    def programar_entrega(self, id_obra, fecha_programada, vehiculo_asignado, chofer_asignado):
-        query = "INSERT INTO entregas_obras (id_obra, fecha_programada, vehiculo_asignado, chofer_asignado) VALUES (?, ?, ?, ?)"
-        self.db.ejecutar_query(query, (id_obra, fecha_programada, vehiculo_asignado, chofer_asignado))
+    def programar_entrega(self, id_obra, fecha_programada, vehiculo_asignado, chofer_asignado, control_subida=None, fecha_llegada=None):
+        # Nuevo: registrar quién lo llevó, quién lo controló y cuándo se llevó
+        query = """
+        INSERT INTO entregas_obras (id_obra, fecha_programada, vehiculo_asignado, chofer_asignado, control_subida, fecha_llegada)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """
+        self.db.ejecutar_query(query, (id_obra, fecha_programada, vehiculo_asignado, chofer_asignado, control_subida, fecha_llegada))
 
     def generar_acta_entrega(self, id_entrega):
         query = "SELECT id, id_obra, fecha_programada, estado FROM entregas_obras WHERE id = ?"

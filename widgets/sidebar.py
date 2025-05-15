@@ -93,7 +93,7 @@ class Sidebar(QWidget):
                 icon_path = os.path.join('img', f"{section_name.lower()}.svg")
             if os.path.exists(icon_path):
                 button.setIcon(QIcon(icon_path))
-                button.setIconSize(QSize(24, 24))
+                button.setIconSize(QSize(20, 20))  # Cambiado a 20x20 para todos los botones
             if self._mostrar_nombres:
                 button.setText(section_name)
                 button.setStyleSheet("text-align: left; padding-left: 12px;")
@@ -105,3 +105,11 @@ class Sidebar(QWidget):
         if self._expanded != expanded:
             self._expanded = expanded
             self._create_buttons()
+
+    @property
+    def sections(self):
+        return self._sections
+
+    def set_sections(self, sections):
+        self._sections = sections
+        self._create_buttons()

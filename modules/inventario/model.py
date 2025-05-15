@@ -133,22 +133,27 @@ class InventarioModel:
 
     def transformar_reserva_en_entrega(self, id_reserva):
         # Obtener datos de la reserva
-        query_reserva = "SELECT id_item, cantidad_reservada FROM reservas_materiales WHERE id = ? AND estado = 'activa'"
+        query_reserva = "SELECT id_item, cantidad_reservada, estado FROM reservas_materiales WHERE id = ?"
         reserva = self.db.ejecutar_query(query_reserva, (id_reserva,))
-
         if not reserva:
-            return False  # No se encontró la reserva activa
-
-        id_item, cantidad_reservada = reserva[0]
-
+            return False  # No se encontró la reserva
+        id_item, cantidad_reservada, estado = reserva[0]
+        if estado != 'activa':
+            return False  # Solo se puede entregar reservas activas
+        # Validar stock suficiente
+        query_stock = "SELECT stock_actual FROM inventario_perfiles WHERE id = ?"
+        stock_row = self.db.ejecutar_query(query_stock, (id_item,))
+        if not stock_row or stock_row[0][0] < cantidad_reservada:
+            return False  # Stock insuficiente
         # Actualizar el stock del ítem
         query_actualizar_stock = "UPDATE inventario_perfiles SET stock_actual = stock_actual - ? WHERE id = ?"
         self.db.ejecutar_query(query_actualizar_stock, (cantidad_reservada, id_item))
-
         # Cambiar el estado de la reserva a 'entregada'
         query_actualizar_reserva = "UPDATE reservas_materiales SET estado = 'entregada' WHERE id = ?"
         self.db.ejecutar_query(query_actualizar_reserva, (id_reserva,))
-
+        # Registrar auditoría si está disponible
+        if hasattr(self, 'auditoria_model'):
+            self.auditoria_model.registrar_evento('inventario', 'entrega', f'Reserva entregada: {id_reserva}')
         return True
 
     def obtener_productos(self):

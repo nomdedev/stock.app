@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QTableWid
 from PyQt6.QtGui import QIcon, QColor
 from PyQt6.QtCore import QSize
 import json
+from core.ui_components import estilizar_boton_icono
 
 class NotificacionesView(QWidget):
     def __init__(self):
@@ -28,7 +29,7 @@ class NotificacionesView(QWidget):
         botones_layout = QHBoxLayout()
         self.boton_marcar_leido = QPushButton()
         self.boton_marcar_leido.setIcon(QIcon("img/check_icon.svg"))
-        self.boton_marcar_leido.setIconSize(QSize(24, 24))
+        self.boton_marcar_leido.setIconSize(QSize(20, 20))
         self.boton_marcar_leido.setToolTip("Marcar como leído")
         self.boton_marcar_leido.setText("")
         self.boton_marcar_leido.setFixedSize(48, 48)
@@ -39,6 +40,7 @@ class NotificacionesView(QWidget):
         sombra.setYOffset(4)
         sombra.setColor(QColor(0, 0, 0, 50))
         self.boton_marcar_leido.setGraphicsEffect(sombra)
+        estilizar_boton_icono(self.boton_marcar_leido)
         botones_layout.addWidget(self.boton_marcar_leido)
         botones_layout.addStretch()
         self.layout.addLayout(botones_layout)

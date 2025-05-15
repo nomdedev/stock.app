@@ -39,12 +39,13 @@ class PermisoAuditoria:
 permiso_auditoria_obras = PermisoAuditoria('obras')
 
 class ObrasController:
-    def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None):
+    def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None, logistica_controller=None):
         self.model = model
         self.view = view
         self.usuario_actual = usuario_actual
         self.usuarios_model = usuarios_model
         self.auditoria_model = AuditoriaModel(db_connection)
+        self.logistica_controller = logistica_controller  # Referencia cruzada opcional
         self.view.boton_agregar.clicked.connect(self.agregar_obra)
         self.view.gantt_on_bar_clicked = self.editar_fecha_entrega
         # Conexión del botón de verificación manual (si existe en la vista)
@@ -188,6 +189,17 @@ class ObrasController:
         except Exception as e:
             print(f"Error al agregar obra: {e}")
             self.view.label.setText("Error al agregar la obra.")
+
+    @permiso_auditoria_obras('cambiar_estado')
+    def cambiar_estado_obra(self, id_obra, nuevo_estado):
+        self.model.actualizar_estado_obra(id_obra, nuevo_estado)
+        # Notificar a logística si corresponde
+        if self.logistica_controller and nuevo_estado.lower() in ("entrega", "colocada", "finalizada"):
+            self.logistica_controller.actualizar_por_cambio_estado_obra(id_obra, nuevo_estado)
+        self.cargar_datos_obras()
+        self.mostrar_gantt()
+        self.actualizar_calendario()
+        self.view.label.setText(f"Estado de la obra actualizado a {nuevo_estado}.")
 
     def editar_fecha_entrega(self, id_obra, fecha_actual):
         from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton

@@ -3,6 +3,7 @@ from PyQt6.QtGui import QIcon, QColor
 from PyQt6.QtCore import QSize
 from themes.theme_manager import aplicar_tema, guardar_preferencia_tema, cargar_preferencia_tema
 import json
+from core.ui_components import estilizar_boton_icono
 
 class ConfiguracionView(QWidget):
     def __init__(self):
@@ -65,6 +66,7 @@ class ConfiguracionView(QWidget):
             sombra.setYOffset(4)
             sombra.setColor(QColor(0, 0, 0, 50))
             self.boton_guardar.setGraphicsEffect(sombra)
+            estilizar_boton_icono(self.boton_guardar)
             botones_layout.addWidget(self.boton_guardar)
             botones_layout.addStretch()
             self.layout.addLayout(botones_layout)

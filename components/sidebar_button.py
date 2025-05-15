@@ -1,51 +1,53 @@
 from PyQt6.QtWidgets import QPushButton, QSizePolicy
 from PyQt6.QtGui import QIcon
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, Qt
+from core.ui_components import COLOR_BOTON_FONDO, COLOR_BOTON_TEXTO, COLOR_BOTON_BORDE, COLOR_BOTON_FONDO_HOVER, COLOR_BOTON_FONDO_PRESSED
 
 class SidebarButton(QPushButton):
-    def __init__(self, texto, ruta_icono, activo=False, parent=None):
+    def __init__(self, texto: str, icono_path: str, parent=None):
         super().__init__(texto, parent)
-
-        # Configurar ícono
-        self.setIcon(QIcon(ruta_icono))
-        self.setIconSize(QSize(24, 24))
-
-        # Configurar tamaño y política
-        self.setFixedHeight(40)
+        self.selected = False
+        self.setIcon(QIcon(icono_path))
+        self.setIconSize(QSize(20, 20))  # Forzar icono 20x20
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.setFixedHeight(40)
+        self.setStyleSheet(self._get_style())
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.setCheckable(False)
 
-        # Configurar estilos
-        self.setStyleSheet(self._get_stylesheet(activo))
-
-        # Tooltip si no hay texto
-        if not texto:
-            self.setToolTip(texto)
-
-    def _get_stylesheet(self, activo):
-        if activo:
-            return """
-                QPushButton {
-                    background-color: #FFFFFF; /* Fondo activo blanco */
-                    color: #1F6FEB; /* Texto activo */
+    def _get_style(self):
+        if self.selected:
+            return f"""
+                QPushButton {{
+                    background-color: {COLOR_BOTON_FONDO};
+                    color: {COLOR_BOTON_TEXTO};
                     font-weight: bold;
-                    border-radius: 6px;
-                }
-                QPushButton:hover {
-                    background-color: #F0F0F0; /* Hover blanco */
-                }
+                    border-radius: 8px;
+                    border: 1.5px solid {COLOR_BOTON_BORDE};
+                    padding: 0 12px;
+                    text-align: left;
+                }}
+                QPushButton:hover {{
+                    background-color: {COLOR_BOTON_FONDO_HOVER};
+                }}
             """
         else:
-            return """
-                QPushButton {
-                    background-color: #FFFFFF; /* Fondo normal blanco */
-                    color: #000000; /* Texto normal negro */
-                    border-radius: 6px;
-                }
-                QPushButton:hover {
-                    background-color: #F0F0F0; /* Hover blanco */
-                }
+            return f"""
+                QPushButton {{
+                    background-color: {COLOR_BOTON_FONDO};
+                    color: {COLOR_BOTON_TEXTO};
+                    border-radius: 8px;
+                    border: 1.5px solid {COLOR_BOTON_BORDE};
+                    padding: 0 12px;
+                    text-align: left;
+                }}
+                QPushButton:hover {{
+                    background-color: {COLOR_BOTON_FONDO_HOVER};
+                }}
             """
 
     def set_activo(self, activo):
         """Actualizar el estado activo del botón."""
-        self.setStyleSheet(self._get_stylesheet(activo))
+        self.selected = activo
+        self.setStyleSheet(self._get_style())

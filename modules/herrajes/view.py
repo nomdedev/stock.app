@@ -5,6 +5,7 @@ import json
 import os
 from functools import partial
 from core.table_responsive_mixin import TableResponsiveMixin
+from core.ui_components import estilizar_boton_icono
 
 class HerrajesView(QWidget, TableResponsiveMixin):
     def __init__(self):
@@ -43,6 +44,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         sombra.setYOffset(4)
         sombra.setColor(QColor(0, 0, 0, 50))
         self.boton_agregar.setGraphicsEffect(sombra)
+        estilizar_boton_icono(self.boton_agregar)
         botones_layout.addWidget(self.boton_agregar)
         botones_layout.addStretch()
         self.layout.addLayout(botones_layout)
