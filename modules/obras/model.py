@@ -69,20 +69,16 @@ class ObrasModel:
         return self.db_connection.ejecutar_query(query)
 
     def agregar_obra(self, datos):
-        """Agrega una nueva obra a la base de datos. El estado inicial es el que recibe el formulario."""
+        """Agrega una nueva obra a la base de datos con todos los campos modernos."""
         try:
-            datos = list(datos)
-            if len(datos) == 4:
-                # Si no se pasa fecha_entrega, calcular +90 días desde fecha
-                from datetime import datetime, timedelta
-                fecha = datetime.strptime(datos[3], "%Y-%m-%d")
-                fecha_entrega = fecha + timedelta(days=90)
-                datos.append(fecha_entrega.strftime("%Y-%m-%d"))
+            # datos: (nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars, fecha_medicion, dias_entrega, fecha_entrega, usuario_creador)
             query = """
-                INSERT INTO obras (nombre, cliente, estado, fecha, fecha_entrega)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO obras (
+                    nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars,
+                    fecha_medicion, dias_entrega, fecha_entrega, usuario_creador
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
-            self.db_connection.ejecutar_query(query, tuple(datos))
+            self.db_connection.ejecutar_query(query, datos)
         except Exception as e:
             print(f"Error al agregar obra: {e}")
             raise
@@ -189,3 +185,12 @@ class ObrasModel:
         else:
             query = "UPDATE obras SET nombre = ?, cliente = ?, estado = ? WHERE id = ?"
             self.db_connection.ejecutar_query(query, (nombre, cliente, estado, id_obra))
+
+    def actualizar_obra_completa(self, id_obra, nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars, fecha_medicion, dias_entrega, fecha_entrega):
+        """Actualiza todos los campos clave de una obra."""
+        query = """
+            UPDATE obras SET nombre=?, cliente=?, estado=?, fecha_compra=?, cantidad_aberturas=?, pago_completo=?, pago_porcentaje=?, monto_usd=?, monto_ars=?, fecha_medicion=?, dias_entrega=?, fecha_entrega=? WHERE id=?
+        """
+        self.db_connection.ejecutar_query(query, (
+            nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars, fecha_medicion, dias_entrega, fecha_entrega, id_obra
+        ))

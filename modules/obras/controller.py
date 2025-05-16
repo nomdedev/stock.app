@@ -1,5 +1,5 @@
 import datetime
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox, QLineEdit, QComboBox, QWidget, QHBoxLayout
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox, QLineEdit, QComboBox, QWidget, QHBoxLayout, QFormLayout, QCheckBox
 from PyQt6.QtGui import QIcon
 from PyQt6 import QtCore
 from modules.usuarios.model import UsuariosModel
@@ -72,6 +72,23 @@ class ObrasController:
     def cargar_datos_obras(self):
         try:
             datos = self.model.obtener_datos_obras()
+            # Adaptar a lista de dicts para la tabla visual
+            obras = []
+            for d in datos:
+                # d: (id, nombre, cliente, estado, fecha, fecha_entrega, cantidad_aberturas, fecha_compra, pago_completo, pago_porcentaje, monto_usd, monto_ars, tipo_obra, usuario_creador, fecha_medicion, dias_entrega)
+                obra = {
+                    'nombre': d[1],
+                    'cliente': d[2],
+                    'estado': d[3],
+                    'fecha_medicion': d[14] if len(d) > 14 else d[4],
+                    'fecha_entrega': d[5],
+                    'dias_entrega': d[15] if len(d) > 15 else '',
+                    'monto_ars': d[11] if len(d) > 11 else '',
+                    'pago_porcentaje': d[9] if len(d) > 9 else '',
+                }
+                obras.append(obra)
+            if hasattr(self.view, 'cargar_tabla_obras'):
+                self.view.cargar_tabla_obras(obras)
         except Exception as e:
             self.view.label.setText(f"Error al cargar datos: {e}")
 
@@ -119,33 +136,85 @@ class ObrasController:
             usuario = self.usuario_actual
             dialog = QDialog(self.view)
             dialog.setWindowTitle("Agregar nueva obra")
+            dialog.setFixedSize(600, 600)
             layout = QVBoxLayout(dialog)
-            label = QLabel("Ingrese los datos de la nueva obra:")
-            label.setStyleSheet("font-weight: bold; font-size: 15px; margin-bottom: 8px;")
+            label = QLabel("Ingrese los datos completos de la nueva obra:")
+            label.setStyleSheet("font-weight: bold; font-size: 16px; margin-bottom: 8px;")
             layout.addWidget(label)
 
-            # Usuario actual visible, destacado
+            # Usuario actual visible
             if usuario and 'username' in usuario:
                 usuario_label = QLabel(f"<b>Usuario cargando: <span style='color:#2563eb'>{usuario['username']} ({usuario.get('rol','')})</span></b>")
                 usuario_label.setStyleSheet("font-size: 13px; margin-bottom: 8px; background: #f1f5f9; border-radius: 8px; padding: 4px 8px;")
                 layout.addWidget(usuario_label)
 
+            from PyQt6.QtWidgets import QFormLayout, QDateEdit, QCheckBox, QSpinBox
+            from PyQt6.QtCore import QDate
+            form = QFormLayout()
             nombre_input = QLineEdit()
+            apellido_input = QLineEdit()
             cliente_input = QLineEdit()
+            direccion_input = QLineEdit()
+            telefono_input = QLineEdit()
+            cantidad_aberturas_input = QLineEdit()
+            fecha_compra_input = QDateEdit()
+            fecha_compra_input.setCalendarPopup(True)
+            fecha_compra_input.setDate(QDate.currentDate())
+            pago_completo_input = QCheckBox("Pago completo")
+            pago_porcentaje_input = QLineEdit()
+            monto_usd_input = QLineEdit()
+            monto_ars_input = QLineEdit()
             estado_input = QComboBox()
             estado_input.addItems(["Medición", "Fabricación", "Entrega"])
+            # Campos nuevos para planificación
+            fecha_medicion_input = QDateEdit()
+            fecha_medicion_input.setCalendarPopup(True)
+            fecha_medicion_input.setDate(QDate.currentDate())
+            dias_entrega_input = QSpinBox()
+            dias_entrega_input.setMinimum(1)
+            dias_entrega_input.setMaximum(365)
+            dias_entrega_input.setValue(90)
+            fecha_entrega_input = QDateEdit()
+            fecha_entrega_input.setCalendarPopup(True)
+            # Se actualizará automáticamente al cambiar fecha_medicion o dias_entrega
+            def actualizar_fecha_entrega():
+                fecha_med = fecha_medicion_input.date().toPyDate()
+                dias = dias_entrega_input.value()
+                nueva_fecha = fecha_med + datetime.timedelta(days=dias)
+                fecha_entrega_input.setDate(QDate(nueva_fecha.year, nueva_fecha.month, nueva_fecha.day))
+            fecha_medicion_input.dateChanged.connect(actualizar_fecha_entrega)
+            dias_entrega_input.valueChanged.connect(actualizar_fecha_entrega)
+            actualizar_fecha_entrega()
 
             nombre_input.setPlaceholderText("Nombre de la obra")
-            cliente_input.setPlaceholderText("Cliente")
+            apellido_input.setPlaceholderText("Apellido del cliente")
+            cliente_input.setPlaceholderText("Cliente o razón social")
+            direccion_input.setPlaceholderText("Dirección de la obra")
+            telefono_input.setPlaceholderText("Teléfono de contacto")
+            cantidad_aberturas_input.setPlaceholderText("Cantidad de aberturas")
+            pago_porcentaje_input.setPlaceholderText("% pago (si no es completo)")
+            monto_usd_input.setPlaceholderText("Monto en USD")
+            monto_ars_input.setPlaceholderText("Monto en ARS")
 
-            layout.addWidget(QLabel("Nombre:"))
-            layout.addWidget(nombre_input)
-            layout.addWidget(QLabel("Cliente:"))
-            layout.addWidget(cliente_input)
-            layout.addWidget(QLabel("Estado:"))
-            layout.addWidget(estado_input)
+            form.addRow("Nombre:", nombre_input)
+            form.addRow("Apellido:", apellido_input)
+            form.addRow("Cliente:", cliente_input)
+            form.addRow("Dirección:", direccion_input)
+            form.addRow("Teléfono:", telefono_input)
+            form.addRow("Cantidad de aberturas:", cantidad_aberturas_input)
+            form.addRow("Fecha de compra:", fecha_compra_input)
+            form.addRow("Pago completo:", pago_completo_input)
+            form.addRow("Pago en %:", pago_porcentaje_input)
+            form.addRow("Monto USD:", monto_usd_input)
+            form.addRow("Monto ARS:", monto_ars_input)
+            form.addRow("Estado inicial:", estado_input)
+            # Nuevos campos
+            form.addRow("Fecha de medición:", fecha_medicion_input)
+            form.addRow("Días de entrega:", dias_entrega_input)
+            form.addRow("Fecha de entrega:", fecha_entrega_input)
+            layout.addLayout(form)
 
-            # Botones con estilo visual consistente
+            # Botones
             btns_layout = QHBoxLayout()
             btn_guardar = QPushButton()
             btn_guardar.setIcon(QIcon("img/plus_icon.svg"))
@@ -166,29 +235,65 @@ class ObrasController:
             dialog.setLayout(layout)
             if dialog.exec() == QDialog.DialogCode.Accepted:
                 nombre = nombre_input.text().strip()
+                apellido = apellido_input.text().strip()
                 cliente = cliente_input.text().strip()
+                direccion = direccion_input.text().strip()
+                telefono = telefono_input.text().strip()
+                cantidad_aberturas = cantidad_aberturas_input.text().strip()
+                fecha_compra = fecha_compra_input.date().toString("yyyy-MM-dd")
+                pago_completo = pago_completo_input.isChecked()
+                pago_porcentaje = pago_porcentaje_input.text().strip()
+                monto_usd = monto_usd_input.text().strip()
+                monto_ars = monto_ars_input.text().strip()
                 estado = estado_input.currentText()
-                if not (nombre and cliente and estado):
-                    self.view.label.setText("Por favor, complete todos los campos.")
+                fecha_medicion = fecha_medicion_input.date().toString("yyyy-MM-dd")
+                dias_entrega = dias_entrega_input.value()
+                fecha_entrega = fecha_entrega_input.date().toString("yyyy-MM-dd")
+                # Validación básica
+                if not (nombre and cliente and direccion and telefono and cantidad_aberturas and fecha_compra and estado and fecha_medicion and dias_entrega and fecha_entrega):
+                    self.view.label.setText("Por favor, complete todos los campos obligatorios.")
                     return
-                if self.model.verificar_obra_existente(nombre, cliente):
-                    QMessageBox.warning(
-                        self.view,
-                        "Obra Existente",
-                        "Ya existe una obra con el mismo nombre y cliente."
-                    )
-                    return
-                fecha_actual = QtCore.QDate.currentDate().toString("yyyy-MM-dd")
-                self.model.agregar_obra((nombre, cliente, estado, fecha_actual))
-                self.view.label.setText("Obra agregada exitosamente.")
+                # Guardar todos los campos en el modelo
+                self.model.agregar_obra((
+                    nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars,
+                    fecha_medicion, dias_entrega, fecha_entrega, self.usuario_actual['id'] if self.usuario_actual else None
+                ))
+                mensaje = (
+                    f"<b>Obra agregada exitosamente:</b><br>"
+                    f"<ul style='margin:0 0 0 16px;padding:0'>"
+                    f"<li><b>Nombre:</b> {nombre}</li>"
+                    f"<li><b>Apellido:</b> {apellido}</li>"
+                    f"<li><b>Cliente:</b> {cliente}</li>"
+                    f"<li><b>Dirección:</b> {direccion}</li>"
+                    f"<li><b>Teléfono:</b> {telefono}</li>"
+                    f"<li><b>Cant. aberturas:</b> {cantidad_aberturas}</li>"
+                    f"<li><b>Fecha compra:</b> {fecha_compra}</li>"
+                    f"<li><b>Pago completo:</b> {'Sí' if pago_completo else 'No'} {pago_porcentaje+'%' if pago_porcentaje else ''}</li>"
+                    f"<li><b>Monto USD:</b> {monto_usd}</li>"
+                    f"<li><b>Monto ARS:</b> {monto_ars}</li>"
+                    f"<li><b>Fecha medición:</b> {fecha_medicion}</li>"
+                    f"<li><b>Días entrega:</b> {dias_entrega}</li>"
+                    f"<li><b>Fecha entrega:</b> {fecha_entrega}</li>"
+                    f"<li><b>Estado inicial:</b> {estado}</li>"
+                    f"</ul>"
+                    f"<br>" 
+                    f"<span style='color:#2563eb'><b>¿Qué desea hacer ahora?</b></span><br>"
+                    f"- <b>Asignar materiales</b> a la obra desde el menú de acciones.<br>"
+                    f"- <b>Programar cronograma</b> en la pestaña Cronograma.<br>"
+                    f"- <b>Ver la obra</b> en la tabla principal.<br>"
+                )
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(mensaje, tipo='exito', duracion=9000)
+                else:
+                    self.view.label.setText(mensaje)
                 self.cargar_datos_obras()
-                self.actualizar_calendario()
                 self.mostrar_gantt()
-                # Verificación automática en SQL
-                self.verificar_obra_en_sql(nombre, cliente)
         except Exception as e:
             print(f"Error al agregar obra: {e}")
-            self.view.label.setText("Error al agregar la obra.")
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error al agregar la obra: {e}", tipo='error')
+            else:
+                self.view.label.setText("Error al agregar la obra.")
 
     @permiso_auditoria_obras('cambiar_estado')
     def cambiar_estado_obra(self, id_obra, nuevo_estado):
@@ -226,20 +331,105 @@ class ObrasController:
                 self.model.actualizar_obra(id_obra, nombre, cliente, estado, nueva_fecha)
                 self.mostrar_gantt()
 
+    def editar_obra(self, id_obra):
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QFormLayout, QLineEdit, QDateEdit, QSpinBox, QCheckBox, QComboBox, QPushButton
+        from PyQt6.QtCore import QDate
+        datos = self.model.obtener_obra_por_id(id_obra)
+        if not datos:
+            self.view.label.setText("No se encontró la obra para editar.")
+            return
+        # Mapear datos actuales
+        nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars, fecha_medicion, dias_entrega, fecha_entrega = (
+            datos[1], datos[2], datos[3], datos[4], datos[6], datos[8], datos[9], datos[10], datos[11], datos[14], datos[15], datos[5]
+        )
+        dialog = QDialog(self.view)
+        dialog.setWindowTitle("Editar obra")
+        layout = QVBoxLayout(dialog)
+        form = QFormLayout()
+        nombre_input = QLineEdit(nombre)
+        cliente_input = QLineEdit(cliente)
+        estado_input = QComboBox()
+        estado_input.addItems(["Medición", "Fabricación", "Entrega"])
+        estado_input.setCurrentText(estado)
+        fecha_compra_input = QDateEdit()
+        fecha_compra_input.setDate(QDate.fromString(str(fecha_compra), "yyyy-MM-dd"))
+        cantidad_aberturas_input = QLineEdit(str(cantidad_aberturas))
+        pago_completo_input = QCheckBox("Pago completo")
+        pago_completo_input.setChecked(bool(pago_completo))
+        pago_porcentaje_input = QLineEdit(str(pago_porcentaje))
+        monto_usd_input = QLineEdit(str(monto_usd))
+        monto_ars_input = QLineEdit(str(monto_ars))
+        fecha_medicion_input = QDateEdit()
+        fecha_medicion_input.setDate(QDate.fromString(str(fecha_medicion), "yyyy-MM-dd"))
+        dias_entrega_input = QSpinBox()
+        dias_entrega_input.setMinimum(1)
+        dias_entrega_input.setMaximum(365)
+        dias_entrega_input.setValue(int(dias_entrega) if dias_entrega else 90)
+        fecha_entrega_input = QDateEdit()
+        fecha_entrega_input.setDate(QDate.fromString(str(fecha_entrega), "yyyy-MM-dd"))
+        # Lógica de actualización automática
+        def actualizar_fecha_entrega():
+            fecha_med = fecha_medicion_input.date().toPyDate()
+            dias = dias_entrega_input.value()
+            nueva_fecha = fecha_med + datetime.timedelta(days=dias)
+            fecha_entrega_input.setDate(QDate(nueva_fecha.year, nueva_fecha.month, nueva_fecha.day))
+        fecha_medicion_input.dateChanged.connect(actualizar_fecha_entrega)
+        dias_entrega_input.valueChanged.connect(actualizar_fecha_entrega)
+        # Formulario
+        form.addRow("Nombre:", nombre_input)
+        form.addRow("Cliente:", cliente_input)
+        form.addRow("Estado:", estado_input)
+        form.addRow("Fecha compra:", fecha_compra_input)
+        form.addRow("Cantidad aberturas:", cantidad_aberturas_input)
+        form.addRow("Pago completo:", pago_completo_input)
+        form.addRow("Pago en %:", pago_porcentaje_input)
+        form.addRow("Monto USD:", monto_usd_input)
+        form.addRow("Monto ARS:", monto_ars_input)
+        form.addRow("Fecha medición:", fecha_medicion_input)
+        form.addRow("Días entrega:", dias_entrega_input)
+        form.addRow("Fecha entrega:", fecha_entrega_input)
+        layout.addLayout(form)
+        btn_guardar = QPushButton("Guardar cambios")
+        btn_guardar.clicked.connect(dialog.accept)
+        layout.addWidget(btn_guardar)
+        dialog.setLayout(layout)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            # Guardar cambios
+            self.model.actualizar_obra_completa(
+                id_obra,
+                nombre_input.text().strip(),
+                cliente_input.text().strip(),
+                estado_input.currentText(),
+                fecha_compra_input.date().toString("yyyy-MM-dd"),
+                cantidad_aberturas_input.text().strip(),
+                pago_completo_input.isChecked(),
+                pago_porcentaje_input.text().strip(),
+                monto_usd_input.text().strip(),
+                monto_ars_input.text().strip(),
+                fecha_medicion_input.date().toString("yyyy-MM-dd"),
+                dias_entrega_input.value(),
+                fecha_entrega_input.date().toString("yyyy-MM-dd")
+            )
+            self.cargar_datos_obras()
+            self.mostrar_gantt()
+
     def mostrar_gantt(self):
         datos = self.model.obtener_datos_obras()
+        # Adaptar a lista de dicts con los campos requeridos por el Gantt
+        obras = []
+        for d in datos:
+            # d: (id, nombre, cliente, estado, fecha, fecha_entrega, ...)
+            obra = {
+                'id': d[0],
+                'nombre': d[1],
+                'cliente': d[2],
+                'estado': d[3],
+                'fecha': d[4],
+                'fecha_entrega': d[5],
+            }
+            obras.append(obra)
         if hasattr(self.view, 'cronograma_view'):
-            self.view.cronograma_view.set_obras([
-                {
-                    'id': d[0],
-                    'nombre': d[1],
-                    'cliente': d[2],
-                    'estado': d[3],
-                    'fecha': d[4] if isinstance(d[4], (datetime.date, datetime.datetime)) else self._parse_fecha(d[4]),
-                    'fecha_entrega': d[5] if isinstance(d[5], (datetime.date, datetime.datetime)) else self._parse_fecha(d[5]),
-                }
-                for d in datos if d[4] and d[5]
-            ])
+            self.view.cronograma_view.set_obras(obras)
 
     @staticmethod
     def _parse_fecha(fecha_str):

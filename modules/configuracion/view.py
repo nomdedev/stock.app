@@ -113,9 +113,59 @@ class ConfiguracionView(QWidget):
             # Agregar pestañas al widget
             self.tabs.addTab(self.general_tab, "General")
             self.tabs.addTab(self.database_tab, "Base de Datos")
-            self.layout.addWidget(self.tabs)
 
-            self.setLayout(self.layout)
+            # --- NUEVA PESTAÑA: Importar Inventario/Herrajes desde CSV ---
+            self.import_tab = QWidget()
+            self.import_layout = QVBoxLayout()
+            self.import_tab.setLayout(self.import_layout)
+
+            self.import_label = QLabel("Importar Inventario/Herrajes desde CSV")
+            self.import_layout.addWidget(self.import_label)
+
+            self.csv_file_input = QLineEdit()
+            self.csv_file_input.setPlaceholderText("Selecciona el archivo CSV...")
+            self.import_layout.addWidget(self.csv_file_input)
+
+            self.boton_seleccionar_csv = QPushButton()
+            self.boton_seleccionar_csv.setIcon(QIcon("img/excel_icon.svg"))
+            self.boton_seleccionar_csv.setIconSize(QSize(24, 24))
+            self.boton_seleccionar_csv.setToolTip("Seleccionar archivo CSV")
+            self.boton_seleccionar_csv.setText("")
+            self.boton_seleccionar_csv.setFixedSize(48, 48)
+            self.boton_seleccionar_csv.setStyleSheet("")
+            sombra_csv = QGraphicsDropShadowEffect()
+            sombra_csv.setBlurRadius(15)
+            sombra_csv.setXOffset(0)
+            sombra_csv.setYOffset(4)
+            sombra_csv.setColor(QColor(0, 0, 0, 50))
+            self.boton_seleccionar_csv.setGraphicsEffect(sombra_csv)
+            estilizar_boton_icono(self.boton_seleccionar_csv)
+            self.import_layout.addWidget(self.boton_seleccionar_csv)
+
+            self.boton_importar_csv = QPushButton()
+            self.boton_importar_csv.setIcon(QIcon("img/add-material.svg"))
+            self.boton_importar_csv.setIconSize(QSize(24, 24))
+            self.boton_importar_csv.setToolTip("Importar y actualizar inventario/herrajes")
+            self.boton_importar_csv.setText("")
+            self.boton_importar_csv.setFixedSize(48, 48)
+            self.boton_importar_csv.setStyleSheet("")
+            sombra_import = QGraphicsDropShadowEffect()
+            sombra_import.setBlurRadius(15)
+            sombra_import.setXOffset(0)
+            sombra_import.setYOffset(4)
+            sombra_import.setColor(QColor(0, 0, 0, 50))
+            self.boton_importar_csv.setGraphicsEffect(sombra_import)
+            estilizar_boton_icono(self.boton_importar_csv)
+            self.import_layout.addWidget(self.boton_importar_csv)
+
+            self.import_result_label = QLabel("")
+            self.import_layout.addWidget(self.import_result_label)
+
+            self.import_layout.addStretch()
+            self.tabs.addTab(self.import_tab, "Importar CSV")
+            # --- FIN NUEVA PESTAÑA ---
+
+            self.layout.addWidget(self.tabs)
         except Exception as e:
             print(f"Error al inicializar ConfiguracionView: {e}")
 
@@ -124,11 +174,3 @@ class ConfiguracionView(QWidget):
         nuevo_tema = "dark" if estado == 2 else "light"
         aplicar_tema(nuevo_tema)
         guardar_preferencia_tema(nuevo_tema)
-
-class Configuracion(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.layout = QVBoxLayout()
-        self.label_titulo = QLabel("Vista de Configuración")
-        self.layout.addWidget(self.label_titulo)
-        self.setLayout(self.layout)

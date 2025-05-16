@@ -15,7 +15,7 @@ class SplashScreen(QSplashScreen):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.setBrush(QColor(PRIMARY_COLOR))
         painter.setPen(QColor(BORDER_COLOR))
-        painter.drawRoundedRect(0, 0, ancho, alto, 24, 24)
+        painter.drawRoundedRect(0, 0, ancho, alto, 12, 12)
         # Imagen redondeada centrada
         if use_custom_img:
             img = QPixmap(custom_img_path).scaled(360, 200, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
@@ -25,7 +25,7 @@ class SplashScreen(QSplashScreen):
             mask_painter.setRenderHint(QPainter.RenderHint.Antialiasing)
             mask_painter.setBrush(QBrush(Qt.GlobalColor.white))
             mask_painter.setPen(Qt.PenStyle.NoPen)
-            mask_painter.drawRoundedRect(0, 0, 360, 200, 32, 32)
+            mask_painter.drawRoundedRect(0, 0, 360, 200, 18, 18)
             mask_painter.end()
             img.setMask(mask.createMaskFromColor(Qt.GlobalColor.transparent, Qt.MaskMode.MaskInColor))
             painter.drawPixmap((ancho-360)//2, 40, img)
@@ -82,8 +82,9 @@ class SplashScreen(QSplashScreen):
     def show_and_finish(self, main_window_callback):
         self.show()
         self.fade_in.start()
-        QTimer.singleShot(self.duration, lambda: self.finish_and_start(main_window_callback))
-
-    def finish_and_start(self, main_window_callback):
-        self.fade_out.finished.connect(lambda: (self.close(), main_window_callback()))
-        self.fade_out.start()
+        # Esperar a que la ventana principal esté realmente visible antes de cerrar el splash
+        def cerrar_splash():
+            main_window_callback()
+            self.fade_out.finished.connect(self.close)
+            self.fade_out.start()
+        QTimer.singleShot(self.duration, cerrar_splash)

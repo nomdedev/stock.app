@@ -9,21 +9,22 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import tempfile
 from core.table_responsive_mixin import TableResponsiveMixin
+from core.ui_components import estilizar_boton_icono
 
 class UsuariosView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default", controller=None):
         super().__init__()
         self.usuario_actual = usuario_actual
         self.controller = controller  # Permite inyectar lógica de negocio/mock para testeo
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(20, 20, 20, 20)
-        self.layout.setSpacing(20)
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setSpacing(20)
 
         self._cargar_stylesheet()
         self._init_tabs()
         self._init_tab_usuarios()
         self._init_tab_permisos()
-        self.setLayout(self.layout)
+        self.setLayout(self.main_layout)
 
     def _cargar_stylesheet(self):
         """Carga el stylesheet visual moderno para Usuarios según el tema activo."""
@@ -43,7 +44,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.tab_permisos = QWidget()
         self.tabs.addTab(self.tab_usuarios, "Usuarios")
         self.tabs.addTab(self.tab_permisos, "Permisos de módulos")
-        self.layout.addWidget(self.tabs)
+        self.main_layout.addWidget(self.tabs)
 
     def _init_tab_usuarios(self):
         tab_usuarios_layout = QVBoxLayout(self.tab_usuarios)
@@ -53,6 +54,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.boton_agregar.setIconSize(QSize(20, 20))
         self.boton_agregar.setToolTip("Agregar usuario")
         self.boton_agregar.setText("")
+        estilizar_boton_icono(self.boton_agregar)
         self.boton_agregar.setFixedSize(48, 48)
         sombra = QGraphicsDropShadowEffect()
         sombra.setBlurRadius(15)
@@ -88,6 +90,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.make_table_responsive(self.tabla_permisos_modulos)
         tab_permisos_layout.addWidget(self.tabla_permisos_modulos)
         self.boton_guardar_permisos = QPushButton("Guardar permisos")
+        estilizar_boton_icono(self.boton_guardar_permisos)
         tab_permisos_layout.addWidget(self.boton_guardar_permisos)
 
     def mostrar_tab_permisos(self, visible):

@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTabWidget, QCalendarWidget, QPushButton, QHBoxLayout, QFrame
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTabWidget, QCalendarWidget, QPushButton, QHBoxLayout, QFrame, QTableWidget, QTableWidgetItem, QGraphicsDropShadowEffect
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtGui import QIcon, QFont
+from PyQt6.QtGui import QIcon, QFont, QColor
 from themes import theme_manager
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -30,9 +30,74 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.label_estado.setFrameStyle(QFrame.Shape.Panel | QFrame.Shadow.Sunken)
         self.label_estado.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.layout.addWidget(self.label_estado)
-        # Pestañas: solo Cronograma (Gantt) y Calendario
+        # Pestañas: Obras, Cronograma (Gantt) y Calendario
         self.tabs = QTabWidget()
         self.layout.addWidget(self.tabs)
+        # --- NUEVA PESTAÑA: Tabla de Obras ---
+        self.tab_tabla_obras = QWidget()
+        self.tab_tabla_obras_layout = QVBoxLayout()
+        self.tab_tabla_obras.setLayout(self.tab_tabla_obras_layout)
+        self.tabs.addTab(self.tab_tabla_obras, "Listado de Obras")
+        # --- Botones superiores derechos estilo Inventario ---
+        top_btns_layout = QHBoxLayout()
+        top_btns_layout.addStretch()
+        self.boton_agregar_obra = QPushButton()
+        self.boton_agregar_obra.setIcon(QIcon("img/add-etapa.svg"))
+        self.boton_agregar_obra.setIconSize(QSize(24, 24))
+        self.boton_agregar_obra.setToolTip("Agregar nueva obra")
+        self.boton_agregar_obra.setText("")
+        self.boton_agregar_obra.setFixedSize(48, 48)
+        sombra = QGraphicsDropShadowEffect()
+        sombra.setBlurRadius(15)
+        sombra.setXOffset(0)
+        sombra.setYOffset(4)
+        sombra.setColor(QColor(0, 0, 0, 50))
+        self.boton_agregar_obra.setGraphicsEffect(sombra)
+        estilizar_boton_icono(self.boton_agregar_obra)
+        top_btns_layout.addWidget(self.boton_agregar_obra)
+        self.tab_tabla_obras_layout.addLayout(top_btns_layout)
+        # --- Tabla principal de obras (estilo Inventario) ---
+        self.tabla_obras = QTableWidget()
+        self.tabla_obras.setObjectName("tabla_obras")
+        TableResponsiveMixin.make_table_responsive(self, self.tabla_obras)
+        self.tabla_obras.setAlternatingRowColors(True)
+        self.tabla_obras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.tabla_obras.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.tabla_obras.verticalHeader().setVisible(False)
+        self.tabla_obras.horizontalHeader().setHighlightSections(False)
+        self.tabla_obras.setShowGrid(False)
+        self.tabla_obras.setMinimumHeight(400)
+        self.tabla_obras.setMinimumWidth(1200)
+        self.tabla_obras.setStyleSheet("")
+        self.tab_tabla_obras_layout.addWidget(self.tabla_obras)
+        # Método para cargar datos en la tabla
+        def cargar_tabla_obras(obras):
+            self.tabla_obras.setRowCount(0)
+            for idx, obra in enumerate(obras):
+                row = self.tabla_obras.rowCount()
+                self.tabla_obras.insertRow(row)
+                self.tabla_obras.setItem(row, 0, QTableWidgetItem(str(obra.get('nombre',''))))
+                self.tabla_obras.setItem(row, 1, QTableWidgetItem(str(obra.get('cliente',''))))
+                self.tabla_obras.setItem(row, 2, QTableWidgetItem(str(obra.get('estado',''))))
+                self.tabla_obras.setItem(row, 3, QTableWidgetItem(str(obra.get('fecha_medicion',''))))
+                self.tabla_obras.setItem(row, 4, QTableWidgetItem(str(obra.get('fecha_entrega',''))))
+                self.tabla_obras.setItem(row, 5, QTableWidgetItem(str(obra.get('dias_entrega',''))))
+                self.tabla_obras.setItem(row, 6, QTableWidgetItem(str(obra.get('monto_ars',''))))
+                self.tabla_obras.setItem(row, 7, QTableWidgetItem(str(obra.get('pago_porcentaje',''))))
+                # Botón de edición
+                btn_editar = QPushButton()
+                btn_editar.setIcon(QIcon("img/plus_icon.svg"))
+                btn_editar.setToolTip("Editar obra")
+                btn_editar.setFixedSize(32, 32)
+                estilizar_boton_icono(btn_editar)
+                btn_editar.clicked.connect(lambda _, r=row: self.accion_editar_obra(r))
+                self.tabla_obras.setCellWidget(row, 8, btn_editar)
+        self.cargar_tabla_obras = cargar_tabla_obras
+        # Acción de edición
+        def accion_editar_obra(row):
+            if hasattr(self, 'obras_controller'):
+                self.obras_controller.editar_obra(row+1)
+        self.accion_editar_obra = accion_editar_obra
         # Pestaña de Cronograma (Gantt visual)
         self.tab_cronograma = QWidget()
         self.tab_cronograma_layout = QVBoxLayout()

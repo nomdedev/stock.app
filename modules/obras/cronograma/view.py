@@ -150,13 +150,13 @@ class CronogramaView(QWidget):
             dias_totales = 90
             fecha_max = fecha_min + datetime.timedelta(days=89)
         # Parámetros visuales
-        row_height = 50
-        bar_height = 28
-        left_margin = 120
-        top_margin = 40
+        row_height = 70  # Aumentar separación vertical entre barras
+        bar_height = 32  # Aumentar altura de barra
+        left_margin = 140  # Más espacio para nombres
+        top_margin = 60   # Más margen superior
         day_width = max(self._min_day_width, min(self._base_day_width * self._zoom_factor, self._max_day_width))
-        font = QFont("Segoe UI", 10)
-        font_bold = QFont("Segoe UI", 10)
+        font = QFont("Segoe UI", 11)
+        font_bold = QFont("Segoe UI", 11)
         font_bold.setBold(True)
         # Fechas de entrega a resaltar
         fechas_entrega_set = set(o['fecha_entrega'] for o in self.obras if o['fecha_entrega'])
@@ -188,10 +188,19 @@ class CronogramaView(QWidget):
         hoy = datetime.date.today()
         for idx, obra in enumerate(self.obras):
             y = top_margin + idx * row_height
-            # Nombre de la obra
-            text = scene.addText(obra['nombre'], font)
-            text.setDefaultTextColor(QColor(60,60,60))
-            text.setPos(10, y+row_height/2-10)
+            # Nombre de la obra con estilo moderno y datos clave
+            nombre_html = f"""
+                <div style='font-size:15px;font-weight:bold;color:#2563eb'>{obra['nombre']}</div>
+                <div style='font-size:12px;color:#555'>{obra['cliente']}</div>
+                <div style='font-size:11px;color:#888'>Medición: {obra['fecha'].strftime('%d/%m/%Y')} | Entrega: <b style='color:#e53935'>{obra['fecha_entrega'].strftime('%d/%m/%Y')}</b></div>
+            """
+            text_widget = scene.addText(obra['nombre'], font)
+            try:
+                text_widget.setHtml(nombre_html)
+            except Exception:
+                # Fallback si setHtml no está disponible
+                text_widget.setPlainText(f"{obra['nombre']}\n{obra['cliente']}\nMedición: {obra['fecha'].strftime('%d/%m/%Y')} | Entrega: {obra['fecha_entrega'].strftime('%d/%m/%Y')}")
+            text_widget.setPos(10, y+row_height/2-18)
             # Barra de Gantt
             inicio = (obra['fecha'] - fecha_min).days
             fin = (obra['fecha_entrega'] - fecha_min).days
@@ -203,10 +212,13 @@ class CronogramaView(QWidget):
             bar.setBrush(QBrush(color))
             bar.setPen(QPen(Qt.GlobalColor.transparent))
             scene.addItem(bar)
-            # Texto sobre la barra
-            label = f"{obra['cliente']} - {obra['estado']}"
-            t = scene.addText(label, font)
-            t.setDefaultTextColor(QColor(30,30,30))
+            # Etiqueta moderna sobre la barra
+            label = f"<span style='font-weight:bold;color:#2563eb'>{obra['estado']}</span>"
+            t = scene.addText(obra['cliente'] + ' - ' + obra['estado'], font)
+            try:
+                t.setHtml(label)
+            except Exception:
+                t.setPlainText(obra['estado'])
             t.setPos(x1+8, y+14)
         # Ajustar tamaño de la escena
         scene.setSceneRect(0, 0, left_margin + dias_totales*day_width + 100, top_margin + len(self.obras)*row_height + 60)

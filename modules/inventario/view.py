@@ -364,7 +364,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
             if not codigo:
                 QMessageBox.warning(dialog, "Falta código", "Ingrese un código de proveedor.")
                 return
-            query = "SELECT id, codigo, descripcion, stock_actual FROM inventario_perfiles WHERE codigo LIKE ?"
+            query = "SELECT id, codigo, descripcion, stock FROM inventario_perfiles WHERE codigo LIKE ?"
             connection_string = (
                 f"DRIVER={{{self.db_connection.driver}}};"
                 f"SERVER=localhost\\SQLEXPRESS;"

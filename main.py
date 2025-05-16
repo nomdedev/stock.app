@@ -77,6 +77,9 @@ from widgets.sidebar import Sidebar
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        from PyQt6.QtWidgets import QStatusBar
+        self._status_bar = QStatusBar()
+        self.setStatusBar(self._status_bar)
         self.logger = Logger()  # Inicializar el logger
         self.logger.info("Aplicación iniciada")
         self.setWindowTitle("MPS Inventario App")
@@ -91,7 +94,7 @@ class MainWindow(QMainWindow):
         self.usuario_label.setObjectName("usuarioActualLabel")
         self.usuario_label.setStyleSheet("background: #e0e7ef; color: #1e293b; font-size: 13px; font-weight: bold; border-radius: 8px; padding: 4px 12px; margin-right: 8px;")
         self.usuario_label.setText("")
-        self.statusBar().addPermanentWidget(self.usuario_label, 1)
+        self._status_bar.addPermanentWidget(self.usuario_label, 1)
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
         """Muestra un mensaje visual en la barra de estado y, si es error, también un QMessageBox."""
@@ -103,8 +106,8 @@ class MainWindow(QMainWindow):
         }
         color = colores.get(tipo, "#2563eb")
         # Fondo sutil y texto destacado para feedback moderno
-        self.statusBar().setStyleSheet(f"background: #f1f5f9; color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 4px 12px;")
-        self.statusBar().showMessage(mensaje, duracion)
+        self._status_bar.setStyleSheet(f"background: #f1f5f9; color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 4px 12px;")
+        self._status_bar.showMessage(mensaje, duracion)
         if tipo == "error":
             QMessageBox.critical(self, "Error", mensaje)
         elif tipo == "advertencia":
@@ -209,7 +212,7 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print(f"Error al inicializar el módulo Auditoría: {e}")
             # Mostrar un mensaje de advertencia en la interfaz
-            self.statusBar().showMessage("El módulo Auditoría está deshabilitado temporalmente.")
+            self._status_bar.showMessage("El módulo Auditoría está deshabilitado temporalmente.")
 
         try:
             # Inicializar el módulo Configuración
@@ -219,7 +222,7 @@ class MainWindow(QMainWindow):
             )
         except Exception as e:
             print(f"Error al inicializar el módulo Configuración: {e}")
-            self.statusBar().showMessage("El módulo Configuración está deshabilitado temporalmente.")
+            self._status_bar.showMessage("El módulo Configuración está deshabilitado temporalmente.")
 
         # Inicializar el módulo Mantenimiento
         self.mantenimiento_view = MantenimientoView()

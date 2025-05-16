@@ -17,13 +17,13 @@ class LogisticaView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default"):
         super().__init__()
         self.usuario_actual = usuario_actual
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(20, 20, 20, 20)
-        self.layout.setSpacing(20)
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setSpacing(20)
 
         # Tabs principales
         self.tabs = QTabWidget()
-        self.layout.addWidget(self.tabs)
+        self.main_layout.addWidget(self.tabs)
 
         # --- Pestaña 1: Obras y Direcciones ---
         self.tab_obras = QWidget()
@@ -57,15 +57,17 @@ class LogisticaView(QWidget, TableResponsiveMixin):
         self.tab_envios = QWidget()
         tab_envios_layout = QVBoxLayout(self.tab_envios)
         self.tabla_envios = QTableWidget()
-        self.tabla_envios.setColumnCount(5)
-        self.tabla_envios.setHorizontalHeaderLabels(["ID", "Obra", "Material", "Cantidad", "Estado"])
+        self.tabla_envios.setColumnCount(7)
+        self.tabla_envios.setHorizontalHeaderLabels([
+            "ID", "Obra", "Material", "Cantidad", "Estado", "Quién lo llevó", "Vehículo"
+        ])
         self.make_table_responsive(self.tabla_envios)
         tab_envios_layout.addWidget(self.tabla_envios)
         self.tabs.addTab(self.tab_envios, "Envíos y Materiales")
 
         # Configuración de columnas para Envíos y Materiales
         self.config_path_envios = f"config_logistica_envios_columns.json"
-        self.envios_headers = ["ID", "Obra", "Material", "Cantidad", "Estado"]
+        self.envios_headers = ["ID", "Obra", "Material", "Cantidad", "Estado", "Quién lo llevó", "Vehículo"]
         self.columnas_visibles_envios = self.cargar_config_columnas(self.config_path_envios, self.envios_headers)
         self.aplicar_columnas_visibles(self.tabla_envios, self.envios_headers, self.columnas_visibles_envios)
         header_envios = self.tabla_envios.horizontalHeader()
@@ -158,8 +160,11 @@ Para habilitar el mapa, instala el paquete y reinicia la app.
 Comando:
 pip install PyQt6-WebEngine
 """)
-            self.boton_instalar_webengine = QPushButton("Instalar PyQt6-WebEngine ahora")
-            self.boton_instalar_webengine.setStyleSheet("background:#4ade80;color:#222;font-weight:bold;padding:8px 16px;border-radius:8px;")
+            self.boton_instalar_webengine = QPushButton()
+            self.boton_instalar_webengine.setIcon(QIcon("img/settings_icon.svg"))
+            self.boton_instalar_webengine.setToolTip("Instalar PyQt6-WebEngine ahora")
+            self.boton_instalar_webengine.setText("")
+            estilizar_boton_icono(self.boton_instalar_webengine)
             self.boton_instalar_webengine.clicked.connect(self.instalar_webengine)
             tab_mapa_layout.addWidget(self.mapa_placeholder)
             tab_mapa_layout.addWidget(self.boton_instalar_webengine)
@@ -198,9 +203,9 @@ pip install PyQt6-WebEngine
         estilizar_boton_icono(self.boton_agregar)
         botones_layout.addWidget(self.boton_agregar)
         botones_layout.addStretch()
-        self.layout.addLayout(botones_layout)
+        self.main_layout.addLayout(botones_layout)
 
-        self.setLayout(self.layout)
+        self.setLayout(self.main_layout)
 
     def instalar_webengine(self):
         import subprocess, sys
