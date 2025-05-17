@@ -310,6 +310,61 @@ Este patrón es obligatorio para todos los módulos y garantiza robustez y traza
 
 ---
 
+## Patrón de gestión de permisos y visibilidad de módulos (implementación real)
+
+### Lógica de carga y uso de permisos
+
+- Al iniciar sesión, se cargan los permisos del usuario desde la tabla `permisos_modulos`.
+- El modelo `UsuariosModel` expone los siguientes métodos:
+
+```python
+# Obtener módulos permitidos (visibles en el sidebar)
+modulos = usuarios_model.obtener_modulos_permitidos(usuario)
+
+# Obtener permisos granulares para un módulo
+permisos = usuarios_model.obtener_permisos_modulo(usuario, 'inventario')
+# permisos = {'ver': True, 'modificar': False, 'aprobar': False}
+
+# Verificar permiso para una acción específica
+if usuarios_model.tiene_permiso(usuario, 'inventario', 'modificar'):
+    # Permitir acción
+    ...
+else:
+    # Mostrar mensaje de permiso denegado
+    ...
+```
+
+- El controlador debe usar estos métodos para construir el sidebar y habilitar/deshabilitar acciones según los permisos.
+- El método `actualizar_permisos_modulos_usuario` permite actualizar los permisos desde la UI de configuración:
+
+```python
+# permisos_dict = {'inventario': {'ver': True, 'modificar': False, 'aprobar': False}, ...}
+usuarios_model.actualizar_permisos_modulos_usuario(id_usuario, permisos_dict, creado_por)
+```
+
+### Ejemplo de uso en el controlador
+
+```python
+def cargar_sidebar(self):
+    modulos = self.usuarios_model.obtener_modulos_permitidos(self.usuario_actual)
+    for modulo in TODOS_LOS_MODULOS:
+        if modulo in modulos:
+            self.sidebar.agregar_boton_modulo(modulo)
+
+# Al realizar una acción:
+if not self.usuarios_model.tiene_permiso(self.usuario_actual, 'inventario', 'modificar'):
+    self.view.mostrar_mensaje("No tiene permiso para modificar inventario.")
+    return
+# ...
+```
+
+### Ventajas
+- Permisos granulares y auditables por usuario y módulo.
+- Sidebar y acciones de la UI se adaptan automáticamente a los permisos.
+- Fácil de extender a roles o a nuevos módulos/acciones.
+
+---
+
 ## Módulo Contabilidad
 
 El módulo de Contabilidad centraliza la gestión financiera y administrativa del sistema, permitiendo un control integral de movimientos, pagos y recibos asociados a las obras y operaciones generales.

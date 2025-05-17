@@ -176,41 +176,63 @@ class UsuariosModel:
         return resultado[0][0] > 0
 
     def obtener_modulos_permitidos(self, usuario):
-        # Si es admin o supervisor, devuelve todos los módulos
+        """
+        Devuelve la lista de módulos a los que el usuario tiene acceso (puede_ver=TRUE en permisos_modulos).
+        Admin y supervisor ven todos los módulos.
+        """
         if usuario['rol'] in ('admin', 'supervisor'):
-            query = "SELECT DISTINCT modulo FROM roles_permisos"
+            query = "SELECT DISTINCT modulo FROM permisos_modulos"
             resultado = self.db.ejecutar_query(query)
             return [r[0] for r in resultado]
         else:
-            # Devuelve solo los módulos permitidos explícitamente (por username)
-            query = "SELECT modulo FROM permisos_usuario WHERE username = ?"
-            resultado = self.db.ejecutar_query(query, (usuario['username'],))
+            query = "SELECT modulo FROM permisos_modulos WHERE id_usuario = ? AND puede_ver = 1"
+            resultado = self.db.ejecutar_query(query, (usuario['id'],))
             return [r[0] for r in resultado]
 
-    def tiene_permiso(self, usuario, modulo, accion):
-        # Admin y supervisor tienen acceso total
+    def obtener_permisos_modulo(self, usuario, modulo):
+        """
+        Devuelve un dict con los permisos del usuario para el módulo indicado.
+        """
         if usuario['rol'] in ('admin', 'supervisor'):
-            return True
-        # Usuarios normales: verificar si tiene el módulo permitido
-        modulos = self.obtener_modulos_permitidos(usuario)
-        if modulo not in modulos:
-            return False
-        # Verificar permisos específicos por acción (ver, editar, etc.)
-        query = '''
-        SELECT permiso_ver, permiso_editar, permiso_aprobar, permiso_eliminar
-        FROM roles_permisos
-        WHERE rol = (SELECT rol FROM usuarios WHERE id = ?) AND modulo = ?
-        '''
+            # Acceso total
+            return {'ver': True, 'modificar': True, 'aprobar': True}
+        query = """
+        SELECT puede_ver, puede_modificar, puede_aprobar
+        FROM permisos_modulos
+        WHERE id_usuario = ? AND modulo = ?
+        """
         resultado = self.db.ejecutar_query(query, (usuario['id'], modulo))
-        if not resultado:
-            return False
-        permisos = {
-            'ver': resultado[0][0],
-            'editar': resultado[0][1],
-            'aprobar': resultado[0][2],
-            'eliminar': resultado[0][3]
-        }
-        return bool(permisos.get(accion, 0))
+        if resultado:
+            return {
+                'ver': bool(resultado[0][0]),
+                'modificar': bool(resultado[0][1]),
+                'aprobar': bool(resultado[0][2])
+            }
+        return {'ver': False, 'modificar': False, 'aprobar': False}
+
+    def tiene_permiso(self, usuario, modulo, accion):
+        """
+        Verifica si el usuario tiene permiso para la acción ('ver', 'modificar', 'aprobar') en el módulo.
+        """
+        permisos = self.obtener_permisos_modulo(usuario, modulo)
+        return permisos.get(accion, False)
+
+    def actualizar_permisos_modulos_usuario(self, id_usuario, permisos_dict, creado_por):
+        """
+        Actualiza los permisos de módulos para un usuario.
+        permisos_dict: {modulo: {'ver': bool, 'modificar': bool, 'aprobar': bool}}
+        """
+        # Borra los permisos actuales
+        self.db.ejecutar_query("DELETE FROM permisos_modulos WHERE id_usuario = ?", (id_usuario,))
+        # Inserta los nuevos permisos
+        for modulo, permisos in permisos_dict.items():
+            self.db.ejecutar_query(
+                """
+                INSERT INTO permisos_modulos (id_usuario, modulo, puede_ver, puede_modificar, puede_aprobar, creado_por)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (id_usuario, modulo, int(permisos.get('ver', False)), int(permisos.get('modificar', False)), int(permisos.get('aprobar', False)), creado_por)
+            )
 
     def obtener_todos_los_modulos(self):
         query = "SELECT DISTINCT modulo FROM roles_permisos"
