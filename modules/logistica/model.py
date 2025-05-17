@@ -17,7 +17,7 @@ FLUJO PASO A PASO DEL MÓDULO LOGÍSTICA
 
 import pandas as pd
 from fpdf import FPDF
-from core.database import LogisticaDatabaseConnection  # Importar la clase correcta
+from core.database import InventarioDatabaseConnection  # Importar la clase correcta
 
 class LogisticaModel:
     def __init__(self, db_connection):

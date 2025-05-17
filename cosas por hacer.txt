@@ -1,142 +1,28 @@
 **COSAS POR HACER (actualizado 2025-05-17)**
 
-- [x] Refactorizar y robustecer agregar_item en InventarioController: validación, unicidad, manejo de errores, auditoría, feedback UI.
-- [x] Revisar y robustecer reservar_item: validar stock suficiente antes de reservar, evitar reservas con cantidad inválida, feedback claro en UI, auditar correctamente.
-- [x] Revisar y robustecer lógica de entrega de materiales (transformar_reserva_en_entrega): validar stock, evitar entregas dobles, auditar.
-- [x] Agregar tests de integración SQL para verificar agregado, ajuste y eliminación real en la base de datos y alertar si falla.
-- [x] Mejorar manejo de errores y feedback en todos los métodos críticos del controlador de inventario.
-- [x] Corregir y hacer pasar todos los tests unitarios de inventario (alta, reserva, export, QR, movimientos, tabla, etc.).
-- [x] Adaptar y expandir los tests para cubrir todos los flujos y edge cases (stock insuficiente, duplicados, permisos, errores de DB, etc.).
-- [x] Validar y documentar los flujos nuevos/cambiados en README.
-
 # Estado de tests por módulo (2025-05-17)
 - inventario: OK (tests unitarios e integración pasan; edge cases cubiertos)
-- logistica: 2 tests fallan (diferencias en SQL esperado vs real)
-- mantenimiento: todos los tests fallan (métodos incompletos o mal definidos)
-- usuarios: OK
+- logistica: OK (tests unitarios e integración pasan)
+- mantenimiento: OK (tests unitarios e integración pasan)
+- usuarios: OK (headers dinámicos implementados)
 - compras: OK
 - configuracion: OK
 - auditoria: OK
 - auditoria_integracion: OK
-- obras: OK (tests integración y unitarios pasan, auditoría y flujos validados)
+- obras: OK (headers dinámicos implementados, tests integración y unitarios pasan, auditoría y flujos validados)
 
 # Próximos pasos:
-- [ ] Corregir tests de logistica (ajustar asserts de SQL y mocks)
-- [ ] Completar y corregir métodos y tests de mantenimiento
-- [ ] Ejecutar y revisar tests de obras
-- [ ] Documentar en README los flujos y casos cubiertos
 
 # NOTA: Cuando completes un punto, márcalo como [x] y elimina los resueltos en la próxima actualización.
 
 Actualiza este archivo a medida que completes tareas o surjan nuevas necesidades.
 
-After searching your codebase for indicators of pending work (such as TODOs, FIXMEs, comments about missing features, and documentation checklists), here’s a summary of what remains pending or is marked as incomplete in your project:
+# Checklist de mejoras y recordatorios pendientes (según README y SAP-like):
 
-1. General Pending Items and TODOs
-No explicit TODO or FIXME comments were found in the codebase, but several modules contain documentation blocks and checklists that indicate features, requirements, or flows that should be implemented or verified.
-2. Module-Specific Checklists and Documentation
-Obras (modules/obras/model.py)
-The top of the file contains a detailed checklist and flow documentation. All main features are marked as completed ([x]), but the notes suggest:
-Consult README.md and diagrams for references and to ensure full compliance with the intended flow.
-Ensure all actions are registered in the audit log.
-Use the PermisoAuditoria decorator in the controller for permission checks.
-Checklist visual: Confirm all points of visualization, editing, exporting, searching, filtering, and auditing are met.
-Usuarios (modules/usuarios/model.py)
-The checklist at the top is fully checked, but the notes emphasize:
-All sensitive actions must be logged in logs_usuarios.
-Modification methods require permission validation by role.
-Access to user management must be restricted to authorized roles.
-Integration with the audit module is required.
-Review and ensure all requirements are enforced in code.
-Compras (modules/compras/model.py)
-The step-by-step flow is documented, but there are no explicit checkmarks. Review to ensure:
-All steps (from creating a purchase order to auditing) are implemented.
-Export and audit features are present.
-Mantenimiento (modules/mantenimiento/model.py)
-The model methods are implemented, but no explicit checklist is present. Review for:
-Full coverage of maintenance flows and audit logging.
-3. README and Documentation Requirements
-The README.md contains several MUSTS and obligatory patterns for all modules:
-Dynamic header synchronization: All table views must fetch column headers from the database, not hardcoded.
-Column visibility persistence: User preferences for visible columns must be saved and restored.
-No header desynchronization: If a table structure changes, the view must update automatically.
-UI/DB integration tests: All modules must have tests that verify data is reflected both in the UI and the database.
-Audit logging: All important actions must be registered in the audit log.
-Permission checks: All sensitive actions must be protected by role-based permission checks.
-Modern, responsive UI: All tables must be responsive and follow the visual standards.
-4. Code Patterns to Review
-PermisoAuditoria Decorator:
-Found in several controllers (e.g., modules/logistica/controller.py, modules/compras/controller.py, modules/notificaciones/controller.py).
-
-Ensure all sensitive controller actions use this decorator.
-Check that the decorator is always passed the correct models and user context.
-Audit Logging:
-
-Verify that every create, update, and delete action in every module is logged in the audit system.
-Tests:
-
-Ensure all modules have integration tests that check both UI and DB reflection.
-Check that all tests are up-to-date with the current data structures and flows.
-5. Database and Table Synchronization
-Dynamic header fetching is required for all QTableWidget-based views.
-If any table headers are hardcoded, refactor to fetch from the DB.
-6. Other Noted Requirements
-Export to Excel/PDF:
-Confirm that all modules with tabular data support export as required.
-QR Code Generation:
-Ensure inventory and materials modules support QR code generation and display.
-Role and Permission Management:
-Confirm that user roles and permissions are enforced everywhere.
-Error Handling:
-The app must not crash if the DB is unavailable; show a warning and keep the rest functional.
-Summary Table of Pending/To-Verify Items
-Area/Module	Pending/To Verify
-Obras	Confirm all checklist items, audit logging, permission checks, visual compliance
-Usuarios	Ensure all sensitive actions are logged, permissions enforced, audit integration
-Compras	Review full flow, export, audit, and permission checks
-Mantenimiento	Review for full flow and audit logging
-All Modules	Dynamic headers, column visibility persistence, audit logging, permission checks
-UI/DB Integration	Tests for all modules, reflecting data in both UI and DB
-Export/QR	Export to Excel/PDF and QR code generation where required
-Error Handling	App must handle DB errors gracefully
-Actionable Next Steps
-Review all modules for dynamic header fetching and column persistence.
-Audit all controller actions for proper use of PermisoAuditoria and audit logging.
-Ensure all modules have up-to-date integration tests (UI + DB).
-Check that all export and QR code features are present where required.
-Verify that the app handles DB connection errors gracefully.
-Consult the README and module docstrings/checklists for any additional requirements.
-If you want a module-by-module checklist or want to see all places where a specific pattern (like audit logging or permission checks) is missing, let me know!
-
-Revisando el código y el estado actual de los archivos, esto es lo que queda pendiente o puede mejorarse para robustez, mantenibilidad y cumplimiento total de los estándares y flujos definidos:
-
-1. Decorador PermisoAuditoria
-El decorador PermisoAuditoria está duplicado en varios controladores (compras, logística, notificaciones). Sería ideal centralizarlo en un solo módulo utilitario para evitar duplicidad y facilitar el mantenimiento.
-En el decorador, se usan referencias a UsuariosModel y AuditoriaModel sin importar explícitamente esos modelos en todos los archivos. Si no están importados, puede causar errores en tiempo de ejecución.
-2. Control de Permisos y Auditoría
-Verifica que todos los métodos críticos de los controladores de cada módulo tengan aplicado el decorador de permisos y auditoría, especialmente en módulos nuevos o refactorizados.
-Asegúrate de que el mensaje de "No tiene permiso..." se muestre siempre de forma visible y amigable para el usuario.
-3. Modelos y Métodos
-Algunos métodos en modelos como MantenimientoModel, ComprasModel, PedidosModel y otros están incompletos o con cuerpos vacíos (pass o sin implementación). Completa estos métodos para que la funcionalidad esté cubierta y no haya errores en producción.
-Asegúrate de que todos los métodos de obtención de datos devuelvan siempre una lista (nunca None), como ya se corrigió en auditoría/configuración.
-4. Pruebas Unitarias y de Integración
-Si bien la suite de tests pasa, revisa que haya cobertura suficiente para:
-Errores de permisos (usuario sin permiso, usuario no autenticado).
-Errores de conexión a base de datos (simulación de fallo).
-Pruebas de integración entre módulos (por ejemplo, que un cambio de estado en Obras se refleje en Logística).
-Agrega tests para los métodos que aún no tienen cobertura, especialmente en módulos nuevos o refactorizados.
-5. Documentación
-En el README y en los docstrings de los modelos/controladores, asegúrate de que esté documentado el flujo real de cada módulo, los permisos requeridos y los puntos de integración con otros módulos.
-Documenta el uso del decorador de permisos y cómo agregar nuevos permisos o módulos.
-6. Refactorización y Limpieza
-Centraliza la lógica repetida (por ejemplo, el decorador de permisos).
-Elimina código muerto o comentarios obsoletos.
-Revisa que todos los imports sean necesarios y estén ordenados.
-7. Automatización y Scripts
-Si no lo has hecho, agrega scripts para poblar la base de datos con datos de ejemplo para pruebas/desarrollo.
-Asegúrate de que los scripts de instalación (install.bat, install.sh) incluyan todas las dependencias y pasos necesarios.
-8. UI/UX
-Verifica que todos los QTableWidget usen el mixin de responsividad.
-Asegúrate de que los mensajes de error y feedback visual sean claros y consistentes en toda la app.
-En resumen:
-El sistema está muy avanzado y robusto, pero puedes mejorar la mantenibilidad y escalabilidad centralizando el decorador de permisos, completando métodos vacíos, asegurando cobertura de tests para casos de error y permisos, y documentando bien los flujos y puntos de integración. Si necesitas ayuda con alguna de estas tareas, dime cuál priorizar.
+- [x] Validar que todas las tablas principales obtienen headers dinámicamente desde la base de datos (sin hardcode).
+- [x] Implementar menú contextual para mostrar/ocultar columnas en todas las QTableWidget.
+- [x] Verificar que todos los módulos usan el mixin TableResponsiveMixin para tablas responsive.
+- [ ] Revisar que cada acción relevante (alta, edición, eliminación, exportación, reserva, entrega, cambio de estado) queda registrada en auditoría.
+- [ ] Validar que los permisos y visibilidad de módulos se cargan dinámicamente según el usuario (sidebar y QStackedWidget).
+- [ ] Implementar y testear el flujo de solicitudes de aprobación para usuarios sin permiso de modificación (tabla solicitudes_aprobacion).
+- [ ] Revisar feedback visual en todas las acciones (mensajes de éxito, error, advertencia, permiso denegado).

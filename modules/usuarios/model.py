@@ -244,3 +244,14 @@ class UsuariosModel:
         self.db.ejecutar_query("DELETE FROM permisos_usuario WHERE username = ?", (username,))
         for modulo in modulos:
             self.db.ejecutar_query("INSERT INTO permisos_usuario (username, modulo) VALUES (?, ?)", (username, modulo))
+
+    def obtener_headers_usuarios(self):
+        """
+        Obtiene los nombres de columnas (headers) de la tabla usuarios directamente desde la base de datos.
+        Cumple el MUST de sincronización automática de columnas.
+        """
+        query = "SELECT TOP 0 * FROM usuarios"
+        cursor = self.db.db.cursor()
+        cursor.execute(query)
+        headers = [column[0] for column in cursor.description]
+        return headers

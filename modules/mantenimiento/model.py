@@ -14,11 +14,20 @@ class MantenimientoModel:
         return self.db.ejecutar_query(query)
 
     def agregar_mantenimiento(self, datos):
+        # Alias de registrar_mantenimiento para compatibilidad
+        return self.registrar_mantenimiento(datos)
+
+    def registrar_mantenimiento(self, datos):
+        """
+        Registra un nuevo mantenimiento.
+        datos: (tipo_objeto, id_objeto, tipo_mantenimiento, fecha_realizacion, realizado_por, observaciones, firma_digital)
+        """
         query = """
         INSERT INTO mantenimientos (tipo_objeto, id_objeto, tipo_mantenimiento, fecha_realizacion, realizado_por, observaciones, firma_digital)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """
         self.db.ejecutar_query(query, datos)
+        return True
 
     def obtener_mantenimientos(self):
         query = "SELECT * FROM mantenimientos"
@@ -29,39 +38,41 @@ class MantenimientoModel:
         return self.db.ejecutar_query(query, (id_mantenimiento,))
 
     def agregar_checklist_item(self, datos):
+        # datos: (id_mantenimiento, item, estado, observaciones)
         query = """
         INSERT INTO checklists_mantenimiento (id_mantenimiento, item, estado, observaciones)
         VALUES (?, ?, ?, ?)
         """
         self.db.ejecutar_query(query, datos)
+        return True
 
     def obtener_tareas_recurrentes(self):
         query = "SELECT * FROM tareas_recurrentes WHERE proxima_fecha <= CURRENT_DATE"
         return self.db.ejecutar_query(query)
 
     def agregar_tarea_recurrente(self, datos):
+        # datos: (tipo_objeto, id_objeto, descripcion, frecuencia_dias, proxima_fecha, responsable)
         query = """
         INSERT INTO tareas_recurrentes (tipo_objeto, id_objeto, descripcion, frecuencia_dias, proxima_fecha, responsable)
         VALUES (?, ?, ?, ?, ?, ?)
         """
         self.db.ejecutar_query(query, datos)
+        return True
 
     def actualizar_tarea_recurrente(self, id_tarea, nueva_fecha):
         query = "UPDATE tareas_recurrentes SET proxima_fecha = ? WHERE id = ?"
         self.db.ejecutar_query(query, (nueva_fecha, id_tarea))
+        return True
 
     def eliminar_tarea_recurrente(self, id_tarea):
         query = "DELETE FROM tareas_recurrentes WHERE id = ?"
         self.db.ejecutar_query(query, (id_tarea,))
-
-    def registrar_mantenimiento(self, tipo_objeto, id_objeto, tipo_mantenimiento, fecha_realizacion, realizado_por, observaciones):
-        query = """
-        INSERT INTO mantenimientos (tipo_objeto, id_objeto, tipo_mantenimiento, fecha_realizacion, realizado_por, observaciones)
-        VALUES (?, ?, ?, ?, ?, ?)
-        """
-        self.db.ejecutar_query(query, (tipo_objeto, id_objeto, tipo_mantenimiento, fecha_realizacion, realizado_por, observaciones))
+        return True
 
     def exportar_reporte_mantenimiento(self, formato):
+        """
+        Exporta el reporte de mantenimientos en el formato solicitado.
+        """
         query = """
         SELECT tipo_mantenimiento, fecha_realizacion, realizado_por, observaciones, firma_digital
         FROM mantenimientos
@@ -86,13 +97,18 @@ class MantenimientoModel:
         return "Formato no soportado."
 
     def registrar_repuesto_utilizado(self, datos):
+        # datos: (id_mantenimiento, id_item, cantidad_utilizada)
         query = """
         INSERT INTO repuestos_usados (id_mantenimiento, id_item, cantidad_utilizada)
         VALUES (?, ?, ?)
         """
         self.db.ejecutar_query(query, datos)
+        return True
 
     def exportar_historial_mantenimientos(self, formato):
+        """
+        Exporta el historial de mantenimientos en el formato solicitado.
+        """
         query = """
         SELECT tipo_mantenimiento, fecha_realizacion, realizado_por, observaciones, firma_digital
         FROM mantenimientos

@@ -99,7 +99,7 @@ class ProduccionDatabaseConnection(BaseDatabaseConnection):
 
 class LogisticaDatabaseConnection(BaseDatabaseConnection):
     def __init__(self):
-        super().__init__("logistica")
+        super().__init__("inventario")  # Usar la base de datos 'inventario' para logística
 
 class PedidosDatabaseConnection(BaseDatabaseConnection):
     def __init__(self):

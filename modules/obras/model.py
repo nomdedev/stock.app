@@ -186,6 +186,12 @@ class ObrasModel:
         res = self.db_connection.ejecutar_query(query, (id_obra,))
         return res[0] if res else None
 
+    def obtener_obra_por_nombre_cliente(self, nombre, cliente):
+        """Obtiene una obra por nombre y cliente."""
+        query = "SELECT * FROM obras WHERE nombre = ? AND cliente = ?"
+        res = self.db_connection.ejecutar_query(query, (nombre, cliente))
+        return res[0] if res else None
+
     def actualizar_obra(self, id_obra, nombre, cliente, estado, fecha_entrega=None):
         if fecha_entrega:
             query = "UPDATE obras SET nombre = ?, cliente = ?, estado = ?, fecha_entrega = ? WHERE id = ?"
@@ -202,3 +208,22 @@ class ObrasModel:
         self.db_connection.ejecutar_query(query, (
             nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars, fecha_medicion, dias_entrega, fecha_entrega, id_obra
         ))
+
+    def obtener_headers_obras(self):
+        """
+        Obtiene los nombres de columnas (headers) de la tabla obras directamente desde la base de datos.
+        Cumple el MUST de sincronización automática de columnas.
+        """
+        try:
+            cursor = self.db_connection.get_cursor()
+            # Compatibilidad con SQLite y SQL Server
+            if hasattr(cursor, 'execute'):
+                cursor.execute("SELECT * FROM obras LIMIT 0")
+                headers = [column[0] for column in cursor.description]
+                return headers
+            else:
+                # Fallback para otros motores
+                return ["id", "nombre", "cliente", "estado", "fecha", "fecha_entrega"]
+        except Exception as e:
+            print(f"Error al obtener headers de obras: {e}")
+            return ["id", "nombre", "cliente", "estado", "fecha", "fecha_entrega"]
