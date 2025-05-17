@@ -366,22 +366,137 @@ El módulo de Contabilidad centraliza la gestión financiera y administrativa de
 
 ---
 
-## Contabilidad
+## Gestión avanzada de permisos y visibilidad de módulos (estructura recomendada)
 
-El módulo de Contabilidad cuenta con una interfaz de pestañas (QTabWidget) con las siguientes secciones:
+### Estructura de permisos flexible y escalable
 
-- **Balance**: muestra todos los movimientos de entrada y salida de dinero. Permite agregar nuevos movimientos mediante un diálogo y persiste los datos en la base de datos.
-- **Seguimiento de Pagos**: permite visualizar el estado de pagos por obra, montos adeudados, montos pagados y detalles por colocador. Los datos se obtienen de las tablas relacionadas.
-- **Recibos**: muestra todos los recibos, permite agregar nuevos recibos mediante un formulario, y generar/guardar/imprimir el PDF del recibo seleccionado.
-- **Estadísticas**: proporciona visualizaciones gráficas de ingresos vs egresos, resumen de totales y filtros avanzados.
+Para garantizar una gestión robusta, auditable y escalable de los permisos y la visibilidad de módulos, se implementa una tabla separada `permisos_modulos` en la base de datos. Esta estructura permite asignar permisos granulares por usuario y módulo, y es fácilmente extensible a roles.
 
-Todas las tablas de este módulo implementan el patrón UX universal:
-- Menú de mostrar/ocultar columnas (clic izquierdo en el encabezado)
-- Persistencia de preferencias de columnas por usuario/sesión
-- Ajuste manual y automático de ancho de columnas
-- Generación y visualización de código QR al seleccionar una fila (con opción de guardar/imprimir como PDF)
+#### SQL recomendado
 
-**Requisito obligatorio:** Este patrón UX es obligatorio y debe estar presente en todos los módulos que utilicen QTableWidget.
+```sql
+CREATE TABLE permisos_modulos (
+    id SERIAL PRIMARY KEY,
+    id_usuario INT REFERENCES usuarios(id),
+    modulo VARCHAR(50) NOT NULL,
+    puede_ver BOOLEAN DEFAULT TRUE,
+    puede_modificar BOOLEAN DEFAULT FALSE,
+    puede_aprobar BOOLEAN DEFAULT FALSE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    creado_por INT REFERENCES usuarios(id)
+);
+```
+
+- **id_usuario**: Relaciona el permiso con un usuario específico.
+- **modulo**: Nombre del módulo (ej: 'inventario', 'obras', 'logistica', etc.).
+- **puede_ver / puede_modificar / puede_aprobar**: Permisos granulares por acción.
+- **fecha_creacion / creado_por**: Trazabilidad y auditoría de cambios.
+
+#### Ejemplo de consulta de permisos por usuario
+
+```sql
+SELECT modulo, puede_ver, puede_modificar, puede_aprobar
+FROM permisos_modulos
+WHERE id_usuario = ?;
+```
+
+#### Extensión a permisos por rol (opcional, recomendado para sistemas grandes)
+
+1. Crear tabla `roles` (id, nombre)
+2. Crear tabla `roles_permisos` (id, id_rol, modulo, puede_ver, puede_modificar, puede_aprobar)
+3. Relacionar usuarios con roles (columna id_rol en `usuarios`)
+4. Al consultar permisos, combinar los de usuario y rol (el permiso de usuario tiene prioridad sobre el de rol)
+
+#### Ventajas de este enfoque
+- Permite agregar nuevos módulos o acciones sin modificar la tabla de usuarios.
+- Facilita la administración y auditoría de permisos.
+- Escalable y compatible con flujos de aprobación y visibilidad SAP-like.
+- Permite UI de configuración flexible (checkboxes por usuario/rol y módulo).
+
+#### Implementación en la aplicación
+- Al iniciar sesión, se cargan los permisos desde `permisos_modulos` y se construye el sidebar y la navegación solo con los módulos permitidos.
+- El módulo de Configuración permite al admin gestionar estos permisos de forma visual.
+- Todas las acciones sensibles validan permisos antes de ejecutarse y registran en auditoría.
+
+> **Este patrón es obligatorio para cumplir con los estándares de seguridad, trazabilidad y experiencia SAP-like del sistema.**
+
+---
+
+## Gestión de Permisos, Visibilidad de Módulos y Aprobaciones (Admin, Supervisor, Usuario)
+
+### Objetivo
+Implementar un sistema robusto de permisos y visibilidad de módulos, donde:
+- **Admin**: Puede ver y acceder a todos los módulos, y definir qué módulos pueden ver los supervisores y usuarios.
+- **Supervisor**: Puede ver los módulos habilitados por el admin y realizar modificaciones, pero no puede cambiar la visibilidad global de módulos.
+- **Usuario**: Solo puede ver los módulos habilitados por el admin y supervisores, y NO puede realizar modificaciones sin aprobación de un supervisor.
+
+### Requerimientos Técnicos y de UI/UX
+
+#### 1. Estructura de Permisos y Visibilidad
+- Crear una tabla o archivo de configuración (`permisos_modulos` o similar) que relacione usuarios/roles con los módulos visibles y permisos de acción (ver, modificar, aprobar).
+- Al iniciar sesión, cargar la configuración de permisos y construir el sidebar y el QStackedWidget solo con los módulos permitidos para ese usuario.
+- El admin debe tener acceso a una interfaz en el módulo de Configuración para gestionar la visibilidad de módulos por usuario y rol (checkboxes por módulo y usuario/rol).
+
+#### 2. Lógica de Aprobación y Modificación
+- Los usuarios con rol "usuario" pueden ver datos, pero cualquier acción de modificación (agregar, editar, eliminar) debe requerir la aprobación de un supervisor.
+- Implementar un flujo de aprobación:
+  - El usuario realiza una solicitud de modificación (por ejemplo, editar un material).
+  - La acción queda "pendiente de aprobación" y se notifica a los supervisores (por ejemplo, en el módulo Notificaciones).
+  - Un supervisor puede aprobar o rechazar la solicitud. Solo al aprobarse, la acción se ejecuta realmente en la base de datos y la UI.
+  - Todas las solicitudes y aprobaciones deben quedar registradas en Auditoría.
+
+#### 3. UI/UX para Permisos y Aprobaciones
+- En el módulo Configuración, agregar una pestaña "Permisos y visibilidad" donde el admin pueda:
+  - Ver la lista de usuarios y roles.
+  - Marcar/desmarcar qué módulos puede ver cada usuario/rol (checkboxes por módulo).
+  - Definir qué acciones puede realizar cada rol (ver, modificar, aprobar).
+- En la UI de cada módulo:
+  - Si el usuario no tiene permiso de modificación, los botones de acción (agregar, editar, eliminar) deben estar deshabilitados o no visibles.
+  - Si un usuario realiza una acción que requiere aprobación, mostrar un mensaje visual indicando que la acción está pendiente de aprobación.
+  - Los supervisores deben ver una lista de solicitudes pendientes y poder aprobar/rechazar desde la UI.
+- El admin siempre puede ver y modificar todo.
+
+#### 4. Persistencia y Seguridad
+- Guardar la configuración de permisos y visibilidad de forma persistente (en base de datos o archivo seguro).
+- Validar los permisos en backend y frontend para evitar bypass por manipulación de la UI.
+- Registrar en Auditoría todos los intentos de acción no permitida, solicitudes de aprobación, aprobaciones y rechazos.
+
+#### 5. Checklist de Implementación
+- [ ] Crear modelo de permisos y visibilidad de módulos por usuario/rol.
+- [ ] Adaptar la construcción del sidebar y QStackedWidget según permisos cargados al login.
+- [ ] Implementar la pestaña de "Permisos y visibilidad" en Configuración para el admin.
+- [ ] Deshabilitar/ocultar botones de acción según permisos en cada módulo.
+- [ ] Implementar flujo de solicitudes de modificación y aprobación para usuarios.
+- [ ] Notificar a supervisores de solicitudes pendientes y permitir aprobar/rechazar.
+- [ ] Registrar todas las acciones y aprobaciones en Auditoría.
+- [ ] Agregar tests de integración para verificar la lógica de permisos, visibilidad y aprobaciones.
+
+#### 6. Ejemplo de Estructura de Permisos (SQL)
+```sql
+CREATE TABLE permisos_modulos (
+    id SERIAL PRIMARY KEY,
+    id_usuario INT REFERENCES usuarios(id),
+    modulo VARCHAR(50),
+    puede_ver BOOLEAN DEFAULT TRUE,
+    puede_modificar BOOLEAN DEFAULT FALSE,
+    puede_aprobar BOOLEAN DEFAULT FALSE
+);
+```
+
+#### 7. Ejemplo de UI para Configuración de Permisos
+- Tabla con usuarios/roles en filas y módulos en columnas, con checkboxes para "ver", "modificar", "aprobar".
+- Botón para guardar cambios.
+- Mensaje visual de éxito/error al guardar.
+
+#### 8. Ejemplo de Flujo de Aprobación
+- Usuario intenta editar un material → aparece diálogo "Esta acción requiere aprobación de un supervisor. ¿Desea enviar la solicitud?"
+- Al confirmar, la solicitud queda pendiente y se notifica a los supervisores.
+- El supervisor ve la solicitud en Notificaciones y puede aprobar/rechazar.
+- Al aprobar, se ejecuta la acción y se notifica al usuario.
+
+---
+
+> **Implementar este sistema de permisos, visibilidad y aprobaciones es obligatorio para cumplir con los estándares de seguridad, trazabilidad y experiencia SAP-like del proyecto.**
 
 ---
 
@@ -441,64 +556,6 @@ Todas las tablas de este módulo implementan el patrón UX universal:
 ---
 
 > **Este flujo asegura que cada módulo no es un silo, sino parte de un sistema integrado, donde cada acción tiene impacto y trazabilidad global, replicando la lógica de integración de SAP.**
-
----
-
-## Flujo de integración e interacción entre módulos (estilo SAP)
-
-### Visión general
-El sistema está diseñado para que todos los módulos interactúen de forma integrada, con trazabilidad y feedback visual en cada paso. Cada acción relevante en un módulo puede impactar en otros, y todo queda registrado en auditoría. El flujo es digital, auditable y visualmente unificado.
-
-### Ejemplo de flujo típico y relaciones entre módulos
-
-1. **Alta de obra (Obras)**
-   - El usuario crea una nueva obra desde el módulo Obras.
-   - Se registra en la tabla `obras` y se audita la acción.
-   - La obra queda disponible para ser seleccionada en otros módulos (Inventario, Logística, Contabilidad, Pedidos).
-
-2. **Asignación de materiales a obra (Obras ↔ Inventario)**
-   - Desde Obras, se asignan materiales/perfiles a la obra (tabla `materiales_por_obra`).
-   - El sistema consulta el stock en Inventario y permite reservar materiales.
-   - Si hay stock suficiente, se descuenta y se registra el movimiento en Inventario (`movimientos_stock` y `reservas_stock`).
-   - Si falta stock, se genera una reserva pendiente y puede disparar un pedido de compra (módulo Compras).
-   - Todo el proceso queda auditado.
-
-3. **Reserva y entrega de materiales (Inventario ↔ Logística ↔ Obras)**
-   - Cuando se reserva material para una obra, Logística puede programar la entrega (tabla `entregas_obras`).
-   - El estado de la entrega se refleja en la obra y en el inventario.
-   - El usuario puede ver el avance y los pendientes desde Obras y Logística.
-
-4. **Pedidos y compras (Obras/Inventario ↔ Compras)**
-   - Si hay faltantes, el sistema permite generar un pedido desde Inventario o desde Obras.
-   - El pedido se gestiona en Compras, y al recibir el material, se actualiza el stock y se notifica a los módulos involucrados.
-   - Todo el ciclo queda registrado y auditado.
-
-5. **Movimientos contables y recibos (Obras ↔ Contabilidad)**
-   - Los movimientos de avance de obra, pagos y cobros se reflejan en Contabilidad.
-   - Los recibos y movimientos contables se asocian a obras y quedan disponibles para consulta cruzada.
-
-6. **Auditoría y permisos (Todos los módulos)**
-   - Cada acción relevante (alta, edición, reserva, entrega, exportación, cambio de estado, etc.) queda registrada en el módulo de Auditoría, con usuario, fecha, IP y detalle.
-   - Los permisos se validan en cada acción sensible, y los intentos fallidos también se auditan.
-
-7. **Feedback visual y sincronización (Todos los módulos)**
-   - Cada acción muestra feedback inmediato y claro en la UI (barra de estado, mensajes, tooltips, colores por tipo de mensaje/rol).
-   - Las tablas se sincronizan dinámicamente con la base de datos y persisten la configuración de columnas por usuario.
-   - Los cambios en un módulo se reflejan en tiempo real en los módulos relacionados.
-
-### Diagrama de flujo y navegación
-- Ver `img/diagrama-de-flujo-detallado.png` para el diagrama visual de integración.
-- El usuario puede navegar entre módulos y ver el impacto de cada acción en tiempo real.
-
-### Resumen de integración
-- **Obras** es el eje central: conecta con Inventario, Logística, Compras y Contabilidad.
-- **Inventario** gestiona stock y reservas, y se integra con Obras, Compras y Logística.
-- **Logística** coordina entregas y refleja el estado en Obras e Inventario.
-- **Compras** gestiona pedidos y abastece Inventario y Obras.
-- **Contabilidad** refleja los movimientos económicos asociados a Obras y Pedidos.
-- **Auditoría** y **Permisos** son transversales a todo el sistema.
-
-> **Este flujo integrado garantiza trazabilidad, robustez y una experiencia SAP-like, donde cada módulo es parte de un todo y la información fluye de manera transparente y auditable.**
 
 ---
 

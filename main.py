@@ -279,7 +279,9 @@ class MainWindow(QMainWindow):
         # Crear QStackedWidget para la navegación entre secciones
         self.module_stack = QStackedWidget()
         self.module_stack.addWidget(self.obras_view)            # index 0
-        self.module_stack.addWidget(self.inventario_view)       # index 1
+        inventario_valido = self.db_connection_inventario and all(hasattr(self.db_connection_inventario, attr) for attr in ["driver", "database", "username", "password"])
+        if inventario_valido:
+            self.module_stack.addWidget(self.inventario_view)   # index 1
         self.module_stack.addWidget(self.herrajes_view)         # index 2
         self.module_stack.addWidget(self.compras_pedidos_view)  # index 3
         self.module_stack.addWidget(self.logistica_view)        # index 4
@@ -300,7 +302,8 @@ class MainWindow(QMainWindow):
         svg_dir = os.path.join(os.path.dirname(__file__), 'utils')
         sidebar_sections = [
             ("Obras", os.path.join(svg_dir, 'obras.svg')),
-            ("Inventario", os.path.join(svg_dir, 'inventario.svg')),
+            # Solo mostrar Inventario si la conexión es válida
+            *([("Inventario", os.path.join(svg_dir, 'inventario.svg'))] if inventario_valido else []),
             ("Herrajes", os.path.join(svg_dir, 'herrajes.svg')),
             ("Compras / Pedidos", os.path.join(svg_dir, 'compras.svg')),
             ("Logística", os.path.join(svg_dir, 'logistica.svg')),
