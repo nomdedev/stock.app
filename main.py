@@ -376,34 +376,26 @@ class MainWindow(QMainWindow):
         self.module_stack.setCurrentIndex(indices_permitidos[0] if indices_permitidos else 0)
 
     def login_success(self, usuario):
-        # Forzar usuario admin para pruebas y experiencia completa
-        usuario_admin = {
-            'id': 1,
-            'username': 'admin',
-            'rol': 'admin',
-            'email': 'admin@demo.com',
-            'nombre': 'Administrador',
-            'apellido': 'Demo'
-        }
-        self.usuario_actual = usuario_admin
-        self.mostrar_modulos_permitidos(usuario_admin)
+        # Usar el usuario real autenticado (no hardcodear admin)
+        self.usuario_actual = usuario
+        self.mostrar_modulos_permitidos(usuario)
         # Pasar usuario_actual a los controladores
-        self.inventario_controller.usuario_actual = usuario_admin
-        self.obras_controller.usuario_actual = usuario_admin
-        self.produccion_controller.usuario_actual = usuario_admin
-        self.logistica_controller.usuario_actual = usuario_admin
-        self.compras_pedidos_controller.usuario_actual = usuario_admin
-        self.pedidos_controller.usuario_actual = usuario_admin
-        self.usuarios_controller.usuario_actual = usuario_admin
+        self.inventario_controller.usuario_actual = usuario
+        self.obras_controller.usuario_actual = usuario
+        self.produccion_controller.usuario_actual = usuario
+        self.logistica_controller.usuario_actual = usuario
+        self.compras_pedidos_controller.usuario_actual = usuario
+        self.pedidos_controller.usuario_actual = usuario
+        self.usuarios_controller.usuario_actual = usuario
         if hasattr(self, 'auditoria_controller'):
-            self.auditoria_controller.usuario_actual = usuario_admin
+            self.auditoria_controller.usuario_actual = usuario
         if hasattr(self, 'configuracion_controller'):
-            self.configuracion_controller.usuario_actual = usuario_admin
+            self.configuracion_controller.usuario_actual = usuario
         if hasattr(self, 'herrajes_controller'):
-            self.herrajes_controller.usuario_actual = usuario_admin
+            self.herrajes_controller.usuario_actual = usuario
         # Mostrar el usuario actual de forma visualmente destacado en la barra de estado
-        self.actualizar_usuario_label(usuario_admin)
-        self.mostrar_mensaje(f"Usuario actual: {usuario_admin['username']} ({usuario_admin['rol']})", tipo="info", duracion=4000)
+        self.actualizar_usuario_label(usuario)
+        self.mostrar_mensaje(f"Usuario actual: {usuario['username']} ({usuario['rol']})", tipo="info", duracion=4000)
 
     def showEvent(self, event):
         super().showEvent(event)

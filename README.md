@@ -310,6 +310,43 @@ Este patrón es obligatorio para todos los módulos y garantiza robustez y traza
 
 ---
 
+## Patrón de solicitudes de aprobación para acciones de usuario (ISO/SAP-like)
+
+- Cuando un usuario con rol "usuario" intenta realizar una acción de modificación (agregar, editar, eliminar), la acción no se ejecuta directamente.
+- En su lugar, se crea una solicitud pendiente en la tabla `solicitudes_aprobacion` con los datos de la acción y el usuario solicitante.
+- El usuario recibe feedback visual indicando que la acción está pendiente de aprobación.
+- Los supervisores pueden ver, aprobar o rechazar estas solicitudes desde la UI (por ejemplo, en el módulo Notificaciones o una pestaña especial).
+- Solo tras la aprobación del supervisor, la acción se ejecuta realmente y se registra en auditoría.
+- Todo el flujo queda trazado y auditable, cumpliendo la norma ISO y el estándar SAP-like.
+
+**Estructura SQL:**
+
+```sql
+CREATE TABLE solicitudes_aprobacion (
+    id SERIAL PRIMARY KEY,
+    id_usuario INT REFERENCES usuarios(id),
+    modulo VARCHAR(50) NOT NULL,
+    tipo_accion VARCHAR(30) NOT NULL, -- agregar, editar, eliminar
+    datos_json TEXT NOT NULL,         -- datos de la acción en formato JSON
+    estado VARCHAR(20) DEFAULT 'pendiente', -- pendiente, aprobada, rechazada
+    fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_resolucion TIMESTAMP,
+    resuelto_por INT REFERENCES usuarios(id),
+    observaciones TEXT
+);
+```
+
+**Ejemplo de flujo:**
+
+1. Usuario intenta editar un material en Inventario.
+2. Se crea una solicitud en `solicitudes_aprobacion` con estado "pendiente".
+3. El supervisor ve la solicitud y la aprueba o rechaza desde la UI.
+4. Si aprueba, se ejecuta la acción y se registra en auditoría; si rechaza, se notifica al usuario.
+
+> Este patrón es obligatorio para trazabilidad, cumplimiento normativo y robustez en la gestión de acciones críticas.
+
+---
+
 ## Patrón de gestión de permisos y visibilidad de módulos (implementación real)
 
 ### Lógica de carga y uso de permisos
@@ -716,5 +753,25 @@ A continuación se describe un flujo típico de trabajo que atraviesa varios mó
 ---
 
 > **Estos ejemplos visuales y de trazabilidad aseguran que el usuario siempre sepa el resultado de sus acciones y que todo sea auditable, cumpliendo el estándar SAP-like.**
+
+---
+
+### Visibilidad dinámica de módulos tras login
+
+- Al iniciar sesión, el sistema consulta los permisos del usuario en la tabla `permisos_modulos`.
+- Solo los módulos permitidos aparecen en el sidebar y en la navegación (QStackedWidget).
+- El método `mostrar_modulos_permitidos(usuario)` filtra y muestra únicamente los módulos habilitados para ese usuario.
+- Todos los controladores reciben el usuario actual para validar permisos en cada acción.
+- El label de usuario y el feedback visual reflejan el rol y los permisos activos.
+
+**Ejemplo de uso:**
+
+```python
+# Tras login exitoso:
+main_window.login_success(usuario_autenticado)
+# El sidebar y la navegación solo muestran los módulos permitidos.
+```
+
+> Este patrón es obligatorio para cumplir con la seguridad, trazabilidad y experiencia SAP-like. Cualquier intento de acceso a un módulo no permitido debe ser bloqueado y registrado en auditoría.
 
 ---
