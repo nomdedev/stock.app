@@ -438,19 +438,31 @@ class InventarioController:
         QMessageBox.information(self.view, "QR asociado", f"QR '{qr_code}' asociado al perfil con código '{codigo}'.")
         self.actualizar_inventario()
 
+    @permiso_auditoria_inventario('ver')
     def ver_qr_item_seleccionado(self):
         id_item = self.view.obtener_id_item_seleccionado()
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
         if not id_item:
             QMessageBox.warning(self.view, "QR", "Seleccione un perfil para ver su QR.")
+            if hasattr(self, 'auditoria_model'):
+                self.auditoria_model.registrar_evento(usuario, 'inventario', 'ver_qr_item_seleccionado', ip_origen=ip, resultado="denegado (sin selección)")
             return
         item = self.model.obtener_item_por_id(id_item)
         if item and ("qr" in item or "qr_code" in item):
             qr_valor = item.get("qr") or item.get("qr_code")
             QMessageBox.information(self.view, "QR del perfil", f"QR asociado: {qr_valor}")
+            if hasattr(self, 'auditoria_model'):
+                self.auditoria_model.registrar_evento(usuario, 'inventario', 'ver_qr_item_seleccionado', ip_origen=ip, resultado="éxito")
         else:
             QMessageBox.warning(self.view, "QR", "No se encontró el QR para este perfil.")
+            if hasattr(self, 'auditoria_model'):
+                self.auditoria_model.registrar_evento(usuario, 'inventario', 'ver_qr_item_seleccionado', ip_origen=ip, resultado="error (no encontrado)")
 
+    @permiso_auditoria_inventario('ver')
     def resaltar_items_bajo_stock(self, datos):
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
         try:
             for row, item in enumerate(datos):
                 stock_actual = item[5]  # Suponiendo que la columna 5 es el stock actual
@@ -458,21 +470,42 @@ class InventarioController:
                 if stock_actual < stock_minimo:
                     for col in range(self.view.tabla_inventario.columnCount()):
                         self.view.tabla_inventario.item(row, col).setBackground(QtGui.QColor("red"))
+            if hasattr(self, 'auditoria_model'):
+                self.auditoria_model.registrar_evento(usuario, 'inventario', 'resaltar_items_bajo_stock', ip_origen=ip, resultado="éxito")
         except Exception as e:
             print(f"Error al resaltar ítems bajo stock: {e}")
             self.view.label_estado.setText("Error al resaltar ítems con bajo stock.")
+            if hasattr(self, 'auditoria_model'):
+                self.auditoria_model.registrar_evento(usuario, 'inventario', 'resaltar_items_bajo_stock', ip_origen=ip, resultado=f"error: {e}")
 
+    @permiso_auditoria_inventario('ver')
     def mostrar_mensaje_confirmacion(self):
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
         QMessageBox.information(self.view, "Inventario actualizado", "La tabla de inventario se ha actualizado correctamente.")
+        if hasattr(self, 'auditoria_model'):
+            self.auditoria_model.registrar_evento(usuario, 'inventario', 'mostrar_mensaje_confirmacion', ip_origen=ip, resultado="éxito")
 
+    @permiso_auditoria_inventario('ver')
     def abrir_reserva_lote_perfiles(self):
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
         self.view.abrir_reserva_lote_perfiles()
+        if hasattr(self, 'auditoria_model'):
+            self.auditoria_model.registrar_evento(usuario, 'inventario', 'abrir_reserva_lote_perfiles', ip_origen=ip, resultado="éxito")
 
+    @permiso_auditoria_inventario('ver')
     def mostrar_feedback_entrega(self, exito, mensaje):
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
         if exito:
             self.view.label.setText(f"Entrega realizada correctamente: {mensaje}")
+            resultado = "éxito"
         else:
             self.view.label.setText(f"Error en la entrega: {mensaje}")
+            resultado = "error"
+        if hasattr(self, 'auditoria_model'):
+            self.auditoria_model.registrar_evento(usuario, 'inventario', 'mostrar_feedback_entrega', ip_origen=ip, resultado=resultado)
 
     @permiso_auditoria_inventario('editar')
     def transformar_reserva_en_entrega(self, id_reserva):

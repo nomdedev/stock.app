@@ -41,15 +41,39 @@ class ComprasController:
 
     @permiso_auditoria_compras('ver')
     def ver_compras(self):
-        # Implementar lógica de visualización de compras
-        pass
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
+        try:
+            # Implementar lógica de visualización de compras
+            if hasattr(self, 'auditoria_model'):
+                self.auditoria_model.registrar_evento(usuario, 'compras', 'ver_compras', ip_origen=ip, resultado="éxito")
+        except Exception as e:
+            if hasattr(self, 'auditoria_model'):
+                self.auditoria_model.registrar_evento(usuario, 'compras', 'ver_compras', ip_origen=ip, resultado=f"error: {e}")
+            raise
 
     @permiso_auditoria_compras('crear')
     def crear_compra(self):
-        # Implementar lógica de creación de compra
-        pass
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
+        try:
+            # Implementar lógica de creación de compra
+            if hasattr(self, 'auditoria_model'):
+                self.auditoria_model.registrar_evento(usuario, 'compras', 'crear_compra', ip_origen=ip, resultado="éxito")
+        except Exception as e:
+            if hasattr(self, 'auditoria_model'):
+                self.auditoria_model.registrar_evento(usuario, 'compras', 'crear_compra', ip_origen=ip, resultado=f"error: {e}")
+            raise
 
     @permiso_auditoria_compras('aprobar')
     def aprobar_compra(self):
-        # Implementar lógica de aprobación de compra
-        pass
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
+        try:
+            # Implementar lógica de aprobación de compra
+            if hasattr(self, 'auditoria_model'):
+                self.auditoria_model.registrar_evento(usuario, 'compras', 'aprobar_compra', ip_origen=ip, resultado="éxito")
+        except Exception as e:
+            if hasattr(self, 'auditoria_model'):
+                self.auditoria_model.registrar_evento(usuario, 'compras', 'aprobar_compra', ip_origen=ip, resultado=f"error: {e}")
+            raise

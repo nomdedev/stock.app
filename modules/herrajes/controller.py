@@ -48,12 +48,17 @@ class HerrajesController:
 
     @permiso_auditoria_herrajes('editar')
     def agregar_material(self):
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
+        auditoria_model = getattr(self, 'auditoria_model', None)
         try:
             nombre = self.view.nombre_input.text()
             cantidad = self.view.cantidad_input.text()
             proveedor = self.view.proveedor_input.text()
             if not (nombre and cantidad and proveedor):
                 self.view.label.setText("Por favor, complete todos los campos.")
+                if auditoria_model:
+                    auditoria_model.registrar_evento(usuario, 'herrajes', 'agregar_material', ip_origen=ip, resultado="denegado (faltan campos)")
                 return
             if self.model.verificar_material_existente(nombre):
                 QMessageBox.warning(
@@ -62,9 +67,15 @@ class HerrajesController:
                     "Ya existe un material con el mismo nombre."
                 )
                 self.view.nombre_input.setStyleSheet("border: 1px solid red;")
+                if auditoria_model:
+                    auditoria_model.registrar_evento(usuario, 'herrajes', 'agregar_material', ip_origen=ip, resultado="denegado (material existente)")
                 return
             self.model.agregar_material((nombre, cantidad, proveedor))
             self.view.label.setText("Material agregado exitosamente.")
             self.view.nombre_input.setStyleSheet("")
+            if auditoria_model:
+                auditoria_model.registrar_evento(usuario, 'herrajes', 'agregar_material', ip_origen=ip, resultado="éxito")
         except Exception as e:
             self.view.label.setText(f"Error al agregar material: {e}")
+            if auditoria_model:
+                auditoria_model.registrar_evento(usuario, 'herrajes', 'agregar_material', ip_origen=ip, resultado=f"error: {e}")

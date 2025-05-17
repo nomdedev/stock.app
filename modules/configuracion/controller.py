@@ -168,9 +168,14 @@ class ConfiguracionController:
     def importar_csv_inventario(self):
         import csv, re
         from core.database import DatabaseConnection
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
+        auditoria_model = getattr(self, 'auditoria_model', None)
         ruta_csv = self.view.csv_file_input.text()
         if not ruta_csv or not ruta_csv.lower().endswith('.csv'):
             self.view.import_result_label.setText("Selecciona un archivo CSV válido.")
+            if auditoria_model:
+                auditoria_model.registrar_evento(usuario, 'configuracion', 'importar_csv_inventario', ip_origen=ip, resultado="denegado (archivo inválido)")
             return
         db = self.model.db
         count = 0
@@ -237,8 +242,12 @@ class ConfiguracionController:
             if codigos_repetidos:
                 resumen += f"Perfiles omitidos por código repetido: {len(codigos_repetidos)}\nCódigos repetidos: {list(codigos_repetidos)[:10]}\n"
             self.view.import_result_label.setText(resumen)
+            if auditoria_model:
+                auditoria_model.registrar_evento(usuario, 'configuracion', 'importar_csv_inventario', ip_origen=ip, resultado=f"éxito ({count} importados, {len(codigos_omitidos)} omitidos, {len(codigos_repetidos)} repetidos)")
         except Exception as e:
             self.view.import_result_label.setText(f"Error al importar: {e}")
+            if auditoria_model:
+                auditoria_model.registrar_evento(usuario, 'configuracion', 'importar_csv_inventario', ip_origen=ip, resultado=f"error: {e}")
 
     # --- Métodos para la pestaña de permisos y visibilidad ---
     def cargar_permisos_modulos(self):

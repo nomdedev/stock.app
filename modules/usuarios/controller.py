@@ -115,7 +115,10 @@ class UsuariosController(BaseController):
 
         self.model.agregar_usuario((nombre, email, rol))
         self.view.label.setText("Usuario agregado exitosamente.")
-        self.model.db.registrar_auditoria("admin", "Agregar Usuario", f"Nombre: {nombre}, Email: {email}")
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
+        if hasattr(self, 'auditoria_model'):
+            self.auditoria_model.registrar_evento(usuario, 'usuarios', 'agregar', ip_origen=ip, resultado="éxito")
         self.view.email_input.setStyleSheet("")
         self.view.nombre_input.setStyleSheet("")
 
@@ -124,13 +127,19 @@ class UsuariosController(BaseController):
         try:
             self.model.actualizar_usuario(id_usuario, datos, fecha_actualizacion)
             self.view.label.setText("Usuario actualizado exitosamente.")
-            self.model.db.registrar_auditoria("admin", "Actualizar Usuario", f"ID: {id_usuario}, Datos: {datos}")
+            if hasattr(self, 'auditoria_model'):
+                usuario = getattr(self, 'usuario_actual', None)
+                ip = usuario.get('ip', '') if usuario else ''
+                self.auditoria_model.registrar_evento(usuario, 'usuarios', 'actualizar', ip_origen=ip, resultado="éxito")
         except Exception as e:
             self.view.label.setText(f"Error: {str(e)}")
 
     def marcar_como_favorito(self):
-        self.model.db.registrar_auditoria("admin", "Marcar Favorito", "Vista Usuarios")
         self.view.parent().agregar_a_favoritos("Usuarios")
+        if hasattr(self, 'auditoria_model'):
+            usuario = getattr(self, 'usuario_actual', None)
+            ip = usuario.get('ip', '') if usuario else ''
+            self.auditoria_model.registrar_evento(usuario, 'usuarios', 'marcar_favorito', ip_origen=ip, resultado="éxito")
 
     def registrar_login_fallido(self, ip, usuario):
         self.model.db.registrar_login_fallido(ip, usuario, datetime.now().isoformat(), "fallido")
@@ -231,9 +240,12 @@ class UsuariosController(BaseController):
     def cambiar_estado_usuario(self, usuario_id, estado_actual):
         nuevo_estado = "Inactivo" if estado_actual == "Activo" else "Activo"
         self.model.actualizar_estado_usuario(usuario_id, nuevo_estado)
-        self.model.db.registrar_auditoria("admin", "Cambiar Estado Usuario", f"ID: {usuario_id}, Nuevo Estado: {nuevo_estado}")
         self.view.label.setText(f"Estado del usuario con ID {usuario_id} cambiado a {nuevo_estado}.")
         self.cargar_usuarios()
+        if hasattr(self, 'auditoria_model'):
+            usuario = getattr(self, 'usuario_actual', None)
+            ip = usuario.get('ip', '') if usuario else ''
+            self.auditoria_model.registrar_evento(usuario, 'usuarios', 'cambiar_estado', ip_origen=ip, resultado="éxito")
 
     def _mostrar_roles_permisos(self):
         # Carga la tabla de roles y permisos con checkboxes

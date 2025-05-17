@@ -85,3 +85,33 @@ Actualiza este archivo a medida que completes tareas o surjan nuevas necesidades
 - [ ] Agregar tests automáticos para la lógica de permisos, visibilidad y aprobaciones.
 
 # (Agrega aquí nuevas sugerencias o elimina las resueltas en la próxima actualización)
+
+Revisar que cada acción relevante (alta, edición, eliminación, exportación, reserva, entrega, cambio de estado) queda registrada en auditoría.
+Revisar que todos los módulos registran acciones relevantes en auditoría (decorador o función centralizada).
+Garantizar que todas las acciones críticas (alta, edición, eliminación, reservas, entregas, exportaciones, cambios de estado) quedan SIEMPRE registradas en auditoría, incluyendo intentos fallidos y acciones denegadas por permisos.
+Validar que los roles y permisos se consultan y aplican antes de cada acción sensible, y que todo intento fallido queda registrado en auditoría.
+Verificar que los tests de integración cubren la correcta sincronización entre UI, base de datos y auditoría.
+Mejorar la cobertura de tests unitarios y de integración para todos los módulos.
+Unificar y centralizar el registro de auditoría para evitar duplicación de lógica.
+Mejorar la documentación de los módulos y de la arquitectura general.
+Validar que los decoradores de permisos y auditoría están aplicados en todos los endpoints y métodos críticos.
+Revisar y mejorar el manejo de errores y feedback visual al usuario.
+Garantizar que la exportación de datos (Excel, PDF) queda registrada en auditoría.
+Revisar que los logs de auditoría incluyan usuario, fecha, IP, módulo, acción y detalle.
+Validar que los cambios de estado en obras, inventario y otros módulos quedan reflejados en auditoría.
+Revisar la trazabilidad de permisos y roles (alta, baja, cambio) en auditoría.
+Mejorar la experiencia de usuario en la consulta y filtrado de auditoría.
+Documentar flujos críticos y casos de uso en el README.
+Validar que la integración entre módulos (Inventario, Obras, Logística, etc.) refleja correctamente los cambios en auditoría.
+Revisar la consistencia de los nombres de acciones y módulos en los registros de auditoría.
+Garantizar que las acciones de aprobación/rechazo de solicitudes quedan registradas en auditoría.
+Revisar la seguridad y protección de los logs de auditoría.
+Puedes copiar y pegar esta lista en cosas por hacer.txt para ir marcando el avance. Si quieres que empecemos por el primer punto, indícalo y te ayudo a revisar el código relevante y los tests para asegurarnos de que todas las acciones críticas quedan registradas en auditoría.
+
+El sistema ya tiene implementado un decorador PermisoAuditoria en los controladores principales, que registra en auditoría las acciones exitosas, denegadas y con error. Sin embargo, para cumplir completamente con el punto pendiente de la lista (“Revisar que cada acción relevante (alta, edición, eliminación, exportación, reserva, entrega, cambio de estado) queda registrada en auditoría”), es necesario:
+
+Verificar que TODAS las acciones críticas de todos los módulos usan el decorador o llaman explícitamente a auditoria_model.registrar_evento (incluyendo intentos fallidos y acciones denegadas).
+Asegurar que los métodos de exportación, reserva, entrega y cambio de estado también registran en auditoría (no solo altas/ediciones/eliminaciones).
+Unificar el formato de registro para que siempre quede: usuario, módulo, tipo de acción, detalle, IP, resultado (éxito/error/denegado).
+Agregar tests de integración que verifiquen que cada acción relevante deja un registro en la tabla auditorias_sistema.
+¿Quieres que comencemos revisando un módulo específico (por ejemplo, Inventario) o hacemos un barrido por todos los controladores para asegurar la cobertura de auditoría?
