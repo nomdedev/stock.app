@@ -2,7 +2,7 @@ from utils.theme_manager import aplicar_tema, guardar_modo_tema
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
-from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication, QTableWidgetItem, QCheckBox
 
 class PermisoAuditoria:
     def __init__(self, modulo):
@@ -52,6 +52,9 @@ class ConfiguracionController:
                 self.view.boton_seleccionar_csv.clicked.connect(self.seleccionar_archivo_csv)
             if hasattr(self.view, "boton_importar_csv"):
                 self.view.boton_importar_csv.clicked.connect(self.importar_csv_inventario)
+            # Conectar lógica de la pestaña de permisos y visibilidad
+            if hasattr(self.view, "boton_guardar_permisos"):
+                self.conectar_pestana_permisos()
         except AttributeError as e:
             print(f"Error en ConfiguracionController: {e}")
         except Exception as e:
@@ -236,3 +239,77 @@ class ConfiguracionController:
             self.view.import_result_label.setText(resumen)
         except Exception as e:
             self.view.import_result_label.setText(f"Error al importar: {e}")
+
+    # --- Métodos para la pestaña de permisos y visibilidad ---
+    def cargar_permisos_modulos(self):
+        """
+        Carga la tabla de permisos (usuarios/roles x módulos) en la pestaña de permisos y visibilidad.
+        """
+        try:
+            usuarios = self.usuarios_model.obtener_usuarios()
+            modulos = self.usuarios_model.obtener_todos_los_modulos()
+            # Limpiar tabla
+            self.view.tabla_permisos.setRowCount(0)
+            for usuario in usuarios:
+                id_usuario = usuario[0] if isinstance(usuario, (list, tuple)) else usuario.get('id')
+                nombre_usuario = usuario[3] if isinstance(usuario, (list, tuple)) else usuario.get('usuario')
+                rol = usuario[6] if isinstance(usuario, (list, tuple)) else usuario.get('rol')
+                for modulo in modulos:
+                    row = self.view.tabla_permisos.rowCount()
+                    self.view.tabla_permisos.insertRow(row)
+                    self.view.tabla_permisos.setItem(row, 0, QTableWidgetItem(f"{nombre_usuario} ({rol})"))
+                    self.view.tabla_permisos.setItem(row, 1, QTableWidgetItem(modulo))
+                    permisos = self.usuarios_model.obtener_permisos_modulo({'id': id_usuario, 'rol': rol}, modulo)
+                    for col, accion in enumerate(['ver', 'modificar', 'aprobar'], start=2):
+                        chk = QCheckBox()
+                        chk.setChecked(permisos.get(accion, False))
+                        self.view.tabla_permisos.setCellWidget(row, col, chk)
+        except Exception as e:
+            self.view.permisos_result_label.setText(f"Error al cargar permisos: {e}")
+
+    def guardar_permisos_modulos(self):
+        """
+        Guarda los permisos editados en la tabla de permisos y visibilidad.
+        """
+        try:
+            permisos_dict_por_usuario = {}
+            for row in range(self.view.tabla_permisos.rowCount()):
+                usuario_rol = self.view.tabla_permisos.item(row, 0).text()
+                modulo = self.view.tabla_permisos.item(row, 1).text()
+                # Extraer id_usuario del string usuario_rol
+                usuario = usuario_rol.split(' (')[0]
+                # Buscar id_usuario y rol
+                usuarios = self.usuarios_model.obtener_usuarios()
+                id_usuario = None
+                rol = None
+                for u in usuarios:
+                    nombre_usuario = u[3] if isinstance(u, (list, tuple)) else u.get('usuario')
+                    if nombre_usuario == usuario:
+                        id_usuario = u[0] if isinstance(u, (list, tuple)) else u.get('id')
+                        rol = u[6] if isinstance(u, (list, tuple)) else u.get('rol')
+                        break
+                if id_usuario is None:
+                    continue
+                if id_usuario not in permisos_dict_por_usuario:
+                    permisos_dict_por_usuario[id_usuario] = {}
+                permisos_dict_por_usuario[id_usuario][modulo] = {
+                    'ver': self.view.tabla_permisos.cellWidget(row, 2).isChecked(),
+                    'modificar': self.view.tabla_permisos.cellWidget(row, 3).isChecked(),
+                    'aprobar': self.view.tabla_permisos.cellWidget(row, 4).isChecked(),
+                }
+            # Guardar en la base de datos
+            for id_usuario, permisos_dict in permisos_dict_por_usuario.items():
+                self.usuarios_model.actualizar_permisos_modulos_usuario(id_usuario, permisos_dict, self.usuario_actual['id'])
+            self.view.permisos_result_label.setText("Permisos actualizados correctamente.")
+        except Exception as e:
+            self.view.permisos_result_label.setText(f"Error al guardar permisos: {e}")
+
+    def conectar_pestana_permisos(self):
+        """
+        Conecta los botones y carga inicial de la pestaña de permisos y visibilidad.
+        """
+        try:
+            self.cargar_permisos_modulos()
+            self.view.boton_guardar_permisos.clicked.connect(self.guardar_permisos_modulos)
+        except Exception as e:
+            self.view.permisos_result_label.setText(f"Error al inicializar pestaña permisos: {e}")

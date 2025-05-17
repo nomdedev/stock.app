@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QComboBox, QCheckBox, QPushButton, QSizePolicy, QTabWidget, QHBoxLayout, QGraphicsDropShadowEffect
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QComboBox, QCheckBox, QPushButton, QSizePolicy, QTabWidget, QHBoxLayout, QGraphicsDropShadowEffect, QTableWidget, QTableWidgetItem
 from PyQt6.QtGui import QIcon, QColor
 from PyQt6.QtCore import QSize
 from themes.theme_manager import aplicar_tema, guardar_preferencia_tema, cargar_preferencia_tema
@@ -163,6 +163,46 @@ class ConfiguracionView(QWidget):
 
             self.import_layout.addStretch()
             self.tabs.addTab(self.import_tab, "Importar CSV")
+            # --- FIN NUEVA PESTAÑA ---
+
+            # --- NUEVA PESTAÑA: Permisos y visibilidad ---
+            self.permisos_tab = QWidget()
+            self.permisos_layout = QVBoxLayout()
+            self.permisos_tab.setLayout(self.permisos_layout)
+
+            self.permisos_label = QLabel("Gestión de permisos y visibilidad de módulos por usuario/rol")
+            self.permisos_layout.addWidget(self.permisos_label)
+
+            # Tabla de permisos: usuarios/roles en filas, módulos en columnas, checkboxes por acción
+            self.tabla_permisos = QTableWidget()
+            self.tabla_permisos.setColumnCount(5)  # Usuario/Rol, Módulo, Ver, Modificar, Aprobar
+            self.tabla_permisos.setHorizontalHeaderLabels([
+                "Usuario/Rol", "Módulo", "Ver", "Modificar", "Aprobar"
+            ])
+            self.tabla_permisos.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+            self.permisos_layout.addWidget(self.tabla_permisos)
+
+            # Botón para guardar cambios de permisos
+            self.boton_guardar_permisos = QPushButton()
+            self.boton_guardar_permisos.setIcon(QIcon("img/settings_icon.svg"))
+            self.boton_guardar_permisos.setIconSize(QSize(24, 24))
+            self.boton_guardar_permisos.setToolTip("Guardar cambios de permisos")
+            self.boton_guardar_permisos.setText("")
+            self.boton_guardar_permisos.setFixedSize(48, 48)
+            sombra_perm = QGraphicsDropShadowEffect()
+            sombra_perm.setBlurRadius(15)
+            sombra_perm.setXOffset(0)
+            sombra_perm.setYOffset(4)
+            sombra_perm.setColor(QColor(0, 0, 0, 50))
+            self.boton_guardar_permisos.setGraphicsEffect(sombra_perm)
+            estilizar_boton_icono(self.boton_guardar_permisos)
+            self.permisos_layout.addWidget(self.boton_guardar_permisos)
+
+            self.permisos_result_label = QLabel("")
+            self.permisos_layout.addWidget(self.permisos_result_label)
+
+            self.permisos_layout.addStretch()
+            self.tabs.addTab(self.permisos_tab, "Permisos y visibilidad")
             # --- FIN NUEVA PESTAÑA ---
 
             self.layout.addWidget(self.tabs)

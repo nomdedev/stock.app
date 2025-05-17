@@ -365,62 +365,6 @@ if not self.usuarios_model.tiene_permiso(self.usuario_actual, 'inventario', 'mod
 
 ---
 
-## Módulo Contabilidad
-
-El módulo de Contabilidad centraliza la gestión financiera y administrativa del sistema, permitiendo un control integral de movimientos, pagos y recibos asociados a las obras y operaciones generales.
-
-### Mejoras técnicas y de UX implementadas
-
-- **Sincronización dinámica de headers**: Las tablas de Balance y Recibos obtienen sus columnas directamente de la base de datos, adaptándose automáticamente a cambios en la estructura.
-- **Selector de obra en formularios**: Al agregar un recibo o movimiento, se utiliza un selector desplegable que muestra todas las obras disponibles, facilitando la asociación precisa.
-- **Filtros y búsqueda rápida**: Todas las tablas del módulo (Balance, Pagos, Recibos) cuentan con un campo de búsqueda rápida que filtra resultados en tiempo real por cualquier columna.
-- **Mejoras visuales y tooltips**: Botones de acción flotantes, tooltips descriptivos y estilos modernos aseguran una experiencia clara y profesional.
-- **Alta de recibos**: El botón para agregar recibo está en la esquina superior derecha de la pestaña Recibos. Al pulsarlo, se abre un diálogo con los campos requeridos y un selector de obra. El recibo se persiste en la base de datos y se refleja inmediatamente en la tabla.
-- **Persistencia y actualización**: Todos los cambios (alta de recibos, movimientos, etc.) se reflejan en la base de datos y en la interfaz de manera inmediata.
-
-### Pestañas principales
-
-1. **Balance General (Entradas y Salidas)**
-   - Tabla con todos los movimientos de dinero (ingresos y egresos), con columna de tipo (entrada/salida).
-   - Botón flotante para agregar movimiento: abre ventana para registrar ingreso o salida, con selector de obra, campos requeridos y persistencia automática.
-   - Exportar a Excel/PDF, menú de columnas, QR, filtros y búsqueda rápida.
-
-2. **Seguimiento de Pagos por Obra**
-   - Tabla con estado de pagos de cada obra: monto total, pagado, pendiente, monto para colocador, etc.
-   - Integración con otras tablas para obtener datos de obras y pagos.
-   - Permite agregar o actualizar pagos realizados.
-   - Filtros, exportación, menú de columnas, QR, etc.
-
-3. **Recibos**
-   - Tabla con todos los recibos generados, mostrando datos clave (obra, monto, concepto, destinatario, fecha, estado).
-   - Botón flotante para agregar recibo (esquina superior derecha): abre diálogo con selector de obra y campos requeridos.
-   - Opción de imprimir o guardar el recibo como PDF.
-   - Exportación, menú de columnas, QR, filtros y búsqueda rápida.
-
-4. **Estadísticas**
-   - Gráfico de barras de ingresos vs egresos (Entradas vs Salidas).
-   - Resumen de totales: entradas, salidas y saldo neto.
-   - Preparado para filtros por fecha, obra y tipo de movimiento.
-   - Visualización moderna y tooltips.
-
-### Integración con Obras
-
-- Desde el módulo Obras, cualquier usuario puede cargar una nueva obra (sin restricciones de permisos para alta de obra).
-- Los movimientos y recibos pueden asociarse a obras existentes mediante el selector en los formularios.
-
-### Estándar UX en Tablas
-
-- Todas las tablas del módulo incluyen:
-  - Menú de columnas (mostrar/ocultar).
-  - Persistencia de configuración de columnas.
-  - Ajuste de ancho de columnas.
-  - Exportar a Excel/PDF.
-  - Visualización de QR al seleccionar fila.
-  - Filtros y búsqueda rápida.
-  - Tooltips y feedback visual en acciones.
-
----
-
 ## Gestión avanzada de permisos y visibilidad de módulos (estructura recomendada)
 
 ### Estructura de permisos flexible y escalable
@@ -552,6 +496,25 @@ CREATE TABLE permisos_modulos (
 ---
 
 > **Implementar este sistema de permisos, visibilidad y aprobaciones es obligatorio para cumplir con los estándares de seguridad, trazabilidad y experiencia SAP-like del proyecto.**
+
+---
+
+## Flujo de gestión de permisos y visibilidad en Configuración
+
+- Al abrir la pestaña "Permisos y visibilidad", el sistema carga automáticamente todos los usuarios/roles y todos los módulos definidos en la base de datos.
+- Para cada usuario y módulo, se muestran los permisos actuales (ver, modificar, aprobar) en forma de checkboxes editables.
+- El administrador puede marcar/desmarcar los permisos deseados y pulsar el botón de guardar.
+- Al guardar, se actualizan los permisos en la base de datos de forma robusta y auditable.
+- Se muestra un mensaje visual de éxito o error debajo del botón.
+
+**Ejemplo de uso:**
+
+1. El admin accede a Configuración > Permisos y visibilidad.
+2. Edita los permisos de usuarios/roles y módulos según necesidad.
+3. Pulsa "Guardar cambios de permisos".
+4. El sistema actualiza la tabla `permisos_modulos` y muestra feedback visual.
+
+> La persistencia y trazabilidad de los permisos es obligatoria para cumplir con los estándares SAP-like y de auditoría del sistema.
 
 ---
 
@@ -753,3 +716,5 @@ A continuación se describe un flujo típico de trabajo que atraviesa varios mó
 ---
 
 > **Estos ejemplos visuales y de trazabilidad aseguran que el usuario siempre sepa el resultado de sus acciones y que todo sea auditable, cumpliendo el estándar SAP-like.**
+
+---
