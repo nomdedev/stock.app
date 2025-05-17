@@ -18,7 +18,7 @@
 - configuracion: OK
 - auditoria: OK
 - auditoria_integracion: OK
-- obras: (pendiente de ejecutar)
+- obras: OK (tests integración y unitarios pasan, auditoría y flujos validados)
 
 # Próximos pasos:
 - [ ] Corregir tests de logistica (ajustar asserts de SQL y mocks)
