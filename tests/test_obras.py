@@ -35,12 +35,18 @@ class MockView:
         self.tabla_obras.item.side_effect = lambda row, col: MagicMock(text=lambda: ["1", "Obra Test", "Cliente Test", "medida", "2025-05-10"][col])
     def set_estado(self, estado):
         self.tabla_obras.item.side_effect = lambda row, col: MagicMock(text=lambda: ["1", "Obra Test", "Cliente Test", estado, "2025-05-10"][col])
+    def mostrar_mensaje(self, mensaje, tipo=None):
+        pass
 
 class MockAuditoriaModel:
     def __init__(self):
         self.registros = []
-    def registrar_evento(self, usuario, modulo, accion):
-        self.registros.append((usuario, modulo, accion))
+    def registrar_evento(self, usuario, modulo, accion, ip_origen=None, resultado=None):
+        # Simula el formato unificado de auditoría
+        detalle = accion
+        if resultado:
+            detalle = f"{accion} | resultado: {resultado}"
+        self.registros.append((usuario, modulo, detalle))
 
 class MockPedidosController:
     def __init__(self):
@@ -115,7 +121,7 @@ def test_cambio_estado_pedido_cargado(setup_controller):
          patch("PyQt6.QtWidgets.QComboBox.currentText", return_value="pedido cargado"):
         controller.cambiar_estado_obra("1", "pedido cargado")
     assert pedidos.generado is True
-    assert any(x[2] == "cambiar_estado" for x in auditoria.registros)
+    assert any("cambiar_estado" in x[2] for x in auditoria.registros)
     assert ("UPDATE obras SET estado = ? WHERE id = ?", ("pedido cargado", "1")) in mock_db.queries
 
 def test_cambio_estado_en_produccion(setup_controller):
@@ -131,7 +137,7 @@ def test_cambio_estado_en_produccion(setup_controller):
         controller.cambiar_estado_obra("1", "en producción")
     assert produccion.iniciado is True
     assert ("UPDATE obras SET estado = ? WHERE id = ?", ("en producción", "1")) in mock_db.queries
-    assert any(x[2] == "cambiar_estado" for x in auditoria.registros)
+    assert any("cambiar_estado" in x[2] for x in auditoria.registros)
 
 def test_cambio_estado_colocada(setup_controller):
     controller, _, view, auditoria, _, _, logistica, _ = setup_controller
@@ -140,7 +146,7 @@ def test_cambio_estado_colocada(setup_controller):
          patch("PyQt6.QtWidgets.QComboBox.currentText", return_value="colocada"):
         controller.cambiar_estado_obra("1", "colocada")
     assert logistica.colocada is True
-    assert any(x[2] == "cambiar_estado" for x in auditoria.registros)
+    assert any("cambiar_estado" in x[2] for x in auditoria.registros)
 
 def test_cambio_estado_finalizada(setup_controller):
     controller, _, view, auditoria, _, _, logistica, _ = setup_controller
@@ -148,7 +154,7 @@ def test_cambio_estado_finalizada(setup_controller):
     with patch("PyQt6.QtWidgets.QDialog.exec", return_value=1), \
          patch("PyQt6.QtWidgets.QComboBox.currentText", return_value="finalizada"):
         controller.cambiar_estado_obra("1", "finalizada")
-    assert any(x[2] == "cambiar_estado" for x in auditoria.registros)
+    assert any("cambiar_estado" in x[2] for x in auditoria.registros)
 
 def test_visualizacion_estado_en_vista(setup_controller):
     controller, _, view, _, _, _, _, _ = setup_controller
@@ -168,7 +174,7 @@ def test_auditoria_registro_completo(setup_controller):
     with patch("PyQt6.QtWidgets.QDialog.exec", return_value=1), \
          patch("PyQt6.QtWidgets.QComboBox.currentText", return_value="pedido cargado"):
         controller.cambiar_estado_obra("1", "pedido cargado")
-    assert any(x[2] == "cambiar_estado" for x in auditoria.registros)
+    assert any("cambiar_estado" in x[2] for x in auditoria.registros)
 
 class TestObrasIntegracion(unittest.TestCase):
     def setUp(self):
@@ -198,28 +204,28 @@ class TestObrasIntegracion(unittest.TestCase):
         self.mock_view.set_estado("medida")
         self.controller.cambiar_estado_obra("1", "pedido cargado")
         # Solo validamos efectos observables
-        self.assertTrue(any(x[2] == "cambiar_estado" for x in self.mock_auditoria.registros))
+        self.assertTrue(any("cambiar_estado" in x[2] for x in self.mock_auditoria.registros))
         self.assertIn(("UPDATE obras SET estado = ? WHERE id = ?", ("pedido cargado", "1")), self.mock_db.queries)
 
     @patch('PyQt6.QtWidgets.QMessageBox.question', return_value=QtWidgets.QMessageBox.StandardButton.Yes)
     def test_cambio_estado_en_produccion(self, mock_question):
         self.mock_view.set_estado("pedido cargado")
         self.controller.cambiar_estado_obra("1", "en producción")
-        self.assertTrue(any(x[2] == "cambiar_estado" for x in self.mock_auditoria.registros))
+        self.assertTrue(any("cambiar_estado" in x[2] for x in self.mock_auditoria.registros))
         self.assertIn(("UPDATE obras SET estado = ? WHERE id = ?", ("en producción", "1")), self.mock_db.queries)
 
     @patch('PyQt6.QtWidgets.QMessageBox.question', return_value=QtWidgets.QMessageBox.StandardButton.Yes)
     def test_cambio_estado_colocada(self, mock_question):
         self.mock_view.set_estado("en producción")
         self.controller.cambiar_estado_obra("1", "colocada")
-        self.assertTrue(any(x[2] == "cambiar_estado" for x in self.mock_auditoria.registros))
+        self.assertTrue(any("cambiar_estado" in x[2] for x in self.mock_auditoria.registros))
         self.assertIn(("UPDATE obras SET estado = ? WHERE id = ?", ("colocada", "1")), self.mock_db.queries)
 
     @patch('PyQt6.QtWidgets.QMessageBox.question', return_value=QtWidgets.QMessageBox.StandardButton.Yes)
     def test_cambio_estado_finalizada(self, mock_question):
         self.mock_view.set_estado("colocada")
         self.controller.cambiar_estado_obra("1", "finalizada")
-        self.assertTrue(any(x[2] == "cambiar_estado" for x in self.mock_auditoria.registros))
+        self.assertTrue(any("cambiar_estado" in x[2] for x in self.mock_auditoria.registros))
         self.assertIn(("UPDATE obras SET estado = ? WHERE id = ?", ("finalizada", "1")), self.mock_db.queries)
 
     def test_visualizacion_estado_en_vista(self):
@@ -236,9 +242,21 @@ class TestObrasIntegracion(unittest.TestCase):
         # Cambiar estado
         self.mock_auditoria.registrar_evento(self.usuario_dict["username"], "obras", "cambiar_estado")
         acciones = [a[2] for a in self.mock_auditoria.registros]
-        self.assertIn("crear obra", acciones)
-        self.assertIn("editar obra", acciones)
-        self.assertIn("cambiar_estado", acciones)
+        self.assertTrue(any("crear obra" in a for a in acciones))
+        self.assertTrue(any("editar obra" in a for a in acciones))
+        self.assertTrue(any("cambiar_estado" in a for a in acciones))
+
+    def test_exportar_cronograma_auditoria(self):
+        self.mock_view.mostrar_mensaje = MagicMock()
+        self.obras_model.exportar_cronograma = MagicMock(return_value="Exportación exitosa")
+        self.controller.exportar_cronograma("excel", 1)
+        self.assertTrue(any("Exportación de cronograma de obra 1 a excel" in x[2] and "resultado: éxito" in x[2] for x in self.mock_auditoria.registros))
+
+    def test_eliminar_etapa_cronograma_auditoria(self):
+        self.mock_view.mostrar_mensaje = MagicMock()
+        self.obras_model.eliminar_etapa_cronograma = MagicMock()
+        self.controller.eliminar_etapa_cronograma(5)
+        self.assertTrue(any("Eliminación de etapa de cronograma 5" in x[2] and "resultado: éxito" in x[2] for x in self.mock_auditoria.registros))
 
 if __name__ == "__main__":
     unittest.main()

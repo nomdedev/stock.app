@@ -17,24 +17,36 @@ class PermisoAuditoria:
                 usuario_model = getattr(controller, 'usuarios_model', None)
                 auditoria_model = getattr(controller, 'auditoria_model', None)
                 usuario = getattr(controller, 'usuario_actual', None)
+                ip = usuario.get('ip', '') if usuario else ''
                 if not usuario or not usuario_model:
                     if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                         controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                    if auditoria_model:
+                        auditoria_model.registrar_evento(usuario if usuario else {'id': None}, self.modulo, f"{accion} - denegado", ip_origen=ip)
                     return None
                 if usuario['rol'] not in ('admin', 'supervisor'):
                     modulos_permitidos = usuario_model.obtener_modulos_permitidos(usuario)
                     if self.modulo not in modulos_permitidos:
                         if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                             controller.view.label.setText(f"No tiene permiso para acceder al módulo: {self.modulo}")
+                        if auditoria_model:
+                            auditoria_model.registrar_evento(usuario, self.modulo, f"{accion} - denegado (módulo)", ip_origen=ip)
                         return None
                 if not usuario_model.tiene_permiso(usuario, self.modulo, accion):
                     if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                         controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                    if auditoria_model:
+                        auditoria_model.registrar_evento(usuario, self.modulo, f"{accion} - denegado (permiso)", ip_origen=ip)
                     return None
-                resultado = func(controller, *args, **kwargs)
-                if auditoria_model:
-                    auditoria_model.registrar_evento(usuario, self.modulo, accion)
-                return resultado
+                try:
+                    resultado = func(controller, *args, **kwargs)
+                    if auditoria_model:
+                        auditoria_model.registrar_evento(usuario, self.modulo, f"{accion} - éxito", ip_origen=ip)
+                    return resultado
+                except Exception as e:
+                    if auditoria_model:
+                        auditoria_model.registrar_evento(usuario, self.modulo, f"{accion} - error: {str(e)}", ip_origen=ip)
+                    raise
             return wrapper
         return decorador
 

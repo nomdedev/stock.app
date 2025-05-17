@@ -26,3 +26,62 @@ Actualiza este archivo a medida que completes tareas o surjan nuevas necesidades
 - [ ] Validar que los permisos y visibilidad de módulos se cargan dinámicamente según el usuario (sidebar y QStackedWidget).
 - [ ] Implementar y testear el flujo de solicitudes de aprobación para usuarios sin permiso de modificación (tabla solicitudes_aprobacion).
 - [ ] Revisar feedback visual en todas las acciones (mensajes de éxito, error, advertencia, permiso denegado).
+
+# Sugerencias de mejoras y revisiones técnicas detectadas (Copilot, 2025-05-17)
+
+## Mejoras técnicas sugeridas:
+- [ ] Unificar y documentar el uso de la clase BaseDatabaseConnection en todos los módulos (evitar conexiones duplicadas).
+- [ ] Validar que todos los modelos usan los nombres exactos de tablas según README y License.
+- [ ] Revisar que todos los formularios validan correctamente antes de insertar/actualizar datos.
+- [ ] Implementar manejo de errores global para caídas de conexión a la base de datos (mostrar aviso, no crashear la app).
+- [ ] Revisar que todos los módulos registran acciones relevantes en auditoría (decorador o función centralizada).
+- [ ] Verificar que la exportación a Excel y PDF respeta filtros y columnas visibles.
+- [ ] Revisar que la interfaz visual cumple con los lineamientos de bordes redondeados, botones con sombra y soporte de tema claro/oscuro en todos los widgets.
+- [ ] Validar que la app puede iniciar y funcionar en modo offline (sin DB), mostrando advertencia y permitiendo navegación básica.
+- [ ] Documentar y testear el flujo de Kanban en obras (cronograma y avance visual).
+- [ ] Revisar que los tests unitarios y de integración cubren los flujos críticos de cada módulo.
+
+## Pendientes de documentación:
+- [ ] Actualizar README y License si se agregan nuevas tablas o módulos.
+- [ ] Documentar en README el flujo de aprobación de solicitudes y su relación con la tabla solicitudes_aprobacion.
+- [ ] Incluir ejemplos de configuración en config.example.py y advertir sobre la exclusión de config.py real.
+
+## Revisiones de buenas prácticas:
+- [ ] Validar que no se suben archivos sensibles (config.py, credenciales) al repositorio.
+- [ ] Revisar que los nombres de carpetas y archivos respetan la estructura modules/{modulo}/.
+- [ ] Confirmar que los roles y permisos se validan antes de cada acción sensible.
+- [ ] Revisar que los mensajes de feedback visual sean claros y estén presentes en todas las acciones relevantes.
+
+# Sugerencias avanzadas y mejoras integrales (Copilot, 2025-05-17)
+
+## Robustez e integración SAP-like
+- [ ] Garantizar que todas las acciones críticas (alta, edición, eliminación, reservas, entregas, exportaciones, cambios de estado) quedan SIEMPRE registradas en auditoría, incluyendo intentos fallidos y acciones denegadas por permisos.
+- [ ] Validar que la integración entre módulos es real: los movimientos en inventario impactan en obras y logística, y viceversa, con feedback visual inmediato y trazabilidad.
+- [ ] Revisar que la lógica de permisos y visibilidad de módulos se aplica tanto en backend como en frontend, evitando bypass por manipulación de la UI.
+- [ ] Implementar tests de integración que simulen flujos completos entre módulos (ejemplo: reserva en inventario → entrega en logística → impacto en obras y contabilidad).
+- [ ] Confirmar que la exportación a Excel/PDF respeta filtros, columnas visibles y configuración de usuario.
+
+## Feedback visual y experiencia de usuario
+- [ ] Unificar el uso del método `mostrar_mensaje` para todos los mensajes de feedback (éxito, error, advertencia, permiso denegado), con colores y duración estándar.
+- [ ] Asegurar que todos los botones principales usan el utilitario `estilizar_boton_icono` y cumplen con el estándar visual (icono SVG, tamaño, padding, border-radius).
+- [ ] Revisar que el label de usuario en la barra de estado refleja correctamente el rol y los permisos activos (color, borde, tipografía).
+- [ ] Incluir tooltips descriptivos y consistentes en todos los botones y acciones.
+
+## Seguridad y buenas prácticas
+- [ ] Validar que los roles y permisos se consultan y aplican antes de cada acción sensible, y que todo intento fallido queda registrado en auditoría.
+- [ ] Revisar que no se suben archivos sensibles (config.py, credenciales) al repositorio y que existe un config.example.py actualizado.
+- [ ] Confirmar que los nombres de carpetas y archivos respetan la estructura modules/{modulo}/ y que no hay duplicados ni archivos legacy.
+- [ ] Implementar manejo global de errores de conexión a la base de datos: la app debe mostrar aviso y permitir navegación básica en modo offline.
+
+## Documentación y checklist
+- [ ] Mantener actualizado el README con flujos, casos de error, feedback visual, integración y estándares SAP-like.
+- [ ] Documentar el flujo de aprobación de solicitudes y su relación con la tabla solicitudes_aprobacion, incluyendo ejemplos visuales y de código.
+- [ ] Incluir ejemplos de configuración en config.example.py y advertir sobre la exclusión de config.py real.
+- [ ] Actualizar este archivo y los docstrings de modelos/controladores con el checklist funcional y visual de cada módulo.
+
+## Pruebas y cobertura
+- [ ] Ampliar la cobertura de tests unitarios e integración para todos los módulos, incluyendo edge cases y flujos de error.
+- [ ] Verificar que los tests de integración cubren la correcta sincronización entre UI, base de datos y auditoría.
+- [ ] Agregar tests automáticos para la lógica de permisos, visibilidad y aprobaciones.
+
+# (Agrega aquí nuevas sugerencias o elimina las resueltas en la próxima actualización)

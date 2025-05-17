@@ -151,9 +151,18 @@ class InventarioModel:
         # Cambiar el estado de la reserva a 'entregada'
         query_actualizar_reserva = "UPDATE reservas_materiales SET estado = 'entregada' WHERE id = ?"
         self.db.ejecutar_query(query_actualizar_reserva, (id_reserva,))
-        # Registrar auditoría si está disponible
-        if hasattr(self, 'auditoria_model'):
-            self.auditoria_model.registrar_evento('inventario', 'entrega', f'Reserva entregada: {id_reserva}')
+        # Registrar auditoría si está disponible (formato unificado)
+        auditoria_model = getattr(self, 'auditoria_model', None)
+        if auditoria_model:
+            usuario = getattr(self, 'usuario_actual', None)
+            ip = usuario.get('ip', '') if usuario else ''
+            auditoria_model.registrar_evento(
+                usuario,
+                'inventario',
+                f'Reserva entregada: {id_reserva}',
+                ip_origen=ip,
+                resultado='éxito'
+            )
         return True
 
     def obtener_productos(self):

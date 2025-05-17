@@ -75,13 +75,20 @@ class AuditoriaModel:
 
         return "Formato no soportado."
 
-    def registrar_evento(self, usuario, modulo, accion, ip_origen=None):
+    def registrar_evento(self, usuario, modulo, accion, ip_origen=None, resultado=None):
+        """
+        Registra un evento de auditoría con formato unificado: 
+        detalle = f"{accion} | resultado: {resultado if resultado else 'N/A'}"
+        """
         query = """
         INSERT INTO auditorias_sistema (usuario_id, modulo_afectado, tipo_evento, detalle, ip_origen)
         VALUES (?, ?, ?, ?, ?)
         """
         usuario_id = usuario['id'] if usuario and 'id' in usuario else None
-        self.db.ejecutar_query(query, (usuario_id, modulo, 'accion', accion, ip_origen))
+        detalle = accion
+        if resultado:
+            detalle = f"{accion} | resultado: {resultado}"
+        self.db.ejecutar_query(query, (usuario_id, modulo, 'accion', detalle, ip_origen))
 
     def registrar_evento_obra(self, usuario, detalle, ip_origen=None):
         """Registra un evento de auditoría para acciones sobre obras."""
