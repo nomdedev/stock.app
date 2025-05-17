@@ -5,6 +5,7 @@ from PyQt6 import QtCore
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
+from core.ui_components import estilizar_boton_icono
 
 class PermisoAuditoria:
     def __init__(self, modulo):
@@ -115,7 +116,9 @@ class ObrasController:
         cliente_input = QLineEdit()
         layout.addWidget(cliente_input)
         btn_verificar = QPushButton("Verificar")
+        estilizar_boton_icono(btn_verificar)
         btn_cancelar = QPushButton("Cancelar")
+        estilizar_boton_icono(btn_cancelar)
         btn_verificar.clicked.connect(dialog.accept)
         btn_cancelar.clicked.connect(dialog.reject)
         layout.addWidget(btn_verificar)
@@ -219,14 +222,12 @@ class ObrasController:
             btn_guardar = QPushButton()
             btn_guardar.setIcon(QIcon("img/plus_icon.svg"))
             btn_guardar.setToolTip("Guardar obra")
-            btn_guardar.setFixedSize(48, 48)
-            btn_guardar.setStyleSheet("background-color: #2563eb; border-radius: 12px; border: none;")
+            estilizar_boton_icono(btn_guardar, tam_icono=28, tam_boton=48)
             btn_guardar.clicked.connect(dialog.accept)
             btn_cancelar = QPushButton()
             btn_cancelar.setIcon(QIcon("img/reject.svg"))
             btn_cancelar.setToolTip("Cancelar")
-            btn_cancelar.setFixedSize(48, 48)
-            btn_cancelar.setStyleSheet("background-color: #e5e7eb; border-radius: 12px; border: none;")
+            estilizar_boton_icono(btn_cancelar, tam_icono=28, tam_boton=48)
             btn_cancelar.clicked.connect(dialog.reject)
             btns_layout.addWidget(btn_guardar)
             btns_layout.addWidget(btn_cancelar)
@@ -316,7 +317,9 @@ class ObrasController:
         layout.addWidget(QLabel("Nueva fecha de entrega (YYYY-MM-DD):"))
         layout.addWidget(fecha_input)
         btn_guardar = QPushButton("Guardar")
+        estilizar_boton_icono(btn_guardar)
         btn_cancelar = QPushButton("Cancelar")
+        estilizar_boton_icono(btn_cancelar)
         btn_guardar.clicked.connect(dialog.accept)
         btn_cancelar.clicked.connect(dialog.reject)
         layout.addWidget(btn_guardar)
@@ -390,6 +393,7 @@ class ObrasController:
         form.addRow("Fecha entrega:", fecha_entrega_input)
         layout.addLayout(form)
         btn_guardar = QPushButton("Guardar cambios")
+        estilizar_boton_icono(btn_guardar, tam_icono=24, tam_boton=40)
         btn_guardar.clicked.connect(dialog.accept)
         layout.addWidget(btn_guardar)
         dialog.setLayout(layout)

@@ -7,12 +7,12 @@ from core.ui_components import estilizar_boton_icono
 class NotificacionesView(QWidget):
     def __init__(self):
         super().__init__()
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(20, 20, 20, 20)
-        self.layout.setSpacing(20)
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setSpacing(20)
 
         self.label_titulo = QLabel("Gestión de Notificaciones")
-        self.layout.addWidget(self.label_titulo)
+        self.main_layout.addWidget(self.label_titulo)
 
         # Cargar el stylesheet visual moderno para Notificaciones según el tema activo
         try:
@@ -25,28 +25,30 @@ class NotificacionesView(QWidget):
         except Exception as e:
             print(f"No se pudo cargar el archivo de estilos: {e}")
 
-        # Botón principal de acción (Marcar como leído)
+        # Botón principal de acción (Agregar notificación)
         botones_layout = QHBoxLayout()
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/plus_icon.svg"))
+        self.boton_agregar.setIconSize(QSize(20, 20))
+        self.boton_agregar.setToolTip("Agregar notificación")
+        self.boton_agregar.setText("")
+        estilizar_boton_icono(self.boton_agregar, tam_icono=20, tam_boton=48)
+        botones_layout.addWidget(self.boton_agregar)
+
+        # Botón principal de acción (Marcar como leído)
         self.boton_marcar_leido = QPushButton()
-        self.boton_marcar_leido.setIcon(QIcon("img/check_icon.svg"))
+        self.boton_marcar_leido.setIcon(QIcon("img/finish-check.svg"))
         self.boton_marcar_leido.setIconSize(QSize(20, 20))
         self.boton_marcar_leido.setToolTip("Marcar como leído")
         self.boton_marcar_leido.setText("")
-        self.boton_marcar_leido.setFixedSize(48, 48)
-        self.boton_marcar_leido.setStyleSheet("")
-        sombra = QGraphicsDropShadowEffect()
-        sombra.setBlurRadius(15)
-        sombra.setXOffset(0)
-        sombra.setYOffset(4)
-        sombra.setColor(QColor(0, 0, 0, 50))
-        self.boton_marcar_leido.setGraphicsEffect(sombra)
-        estilizar_boton_icono(self.boton_marcar_leido)
+        estilizar_boton_icono(self.boton_marcar_leido, tam_icono=20, tam_boton=48)
         botones_layout.addWidget(self.boton_marcar_leido)
         botones_layout.addStretch()
-        self.layout.addLayout(botones_layout)
+        self.main_layout.addLayout(botones_layout)
 
         # Tabla de notificaciones (placeholder)
         self.tabla_notificaciones = QTableWidget()
-        self.layout.addWidget(self.tabla_notificaciones)
+        self.main_layout.addWidget(self.tabla_notificaciones)
 
-        self.setLayout(self.layout)
+        # Establecer el layout solo una vez al final
+        self.setLayout(self.main_layout)

@@ -261,12 +261,14 @@ class MainWindow(QMainWindow):
             pass
 
         try:
+            from modules.notificaciones.view import NotificacionesView
             from modules.notificaciones.controller import NotificacionesController
+            self.notificaciones_view = NotificacionesView()
             self.notificaciones_controller = NotificacionesController(
                 model=self.notificaciones_view, view=self.notificaciones_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
             )
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Error al inicializar el módulo Notificaciones: {e}")
 
         # Layout principal
         main_layout = QHBoxLayout()

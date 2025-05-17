@@ -1,8 +1,11 @@
+from PyQt6.QtWidgets import QTableWidgetItem
 from modules.pedidos.model import PedidosModel
 
 class PedidosController:
     def __init__(self, view, db_connection):
         self.view = view
+        self.db_connection = db_connection
+        self.usuario_actual = None  # Permite asignar el usuario actual desde main.py
         self.model = PedidosModel(db_connection)
 
     def cargar_pedidos(self):
