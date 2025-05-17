@@ -8,10 +8,15 @@ class AuditoriaModel:
 
     def obtener_auditorias(self, filtros=None):
         query = "SELECT * FROM auditorias_sistema"
+        campos_validos = {"modulo_afectado", "usuario_id", "tipo_evento", "detalle", "ip_origen", "fecha_hora"}
         if filtros:
-            query += " WHERE " + " AND ".join([f"{campo} = ?" for campo in filtros.keys()])
-            result = self.db.ejecutar_query(query, tuple(filtros.values()))
-            return result if result is not None else []
+            # Solo aplicar filtros válidos
+            filtros_validos = {k: v for k, v in filtros.items() if k in campos_validos}
+            if filtros_validos:
+                query += " WHERE " + " AND ".join([f"{campo} = ?" for campo in filtros_validos.keys()])
+                result = self.db.ejecutar_query(query, tuple(filtros_validos.values()))
+                return result if result is not None else []
+            # Si no hay filtros válidos, devolver todos los resultados
         result = self.db.ejecutar_query(query)
         return result if result is not None else []
 
@@ -70,9 +75,21 @@ class AuditoriaModel:
 
         return "Formato no soportado."
 
-    def registrar_evento(self, modulo_afectado, tipo_evento, detalle, ip_origen):
-        query = "INSERT INTO auditorias_sistema (modulo_afectado, tipo_evento, detalle, ip_origen) VALUES (?, ?, ?, ?)"
-        self.db.ejecutar_query(query, (modulo_afectado, tipo_evento, detalle, ip_origen))
+    def registrar_evento(self, usuario, modulo, accion, ip_origen=None):
+        query = """
+        INSERT INTO auditorias_sistema (usuario_id, modulo_afectado, tipo_evento, detalle, ip_origen)
+        VALUES (?, ?, ?, ?, ?)
+        """
+        usuario_id = usuario['id'] if usuario and 'id' in usuario else None
+        self.db.ejecutar_query(query, (usuario_id, modulo, 'accion', accion, ip_origen))
+
+    def registrar_evento_obra(self, usuario, detalle, ip_origen=None):
+        """Registra un evento de auditoría para acciones sobre obras."""
+        modulo_afectado = 'obras'
+        tipo_evento = 'asociar_material_a_obra'
+        usuario_id = usuario['id'] if usuario and 'id' in usuario else None
+        query = "INSERT INTO auditorias_sistema (usuario_id, modulo_afectado, tipo_evento, detalle, ip_origen) VALUES (?, ?, ?, ?, ?)"
+        self.db.ejecutar_query(query, (usuario_id, modulo_afectado, tipo_evento, detalle, ip_origen))
 
     def obtener_logs(self, modulo_afectado):
         query = "SELECT * FROM auditorias_sistema WHERE modulo_afectado = ?"

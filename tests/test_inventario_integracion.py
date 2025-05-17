@@ -73,6 +73,25 @@ class TestInventarioIntegracion(unittest.TestCase):
         self.assertTrue(any(r[0] == id_item for r in reservas))
         self.view.actualizar_tabla(items)
         self.assertEqual(self.view.tabla_data, items)
+    def test_reserva_stock_insuficiente(self):
+        # Agregar un item con poco stock
+        datos = ("C-003", "Material Poco Stock", "PVC", "unidad", 2, 1, "Depósito", "Desc", "QR-C-003", "img3.jpg")
+        self.model.agregar_item(datos)
+        items = self.mock_db.ejecutar_query("SELECT * FROM inventario_perfiles")
+        items = items or []
+        items = [i for i in items if i is not None]
+        id_item = items[-1][0]
+        stock_antes = items[-1][4] if len(items[-1]) > 4 else 0
+        # Intentar reservar más de lo disponible
+        with self.assertRaises(Exception) as cm:
+            self.model.reservar_stock(id_item, 5, id_obra="ObraTest")
+        self.assertIn("Stock insuficiente", str(cm.exception))
+        # Verificar que el stock no cambió
+        items_despues = self.mock_db.ejecutar_query("SELECT * FROM inventario_perfiles")
+        items_despues = items_despues or []
+        items_despues = [i for i in items_despues if i is not None]
+        stock_despues = items_despues[-1][4] if len(items_despues[-1]) > 4 else 0
+        self.assertEqual(stock_antes, stock_despues, "El stock no debe cambiar si la reserva falla")
 
 if __name__ == "__main__":
     unittest.main()

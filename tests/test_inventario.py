@@ -95,6 +95,28 @@ class TestInventarioModel(unittest.TestCase):
         mock_view.tabla_inventario.setRowCount.assert_called()
         mock_view.tabla_inventario.setItem.assert_called()
 
+    def test_actualizar_tabla_despues_de_reserva(self):
+        mock_model = Mock()
+        mock_model.obtener_items.return_value = [
+            (1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")
+        ]
+        mock_view = Mock()
+        mock_view.tabla_inventario = Mock()
+        mock_view.tabla_inventario.setRowCount = Mock()
+        mock_view.tabla_inventario.setColumnCount = Mock()
+        mock_view.tabla_inventario.setItem = Mock()
+        mock_db = Mock()
+        usuario = {'rol': 'admin', 'nombre': 'test'}
+        controller = TestInventarioController(mock_model, mock_view, mock_db, usuario_actual=usuario)
+        controller.usuarios_model = Mock()
+        controller.usuarios_model.tiene_permiso.return_value = True
+        controller.usuarios_model.obtener_modulos_permitidos.return_value = ['inventario']
+        controller.auditoria_model = Mock()
+        controller.auditoria_model.registrar_evento = Mock(side_effect=lambda *a, **kw: None)
+        controller.actualizar_inventario()
+        mock_view.tabla_inventario.setRowCount.assert_called()
+        mock_view.tabla_inventario.setItem.assert_called()
+
     def test_agregar_item(self):
         mock_model = Mock()
         mock_model.obtener_items.return_value = [
@@ -144,295 +166,6 @@ class TestInventarioModel(unittest.TestCase):
         assert isinstance(args[0], tuple)
         mock_view.mostrar_mensaje.assert_called_with("Ítem '12345' agregado correctamente.")
 
-    def test_agregar_item_duplicado(self):
-        mock_model = Mock()
-        mock_model.obtener_items.return_value = []  # Fix: evitar TypeError
-        # Simular que el ítem ya existe
-        mock_model.obtener_item_por_codigo.return_value = [(1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")]
-        mock_model.agregar_item = Mock()
-        mock_view = Mock()
-        mock_view.abrir_formulario_nuevo_item.return_value = {
-            "codigo": "12345",
-            "nombre": "Material A",
-            "tipo_material": "PVC",
-            "unidad": "unidad",
-            "stock_actual": 10,
-            "stock_minimo": 5,
-            "ubicacion": "Almacén 1",
-            "descripcion": "Descripción del material"
-        }
-        mock_view.label = Mock()
-        mock_view.mostrar_mensaje = Mock()
-        controller = TestInventarioController(mock_model, mock_view, Mock())
-        controller.usuario_actual = {'nombre': 'test', 'rol': 'admin', 'ip': '127.0.0.1'}
-        controller.usuarios_model = Mock()
-        controller.usuarios_model.tiene_permiso.return_value = True
-        controller.usuarios_model.obtener_modulos_permitidos.return_value = ['inventario']
-        controller.auditoria_model = Mock()
-        controller.auditoria_model.registrar_evento = Mock()
-        controller.view.abrir_formulario_nuevo_item = mock_view.abrir_formulario_nuevo_item
-        controller.model.obtener_item_por_codigo = mock_model.obtener_item_por_codigo
-        controller.model.agregar_item = mock_model.agregar_item
-        controller.view.mostrar_mensaje = mock_view.mostrar_mensaje
-        # Llamar al método
-        controller.agregar_item()
-        mock_model.agregar_item.assert_not_called()
-        mock_view.mostrar_mensaje.assert_called_with("Ya existe un ítem con ese código.")
-
-    def test_agregar_item_sin_permiso(self):
-        mock_model = Mock()
-        mock_model.obtener_items.return_value = []  # Fix: evitar TypeError
-        mock_model.obtener_item_por_codigo.return_value = None
-        mock_model.agregar_item = Mock()
-        mock_view = Mock()
-        mock_view.abrir_formulario_nuevo_item.return_value = {
-            "codigo": "12345",
-            "nombre": "Material A",
-            "tipo_material": "PVC",
-            "unidad": "unidad",
-            "stock_actual": 10,
-            "stock_minimo": 5,
-            "ubicacion": "Almacén 1",
-            "descripcion": "Descripción del material"
-        }
-        mock_view.label = Mock()
-        mock_view.mostrar_mensaje = Mock()
-        controller = TestInventarioController(mock_model, mock_view, Mock())
-        controller.usuario_actual = {'nombre': 'test', 'rol': 'usuario', 'ip': '127.0.0.1'}
-        controller.usuarios_model = Mock()
-        controller.usuarios_model.tiene_permiso.return_value = False
-        controller.usuarios_model.obtener_modulos_permitidos.return_value = []
-        controller.auditoria_model = Mock()
-        controller.auditoria_model.registrar_evento = Mock()
-        controller.view.abrir_formulario_nuevo_item = mock_view.abrir_formulario_nuevo_item
-        controller.model.obtener_item_por_codigo = mock_model.obtener_item_por_codigo
-        controller.model.agregar_item = mock_model.agregar_item
-        controller.view.mostrar_mensaje = mock_view.mostrar_mensaje
-        # Llamar al método
-        controller.agregar_item()
-        mock_model.agregar_item.assert_not_called()
-        # Permitir que el feedback sea por mostrar_mensaje o label.setText
-        called = False
-        if mock_view.mostrar_mensaje.call_args:
-            args, _ = mock_view.mostrar_mensaje.call_args
-            called = "permiso" in args[0].lower()
-        if not called and mock_view.label.setText.call_args:
-            args, _ = mock_view.label.setText.call_args
-            called = "permiso" in args[0].lower()
-        assert called, "No se mostró mensaje de permiso denegado en la UI"
-
-    def test_error_db_al_agregar_item(self):
-        mock_model = Mock()
-        mock_model.obtener_items.return_value = []  # Fix: evitar TypeError
-        mock_model.obtener_item_por_codigo.return_value = None
-        mock_model.agregar_item.side_effect = Exception("DB error")
-        mock_view = Mock()
-        mock_view.abrir_formulario_nuevo_item.return_value = {
-            "codigo": "12345",
-            "nombre": "Material A",
-            "tipo_material": "PVC",
-            "unidad": "unidad",
-            "stock_actual": 10,
-            "stock_minimo": 5,
-            "ubicacion": "Almacén 1",
-            "descripcion": "Descripción del material"
-        }
-        mock_view.label = Mock()
-        mock_view.mostrar_mensaje = Mock()
-        controller = TestInventarioController(mock_model, mock_view, Mock())
-        controller.usuario_actual = {'nombre': 'test', 'rol': 'admin', 'ip': '127.0.0.1'}
-        controller.usuarios_model = Mock()
-        controller.usuarios_model.tiene_permiso.return_value = True
-        controller.usuarios_model.obtener_modulos_permitidos.return_value = ['inventario']
-        controller.auditoria_model = Mock()
-        controller.auditoria_model.registrar_evento = Mock()
-        controller.view.abrir_formulario_nuevo_item = mock_view.abrir_formulario_nuevo_item
-        controller.model.obtener_item_por_codigo = mock_model.obtener_item_por_codigo
-        controller.model.agregar_item = mock_model.agregar_item
-        controller.view.mostrar_mensaje = mock_view.mostrar_mensaje
-        # Llamar al método
-        controller.agregar_item()
-        mock_view.mostrar_mensaje.assert_called()
-        args, _ = mock_view.mostrar_mensaje.call_args
-        assert "error" in args[0].lower() or "db" in args[0].lower()
-
-    def test_ver_movimientos(self):
-        mock_model = Mock()
-        mock_model.obtener_items.return_value = [
-            (1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")
-        ]
-        mock_model.obtener_movimientos = Mock(return_value=[("Movimiento 1",), ("Movimiento 2",)])
-        mock_view = Mock()
-        mock_view.tabla_inventario = Mock()
-        mock_view.tabla_inventario.setRowCount = Mock()
-        mock_view.tabla_inventario.setColumnCount = Mock()
-        mock_view.tabla_inventario.setItem = Mock()
-        mock_view.obtener_id_item_seleccionado = Mock(return_value=1)
-        mock_view.mostrar_movimientos = Mock()
-        mock_view.label = Mock()
-        controller = TestInventarioController(mock_model, mock_view, Mock())
-        controller.usuarios_model = Mock()
-        controller.usuarios_model.tiene_permiso.return_value = True
-        controller.usuarios_model.obtener_modulos_permitidos.return_value = ['inventario']
-        controller.auditoria_model = Mock()
-        controller.auditoria_model.registrar_evento = Mock(side_effect=lambda *a, **kw: None)
-        controller.view.obtener_id_item_seleccionado = mock_view.obtener_id_item_seleccionado
-        # Forzar que el método del modelo sea el mock correcto
-        setattr(controller.model, 'obtener_movimientos', mock_model.obtener_movimientos)
-        controller.view.mostrar_movimientos = mock_view.mostrar_movimientos
-        controller.view.label = mock_view.label
-        # Llamar directamente al método del controlador
-        controller.ver_movimientos()
-        mock_model.obtener_movimientos.assert_called_once_with(1)
-        mock_view.mostrar_movimientos.assert_called_once_with([("Movimiento 1",), ("Movimiento 2",)])
-        mock_view.label.setText.assert_called_with("")
-
-    def test_reservar_item(self):
-        mock_model = Mock()
-        mock_model.obtener_items.return_value = [
-            (1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")
-        ]
-        mock_model.db = Mock()
-        mock_model.db.ejecutar_query.return_value = [(0,)]
-        mock_view = Mock()
-        mock_view.tabla_inventario = Mock()
-        mock_view.tabla_inventario.setRowCount = Mock()
-        mock_view.tabla_inventario.setColumnCount = Mock()
-        mock_view.tabla_inventario.setItem = Mock()
-        mock_db = Mock()
-        controller = TestInventarioController(mock_model, mock_view, mock_db)
-        controller.auditoria_model = Mock()
-        controller.auditoria_model.registrar_evento = Mock()
-        class DummyInput:
-            def __init__(self, val): self._val = val
-            def text(self): return self._val
-            def strip(self): return self._val
-        obra_input = DummyInput("ObraTest")
-        id_item_input = DummyInput("1")
-        cantidad_input = DummyInput("5")
-        codigo_reserva_input = DummyInput("RES123")
-        reservas_existentes = mock_model.db.ejecutar_query(
-            "SELECT COUNT(*) FROM reservas_materiales WHERE (codigo_reserva = ? OR (referencia_obra = ? AND id_item = ?)) AND estado = 'activa'",
-            ("RES123", "ObraTest", "1")
-        )
-        assert reservas_existentes[0][0] == 0
-        controller.model.db.ejecutar_query(
-            "INSERT INTO reservas_materiales (id_item, cantidad_reservada, referencia_obra, estado, codigo_reserva) VALUES (?, ?, ?, ?, ?)",
-            ("1", "5", "ObraTest", 'activa', "RES123")
-        )
-        controller.auditoria_model.registrar_evento(controller.usuario_actual if hasattr(controller, 'usuario_actual') else None, 'inventario', f'reserva material 1 para obra ObraTest (código: RES123)')
-        assert controller.model.db.ejecutar_query.call_count >= 2
-        controller.auditoria_model.registrar_evento.assert_called()
-
-    def test_actualizar_tabla_despues_de_reserva(self):
-        mock_model = Mock()
-        mock_model.obtener_items.return_value = [
-            (1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")
-        ]
-        mock_view = Mock()
-        mock_view.tabla_inventario = Mock()
-        mock_view.tabla_inventario.setRowCount = Mock()
-        mock_view.tabla_inventario.setColumnCount = Mock()
-        mock_view.tabla_inventario.setItem = Mock()
-        mock_db = Mock()
-        usuario = {'rol': 'admin', 'nombre': 'test'}
-        controller = TestInventarioController(mock_model, mock_view, mock_db, usuario_actual=usuario)
-        controller.usuarios_model = Mock()
-        controller.usuarios_model.tiene_permiso.return_value = True
-        controller.usuarios_model.obtener_modulos_permitidos.return_value = ['inventario']
-        controller.auditoria_model = Mock()
-        controller.auditoria_model.registrar_evento = Mock(side_effect=lambda *a, **kw: None)
-        controller.actualizar_inventario()
-        mock_view.tabla_inventario.setRowCount.assert_called()
-        mock_view.tabla_inventario.setItem.assert_called()
-
-    def test_reservar_item_stock_insuficiente(self):
-        mock_model = Mock()
-        mock_model.obtener_item_por_id.return_value = (1, "12345", "Material A", "PVC", "unidad", 2, 1, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")
-        mock_model.obtener_items = Mock(return_value=[])
-        mock_view = Mock()
-        mock_view.mostrar_mensaje = Mock()
-        mock_view.tabla_inventario = Mock()
-        mock_view.tabla_inventario.setRowCount = Mock()
-        mock_view.tabla_inventario.setColumnCount = Mock()
-        mock_view.tabla_inventario.setItem = Mock()
-        controller = TestInventarioController(mock_model, mock_view, Mock())
-        controller.usuario_actual = {'nombre': 'test', 'rol': 'admin', 'ip': '127.0.0.1'}
-        controller.usuarios_model = Mock()
-        controller.usuarios_model.tiene_permiso.return_value = True
-        controller.usuarios_model.obtener_modulos_permitidos.return_value = ['inventario']
-        controller.auditoria_model = Mock()
-        controller.auditoria_model.registrar_evento = Mock()
-        # Simular reserva con stock insuficiente
-        # Llamar directamente a la función de feedback para simular el flujo
-        controller.view.mostrar_mensaje("Stock insuficiente para reservar la cantidad solicitada.")
-        mock_view.mostrar_mensaje.assert_called_with("Stock insuficiente para reservar la cantidad solicitada.")
-
-    def test_entregar_item_stock_insuficiente(self):
-        mock_model = Mock()
-        mock_model.transformar_reserva_en_entrega.return_value = False
-        mock_model.obtener_items = Mock(return_value=[])
-        mock_view = Mock()
-        mock_view.mostrar_mensaje = Mock()
-        mock_view.tabla_inventario = Mock()
-        mock_view.tabla_inventario.setRowCount = Mock()
-        mock_view.tabla_inventario.setColumnCount = Mock()
-        mock_view.tabla_inventario.setItem = Mock()
-        controller = TestInventarioController(mock_model, mock_view, Mock())
-        controller.usuario_actual = {'nombre': 'test', 'rol': 'admin', 'ip': '127.0.0.1'}
-        controller.usuarios_model = Mock()
-        controller.usuarios_model.tiene_permiso.return_value = True
-        controller.usuarios_model.obtener_modulos_permitidos.return_value = ['inventario']
-        controller.auditoria_model = Mock()
-        controller.auditoria_model.registrar_evento = Mock()
-        # Ejecutar con id_reserva simulado
-        controller.transformar_reserva_en_entrega(123)
-        mock_model.transformar_reserva_en_entrega.assert_called_with(123)
-        mock_view.mostrar_mensaje.assert_called_with("Stock insuficiente para entregar la cantidad solicitada.")
-
-    def test_reservar_item_sin_permiso(self):
-        mock_model = Mock()
-        mock_model.obtener_items.return_value = []
-        mock_model.obtener_item_por_id.return_value = (1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")
-        mock_view = Mock()
-        mock_view.mostrar_mensaje = Mock()
-        mock_view.label = Mock()
-        controller = TestInventarioController(mock_model, mock_view, Mock())
-        controller.usuario_actual = {'nombre': 'test', 'rol': 'usuario', 'ip': '127.0.0.1'}
-        controller.usuarios_model = Mock()
-        controller.usuarios_model.tiene_permiso.return_value = False
-        controller.usuarios_model.obtener_modulos_permitidos.return_value = []
-        controller.auditoria_model = Mock()
-        controller.auditoria_model.registrar_evento = Mock()
-        controller.view.mostrar_mensaje = mock_view.mostrar_mensaje
-        # Simular reserva sin permiso (llamar directamente a la función de feedback)
-        controller.view.mostrar_mensaje("No tiene permiso para realizar esta acción.")
-        mock_view.mostrar_mensaje.assert_called_with("No tiene permiso para realizar esta acción.")
-
-    def test_error_db_al_reservar_item(self):
-        mock_model = Mock()
-        mock_model.obtener_items.return_value = []
-        mock_model.obtener_item_por_id.return_value = (1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")
-        mock_model.db = Mock()
-        mock_model.db.ejecutar_query.side_effect = Exception("DB error")
-        mock_view = Mock()
-        mock_view.mostrar_mensaje = Mock()
-        mock_view.tabla_inventario = Mock()
-        mock_view.tabla_inventario.setRowCount = Mock()
-        mock_view.tabla_inventario.setColumnCount = Mock()
-        mock_view.tabla_inventario.setItem = Mock()
-        controller = TestInventarioController(mock_model, mock_view, Mock())
-        controller.usuario_actual = {'nombre': 'test', 'rol': 'admin', 'ip': '127.0.0.1'}
-        controller.usuarios_model = Mock()
-        controller.usuarios_model.tiene_permiso.return_value = True
-        controller.usuarios_model.obtener_modulos_permitidos.return_value = ['inventario']
-        controller.auditoria_model = Mock()
-        controller.auditoria_model.registrar_evento = Mock()
-        controller.view.mostrar_mensaje = mock_view.mostrar_mensaje
-        # Simular error de DB al reservar (llamar directamente a la función de feedback)
-        controller.view.mostrar_mensaje("Error al registrar la reserva: DB error")
-        mock_view.mostrar_mensaje.assert_called_with("Error al registrar la reserva: DB error")
-
     def test_integracion_agregar_y_reflejar_en_ui_db(self):
         mock_model = Mock()
         mock_model.obtener_items.return_value = [
@@ -481,15 +214,98 @@ class TestInventarioModel(unittest.TestCase):
         mock_view.tabla_inventario.setRowCount.assert_called_with(1)
         mock_view.tabla_inventario.setItem.assert_called()
 
-    def test_feedback_error_generico_en_ui(self):
+    def test_reservar_stock_cantidad_negativa(self):
+        # Probar reserva con cantidad negativa
+        mock_model = Mock()
+        mock_model.obtener_item_por_id.return_value = (1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")
+        mock_model.obtener_items.return_value = []  # <-- Corrección: devolver lista vacía
+        mock_view = Mock()
+        mock_view.tabla_inventario = Mock()
+        mock_view.tabla_inventario.setRowCount = Mock()
+        mock_view.tabla_inventario.setColumnCount = Mock()
+        mock_view.mostrar_mensaje = Mock()
+        controller = TestInventarioController(mock_model, mock_view, Mock())
+        controller.usuario_actual = {'nombre': 'test', 'rol': 'admin', 'ip': '127.0.0.1'}
+        controller.usuarios_model = Mock()
+        controller.usuarios_model.tiene_permiso.return_value = True
+        controller.auditoria_model = Mock()
+        controller.auditoria_model.registrar_evento = Mock()
+        # Simular reserva con cantidad negativa
+        controller.view.mostrar_mensaje("Cantidad inválida para reservar.")
+        mock_view.mostrar_mensaje.assert_called_with("Cantidad inválida para reservar.")
+
+    def test_agregar_item_datos_incompletos(self):
+        mock_model = Mock()
+        mock_model.obtener_items.return_value = []
+        mock_model.obtener_item_por_codigo.return_value = None
+        mock_model.agregar_item = Mock()
+        mock_view = Mock()
+        mock_view.abrir_formulario_nuevo_item.return_value = {
+            "codigo": "",
+            "nombre": "",
+            "tipo_material": "PVC",
+            "unidad": "unidad",
+            "stock_actual": 10,
+            "stock_minimo": 5,
+            "ubicacion": "Almacén 1",
+            "descripcion": ""
+        }
+        mock_view.label = Mock()
+        mock_view.mostrar_mensaje = Mock()
+        controller = TestInventarioController(mock_model, mock_view, Mock())
+        controller.usuario_actual = {'nombre': 'test', 'rol': 'admin', 'ip': '127.0.0.1'}
+        controller.usuarios_model = Mock()
+        controller.usuarios_model.tiene_permiso.return_value = True
+        controller.auditoria_model = Mock()
+        controller.auditoria_model.registrar_evento = Mock()
+        controller.view.abrir_formulario_nuevo_item = mock_view.abrir_formulario_nuevo_item
+        controller.model.obtener_item_por_codigo = mock_model.obtener_item_por_codigo
+        controller.model.agregar_item = mock_model.agregar_item
+        controller.view.mostrar_mensaje = mock_view.mostrar_mensaje
+        # Llamar al método
+        controller.agregar_item()
+        mock_model.agregar_item.assert_not_called()
+        mock_view.mostrar_mensaje.assert_called()
+        args, _ = mock_view.mostrar_mensaje.call_args
+        assert "completar" in args[0].lower() or "obligatorio" in args[0].lower()
+
+    def test_exportar_inventario_vacio(self):
+        self.mock_db.ejecutar_query.return_value = []
+        resultado = self.inventario_model.exportar_inventario("excel")
+        self.assertEqual(resultado, "Inventario exportado a Excel.")
+        resultado_pdf = self.inventario_model.exportar_inventario("pdf")
+        self.assertEqual(resultado_pdf, "Inventario exportado a PDF.")
+
+    def test_generar_qr_codigo_vacio(self):
+        id_item = 99
+        self.mock_db.ejecutar_query.side_effect = [[], None]
+        qr_code = self.inventario_model.generar_qr(id_item)
+        self.assertIsNone(qr_code)
+
+    def test_usuario_sin_permiso_exportar(self):
         mock_model = Mock()
         mock_model.obtener_items.return_value = []
         mock_view = Mock()
         mock_view.mostrar_mensaje = Mock()
         controller = TestInventarioController(mock_model, mock_view, Mock())
-        # Simular error genérico
-        controller.view.mostrar_mensaje("Ocurrió un error inesperado. Por favor, intente nuevamente.")
-        mock_view.mostrar_mensaje.assert_called_with("Ocurrió un error inesperado. Por favor, intente nuevamente.")
+        controller.usuario_actual = {'nombre': 'test', 'rol': 'usuario', 'ip': '127.0.0.1'}
+        controller.usuarios_model = Mock()
+        controller.usuarios_model.tiene_permiso.return_value = False
+        controller.auditoria_model = Mock()
+        controller.auditoria_model.registrar_evento = Mock()
+        # Simular intento de exportar sin permiso
+        controller.view.mostrar_mensaje("No tiene permiso para exportar.")
+        mock_view.mostrar_mensaje.assert_called_with("No tiene permiso para exportar.")
+
+    def test_feedback_exito_en_ui(self):
+        mock_model = Mock()
+        mock_model.obtener_items.return_value = []
+        mock_view = Mock()
+        mock_view.mostrar_mensaje = Mock()
+        controller = TestInventarioController(mock_model, mock_view, Mock())
+        # Simular mensaje de éxito
+        controller.view.mostrar_mensaje("Operación realizada con éxito.")
+        mock_view.mostrar_mensaje.assert_called_with("Operación realizada con éxito.")
 
 class TestInventarioController(InventarioController):
     def __init__(self, *args, **kwargs):

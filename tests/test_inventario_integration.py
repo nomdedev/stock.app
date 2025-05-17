@@ -24,23 +24,25 @@ class TestInventarioIntegration(unittest.TestCase):
             self.fail(f"Error al agregar material: {e}")
         resultado = self.model.obtener_item_por_codigo("C-001")
         self.assertTrue(resultado, "No se encontró el material recién agregado")
-        self.assertEqual(resultado[0][1], "C-001")
-        self.assertEqual(resultado[0][2], "Material Test")
+        # Estructura moderna: id, codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr, imagen_referencia
+        self.assertEqual(resultado[0][1], "C-001")  # codigo
+        self.assertEqual(resultado[0][2], "Material Test")  # nombre
 
     def test_stock_y_descripcion_correcta(self):
         datos = ("C-002", "Material Desc", "Aluminio", "kg", 5, 1, "Depósito", "Descripción especial", "QR-C-002", "img2.jpg")
         self.model.agregar_item(datos)
         resultado = self.model.obtener_item_por_codigo("C-002")
-        self.assertEqual(resultado[0][2], "Material Desc")
-        self.assertEqual(resultado[0][4], "kg")
-        self.assertEqual(resultado[0][5], 5)
-        self.assertEqual(resultado[0][7], "Descripción especial")
+        self.assertEqual(resultado[0][2], "Material Desc")  # nombre
+        self.assertEqual(resultado[0][3], "Aluminio")  # tipo_material
+        self.assertEqual(resultado[0][4], "kg")  # unidad
+        self.assertEqual(resultado[0][5], 5)  # stock_actual
+        self.assertEqual(resultado[0][7], "Descripción especial")  # descripcion
 
     def test_no_error_columna_stock(self):
         datos = ("C-003", "Material Stock", "PVC", "unidad", 8, 2, "Depósito", "Desc", "QR-C-003", "img3.jpg")
         self.model.agregar_item(datos)
         resultado = self.model.obtener_item_por_codigo("C-003")
-        self.assertEqual(resultado[0][5], 8)
+        self.assertEqual(resultado[0][5], 8)  # stock_actual
 
 if __name__ == "__main__":
     unittest.main()

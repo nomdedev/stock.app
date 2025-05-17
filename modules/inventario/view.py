@@ -216,7 +216,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
             return
         # Obtener datos de la tabla
         data = []
-        for row in range(self.tabla_inventario.rowCount():
+        for row in range(self.tabla_inventario.rowCount()):
             row_data = {}
             for col, header in enumerate(self.inventario_headers):
                 item = self.tabla_inventario.item(row, col)

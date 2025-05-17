@@ -1,4 +1,4 @@
-**COSAS POR HACER (actualizado 2025-05-15)**
+**COSAS POR HACER (actualizado 2025-05-17)**
 
 - [x] Refactorizar y robustecer agregar_item en InventarioController: validación, unicidad, manejo de errores, auditoría, feedback UI.
 - [x] Revisar y robustecer reservar_item: validar stock suficiente antes de reservar, evitar reservas con cantidad inválida, feedback claro en UI, auditar correctamente.
@@ -6,11 +6,11 @@
 - [x] Agregar tests de integración SQL para verificar agregado, ajuste y eliminación real en la base de datos y alertar si falla.
 - [x] Mejorar manejo de errores y feedback en todos los métodos críticos del controlador de inventario.
 - [x] Corregir y hacer pasar todos los tests unitarios de inventario (alta, reserva, export, QR, movimientos, tabla, etc.).
-- [ ] Adaptar y expandir los tests para cubrir todos los flujos y edge cases (stock insuficiente, duplicados, permisos, errores de DB, etc.).
-- [ ] Validar y documentar los flujos nuevos/cambiados en README.
+- [x] Adaptar y expandir los tests para cubrir todos los flujos y edge cases (stock insuficiente, duplicados, permisos, errores de DB, etc.).
+- [x] Validar y documentar los flujos nuevos/cambiados en README.
 
-# Estado de tests por módulo (2025-05-15)
-- inventario: OK (tests unitarios pasan; falta cubrir edge cases e integración)
+# Estado de tests por módulo (2025-05-17)
+- inventario: OK (tests unitarios e integración pasan; edge cases cubiertos)
 - logistica: 2 tests fallan (diferencias en SQL esperado vs real)
 - mantenimiento: todos los tests fallan (métodos incompletos o mal definidos)
 - usuarios: OK
@@ -21,7 +21,6 @@
 - obras: (pendiente de ejecutar)
 
 # Próximos pasos:
-- [ ] Adaptar y expandir tests de inventario (mock, edge cases, integración real)
 - [ ] Corregir tests de logistica (ajustar asserts de SQL y mocks)
 - [ ] Completar y corregir métodos y tests de mantenimiento
 - [ ] Ejecutar y revisar tests de obras

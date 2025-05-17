@@ -126,6 +126,14 @@ class ObrasModel:
             print(f"Error al asignar material a obra: {e}")
             raise
 
+    def insertar_material_obra(self, id_obra, id_item, cantidad, estado):
+        query = """
+        INSERT INTO materiales_por_obra (id_obra, id_item, cantidad_necesaria, cantidad_reservada, estado)
+        VALUES (?, ?, ?, ?, ?)
+        """
+        cantidad_reservada = cantidad if estado == "Reservado" else 0
+        self.db_connection.ejecutar_query(query, (id_obra, id_item, cantidad, cantidad_reservada, estado))
+
     def exportar_cronograma(self, formato, id_obra):
         query = """
         SELECT etapa, fecha_programada, fecha_realizada, estado, responsable

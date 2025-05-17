@@ -52,12 +52,12 @@ class InventarioModel:
             print(f"Error al agregar ítem: {e}")
             raise
 
-    def registrar_movimiento(self, datos):
+    def registrar_movimiento(self, id_item, cantidad, tipo, referencia):
         query = """
-        INSERT INTO movimientos_stock (id_item, tipo_movimiento, cantidad, realizado_por, observaciones, referencia)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO movimientos_stock (id_item, cantidad, tipo_movimiento, fecha, referencia)
+        VALUES (?, ?, ?, GETDATE(), ?)
         """
-        self.db.ejecutar_query(query, datos)
+        self.db.ejecutar_query(query, (id_item, cantidad, tipo, str(referencia)))
 
     def registrar_reserva(self, datos):
         query = """
@@ -76,7 +76,7 @@ class InventarioModel:
 
     def obtener_item_por_codigo(self, codigo):
         try:
-            query = "SELECT * FROM inventario_perfiles WHERE codigo = ?"
+            query = "SELECT id, codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr, imagen_referencia FROM inventario_perfiles WHERE codigo = ?"
             return self.db.ejecutar_query(query, (codigo,))
         except Exception as e:
             print(f"Error al obtener ítem por código: {e}")
@@ -257,3 +257,25 @@ class InventarioModel:
                 self.db.ejecutar_query(query, (tipo_n, acabado_n, longitud_n, qr, id_item))
                 faltantes.append(id_item)
         return len(faltantes)
+
+    def obtener_stock_item(self, id_item):
+        """Devuelve el stock actual de un ítem/material por su id."""
+        query = "SELECT stock_actual FROM inventario_perfiles WHERE id = ?"
+        res = self.db.ejecutar_query(query, (id_item,))
+        return res[0][0] if res and len(res[0]) > 0 else 0
+
+    def reservar_stock(self, id_item, cantidad, id_obra):
+        """Reserva stock de un ítem/material, actualizando stock_actual y registrando la reserva."""
+        stock_actual = self.obtener_stock_item(id_item)
+        if stock_actual < cantidad:
+            raise Exception("Stock insuficiente para reservar.")
+        # Descontar stock
+        query_update = "UPDATE inventario_perfiles SET stock_actual = stock_actual - ? WHERE id = ?"
+        self.db.ejecutar_query(query_update, (cantidad, id_item))
+        # Registrar reserva
+        query_reserva = """
+        INSERT INTO reservas_materiales (id_item, cantidad_reservada, referencia_obra, estado)
+        VALUES (?, ?, ?, ?)
+        """
+        self.db.ejecutar_query(query_reserva, (id_item, cantidad, str(id_obra), 'activa'))
+        return True

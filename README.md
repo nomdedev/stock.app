@@ -141,6 +141,32 @@ El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de qu
 
 Si necesitas agregar más información o realizar cambios en las bases de datos, por favor consulta con el equipo antes de proceder.
 
+## Instrucciones para aplicar el script de estructura de tablas
+
+Para garantizar que todas las tablas críticas del sistema tengan la estructura, el orden y los campos correctos, utiliza el script unificado `scripts/estructura_tablas_mps.sql`.
+
+### ¿Qué hace este script?
+- Elimina (si existen) y crea desde cero todas las tablas principales de inventario, usuarios, obras, auditoría, permisos y solicitudes de aprobación, con el orden y tipos de columnas requeridos por el sistema y los tests.
+- Es compatible con SQL Server (puedes adaptarlo fácilmente para PostgreSQL cambiando los tipos y funciones de autoincremento).
+
+### ¿Cómo aplicarlo?
+1. **Haz un respaldo de tus datos actuales** si tienes información importante en las tablas.
+2. Abre SQL Server Management Studio (SSMS) o tu herramienta de administración de base de datos.
+3. Abre el archivo `scripts/estructura_tablas_mps.sql`.
+4. Ejecuta el script en cada base de datos correspondiente:
+   - Para la base de datos de inventario.
+   - Para la base de datos de usuarios.
+   - Para la base de datos de auditoría.
+   - (Y cualquier otra base relevante que uses en tu sistema).
+5. Verifica que las tablas se hayan creado correctamente y que el orden de columnas coincida con lo documentado.
+
+### Notas importantes
+- El script elimina las tablas si existen, por lo que **borra todos los datos previos**. Úsalo solo en entornos de desarrollo o tras hacer un backup.
+- Si necesitas migrar datos legacy, primero exporta la información, luego impórtala respetando el nuevo orden de columnas.
+- Si usas PostgreSQL, reemplaza `IDENTITY(1,1)` por `SERIAL` o `GENERATED ALWAYS AS IDENTITY`, y ajusta los tipos de fecha/hora.
+
+---
+
 ## Resumen de Flujo, Estructura y Relaciones de Datos (2025)
 
 ### Estructura General del Sistema
@@ -243,6 +269,64 @@ CREATE TABLE materiales_por_obra (
   ```
 
 > **Estas reglas son obligatorias para todos los módulos y vistas del proyecto.**
+
+## Estructura y orden de columnas requeridas para tablas principales
+
+### Tabla `inventario_perfiles`
+El sistema y los tests requieren que la tabla `inventario_perfiles` tenga exactamente las siguientes columnas y en este orden:
+
+1. id (INT, PRIMARY KEY, IDENTITY/AUTOINCREMENT)
+2. codigo (VARCHAR, UNIQUE, NOT NULL)
+3. descripcion (VARCHAR o TEXT)
+4. tipo (VARCHAR)
+5. acabado (VARCHAR)
+6. numero (VARCHAR o INT)
+7. vs (VARCHAR)
+8. proveedor (VARCHAR)
+9. longitud (DECIMAL o VARCHAR)
+10. ancho (DECIMAL o VARCHAR)
+11. alto (DECIMAL o VARCHAR)
+12. necesarias (DECIMAL o INT)
+13. stock (DECIMAL o INT)
+14. faltan (DECIMAL o INT)
+15. ped_min (DECIMAL o INT)
+16. emba (VARCHAR)
+17. pedido (VARCHAR)
+18. importe (DECIMAL)
+
+- El tipo de dato puede ajustarse según la necesidad, pero el orden debe ser exactamente este.
+- Si alguna columna no se usa aún, igual debe estar presente (puede ser NULL por defecto).
+- Si tienes otras tablas similares (por ejemplo, para obras, materiales, etc.), sigue el mismo criterio: define y documenta el orden y los nombres exactos de las columnas requeridas por el modelo y la UI.
+
+> **IMPORTANTE:** Si la tabla ya existe y el orden físico de las columnas no coincide, se recomienda crear una nueva tabla temporal con el orden correcto, migrar los datos y renombrar la tabla. Esto es fundamental para que el sistema y los tests funcionen correctamente.
+
+### Ejemplo de SQL para crear la tabla con el orden correcto
+```sql
+CREATE TABLE inventario_perfiles (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    codigo VARCHAR(100) UNIQUE NOT NULL,
+    descripcion VARCHAR(255),
+    tipo VARCHAR(50),
+    acabado VARCHAR(50),
+    numero VARCHAR(50),
+    vs VARCHAR(50),
+    proveedor VARCHAR(100),
+    longitud DECIMAL(18,2),
+    ancho DECIMAL(18,2),
+    alto DECIMAL(18,2),
+    necesarias DECIMAL(18,2),
+    stock DECIMAL(18,2),
+    faltan DECIMAL(18,2),
+    ped_min DECIMAL(18,2),
+    emba VARCHAR(50),
+    pedido VARCHAR(100),
+    importe DECIMAL(18,2)
+);
+```
+
+Asegúrate de replicar este patrón para cualquier otra tabla crítica del sistema (por ejemplo, obras, materiales, etc.) y documentar el orden de columnas en este README.
+
+---
 
 ## Requerimiento obligatorio de tablas
 
@@ -683,7 +767,7 @@ A continuación se describe un flujo típico de trabajo que atraviesa varios mó
 
 ### 5. Auditoría y trazabilidad
 - Cada paso (reserva, entrega, compra, pago) queda registrado en el módulo de Auditoría.
-- Se puede consultar el historial completo por usuario, obra, material o módulo.
+- Se puede consultar el historial completo por usuario, módulo, acción.
 - Los intentos fallidos (por permisos, errores, etc.) también quedan registrados y muestran feedback visual.
 
 ---
@@ -773,5 +857,56 @@ main_window.login_success(usuario_autenticado)
 ```
 
 > Este patrón es obligatorio para cumplir con la seguridad, trazabilidad y experiencia SAP-like. Cualquier intento de acceso a un módulo no permitido debe ser bloqueado y registrado en auditoría.
+
+---
+
+## Cobertura de Tests y Buenas Prácticas (Módulo Auditoría)
+
+El módulo de auditoría cuenta con tests automáticos que cubren:
+- Registro de eventos normales y con errores de base de datos.
+- Exportación de auditorías a Excel y PDF, y manejo de formatos no soportados.
+- Obtención de logs y auditorías con filtros válidos e inválidos.
+- Casos de logs vacíos y flujos de integración (registro y lectura).
+
+**Buenas prácticas aplicadas:**
+- Cada test aísla una funcionalidad y es reproducible.
+- Se prueban tanto flujos exitosos como errores y límites.
+- Se usan mocks para la base de datos, evitando efectos colaterales.
+- Los tests pueden ejecutarse automáticamente y ayudan a detectar cambios inesperados en la lógica.
+
+Para ejecutar los tests:
+```powershell
+pytest tests/test_auditoria.py --maxfail=2 --disable-warnings -v
+```
+
+Se recomienda mantener y ampliar la cobertura de tests a medida que se agregan nuevas funcionalidades.
+
+---
+
+## Cobertura de Tests y Buenas Prácticas (Módulo Inventario)
+
+El módulo de inventario cuenta con tests automáticos que cubren:
+
+- Exportación de inventario a Excel y PDF, incluyendo inventario vacío.
+- Agregado de ítems (nuevo, duplicado, sin permiso, error de DB, datos incompletos).
+- Reservas de stock (casos normales, sin stock, sin permiso, cantidad negativa, error de DB).
+- Integración con la UI (reflejo en tabla, feedback de errores y éxito).
+- Movimientos y feedback de errores genéricos.
+- Generación de QR, incluyendo casos de código vacío.
+- Permisos de usuario para exportar, reservar y modificar stock.
+
+**Buenas prácticas aplicadas:**
+
+- Cada test aísla una funcionalidad y es reproducible.
+- Se prueban tanto flujos exitosos como errores y límites.
+- Se usan mocks para la base de datos y la UI, evitando efectos colaterales.
+- Los tests pueden ejecutarse automáticamente y ayudan a detectar cambios inesperados en la lógica.
+
+Para ejecutar los tests:
+```powershell
+pytest tests/test_inventario.py --maxfail=2 --disable-warnings -v
+```
+
+Se recomienda mantener y ampliar la cobertura de tests a medida que se agregan nuevas funcionalidades.
 
 ---

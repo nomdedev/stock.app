@@ -454,3 +454,40 @@ class ObrasController:
                 print(f"Fecha programada: {fecha}")
         except Exception as e:
             self.view.label.setText(f"Error al actualizar calendario: {e}")
+
+    @permiso_auditoria_obras('crear')
+    def asociar_material_a_obra(self, id_obra, id_item, cantidad_necesaria):
+        try:
+            # Instanciar modelos si no existen como atributos
+            inventario_model = getattr(self, 'inventario_model', None)
+            if inventario_model is None:
+                from modules.inventario.model import InventarioModel
+                inventario_model = InventarioModel(self.model.db_connection)
+            auditoria_model = getattr(self, 'auditoria_model', None)
+            if auditoria_model is None:
+                from modules.auditoria.model import AuditoriaModel
+                auditoria_model = AuditoriaModel(self.model.db_connection)
+            # 1. Verificar stock actual
+            stock_actual = inventario_model.obtener_stock_item(id_item)
+            if stock_actual >= cantidad_necesaria:
+                inventario_model.reservar_stock(id_item, cantidad_necesaria, id_obra)
+                estado = "Reservado"
+            else:
+                estado = "Pendiente"
+            # 2. Asociar material a la obra
+            self.model.insertar_material_obra(id_obra, id_item, cantidad_necesaria, estado)
+            # 3. Registrar movimiento de stock solo si se reservó
+            if estado == "Reservado":
+                inventario_model.registrar_movimiento(
+                    id_item, -cantidad_necesaria, "Reserva", id_obra
+                )
+            # 4. Registrar auditoría
+            auditoria_model.registrar_evento(
+                self.usuario_actual, "obras", f"Asoció material {id_item} a obra {id_obra} (estado: {estado})", ip_origen=None
+            )
+            # 5. Feedback UI
+            self.view.label.setText(f"✔ Material {id_item} asociado a obra. Estado: {estado}")
+        except Exception as e:
+            self.view.label.setText("❌ Error al asociar material: " + str(e))
+            from core.logger import Logger
+            Logger().error("Error al asociar material: " + str(e))
