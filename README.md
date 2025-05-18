@@ -1040,4 +1040,91 @@ A continuación se documentan los errores más frecuentes encontrados en las vis
 
 ---
 
-**Aplicar siempre estos estándares y revisar este listado antes de crear o modificar vistas.**
+# Robustificación, validación y tests automáticos de vistas principales (2025-05)
+
+## Metodología aplicada
+
+Para garantizar la robustez, coherencia visual y prevención de regresiones en todos los módulos principales, se aplicó la siguiente metodología:
+
+1. **Chequeo y refactorización de headers/tablas:**
+   - Todos los accesos a `horizontalHeader()` y `verticalHeader()` se realizan solo si el header existe (`is not None`).
+   - Métodos que usan `.mapToGlobal`, `.sectionPosition`, `.sectionViewportPosition`, etc., validan la existencia del header antes de operar.
+2. **Feedback visual y errores:**
+   - Todos los errores críticos se muestran con `QMessageBox` y feedback visual en la UI, nunca solo en consola.
+   - Se centraliza el feedback visual en un label destacado y colores estándar.
+3. **Cumplimiento de layouts y estilos:**
+   - Uso de layouts con márgenes y padding según los estándares definidos.
+   - Aplicación de QSS global y helpers visuales (`aplicar_qss_global_y_tema`, `estilizar_boton_icono`).
+4. **Docstrings y comentarios:**
+   - Todos los métodos relevantes tienen docstrings y comentarios aclaratorios sobre robustez y visual.
+5. **Tests automáticos robustos:**
+   - Cada vista principal cuenta con un test unitario que valida headers, layouts, feedback visual y robustez ante headers/celdas nulas.
+   - Los tests simulan casos de selección vacía, item None, texto vacío y válido, asegurando que no haya excepciones.
+
+## Checklist de robustificación aplicada (ejemplo para Vidrios y Obras)
+
+- [x] Chequeo seguro de headers antes de operar
+- [x] Feedback visual y errores críticos con QMessageBox
+- [x] Docstrings y comentarios aclaratorios
+- [x] Cumplimiento de layouts, estilos y helpers globales
+- [x] Test unitario robusto que verifica headers, layouts, feedback y manejo de errores ante headers None
+
+## Ejemplo de test robusto aplicado (`tests/test_vidrios_view.py`)
+
+```python
+import unittest
+from PyQt6.QtWidgets import QApplication, QTableWidgetItem
+from modules.vidrios.view import VidriosView
+import sys
+
+app = QApplication.instance() or QApplication(sys.argv)
+
+class TestVidriosView(unittest.TestCase):
+    def setUp(self):
+        self.view = VidriosView(usuario_actual="testuser")
+
+    def test_layout_and_headers(self):
+        self.assertIsNotNone(self.view.layout())
+        headers = [self.view.tabla_vidrios.horizontalHeaderItem(i).text() for i in range(self.view.tabla_vidrios.columnCount())]
+        self.assertEqual(headers, self.view.vidrios_headers)
+
+    def test_header_safe_methods(self):
+        header = self.view.tabla_vidrios.horizontalHeader()
+        if header is not None:
+            self.assertTrue(hasattr(header, 'setContextMenuPolicy'))
+            self.assertTrue(hasattr(header, 'setSectionsMovable'))
+
+    def test_qr_export_robust(self):
+        try:
+            self.view.mostrar_qr_item_seleccionado()
+        except Exception as e:
+            self.fail(f"Sin selección lanzó excepción: {e}")
+        self.view.tabla_vidrios.setRowCount(1)
+        self.view.tabla_vidrios.selectRow(0)
+        try:
+            self.view.mostrar_qr_item_seleccionado()
+        except Exception as e:
+            self.fail(f"Selección con item None lanzó excepción: {e}")
+        self.view.tabla_vidrios.setItem(0, 0, QTableWidgetItem(""))
+        self.view.tabla_vidrios.selectRow(0)
+        try:
+            self.view.mostrar_qr_item_seleccionado()
+        except Exception as e:
+            self.fail(f"Selección con texto vacío lanzó excepción: {e}")
+        self.view.tabla_vidrios.setItem(0, 0, QTableWidgetItem("VIDRIO-TEST"))
+        self.view.tabla_vidrios.selectRow(0)
+        try:
+            self.view.mostrar_qr_item_seleccionado()
+        except Exception as e:
+            self.fail(f"Selección válida lanzó excepción: {e}")
+```
+
+## Estado actual de robustificación y tests
+
+- `modules/vidrios/view.py` y `tests/test_vidrios_view.py`: **Robustificados y validados**
+- `modules/obras/view.py` y `tests/test_obras_view.py`: **Robustificados y validados**
+- El resto de los módulos principales están en proceso de robustificación y testeo.
+
+> **Nota:** Esta metodología y checklist deben aplicarse a todos los módulos principales para mantener la coherencia, robustez y prevenir regresiones visuales o funcionales.
+
+---

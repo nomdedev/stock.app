@@ -23,6 +23,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default", headers_dinamicos=None):
         super().__init__()
         self.usuario_actual = usuario_actual
+        # Inicializar headers ANTES de cualquier uso
+        self.vidrios_headers = headers_dinamicos if headers_dinamicos else ["tipo", "ancho", "alto", "cantidad", "proveedor", "fecha_entrega"]
         self.main_layout = QVBoxLayout()
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(20)
@@ -43,7 +45,6 @@ class VidriosView(QWidget, TableResponsiveMixin):
 
         # Configuración de columnas y headers dinámicos
         self.config_path = f"config_vidrios_columns_{self.usuario_actual}.json"
-        self.vidrios_headers = headers_dinamicos if headers_dinamicos else ["tipo", "ancho", "alto", "cantidad", "proveedor", "fecha_entrega"]
         self.columnas_visibles = self.cargar_config_columnas()
         self.aplicar_columnas_visibles()
 
