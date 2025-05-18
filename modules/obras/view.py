@@ -60,15 +60,18 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.tabla_obras.setAlternatingRowColors(True)
         self.tabla_obras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabla_obras.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-        if self.tabla_obras.verticalHeader() is not None:
-            self.tabla_obras.verticalHeader().setVisible(False)
-        if self.tabla_obras.horizontalHeader() is not None:
-            self.tabla_obras.horizontalHeader().setHighlightSections(False)
-            self.tabla_obras.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
-            self.tabla_obras.horizontalHeader().sectionDoubleClicked.connect(self.autoajustar_columna)
-            self.tabla_obras.horizontalHeader().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            self.tabla_obras.horizontalHeader().customContextMenuRequested.connect(self.mostrar_menu_header)
-            self.tabla_obras.horizontalHeader().sectionClicked.connect(self.mostrar_menu_columnas_header)
+        # Robustecer: Chequear existencia de headers antes de operar
+        vh = self.tabla_obras.verticalHeader()
+        if vh is not None:
+            vh.setVisible(False)
+        hh = self.tabla_obras.horizontalHeader()
+        if hh is not None:
+            hh.setHighlightSections(False)
+            hh.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+            hh.sectionDoubleClicked.connect(self.autoajustar_columna)
+            hh.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            hh.customContextMenuRequested.connect(self.mostrar_menu_header)
+            hh.sectionClicked.connect(self.mostrar_menu_columnas_header)
         self.main_layout.addWidget(self.tabla_obras)
 
         # Configuración de columnas visibles por usuario
@@ -134,6 +137,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
             self.tabla_obras.setColumnHidden(idx, not visible)
 
     def mostrar_menu_columnas(self, pos):
+        """Muestra el menú contextual para mostrar/ocultar columnas."""
         menu = QMenu(self)
         for idx, header in enumerate(self.obras_headers):
             accion = QAction(header, self)
@@ -141,7 +145,11 @@ class ObrasView(QWidget, TableResponsiveMixin):
             accion.setChecked(self.columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
-        menu.exec(self.tabla_obras.horizontalHeader().mapToGlobal(pos))
+        hh = self.tabla_obras.horizontalHeader()
+        if hh is not None:
+            menu.exec(hh.mapToGlobal(pos))
+        else:
+            self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
 
     def toggle_columna(self, idx, header, checked):
         self.columnas_visibles[header] = checked
@@ -150,27 +158,44 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.mostrar_mensaje(f"Columna '{header}' {'mostrada' if checked else 'ocultada'}", "info")
 
     def mostrar_menu_header(self, pos):
+        """Muestra el menú contextual del header para autoajustar columnas."""
         menu = QMenu(self)
         accion_autoajustar = QAction("Autoajustar todas las columnas", self)
         accion_autoajustar.triggered.connect(self.autoajustar_todas_columnas)
         menu.addAction(accion_autoajustar)
-        menu.exec(self.tabla_obras.horizontalHeader().mapToGlobal(pos))
+        hh = self.tabla_obras.horizontalHeader()
+        if hh is not None:
+            menu.exec(hh.mapToGlobal(pos))
+        else:
+            self.mostrar_mensaje("No se puede mostrar el menú de header: header no disponible", "error")
 
     def autoajustar_columna(self, idx):
-        self.tabla_obras.resizeColumnToContents(idx)
+        """Ajusta automáticamente el ancho de una columna específica."""
+        if 0 <= idx < self.tabla_obras.columnCount():
+            self.tabla_obras.resizeColumnToContents(idx)
+        else:
+            self.mostrar_mensaje(f"Índice de columna inválido: {idx}", "error")
 
     def autoajustar_todas_columnas(self):
+        """Ajusta automáticamente el ancho de todas las columnas."""
         for idx in range(self.tabla_obras.columnCount()):
             self.tabla_obras.resizeColumnToContents(idx)
 
     def mostrar_menu_columnas_header(self, idx):
-        header = self.tabla_obras.horizontalHeader()
-        pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-        self.mostrar_menu_columnas(global_pos)
+        """Muestra el menú contextual de columnas desde el header al hacer click."""
+        hh = self.tabla_obras.horizontalHeader()
+        if hh is not None:
+            try:
+                pos = hh.sectionPosition(idx)
+                global_pos = hh.mapToGlobal(QPoint(hh.sectionViewportPosition(idx), 0))
+                self.mostrar_menu_columnas(global_pos)
+            except Exception as e:
+                self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
+        else:
+            self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
 
     def cargar_headers(self, headers):
-        # Permite al controlador actualizar los headers dinámicamente
+        """Permite al controlador actualizar los headers dinámicamente."""
         self.obras_headers = headers
         self.tabla_obras.setColumnCount(len(headers))
         self.tabla_obras.setHorizontalHeaderLabels(headers)
@@ -186,6 +211,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
                 self.tabla_obras.setItem(fila, columna, QTableWidgetItem(str(valor)))
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+        """Muestra feedback visual y errores críticos con QMessageBox y color adecuado."""
         colores = {
             "info": "#2563eb",
             "exito": "#22c55e",

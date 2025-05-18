@@ -1,0 +1,8 @@
+{
+  "id": true,
+  "nombre": true,
+  "cliente": true,
+  "estado": true,
+  "fecha": true,
+  "fecha_entrega": true
+}
