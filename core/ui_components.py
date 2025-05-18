@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QPushButton
 from PyQt6.QtCore import QSize
+import os
 
 # Color crema global para botones
 COLOR_BOTON_FONDO = "#F5F5DC"  # Crema
@@ -65,3 +66,19 @@ def estilizar_boton_icono(boton: QPushButton, tam_icono: int = 20, tam_boton: in
         }}
         """
     )
+
+def aplicar_qss_global_y_tema(widget, qss_global_path="style_moderno.qss", qss_tema_path=None):
+    """
+    Aplica el QSS global y, opcionalmente, un QSS de tema a un widget.
+    El QSS global debe contener los estilos base de la app.
+    El QSS de tema (oscuro, claro, etc.) puede sobreescribir detalles.
+    """
+    estilos = ""
+    if qss_global_path and os.path.exists(qss_global_path):
+        with open(qss_global_path, "r", encoding="utf-8") as f:
+            estilos += f.read() + "\n"
+    if qss_tema_path and os.path.exists(qss_tema_path):
+        with open(qss_tema_path, "r", encoding="utf-8") as f:
+            estilos += f.read() + "\n"
+    if estilos:
+        widget.setStyleSheet(estilos)

@@ -9,7 +9,7 @@ from PyQt6.QtPrintSupport import QPrinter
 from functools import partial
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from core.ui_components import estilizar_boton_icono
+from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 
 class ProduccionView(QWidget):
     def __init__(self):
@@ -18,16 +18,17 @@ class ProduccionView(QWidget):
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.setSpacing(20)
 
-        # Cargar el stylesheet visual moderno para Producción según el tema activo
+        # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
+        qss_tema = None
         try:
+            import json
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
             tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
-            with open(archivo_qss, "r", encoding="utf-8") as f:
-                self.setStyleSheet(f.read())
-        except Exception as e:
-            print(f"No se pudo cargar el archivo de estilos: {e}")
+            qss_tema = f"themes/{tema}.qss"
+        except Exception:
+            pass
+        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
 
         self.label_titulo = QLabel("Gestión de Producción")
         self.layout.addWidget(self.label_titulo)

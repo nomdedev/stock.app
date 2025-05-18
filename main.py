@@ -1,3 +1,53 @@
+# --- PRINCIPIOS Y PARÁMETROS DE DISEÑO UI/UX PARA TODA LA APP ---
+# Estos lineamientos deben aplicarse SIEMPRE al crear cualquier ventana, diálogo, botón, label, input, tabla, etc.
+# Si se requiere una excepción, debe justificarse y documentarse.
+#
+# 1. Padding y márgenes:
+#    - Padding mínimo en diálogos y widgets: 20px vertical, 24px horizontal.
+#    - Márgenes entre elementos: mínimo 16px.
+#    - Los cuadros de diálogo deben estar perfectamente centrados y con el mismo espacio a ambos lados.
+# 2. Bordes y esquinas:
+#    - Bordes redondeados: 8-12px en todos los diálogos, botones y campos de entrada.
+# 3. Tipografía:
+#    - Fuente: Segoe UI, Roboto, o similar sans-serif.
+#    - Tamaño base: 11px para mensajes secundarios, 13px para principales, 14px para títulos.
+#    - Peso: 500-600 para títulos y botones, 400-500 para textos normales.
+#    - Color de texto: #1e293b para texto principal, #ef4444 para errores, #2563eb para info, #22c55e para éxito, #fbbf24 para advertencia.
+#    - El texto debe estar centrado vertical y horizontalmente en diálogos y botones.
+# 4. Botones:
+#    - Ancho mínimo: 80px, alto mínimo: 28px.
+#    - Padding horizontal: 16px.
+#    - Bordes redondeados: 8px.
+#    - Color de fondo: #2563eb para acción principal, #f1f5f9 para secundarios.
+#    - Color de texto: blanco en botones primarios, #1e293b en secundarios.
+#    - Espaciado entre botones: 16px.
+# 5. Colores y fondo:
+#    - Fondo general: #f1f5f9.
+#    - Los diálogos de error usan #ef4444 para el texto y fondo claro.
+#    - Los mensajes de éxito usan #22c55e, advertencia #fbbf24, info #2563eb.
+# 6. Íconos:
+#    - Siempre SVG o PNG de alta resolución.
+#    - Alineados con el texto y con padding de al menos 8px respecto al texto.
+# 7. Tablas y formularios:
+#    - Espaciado entre filas: mínimo 8px.
+#    - Padding en celdas: 12px.
+#    - Bordes redondeados en headers y celdas: 8px.
+#    - No saturar de información, usar scroll y paginación si es necesario.
+# 8. Feedback visual:
+#    - Mensajes breves, claros y con color adecuado.
+#    - Siempre usar QMessageBox o widgets personalizados con los estilos definidos.
+#    - El feedback debe ser inmediato tras la acción del usuario.
+# 9. Accesibilidad:
+#    - Contraste alto entre texto y fondo.
+#    - No usar solo color para indicar estado (agregar íconos o texto).
+#    - Tamaños de fuente nunca menores a 10px.
+# 10. Código:
+#     - Centralizar estilos en QSS global o helpers.
+#     - No hardcodear estilos en cada widget, salvo casos justificados.
+#     - Reutilizar componentes visuales y helpers para mantener coherencia.
+#     - Documentar cualquier excepción a estas reglas.
+# --- FIN DE PRINCIPIOS DE DISEÑO ---
+
 import sys
 import subprocess
 import os
@@ -473,7 +523,8 @@ def chequear_conexion_bd():
 def chequear_conexion_bd_gui():
     from PyQt6.QtWidgets import QApplication, QMessageBox
     DB_DRIVER = os.environ.get('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
-    DB_SERVER = os.environ.get('DB_SERVER', 'localhost\\SQLEXPRESS')
+    # Permitir conexión por IP o nombre de servidor
+    DB_SERVER = os.environ.get('DB_SERVER', '192.168.1.100\\SQLEXPRESS')  # Cambia por la IP real o usa variable de entorno
     DB_DATABASE = os.environ.get('DB_DATABASE', 'inventario')
     DB_USERNAME = os.environ.get('DB_USERNAME', 'sa')
     DB_PASSWORD = os.environ.get('DB_PASSWORD', 'mps.1887')
@@ -495,25 +546,28 @@ def chequear_conexion_bd_gui():
         msg.setIcon(QMessageBox.Icon.Critical)
         msg.setWindowTitle("Error de conexión a la base de datos")
         msg.setText("❌ No se pudo conectar a la base de datos.")
-        msg.setInformativeText("Verifica usuario, contraseña, servidor y que SQL Server acepte autenticación SQL.\n\n" + str(e))
-        # Mejoras de diseño: fuente más pequeña, padding simétrico, bordes redondeados, fondo claro, texto centrado
+        msg.setInformativeText("Verifica usuario, contraseña, servidor (puede ser IP o nombre) y que SQL Server acepte autenticación SQL.\n\n" + str(e))
+        # Estilo minimalista, letra pequeña, padding simétrico, centrado, bordes redondeados, fondo claro
         msg.setStyleSheet("""
             QMessageBox {
                 background: #f1f5f9;
                 color: #ef4444;
-                font-size: 11px;
+                font-size: 10px;
+                font-family: 'Segoe UI', 'Roboto', sans-serif;
                 font-weight: 500;
                 border-radius: 12px;
                 padding: 20px 24px 20px 24px;
             }
             QLabel {
                 qproperty-alignment: 'AlignCenter';
+                font-size: 10px;
             }
             QPushButton {
                 min-width: 80px;
                 min-height: 28px;
                 border-radius: 8px;
-                font-size: 11px;
+                font-size: 10px;
+                font-family: 'Segoe UI', 'Roboto', sans-serif;
                 padding: 4px 16px;
             }
         """)

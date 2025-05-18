@@ -8,7 +8,7 @@ import pandas as pd
 from functools import partial
 from modules.vidrios.view import VidriosView
 from core.table_responsive_mixin import TableResponsiveMixin
-from core.ui_components import estilizar_boton_icono
+from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 
 class InventarioView(QWidget, TableResponsiveMixin):
     # Señales para acciones principales
@@ -93,15 +93,21 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.tabla_inventario.setAlternatingRowColors(True)
         self.tabla_inventario.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabla_inventario.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-        if self.tabla_inventario.verticalHeader() is not None:
-            self.tabla_inventario.verticalHeader().setVisible(False)
-        if self.tabla_inventario.horizontalHeader() is not None:
-            self.tabla_inventario.horizontalHeader().setHighlightSections(False)
-            self.tabla_inventario.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
-            self.tabla_inventario.horizontalHeader().sectionDoubleClicked.connect(self.autoajustar_columna)
-            self.tabla_inventario.horizontalHeader().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            self.tabla_inventario.horizontalHeader().customContextMenuRequested.connect(self.mostrar_menu_header)
-            self.tabla_inventario.horizontalHeader().sectionClicked.connect(self.mostrar_menu_columnas_header)
+        v_header = self.tabla_inventario.verticalHeader()
+        if v_header is not None:
+            v_header.setVisible(False)
+        h_header = self.tabla_inventario.horizontalHeader()
+        if h_header is not None:
+            h_header.setHighlightSections(False)
+            h_header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+            if hasattr(h_header, 'sectionDoubleClicked'):
+                h_header.sectionDoubleClicked.connect(self.autoajustar_columna)
+            if hasattr(h_header, 'setContextMenuPolicy'):
+                h_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            if hasattr(h_header, 'customContextMenuRequested'):
+                h_header.customContextMenuRequested.connect(self.mostrar_menu_header)
+            if hasattr(h_header, 'sectionClicked'):
+                h_header.sectionClicked.connect(self.mostrar_menu_columnas_header)
         self.tabla_inventario.cellClicked.connect(self.toggle_expandir_fila)
         self.filas_expandidas = set()
         self.main_layout.addWidget(self.tabla_inventario)
@@ -117,16 +123,17 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.tabla_inventario.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tabla_inventario.customContextMenuRequested.connect(self.mostrar_menu_columnas)
 
-        # Cargar el stylesheet visual moderno para Inventario según el tema activo
+        # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
+        qss_tema = None
         try:
+            import json
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
             tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
-            with open(archivo_qss, "r", encoding="utf-8") as f:
-                self.setStyleSheet(f.read())
-        except Exception as e:
-            print(f"No se pudo cargar el archivo de estilos: {e}")
+            qss_tema = f"themes/{tema}.qss"
+        except Exception:
+            pass
+        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
 
         # Conectar la señal exportar_excel_signal al método exportar_tabla_a_excel
         self.exportar_excel_signal.connect(self.exportar_tabla_a_excel)
@@ -142,10 +149,13 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 f"PWD={self.db_connection.password};"
                 f"TrustServerCertificate=yes;"
             )
-            with pyodbc.connect(connection_string, timeout=10) as conn:
-                cursor = conn.cursor()
-                cursor.execute(query)
-                return [column[0] for column in cursor.description]
+            try:
+                with pyodbc.connect(connection_string, timeout=10) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(query)
+                    return [column[0] for column in cursor.description]
+            except Exception:
+                return []
         return []
 
     def cargar_config_columnas(self):
@@ -171,7 +181,11 @@ class InventarioView(QWidget, TableResponsiveMixin):
             accion.setChecked(self.columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
-        menu.exec(self.tabla_inventario.viewport().mapToGlobal(pos))
+        viewport = self.tabla_inventario.viewport() if hasattr(self.tabla_inventario, 'viewport') else None
+        if viewport is not None and hasattr(viewport, 'mapToGlobal'):
+            menu.exec(viewport.mapToGlobal(pos))
+        else:
+            menu.exec(pos)
 
     def toggle_columna(self, idx, header, checked):
         self.columnas_visibles[header] = checked
@@ -183,7 +197,11 @@ class InventarioView(QWidget, TableResponsiveMixin):
         accion_autoajustar = QAction("Autoajustar todas las columnas", self)
         accion_autoajustar.triggered.connect(self.autoajustar_todas_columnas)
         menu.addAction(accion_autoajustar)
-        menu.exec(self.tabla_inventario.horizontalHeader().mapToGlobal(pos))
+        h_header = self.tabla_inventario.horizontalHeader() if hasattr(self.tabla_inventario, 'horizontalHeader') else None
+        if h_header is not None and hasattr(h_header, 'mapToGlobal'):
+            menu.exec(h_header.mapToGlobal(pos))
+        else:
+            menu.exec(pos)
 
     def autoajustar_columna(self, idx):
         self.tabla_inventario.resizeColumnToContents(idx)
@@ -193,11 +211,11 @@ class InventarioView(QWidget, TableResponsiveMixin):
             self.tabla_inventario.resizeColumnToContents(idx)
 
     def obtener_id_item_seleccionado(self):
-        # Devuelve el ID del ítem seleccionado en la tabla (stub para pruebas)
+        # Devuelve el ID del ítem seleccionado en la tabla (robustecida)
         fila = self.tabla_inventario.currentRow()
         if fila != -1:
             item = self.tabla_inventario.item(fila, 0)
-            if item is not None:
+            if item is not None and hasattr(item, 'text'):
                 return item.text()
         return None
 
@@ -207,7 +225,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
         for fila, item in enumerate(items):
             for columna, header in enumerate(self.inventario_headers):
                 valor = item.get(header, "")
-                self.tabla_inventario.setItem(fila, columna, QTableWidgetItem(str(valor)))
+                qitem = QTableWidgetItem(str(valor))
+                self.tabla_inventario.setItem(fila, columna, qitem)
 
     def exportar_tabla_a_excel(self):
         # Abrir diálogo para elegir ubicación
@@ -231,18 +250,21 @@ class InventarioView(QWidget, TableResponsiveMixin):
 
     def mostrar_menu_columnas_header(self, idx):
         header = self.tabla_inventario.horizontalHeader()
-        pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-        self.mostrar_menu_columnas(global_pos)
+        if header is not None and hasattr(header, 'sectionPosition') and hasattr(header, 'mapToGlobal') and hasattr(header, 'sectionViewportPosition'):
+            pos = header.sectionPosition(idx)
+            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+            self.mostrar_menu_columnas(global_pos)
 
     def ver_obras_pendientes_material(self):
         id_item = self.obtener_id_item_seleccionado()
         if not id_item:
             QMessageBox.warning(self, "Sin selección", "Seleccione un material en la tabla.")
             return
+        if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])):
+            QMessageBox.critical(self, "Error", "No hay conexión válida a la base de datos.")
+            return
         # Buscar reservas activas o pendientes para este material
         try:
-            # Conexión directa a la base (usa el mismo método que cargar_headers)
             query = "SELECT referencia_obra, cantidad_reservada, estado, codigo_reserva FROM reservas_materiales WHERE id_item = ? AND estado IN ('activa', 'pendiente')"
             connection_string = (
                 f"DRIVER={{{self.db_connection.driver}}};"
@@ -281,7 +303,10 @@ class InventarioView(QWidget, TableResponsiveMixin):
             QMessageBox.critical(self, "Error", f"Error al consultar reservas: {e}")
 
     def toggle_expandir_fila(self, row, col):
-        id_item = self.tabla_inventario.item(row, 0).text()
+        item = self.tabla_inventario.item(row, 0)
+        if item is None or not hasattr(item, 'text'):
+            return
+        id_item = item.text()
         if (row, id_item) in self.filas_expandidas:
             self.colapsar_fila(row)
             self.filas_expandidas.remove((row, id_item))
@@ -291,6 +316,9 @@ class InventarioView(QWidget, TableResponsiveMixin):
 
     def expandir_fila(self, row, id_item):
         # Consultar reservas activas/pendientes para este material
+        if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])):
+            QMessageBox.critical(self, "Error", "No hay conexión válida a la base de datos.")
+            return
         try:
             query = "SELECT referencia_obra, cantidad_reservada, estado, codigo_reserva FROM reservas_materiales WHERE id_item = ? AND estado IN ('activa', 'pendiente')"
             connection_string = (
@@ -312,6 +340,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
             # Insertar filas debajo de la seleccionada
             insert_at = row + 1
             for r in reservas:
+                if insert_at > self.tabla_inventario.rowCount():
+                    break
                 self.tabla_inventario.insertRow(insert_at)
                 self.tabla_inventario.setSpan(insert_at, 0, 1, self.tabla_inventario.columnCount())
                 obra = r.get("referencia_obra", "")
@@ -329,7 +359,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
         # Elimina todas las filas expandidas debajo de la fila seleccionada
         while self.tabla_inventario.rowCount() > row + 1:
             widget = self.tabla_inventario.cellWidget(row + 1, 0)
-            if widget:
+            if widget is not None:
                 self.tabla_inventario.removeRow(row + 1)
             else:
                 break
@@ -370,6 +400,9 @@ class InventarioView(QWidget, TableResponsiveMixin):
         dialog.setLayout(layout)
         perfiles_encontrados = []
         def buscar_perfiles():
+            if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])):
+                QMessageBox.critical(dialog, "Error", "No hay conexión válida a la base de datos.")
+                return
             codigo = codigo_proveedor_input.text().strip()
             if not codigo:
                 QMessageBox.warning(dialog, "Falta código", "Ingrese un código de proveedor.")
@@ -384,32 +417,38 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 f"TrustServerCertificate=yes;"
             )
             import pyodbc
-            with pyodbc.connect(connection_string, timeout=10) as conn:
-                cursor = conn.cursor()
-                cursor.execute(query, (f"%{codigo}%",))
-                perfiles = cursor.fetchall()
-                perfiles_encontrados.clear()
-                tabla_perfiles.setRowCount(0)
-                for i, row in enumerate(perfiles):
-                    id_item, cod, desc, stock = row
-                    tabla_perfiles.insertRow(i)
-                    tabla_perfiles.setItem(i, 0, QTableWidgetItem(str(cod)))
-                    tabla_perfiles.setItem(i, 1, QTableWidgetItem(str(desc)))
-                    tabla_perfiles.setItem(i, 2, QTableWidgetItem(str(stock)))
-                    cantidad_pedir = QLineEdit()
-                    faltan_label = QLabel("0")
-                    tabla_perfiles.setCellWidget(i, 3, cantidad_pedir)
-                    tabla_perfiles.setCellWidget(i, 4, faltan_label)
-                    perfiles_encontrados.append({"id": id_item, "codigo": cod, "desc": desc, "stock": stock, "input": cantidad_pedir, "faltan": faltan_label})
-                    def actualizar_faltan(idx=i):
-                        try:
-                            val = int(perfiles_encontrados[idx]["input"].text())
-                        except Exception:
-                            val = 0
-                        faltan = max(0, val - int(perfiles_encontrados[idx]["stock"]))
-                        perfiles_encontrados[idx]["faltan"].setText(str(faltan))
-                    cantidad_pedir.textChanged.connect(actualizar_faltan)
+            try:
+                with pyodbc.connect(connection_string, timeout=10) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(query, (f"%{codigo}%",))
+                    perfiles = cursor.fetchall()
+                    perfiles_encontrados.clear()
+                    tabla_perfiles.setRowCount(0)
+                    for i, row in enumerate(perfiles):
+                        id_item, cod, desc, stock = row
+                        tabla_perfiles.insertRow(i)
+                        tabla_perfiles.setItem(i, 0, QTableWidgetItem(str(cod)))
+                        tabla_perfiles.setItem(i, 1, QTableWidgetItem(str(desc)))
+                        tabla_perfiles.setItem(i, 2, QTableWidgetItem(str(stock)))
+                        cantidad_pedir = QLineEdit()
+                        faltan_label = QLabel("0")
+                        tabla_perfiles.setCellWidget(i, 3, cantidad_pedir)
+                        tabla_perfiles.setCellWidget(i, 4, faltan_label)
+                        perfiles_encontrados.append({"id": id_item, "codigo": cod, "desc": desc, "stock": stock, "input": cantidad_pedir, "faltan": faltan_label})
+                        def actualizar_faltan(idx=i):
+                            try:
+                                val = int(perfiles_encontrados[idx]["input"].text())
+                            except Exception:
+                                val = 0
+                            faltan = max(0, val - int(perfiles_encontrados[idx]["stock"]))
+                            perfiles_encontrados[idx]["faltan"].setText(str(faltan))
+                        cantidad_pedir.textChanged.connect(actualizar_faltan)
+            except Exception as e:
+                QMessageBox.critical(dialog, "Error", f"Error al buscar perfiles: {e}")
         def pedir_lote():
+            if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])):
+                QMessageBox.critical(dialog, "Error", "No hay conexión válida a la base de datos.")
+                return
             pedidos = []
             for perfil in perfiles_encontrados:
                 try:
@@ -435,14 +474,17 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 f"TrustServerCertificate=yes;"
             )
             import pyodbc
-            with pyodbc.connect(connection_string, timeout=10) as conn:
-                cursor = conn.cursor()
-                for id_item, cantidad, estado in pedidos:
-                    cursor.execute("INSERT INTO reservas_materiales (id_item, cantidad_reservada, referencia_obra, estado) VALUES (?, ?, ?, ?)", (id_item, cantidad, "OBRA", estado))
-                conn.commit()
-            QMessageBox.information(dialog, "Pedido registrado", "Pedido de material realizado correctamente.")
-            dialog.accept()
-            self.actualizar_signal.emit()
+            try:
+                with pyodbc.connect(connection_string, timeout=10) as conn:
+                    cursor = conn.cursor()
+                    for id_item, cantidad, estado in pedidos:
+                        cursor.execute("INSERT INTO reservas_materiales (id_item, cantidad_reservada, referencia_obra, estado) VALUES (?, ?, ?, ?)", (id_item, cantidad, "OBRA", estado))
+                    conn.commit()
+                QMessageBox.information(dialog, "Pedido registrado", "Pedido de material realizado correctamente.")
+                dialog.accept()
+                self.actualizar_signal.emit()
+            except Exception as e:
+                QMessageBox.critical(dialog, "Error", f"Error al registrar pedido: {e}")
         btn_buscar.clicked.connect(buscar_perfiles)
         btn_reservar.clicked.connect(pedir_lote)
         btn_cancelar.clicked.connect(dialog.reject)

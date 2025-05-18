@@ -10,10 +10,10 @@ from core.ui_components import estilizar_boton_icono
 class HerrajesView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
-        self.layout = QVBoxLayout()
+        self.main_layout = QVBoxLayout(self)
 
         self.label_titulo = QLabel("Gestión de Herrajes")
-        self.layout.addWidget(self.label_titulo)
+        self.main_layout.addWidget(self.label_titulo)
 
         self.form_layout = QFormLayout()
         self.nombre_input = QLineEdit()
@@ -22,12 +22,30 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.form_layout.addRow("Nombre:", self.nombre_input)
         self.form_layout.addRow("Cantidad:", self.cantidad_input)
         self.form_layout.addRow("Proveedor:", self.proveedor_input)
-        self.layout.addLayout(self.form_layout)
+        self.main_layout.addLayout(self.form_layout)
 
         # Tabla principal de herrajes
+        self.herrajes_headers = ["Nombre", "Cantidad", "Proveedor"]
         self.tabla_herrajes = QTableWidget()
+        self.tabla_herrajes.setColumnCount(len(self.herrajes_headers))
+        self.tabla_herrajes.setHorizontalHeaderLabels(self.herrajes_headers)
         self.make_table_responsive(self.tabla_herrajes)
-        self.layout.addWidget(self.tabla_herrajes)
+        self.main_layout.addWidget(self.tabla_herrajes)
+
+        # Configuración de columnas y persistencia
+        self.config_path = "config_herrajes_columns.json"
+        self.columnas_visibles = self.cargar_config_columnas()
+        self.aplicar_columnas_visibles()
+
+        # Menú contextual en el header y autoajuste de columna
+        header = self.tabla_herrajes.horizontalHeader()
+        if header is not None:
+            if hasattr(header, 'setContextMenuPolicy'):
+                header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            if hasattr(header, 'customContextMenuRequested'):
+                header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
+            if hasattr(header, 'sectionDoubleClicked'):
+                header.sectionDoubleClicked.connect(self.autoajustar_columna)
 
         # Botón principal de acción (Agregar)
         botones_layout = QHBoxLayout()
@@ -37,7 +55,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.boton_agregar.setToolTip("Agregar nuevo herraje")
         self.boton_agregar.setText("")
         self.boton_agregar.setFixedSize(48, 48)
-        self.boton_agregar.setStyleSheet("")
+        # No sobrescribir el QSS global
         sombra = QGraphicsDropShadowEffect()
         sombra.setBlurRadius(15)
         sombra.setXOffset(0)
@@ -46,50 +64,63 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.boton_agregar.setGraphicsEffect(sombra)
         estilizar_boton_icono(self.boton_agregar)
         botones_layout.addWidget(self.boton_agregar)
-        botones_layout.addStretch()
-        self.layout.addLayout(botones_layout)
+        self.main_layout.addLayout(botones_layout)
 
-        # Cargar el stylesheet visual moderno para Herrajes según el tema activo
+    def cargar_config_columnas(self):
+        import os, json
+        if os.path.exists(self.config_path):
+            try:
+                with open(self.config_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return {header: True for header in self.herrajes_headers}
+
+    def guardar_config_columnas(self):
+        import json
         try:
-            with open("themes/config.json", "r", encoding="utf-8") as f:
-                config = json.load(f)
-            tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
-            with open(archivo_qss, "r", encoding="utf-8") as f:
-                self.setStyleSheet(f.read())
-        except Exception as e:
-            print(f"No se pudo cargar el archivo de estilos de Herrajes: {e}")
+            with open(self.config_path, "w", encoding="utf-8") as f:
+                json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
 
-        self.setLayout(self.layout)
+    def aplicar_columnas_visibles(self):
+        for idx, header in enumerate(self.herrajes_headers):
+            visible = self.columnas_visibles.get(header, True)
+            self.tabla_herrajes.setColumnHidden(idx, not visible)
 
-    @property
-    def label_estado(self):
-        if not hasattr(self, '_label_estado'):
-            self._label_estado = QLabel()
-        return self._label_estado
+    def mostrar_menu_columnas(self, pos):
+        menu = QMenu(self)
+        for idx, header in enumerate(self.herrajes_headers):
+            accion = QAction(header, self)
+            accion.setCheckable(True)
+            accion.setChecked(self.columnas_visibles.get(header, True))
+            accion.toggled.connect(partial(self.toggle_columna, idx, header))
+            menu.addAction(accion)
+        header = self.tabla_herrajes.horizontalHeader()
+        if header is not None and hasattr(header, 'mapToGlobal'):
+            menu.exec(header.mapToGlobal(pos))
+        else:
+            menu.exec(pos)
 
-    @property
-    def buscar_input(self):
-        if not hasattr(self, '_buscar_input'):
-            self._buscar_input = QLineEdit()
-        return self._buscar_input
+    def toggle_columna(self, idx, header, checked):
+        self.columnas_visibles[header] = checked
+        self.tabla_herrajes.setColumnHidden(idx, not checked)
+        self.guardar_config_columnas()
 
-    @property
-    def id_item_input(self):
-        if not hasattr(self, '_id_item_input'):
-            self._id_item_input = QLineEdit()
-        return self._id_item_input
+    def autoajustar_columna(self, idx):
+        self.tabla_herrajes.resizeColumnToContents(idx)
 
 class MaterialesView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default"):
         super().__init__()
         self.usuario_actual = usuario_actual
-        self.layout = QVBoxLayout()
+        self.main_layout = QVBoxLayout(self)
 
         # Tabla de materiales
         self.tabla_materiales = QTableWidget()
         self.make_table_responsive(self.tabla_materiales)
-        self.layout.addWidget(self.tabla_materiales)
+        self.main_layout.addWidget(self.tabla_materiales)
 
         # Configuración de columnas
         self.config_path = f"config_materiales_columns_{self.usuario_actual}.json"
@@ -124,9 +155,7 @@ class MaterialesView(QWidget, TableResponsiveMixin):
         self.boton_agregar.setGraphicsEffect(sombra)
         botones_layout.addWidget(self.boton_agregar)
         botones_layout.addStretch()
-        self.layout.addLayout(botones_layout)
-
-        self.setLayout(self.layout)
+        self.main_layout.addLayout(botones_layout)
 
     def cargar_config_columnas(self):
         if os.path.exists(self.config_path):

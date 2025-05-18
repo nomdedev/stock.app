@@ -1,7 +1,8 @@
-/* style_moderno.qss actualizado para tema oscuro */
+/* style_moderno.qss actualizado para paleta pastel azul-crema con alto contraste y sin fondo azul dominante */
+
 /* Sidebar */
 #menuLateral {
-    background-color: #0A0E1A; /* Azul oscuro profundo */
+    background-color: #fdf6f0; /* Crema cálido pastel */
     border-radius: 12px;
     padding: 8px;
 }
@@ -9,23 +10,23 @@
 /* Botones del Sidebar */
 QPushButton#botonMenu {
     background-color: transparent;
-    color: #F5F5DC; /* Crema */
+    color: #2563eb; /* Azul pastel */
     border-radius: 8px;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 500;
 }
 QPushButton#botonMenu:hover {
-    background-color: #1E3A8A; /* Azul oscuro */
+    background-color: #f3eaff; /* Lila pastel muy claro */
 }
 QPushButton#botonMenuActivo {
-    background-color: #1E40AF; /* Azul más claro */
-    color: #F5F5DC; /* Crema */
+    background-color: #e3f6fd; /* Celeste pastel muy claro */
+    color: #2563eb; /* Azul pastel */
 }
 
 /* Contenedor Widgets */
 #contenedorWidgets {
-    background-color: #161B22; /* Azul muy oscuro */
+    background-color: #fff9f3; /* Crema pastel muy claro */
     border-radius: 12px;
     padding: 16px;
     margin: 16px;
@@ -33,75 +34,87 @@ QPushButton#botonMenuActivo {
 
 /* Tarjetas del Dashboard */
 QGroupBox {
-    background-color: #21262D; /* Azul oscuro */
+    background-color: #f6faff; /* Crema azulada muy claro */
     border-radius: 12px;
-    border: 1px solid #30363D; /* Azul grisáceo */
+    border: 1px solid #e3e3e3; /* Gris pastel */
     padding: 20px;
     margin: 10px;
 }
 
 /* Table styling */
 QTableWidget {
-    background-color: #161B22; /* Azul muy oscuro */
-    color: #F5F5DC; /* Crema */
-    gridline-color: #30363D; /* Azul grisáceo */
-    border: 1px solid #21262D; /* Azul oscuro */
+    background-color: #fff9f3; /* Crema pastel muy claro */
+    color: #2563eb; /* Azul pastel */
+    gridline-color: #e3e3e3; /* Gris pastel */
+    border: 1px solid #f6faff; /* Crema azulada muy claro */
 }
 QTableWidget QHeaderView::section {
-    background-color: #21262D; /* Azul oscuro */
-    color: #F5F5DC; /* Crema */
+    background-color: #e3f6fd; /* Celeste pastel muy claro */
+    color: #2563eb; /* Azul pastel */
     font-weight: bold;
     padding: 8px;
-    border: 1px solid #30363D; /* Azul grisáceo */
+    border: 1px solid #e3e3e3; /* Gris pastel */
 }
 QTableWidget::item:selected {
-    background-color: #1E40AF; /* Azul más claro */
-    color: #F5F5DC; /* Crema */
+    background-color: #ffe5e5; /* Rosa pastel claro */
+    color: #2563eb; /* Azul pastel */
 }
 
 /* Scrollbars */
 QScrollBar:vertical, QScrollBar:horizontal {
-    background: transparent;
+    background: #f6faff;
     border: none;
     width: 8px;
     height: 8px;
 }
 QScrollBar::handle {
-    background: #30363D; /* Azul grisáceo */
+    background: #e3e3e3; /* Gris pastel */
     border-radius: 4px;
 }
 QScrollBar::handle:hover {
-    background: #1E40AF; /* Azul más claro */
+    background: #2563eb; /* Azul pastel */
 }
 
 /* Buttons */
 QPushButton {
-    background-color: #2563EB; /* Azul claro */
-    color: #FFFFFF; /* Texto blanco */
-    border: 1px solid #1E3A8A; /* Azul oscuro */
+    background-color: #e3f6fd; /* Celeste pastel muy claro */
+    color: #2563eb; /* Azul pastel */
+    border: 1px solid #e3e3e3; /* Gris pastel */
     border-radius: 8px;
     padding: 8px 16px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
+    min-width: 80px;
+    min-height: 28px;
+    margin: 0 8px 0 0;
 }
 QPushButton:hover {
-    background-color: #1E40AF; /* Azul más oscuro */
+    background-color: #f3eaff; /* Lila pastel muy claro */
 }
 QPushButton:pressed {
-    background-color: #14274E; /* Azul aún más oscuro */
+    background-color: #ffe5e5; /* Rosa pastel claro */
+}
+QPushButton[secondary="true"] {
+    background: #fff9f3;
+    color: #2563eb;
+    border: 1.5px solid #2563eb;
+}
+QPushButton:disabled {
+    background: #e5e7eb;
+    color: #b6bfc9;
 }
 
 /* Estado Online/Offline */
 QLabel#estadoOnline {
-    background-color: #1E3A8A; /* Azul oscuro */
-    color: #F5F5DC; /* Crema */
+    background-color: #d1f7e7; /* Verde-azulado pastel */
+    color: #2563eb; /* Azul pastel */
     font-weight: bold;
     border-radius: 8px;
     padding: 4px 10px;
 }
 QLabel#estadoOffline {
-    background-color: #991B1B; /* Rojo oscuro */
-    color: #F5F5DC; /* Crema */
+    background-color: #ffe5e5; /* Rojo pastel claro */
+    color: #b91c1c; /* Rojo pastel */
     font-weight: bold;
     border-radius: 8px;
     padding: 4px 10px;
@@ -118,18 +131,86 @@ QWidget, QDialog, QFrame, QPushButton, QTableWidget, QLabel {
     border-radius: 12px; /* Bordes redondeados */
 }
 
-/* Estilo moderno con gamas de azules */
+/* Estilo moderno con gamas de azules pastel y crema */
 QWidget {
-    background-color: #0A0E1A; /* Azul oscuro profundo */
-    color: #F5F5DC; /* Crema */
+    background-color: #fff9f3; /* Crema pastel muy claro */
+    color: #2563eb; /* Azul pastel */
     font-family: 'Segoe UI', 'Inter', sans-serif;
     font-size: 14px;
 }
 
 QLabel {
-    color: #B3C7E6; /* Azul crema claro */
+    color: #2563eb; /* Azul pastel */
 }
 
 QFrame {
-    border: 1px solid #2D2D2D; /* Azul grisáceo oscuro */
+    border: 1px solid #e3e3e3; /* Gris pastel */
 }
+
+QMessageBox {
+    background: #fff9f3;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 12px;
+    padding: 20px 24px 20px 24px;
+}
+QMessageBox QLabel {
+    qproperty-alignment: 'AlignCenter';
+    font-size: 12px;
+}
+QMessageBox QPushButton {
+    min-width: 80px;
+    min-height: 28px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    padding: 4px 16px;
+}
+
+QTableView, QHeaderView::section {
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 13px;
+}
+QTableView QTableCornerButton::section {
+    border-radius: 8px;
+}
+
+/* Colores para feedback */
+QLabel[role="error"], .error {
+    color: #ef4444;
+}
+QLabel[role="success"], .success {
+    color: #22c55e;
+}
+QLabel[role="info"], .info {
+    color: #2563eb;
+}
+QLabel[role="warning"], .warning {
+    color: #fbbf24;
+}
+
+/* Márgenes y espaciados */
+QVBoxLayout, QHBoxLayout {
+    margin: 16px;
+    spacing: 16px;
+}
+
+/* Íconos */
+QLabel[icon="true"] {
+    padding-right: 8px;
+}
+
+/* Scrollbars minimalistas */
+QScrollBar:vertical, QScrollBar:horizontal {
+    background: #f3eaff;
+    border-radius: 8px;
+    width: 10px;
+}
+QScrollBar::handle:vertical, QScrollBar::handle:horizontal {
+    background: #e3e3e3;
+    border-radius: 8px;
+}
+
+/* Otros widgets pueden extender este estilo base */

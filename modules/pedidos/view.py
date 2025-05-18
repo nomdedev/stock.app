@@ -4,7 +4,7 @@ from PyQt6.QtCore import Qt, QSize
 import json
 import os
 from functools import partial
-from core.ui_components import estilizar_boton_icono
+from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 
 class PedidosView(QWidget):
     def __init__(self, usuario_actual="default"):
@@ -13,16 +13,17 @@ class PedidosView(QWidget):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
-        # Cargar el stylesheet visual moderno para Pedidos según el tema activo
+        # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
+        qss_tema = None
         try:
+            import json
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
             tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
-            with open(archivo_qss, "r", encoding="utf-8") as f:
-                self.setStyleSheet(f.read())
-        except Exception as e:
-            print(f"No se pudo cargar el archivo de estilos: {e}")
+            qss_tema = f"themes/{tema}.qss"
+        except Exception:
+            pass
+        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
 
         # Tabla de pedidos
         self.tabla_pedidos = QTableWidget()
@@ -118,13 +119,19 @@ class PedidosView(QWidget):
             accion.setChecked(self.columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
-        menu.exec(self.tabla_pedidos.horizontalHeader().mapToGlobal(pos))
+        header = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
+        if header is not None and hasattr(header, 'mapToGlobal'):
+            menu.exec(header.mapToGlobal(pos))
+        else:
+            menu.exec(pos)
 
     def mostrar_menu_columnas_header(self, idx):
-        pos = self.tabla_pedidos.horizontalHeader().sectionPosition(idx)
-        header = self.tabla_pedidos.horizontalHeader()
-        global_pos = header.mapToGlobal(header.sectionViewportPosition(idx), 0)
-        self.mostrar_menu_columnas(global_pos)
+        header = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
+        if header is not None and hasattr(header, 'sectionPosition') and hasattr(header, 'mapToGlobal') and hasattr(header, 'sectionViewportPosition'):
+            pos = header.sectionPosition(idx)
+            from PyQt6.QtCore import QPoint
+            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+            self.mostrar_menu_columnas(global_pos)
 
     def toggle_columna(self, idx, header, checked):
         self.columnas_visibles[header] = checked
@@ -142,7 +149,10 @@ class PedidosView(QWidget):
         if not selected:
             return
         row = selected[0].row()
-        codigo = self.tabla_pedidos.item(row, 0).text()  # Usar el id o código como dato QR
+        item = self.tabla_pedidos.item(row, 0)
+        if item is None or not hasattr(item, 'text'):
+            return
+        codigo = item.text()  # Usar el id o código como dato QR
         if not codigo:
             return
         qr = qrcode.QRCode(version=1, box_size=6, border=2)
@@ -151,8 +161,9 @@ class PedidosView(QWidget):
         img = qr.make_image(fill_color="black", back_color="white")
         import tempfile
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-            img.save(tmp.name)
-            pixmap = QPixmap(tmp.name)
+            img.save(tmp)
+            tmp_path = tmp.name
+        pixmap = QPixmap(tmp_path)
         dialog = QDialog(self)
         dialog.setWindowTitle(f"Código QR para {codigo}")
         vbox = QVBoxLayout(dialog)
@@ -168,14 +179,15 @@ class PedidosView(QWidget):
         def guardar():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
             if file_path:
-                img.save(file_path)
+                with open(tmp_path, "rb") as src, open(file_path, "wb") as dst:
+                    dst.write(src.read())
         def exportar_pdf():
             from reportlab.pdfgen import canvas
             from reportlab.lib.pagesizes import letter
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
             if file_path:
                 c = canvas.Canvas(file_path, pagesize=letter)
-                c.drawInlineImage(tmp.name, 100, 500, 200, 200)
+                c.drawInlineImage(tmp_path, 100, 500, 200, 200)
                 c.save()
         btn_guardar.clicked.connect(guardar)
         btn_pdf.clicked.connect(exportar_pdf)

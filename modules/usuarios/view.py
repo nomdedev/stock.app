@@ -9,7 +9,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import tempfile
 from core.table_responsive_mixin import TableResponsiveMixin
-from core.ui_components import estilizar_boton_icono
+from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 
 class UsuariosView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default", controller=None):
@@ -27,16 +27,17 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.setLayout(self.main_layout)
 
     def _cargar_stylesheet(self):
-        """Carga el stylesheet visual moderno para Usuarios según el tema activo."""
+        # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
+        qss_tema = None
         try:
+            import json
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
             tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
-            with open(archivo_qss, "r", encoding="utf-8") as f:
-                self.setStyleSheet(f.read())
-        except Exception as e:
-            print(f"No se pudo cargar el archivo de estilos: {e}")
+            qss_tema = f"themes/{tema}.qss"
+        except Exception:
+            pass
+        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
 
     def _init_tabs(self):
         self.tabs = QTabWidget()
@@ -55,30 +56,36 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.boton_agregar.setToolTip("Agregar usuario")
         self.boton_agregar.setText("")
         estilizar_boton_icono(self.boton_agregar)
-        self.boton_agregar.setFixedSize(48, 48)
-        sombra = QGraphicsDropShadowEffect()
-        sombra.setBlurRadius(15)
-        sombra.setXOffset(0)
-        sombra.setYOffset(4)
-        sombra.setColor(QColor(0, 0, 0, 50))
-        self.boton_agregar.setGraphicsEffect(sombra)
         botones_layout.addWidget(self.boton_agregar)
         botones_layout.addStretch()
         tab_usuarios_layout.addLayout(botones_layout)
+        # Tabla de usuarios
         self.tabla_usuarios = QTableWidget()
         self.make_table_responsive(self.tabla_usuarios)
         tab_usuarios_layout.addWidget(self.tabla_usuarios)
         # Configuración de columnas
         self.config_path = f"config_usuarios_columns_{self.usuario_actual}.json"
-        self.usuarios_headers = self.obtener_headers_desde_db("usuarios") or self.obtener_headers_fallback()
+        self.usuarios_headers = self.obtener_headers_fallback()
         self.columnas_visibles = self.cargar_config_columnas()
         self.aplicar_columnas_visibles()
         # Menú contextual en el header
-        header = self.tabla_usuarios.horizontalHeader()
-        header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
-        header.sectionClicked.connect(self.mostrar_menu_columnas_header)
-        self.tabla_usuarios.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
+        header = self.tabla_usuarios.horizontalHeader() if hasattr(self.tabla_usuarios, 'horizontalHeader') else None
+        if header is not None:
+            header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            if hasattr(header, 'customContextMenuRequested'):
+                header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
+            # Solo conectar si existe el método
+            if hasattr(self, 'autoajustar_columna') and hasattr(header, 'sectionDoubleClicked'):
+                header.sectionDoubleClicked.connect(self.autoajustar_columna)
+            if hasattr(header, 'setSectionsMovable'):
+                header.setSectionsMovable(True)
+            if hasattr(header, 'setSectionsClickable'):
+                header.setSectionsClickable(True)
+            if hasattr(header, 'sectionClicked'):
+                header.sectionClicked.connect(self.mostrar_menu_columnas_header)
+        # Señal para mostrar QR al seleccionar un ítem
+        if hasattr(self.tabla_usuarios, 'itemSelectionChanged'):
+            self.tabla_usuarios.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
 
     def _init_tab_permisos(self):
         tab_permisos_layout = QVBoxLayout(self.tab_permisos)
@@ -101,9 +108,16 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             self.tabs.removeTab(idx)
 
     def obtener_headers_desde_db(self, tabla):
-        # Aquí deberías implementar la obtención dinámica de headers desde la base de datos, similar a InventarioView
-        # Por ahora, fallback temporal:
-        return None
+        # Obtención dinámica de headers desde la base de datos (si hay controller y método disponible)
+        if self.controller and hasattr(self.controller, 'obtener_headers_desde_db'):
+            try:
+                headers = self.controller.obtener_headers_desde_db(tabla)
+                if headers:
+                    return headers
+            except Exception as e:
+                print(f"Error obteniendo headers desde BD: {e}")
+        # Fallback seguro
+        return self.obtener_headers_fallback()
 
     def obtener_headers_fallback(self):
         return ["id", "usuario", "nombre", "rol", "email", "estado"]
@@ -128,7 +142,8 @@ class UsuariosView(QWidget, TableResponsiveMixin):
     def aplicar_columnas_visibles(self):
         for idx, header in enumerate(self.usuarios_headers):
             visible = self.columnas_visibles.get(header, True)
-            self.tabla_usuarios.setColumnHidden(idx, not visible)
+            if hasattr(self.tabla_usuarios, 'setColumnHidden'):
+                self.tabla_usuarios.setColumnHidden(idx, not visible)
 
     def mostrar_menu_columnas(self, pos):
         menu = QMenu(self)
@@ -138,64 +153,73 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             accion.setChecked(self.columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
-        menu.exec(self.tabla_usuarios.horizontalHeader().mapToGlobal(pos))
+        viewport = self.tabla_usuarios.viewport() if hasattr(self.tabla_usuarios, 'viewport') else None
+        if viewport is not None and hasattr(viewport, 'mapToGlobal'):
+            menu.exec(viewport.mapToGlobal(pos))
+        else:
+            menu.exec(pos)
 
     def mostrar_menu_columnas_header(self, idx):
-        pos = self.tabla_usuarios.horizontalHeader().sectionPosition(idx)
-        header = self.tabla_usuarios.horizontalHeader()
-        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-        self.mostrar_menu_columnas(global_pos)
+        header = self.tabla_usuarios.horizontalHeader() if hasattr(self.tabla_usuarios, 'horizontalHeader') else None
+        if header is not None and hasattr(header, 'sectionPosition') and hasattr(header, 'mapToGlobal') and hasattr(header, 'sectionViewportPosition'):
+            pos = header.sectionPosition(idx)
+            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+            self.mostrar_menu_columnas(global_pos)
 
     def toggle_columna(self, idx, header, checked):
         self.columnas_visibles[header] = checked
-        self.tabla_usuarios.setColumnHidden(idx, not checked)
+        if hasattr(self.tabla_usuarios, 'setColumnHidden'):
+            self.tabla_usuarios.setColumnHidden(idx, not checked)
         self.guardar_config_columnas()
 
     def mostrar_qr_item_seleccionado(self):
-        selected = self.tabla_usuarios.selectedItems()
-        if not selected:
-            return
-        row = selected[0].row()
-        codigo = self.tabla_usuarios.item(row, 0).text()  # Usar el primer campo como dato QR
-        if not codigo:
-            return
-        qr = qrcode.QRCode(version=1, box_size=6, border=2)
-        qr.add_data(codigo)
-        qr.make(fit=True)
-        img = qr.make_image(fill_color="black", back_color="white")
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-            img.save(tmp.name)
-            pixmap = QPixmap(tmp.name)
-        dialog = QDialog(self)
-        dialog.setWindowTitle(f"Código QR para {codigo}")
-        vbox = QVBoxLayout(dialog)
-        qr_label = QLabel()
-        qr_label.setPixmap(pixmap)
-        vbox.addWidget(qr_label)
-        btns = QHBoxLayout()
-        btn_guardar = QPushButton("Guardar QR como imagen")
-        btn_pdf = QPushButton("Exportar QR a PDF")
-        btns.addWidget(btn_guardar)
-        btns.addWidget(btn_pdf)
-        vbox.addLayout(btns)
-        def guardar():
-            file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
-            if file_path:
-                img.save(file_path)
-        def exportar_pdf():
-            file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
-            if file_path:
-                c = canvas.Canvas(file_path, pagesize=letter)
-                c.drawInlineImage(tmp.name, 100, 500, 200, 200)
-                c.save()
-        btn_guardar.clicked.connect(guardar)
-        btn_pdf.clicked.connect(exportar_pdf)
-        dialog.exec()
+        # Ejemplo de acceso seguro a item
+        row = self.tabla_usuarios.currentRow() if hasattr(self.tabla_usuarios, 'currentRow') else -1
+        if row != -1 and hasattr(self.tabla_usuarios, 'item'):
+            item = self.tabla_usuarios.item(row, 0)
+            if item is not None and hasattr(item, 'text'):
+                codigo = item.text()  # Usar el primer campo como dato QR
+                qr = qrcode.QRCode(version=1, box_size=6, border=2)
+                qr.add_data(codigo)
+                qr.make(fit=True)
+                img = qr.make_image(fill_color="black", back_color="white")
+                with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+                    img.save(tmp)
+                    tmp_path = tmp.name
+                pixmap = QPixmap(tmp_path)
+                dialog = QDialog(self)
+                dialog.setWindowTitle(f"Código QR para {codigo}")
+                vbox = QVBoxLayout(dialog)
+                qr_label = QLabel()
+                qr_label.setPixmap(pixmap)
+                vbox.addWidget(qr_label)
+                btns = QHBoxLayout()
+                btn_guardar = QPushButton("Guardar QR como imagen")
+                btn_pdf = QPushButton("Exportar QR a PDF")
+                btns.addWidget(btn_guardar)
+                btns.addWidget(btn_pdf)
+                vbox.addLayout(btns)
+                def guardar():
+                    file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
+                    if file_path:
+                        with open(tmp_path, "rb") as src, open(file_path, "wb") as dst:
+                            dst.write(src.read())
+                def exportar_pdf():
+                    file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
+                    if file_path:
+                        from reportlab.pdfgen import canvas
+                        from reportlab.lib.pagesizes import letter
+                        c = canvas.Canvas(file_path, pagesize=letter)
+                        c.drawInlineImage(tmp_path, 100, 500, 200, 200)
+                        c.save()
+                btn_guardar.clicked.connect(guardar)
+                btn_pdf.clicked.connect(exportar_pdf)
+                dialog.exec()
 
 class Usuarios(QWidget):
     def __init__(self):
         super().__init__()
-        self.layout = QVBoxLayout()
+        self.main_layout = QVBoxLayout()
         self.label_titulo = QLabel("Vista de Usuarios")
-        self.layout.addWidget(self.label_titulo)
-        self.setLayout(self.layout)
+        self.main_layout.addWidget(self.label_titulo)
+        self.setLayout(self.main_layout)

@@ -5,19 +5,19 @@ import json
 import os
 from functools import partial
 from core.table_responsive_mixin import TableResponsiveMixin
-from core.ui_components import estilizar_boton_icono
+from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 
 class ObrasView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default", db_connection=None):
         super().__init__()
         self.usuario_actual = usuario_actual
         self.db_connection = db_connection
-        self.layout = QVBoxLayout(self)
-        self.setLayout(self.layout)
+        self.main_layout = QVBoxLayout(self)
+        self.setLayout(self.main_layout)
 
         # Título
         self.label = QLabel("Gestión de Obras")
-        self.layout.addWidget(self.label)
+        self.main_layout.addWidget(self.label)
 
         # Botón principal de acción (Agregar obra)
         botones_layout = QHBoxLayout()
@@ -37,7 +37,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
         estilizar_boton_icono(self.boton_agregar)
         botones_layout.addWidget(self.boton_agregar)
         botones_layout.addStretch()
-        self.layout.addLayout(botones_layout)
+        self.main_layout.addLayout(botones_layout)
 
         # Botón para verificar obra en SQL
         self.boton_verificar_obra = QPushButton("Verificar obra en SQL")
@@ -45,7 +45,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.boton_verificar_obra.setIconSize(QSize(20, 20))
         self.boton_verificar_obra.setToolTip("Verificar existencia de obra en la base de datos SQL")
         estilizar_boton_icono(self.boton_verificar_obra)
-        self.layout.addWidget(self.boton_verificar_obra)
+        self.main_layout.addWidget(self.boton_verificar_obra)
 
         # Obtener headers dinámicamente (fallback si no hay conexión)
         self.obras_headers = self.obtener_headers_desde_db("obras")
@@ -69,7 +69,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
             self.tabla_obras.horizontalHeader().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             self.tabla_obras.horizontalHeader().customContextMenuRequested.connect(self.mostrar_menu_header)
             self.tabla_obras.horizontalHeader().sectionClicked.connect(self.mostrar_menu_columnas_header)
-        self.layout.addWidget(self.tabla_obras)
+        self.main_layout.addWidget(self.tabla_obras)
 
         # Configuración de columnas visibles por usuario
         self.config_path = f"config_obras_columns_{self.usuario_actual}.json"
@@ -82,18 +82,19 @@ class ObrasView(QWidget, TableResponsiveMixin):
 
         # Feedback visual centralizado
         self.label_feedback = QLabel()
-        self.layout.addWidget(self.label_feedback)
+        self.main_layout.addWidget(self.label_feedback)
 
-        # Cargar el stylesheet visual moderno para Obras según el tema activo
+        # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
+        qss_tema = None
         try:
+            import json
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
             tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
-            with open(archivo_qss, "r", encoding="utf-8") as f:
-                self.setStyleSheet(f.read())
-        except Exception as e:
-            print(f"No se pudo cargar el archivo de estilos de Obras: {e}")
+            qss_tema = f"themes/{tema}.qss"
+        except Exception:
+            pass
+        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
 
     def obtener_headers_desde_db(self, tabla):
         # Intenta obtener headers dinámicamente desde la base de datos
