@@ -1,3 +1,38 @@
+import sys
+import subprocess
+import os
+
+def verificar_e_instalar_dependencias():
+    requeridos = [
+        "PyQt6", "pyodbc", "reportlab", "qrcode", "pandas"
+    ]
+    faltantes = []
+    for paquete in requeridos:
+        try:
+            __import__(paquete)
+        except ImportError:
+            faltantes.append(paquete)
+    if faltantes:
+        print(f"Instalando paquetes faltantes: {', '.join(faltantes)}")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", *faltantes])
+        print("Dependencias instaladas. Reiniciando la aplicación...")
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+
+def test_dependencias():
+    try:
+        import PyQt6
+        import pyodbc
+        import reportlab
+        import qrcode
+        import pandas
+        print("✅ Todas las dependencias críticas están instaladas correctamente.")
+    except Exception as e:
+        print(f"❌ Error en la verificación de dependencias: {e}")
+        sys.exit(1)
+
+verificar_e_instalar_dependencias()
+test_dependencias()
+
 import os
 # Refuerzo para evitar errores de OpenGL/Skia/Chromium en Windows
 os.environ['QT_OPENGL'] = 'software'
@@ -410,6 +445,100 @@ class MainWindow(QMainWindow):
         # Si la ventana está maximizada o pantalla completa, expandir sidebar
         expanded = self.isMaximized() or self.isFullScreen() or self.width() > 1400
         self.sidebar.set_expanded(expanded)
+
+def chequear_conexion_bd():
+    import pyodbc
+    # Puedes ajustar estos valores según tu configuración real
+    DB_DRIVER = os.environ.get('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
+    DB_SERVER = os.environ.get('DB_SERVER', 'localhost\\SQLEXPRESS')
+    DB_DATABASE = os.environ.get('DB_DATABASE', 'inventario')
+    DB_USERNAME = os.environ.get('DB_USERNAME', 'sa')
+    DB_PASSWORD = os.environ.get('DB_PASSWORD', 'tu_contraseña_aqui')
+    try:
+        connection_string = (
+            f"DRIVER={{{DB_DRIVER}}};"
+            f"SERVER={DB_SERVER};"
+            f"DATABASE={DB_DATABASE};"
+            f"UID={DB_USERNAME};"
+            f"PWD={DB_PASSWORD};"
+            f"TrustServerCertificate=yes;"
+        )
+        with pyodbc.connect(connection_string, timeout=5) as conn:
+            print("✅ Conexión exitosa a la base de datos.")
+    except Exception as e:
+        print(f"❌ Error de conexión a la base de datos: {e}")
+        print("Verifica usuario, contraseña, servidor y que SQL Server acepte autenticación SQL.")
+        sys.exit(1)
+
+def chequear_conexion_bd_gui():
+    from PyQt6.QtWidgets import QApplication, QMessageBox
+    DB_DRIVER = os.environ.get('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
+    DB_SERVER = os.environ.get('DB_SERVER', 'localhost\\SQLEXPRESS')
+    DB_DATABASE = os.environ.get('DB_DATABASE', 'inventario')
+    DB_USERNAME = os.environ.get('DB_USERNAME', 'sa')
+    DB_PASSWORD = os.environ.get('DB_PASSWORD', 'mps.1887')
+    try:
+        connection_string = (
+            f"DRIVER={{{DB_DRIVER}}};"
+            f"SERVER={DB_SERVER};"
+            f"DATABASE={DB_DATABASE};"
+            f"UID={DB_USERNAME};"
+            f"PWD={DB_PASSWORD};"
+            f"TrustServerCertificate=yes;"
+        )
+        import pyodbc
+        with pyodbc.connect(connection_string, timeout=5) as conn:
+            print("✅ Conexión exitosa a la base de datos.")
+    except Exception as e:
+        app = QApplication.instance() or QApplication(sys.argv)
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setWindowTitle("Error de conexión a la base de datos")
+        msg.setText("❌ No se pudo conectar a la base de datos.")
+        msg.setInformativeText("Verifica usuario, contraseña, servidor y que SQL Server acepte autenticación SQL.\n\n" + str(e))
+        # Mejoras de diseño: fuente más pequeña, padding simétrico, bordes redondeados, fondo claro, texto centrado
+        msg.setStyleSheet("""
+            QMessageBox {
+                background: #f1f5f9;
+                color: #ef4444;
+                font-size: 11px;
+                font-weight: 500;
+                border-radius: 12px;
+                padding: 20px 24px 20px 24px;
+            }
+            QLabel {
+                qproperty-alignment: 'AlignCenter';
+            }
+            QPushButton {
+                min-width: 80px;
+                min-height: 28px;
+                border-radius: 8px;
+                font-size: 11px;
+                padding: 4px 16px;
+            }
+        """)
+        msg.exec()
+        sys.exit(1)
+
+# --- BASE DE MEJORES PRÁCTICAS DE DISEÑO PARA TODA LA APP ---
+# 1. Todos los diálogos y mensajes deben tener padding simétrico, bordes redondeados y fondo claro.
+# 2. El texto debe estar centrado y usar fuente moderna, tamaño 11-13px, peso 500-600.
+# 3. Los botones deben tener mínimo 80px de ancho, padding horizontal generoso y bordes redondeados.
+# 4. Los colores deben ser consistentes con la paleta principal (#f1f5f9 fondo, #2563eb info, #ef4444 error, #22c55e éxito, #fbbf24 advertencia).
+# 5. Los íconos deben ser SVG o PNG de alta resolución, alineados con el texto.
+# 6. Los layouts deben tener márgenes y espaciados uniformes (mínimo 16px), y los elementos bien alineados.
+# 7. El feedback visual debe ser inmediato y claro, usando colores y mensajes breves.
+# 8. Los cuadros de diálogo deben estar bien encuadrados, con el mismo espacio a ambos lados.
+# 9. El diseño debe ser responsivo y accesible, evitando textos demasiado pequeños o contrastes bajos.
+# 10. El código debe centralizar estilos y reutilizar componentes visuales para mantener coherencia.
+# 11. Evitar hardcodear estilos en cada widget: usar QSS global o helpers.
+# 12. Siempre usar setStyleSheet para personalizar QMessageBox y otros diálogos.
+# 13. Los errores críticos deben mostrarse en ventana modal, nunca solo en consola.
+# 14. Los formularios y tablas deben tener suficiente espacio y no estar saturados.
+# 15. El diseño debe ser minimalista, sin recargar de información ni colores innecesarios.
+# --- FIN DE BASE DE MEJORES PRÁCTICAS ---
+
+chequear_conexion_bd_gui()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
