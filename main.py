@@ -51,21 +51,42 @@
 import sys
 import subprocess
 import os
+import pkg_resources
 
 def verificar_e_instalar_dependencias():
     requeridos = [
-        "PyQt6", "pyodbc", "reportlab", "qrcode", "pandas"
+        ("PyQt6", "6.9.0"), ("PyQt6-Qt6", "6.9.0"), ("PyQt6-sip", "13.10.0"),
+        ("pyodbc", "5.2.0"), ("reportlab", "4.4.1"), ("qrcode", "7.4.2"),
+        ("pandas", "2.2.2"), ("matplotlib", "3.8.4"), ("pytest", "8.2.0"),
+        ("pillow", "10.3.0"), ("python-dateutil", "2.9.0"), ("pytz", "2024.1"),
+        ("tzdata", "2024.1"), ("openpyxl", "3.1.2"), ("colorama", "0.4.6"), ("ttkthemes", "3.2.2")
     ]
     faltantes = []
-    for paquete in requeridos:
+    actualizar = []
+    for paquete, version in requeridos:
         try:
-            __import__(paquete)
-        except ImportError:
-            faltantes.append(paquete)
-    if faltantes:
-        print(f"Instalando paquetes faltantes: {', '.join(faltantes)}")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", *faltantes])
-        print("Dependencias instaladas. Reiniciando la aplicación...")
+            pkg_resources.require(f"{paquete}=={version}")
+        except pkg_resources.DistributionNotFound:
+            faltantes.append(f"{paquete}=={version}")
+        except pkg_resources.VersionConflict:
+            actualizar.append(f"{paquete}=={version}")
+    if faltantes or actualizar:
+        print(f"Instalando/actualizando paquetes: {', '.join(faltantes + actualizar)}")
+        try:
+            # Detectar si estamos en un entorno virtual
+            in_venv = (
+                hasattr(sys, 'real_prefix') or
+                (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
+            )
+            pip_args = [sys.executable, "-m", "pip", "install", "--upgrade"]
+            if not in_venv:
+                pip_args.append("--user")
+            pip_args += (faltantes + actualizar)
+            subprocess.check_call(pip_args)
+        except Exception as e:
+            print(f"Error al instalar/actualizar dependencias: {e}")
+            sys.exit(1)
+        print("Dependencias instaladas/actualizadas. Reiniciando la aplicación...")
         os.execv(sys.executable, [sys.executable] + sys.argv)
 
 def test_dependencias():
@@ -89,13 +110,12 @@ os.environ['QT_OPENGL'] = 'software'
 os.environ['QT_QUICK_BACKEND'] = 'software'
 os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--disable-gpu --disable-software-rasterizer'
 
-from PyQt6 import QtWidgets, QtGui, QtCore
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, 
     QPushButton, QStackedWidget, QMessageBox
 )
 from PyQt6.QtGui import QPalette, QColor, QIcon
-from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal, QSize
+from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal, QSize, QEvent
 from utils.icon_loader import get_icon
 from utils.theme_manager import aplicar_tema, cargar_modo_tema
 from functools import partial
@@ -488,7 +508,7 @@ class MainWindow(QMainWindow):
 
     def changeEvent(self, event):
         super().changeEvent(event)
-        if event.type() == QtCore.QEvent.Type.WindowStateChange:
+        if event.type() == QEvent.Type.WindowStateChange:
             self._ajustar_sidebar()
 
     def _ajustar_sidebar(self):

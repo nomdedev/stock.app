@@ -1,9 +1,12 @@
 import logging
-from core.database import DatabaseConnection
+from core.database import PedidosDatabaseConnection
 
 class PedidosModel:
-    def __init__(self, db_connection):
-        self.db = db_connection
+    """
+    Modelo de Pedidos que utiliza PedidosDatabaseConnection (hereda de BaseDatabaseConnection) para conexión persistente y segura.
+    """
+    def __init__(self, db_connection=None):
+        self.db = db_connection or PedidosDatabaseConnection()
         self.logger = logging.getLogger(__name__)
 
     def obtener_pedidos(self):

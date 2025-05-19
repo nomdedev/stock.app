@@ -1,6 +1,11 @@
-**COSAS POR HACER (actualizado 2025-05-17)**
+**COSAS POR HACER (actualizado 2025-05-19)**
 
-# Estado de tests por módulo (2025-05-17)
+# Prioridades
+- [ALTA] = Crítico para funcionamiento, seguridad o experiencia de usuario
+- [MEDIA] = Importante para usabilidad, robustez o escalabilidad
+- [BAJA] = Mejora visual, refactor, optimización o documentación
+
+# Estado de tests por módulo (2025-05-19)
 - inventario: OK (tests unitarios e integración pasan; edge cases cubiertos)
 - logistica: OK (tests unitarios e integración pasan)
 - mantenimiento: OK (tests unitarios e integración pasan)
@@ -22,96 +27,45 @@ Actualiza este archivo a medida que completes tareas o surjan nuevas necesidades
 - [x] Validar que todas las tablas principales obtienen headers dinámicamente desde la base de datos (sin hardcode).
 - [x] Implementar menú contextual para mostrar/ocultar columnas en todas las QTableWidget.
 - [x] Verificar que todos los módulos usan el mixin TableResponsiveMixin para tablas responsive.
-- [ ] Revisar que cada acción relevante (alta, edición, eliminación, exportación, reserva, entrega, cambio de estado) queda registrada en auditoría.
-- [ ] Validar que los permisos y visibilidad de módulos se cargan dinámicamente según el usuario (sidebar y QStackedWidget).
-- [ ] Implementar y testear el flujo de solicitudes de aprobación para usuarios sin permiso de modificación (tabla solicitudes_aprobacion).
-- [ ] Revisar feedback visual en todas las acciones (mensajes de éxito, error, advertencia, permiso denegado).
+- [x] Revisar que cada acción relevante (alta, edición, eliminación, exportación, reserva, entrega, cambio de estado) queda registrada en auditoría.
+- [x] Validar que los permisos y visibilidad de módulos se cargan dinámicamente según el usuario (sidebar y QStackedWidget).
+- [x] Implementar y testear el flujo de solicitudes de aprobación para usuarios sin permiso de modificación (tabla solicitudes_aprobacion).
+- [x] Revisar feedback visual en todas las acciones (mensajes de éxito, error, advertencia, permiso denegado).
 
-# Sugerencias de mejoras y revisiones técnicas detectadas (Copilot, 2025-05-17)
+# Mejoras técnicas sugeridas:
+- [ALTA] Unificar y documentar el uso de la clase BaseDatabaseConnection en todos los módulos (evitar conexiones duplicadas).
+- [ALTA] Validar que todos los modelos usan los nombres exactos de tablas según README y License.
+- [MEDIA] Revisar que todos los formularios validan correctamente antes de insertar/actualizar datos.
+- [ALTA] Implementar manejo de errores global para caídas de conexión a la base de datos (mostrar aviso, no crashear la app).
+- [ALTA] Revisar que todos los módulos registran acciones relevantes en auditoría (decorador o función centralizada).
+- [MEDIA] Verificar que la exportación a Excel y PDF respeta filtros y columnas visibles.
+- [MEDIA] Revisar que la interfaz visual cumple con los lineamientos de bordes redondeados, botones con sombra y soporte de tema claro/oscuro en todos los widgets.
+- [MEDIA] Validar que la app puede iniciar y funcionar en modo offline (sin DB), mostrando advertencia y permitiendo navegación básica.
+- [MEDIA] Documentar y testear el flujo de Kanban en obras (cronograma y avance visual).
+- [ALTA] Revisar que los tests unitarios y de integración cubren los flujos críticos de cada módulo.
 
-## Mejoras técnicas sugeridas:
-- [ ] Unificar y documentar el uso de la clase BaseDatabaseConnection en todos los módulos (evitar conexiones duplicadas).
-- [ ] Validar que todos los modelos usan los nombres exactos de tablas según README y License.
-- [ ] Revisar que todos los formularios validan correctamente antes de insertar/actualizar datos.
-- [ ] Implementar manejo de errores global para caídas de conexión a la base de datos (mostrar aviso, no crashear la app).
-- [ ] Revisar que todos los módulos registran acciones relevantes en auditoría (decorador o función centralizada).
-- [ ] Verificar que la exportación a Excel y PDF respeta filtros y columnas visibles.
-- [ ] Revisar que la interfaz visual cumple con los lineamientos de bordes redondeados, botones con sombra y soporte de tema claro/oscuro en todos los widgets.
-- [ ] Validar que la app puede iniciar y funcionar en modo offline (sin DB), mostrando advertencia y permitiendo navegación básica.
-- [ ] Documentar y testear el flujo de Kanban en obras (cronograma y avance visual).
-- [ ] Revisar que los tests unitarios y de integración cubren los flujos críticos de cada módulo.
+# Pendientes de documentación:
+- [MEDIA] Actualizar README y License si se agregan nuevas tablas o módulos.
+- [MEDIA] Documentar en README el flujo de aprobación de solicitudes y su relación con la tabla solicitudes_aprobacion.
+- [BAJA] Incluir ejemplos de configuración en config.example.py y advertir sobre la exclusión de config.py real.
 
-## Pendientes de documentación:
-- [ ] Actualizar README y License si se agregan nuevas tablas o módulos.
-- [ ] Documentar en README el flujo de aprobación de solicitudes y su relación con la tabla solicitudes_aprobacion.
-- [ ] Incluir ejemplos de configuración en config.example.py y advertir sobre la exclusión de config.py real.
+# Revisiones de buenas prácticas:
+- [ALTA] Validar que no se suben archivos sensibles (config.py, credenciales) al repositorio.
 
-## Revisiones de buenas prácticas:
-- [ ] Validar que no se suben archivos sensibles (config.py, credenciales) al repositorio.
-- [ ] Revisar que los nombres de carpetas y archivos respetan la estructura modules/{modulo}/.
-- [ ] Confirmar que los roles y permisos se validan antes de cada acción sensible.
-- [ ] Revisar que los mensajes de feedback visual sean claros y estén presentes en todas las acciones relevantes.
+# Mejoras específicas detectadas (ejemplo ProduccionView)
+- [ALTA] Corregir el import con espacio extra en matplotlib.backends.backend_qt5agg (línea 11).
+- [MEDIA] Validar persistencia de configuración de columnas en tablas (manejo de archivos JSON, errores de lectura/escritura).
+- [MEDIA] Mejorar el feedback visual al agregar/finalizar etapas (mensajes, colores, animaciones).
+- [BAJA] Unificar estilos de botones y efectos de sombra en ProduccionView.
+- [BAJA] Revisar y limpiar imports no usados en ProduccionView.
 
-# Sugerencias avanzadas y mejoras integrales (Copilot, 2025-05-17)
+---
 
-## Robustez e integración SAP-like
-- [ ] Garantizar que todas las acciones críticas (alta, edición, eliminación, reservas, entregas, exportaciones, cambios de estado) quedan SIEMPRE registradas en auditoría, incluyendo intentos fallidos y acciones denegadas por permisos.
-- [ ] Validar que la integración entre módulos es real: los movimientos en inventario impactan en obras y logística, y viceversa, con feedback visual inmediato y trazabilidad.
-- [ ] Revisar que la lógica de permisos y visibilidad de módulos se aplica tanto en backend como en frontend, evitando bypass por manipulación de la UI.
-- [ ] Implementar tests de integración que simulen flujos completos entre módulos (ejemplo: reserva en inventario → entrega en logística → impacto en obras y contabilidad).
-- [ ] Confirmar que la exportación a Excel/PDF respeta filtros, columnas visibles y configuración de usuario.
+## ¿Cómo priorizar?
+- Empieza siempre por los puntos [ALTA].
+- Los puntos [MEDIA] mejoran la experiencia y la mantenibilidad.
+- Los puntos [BAJA] son mejoras visuales, refactors o documentación.
 
-## Feedback visual y experiencia de usuario
-- [ ] Unificar el uso del método `mostrar_mensaje` para todos los mensajes de feedback (éxito, error, advertencia, permiso denegado), con colores y duración estándar.
-- [ ] Asegurar que todos los botones principales usan el utilitario `estilizar_boton_icono` y cumplen con el estándar visual (icono SVG, tamaño, padding, border-radius).
-- [ ] Revisar que el label de usuario en la barra de estado refleja correctamente el rol y los permisos activos (color, borde, tipografía).
-- [ ] Incluir tooltips descriptivos y consistentes en todos los botones y acciones.
+---
 
-## Seguridad y buenas prácticas
-- [ ] Validar que los roles y permisos se consultan y aplican antes de cada acción sensible, y que todo intento fallido queda registrado en auditoría.
-- [ ] Revisar que no se suben archivos sensibles (config.py, credenciales) al repositorio y que existe un config.example.py actualizado.
-- [ ] Confirmar que los nombres de carpetas y archivos respetan la estructura modules/{modulo}/ y que no hay duplicados ni archivos legacy.
-- [ ] Implementar manejo global de errores de conexión a la base de datos: la app debe mostrar aviso y permitir navegación básica en modo offline.
-
-## Documentación y checklist
-- [ ] Mantener actualizado el README con flujos, casos de error, feedback visual, integración y estándares SAP-like.
-- [ ] Documentar el flujo de aprobación de solicitudes y su relación con la tabla solicitudes_aprobacion, incluyendo ejemplos visuales y de código.
-- [ ] Incluir ejemplos de configuración en config.example.py y advertir sobre la exclusión de config.py real.
-- [ ] Actualizar este archivo y los docstrings de modelos/controladores con el checklist funcional y visual de cada módulo.
-
-## Pruebas y cobertura
-- [ ] Ampliar la cobertura de tests unitarios e integración para todos los módulos, incluyendo edge cases y flujos de error.
-- [ ] Verificar que los tests de integración cubren la correcta sincronización entre UI, base de datos y auditoría.
-- [ ] Agregar tests automáticos para la lógica de permisos, visibilidad y aprobaciones.
-
-# (Agrega aquí nuevas sugerencias o elimina las resueltas en la próxima actualización)
-
-Revisar que cada acción relevante (alta, edición, eliminación, exportación, reserva, entrega, cambio de estado) queda registrada en auditoría.
-Revisar que todos los módulos registran acciones relevantes en auditoría (decorador o función centralizada).
-Garantizar que todas las acciones críticas (alta, edición, eliminación, reservas, entregas, exportaciones, cambios de estado) quedan SIEMPRE registradas en auditoría, incluyendo intentos fallidos y acciones denegadas por permisos.
-Validar que los roles y permisos se consultan y aplican antes de cada acción sensible, y que todo intento fallido queda registrado en auditoría.
-Verificar que los tests de integración cubren la correcta sincronización entre UI, base de datos y auditoría.
-Mejorar la cobertura de tests unitarios y de integración para todos los módulos.
-Unificar y centralizar el registro de auditoría para evitar duplicación de lógica.
-Mejorar la documentación de los módulos y de la arquitectura general.
-Validar que los decoradores de permisos y auditoría están aplicados en todos los endpoints y métodos críticos.
-Revisar y mejorar el manejo de errores y feedback visual al usuario.
-Garantizar que la exportación de datos (Excel, PDF) queda registrada en auditoría.
-Revisar que los logs de auditoría incluyan usuario, fecha, IP, módulo, acción y detalle.
-Validar que los cambios de estado en obras, inventario y otros módulos quedan reflejados en auditoría.
-Revisar la trazabilidad de permisos y roles (alta, baja, cambio) en auditoría.
-Mejorar la experiencia de usuario en la consulta y filtrado de auditoría.
-Documentar flujos críticos y casos de uso en el README.
-Validar que la integración entre módulos (Inventario, Obras, Logística, etc.) refleja correctamente los cambios en auditoría.
-Revisar la consistencia de los nombres de acciones y módulos en los registros de auditoría.
-Garantizar que las acciones de aprobación/rechazo de solicitudes quedan registradas en auditoría.
-Revisar la seguridad y protección de los logs de auditoría.
-Puedes copiar y pegar esta lista en cosas por hacer.txt para ir marcando el avance. Si quieres que empecemos por el primer punto, indícalo y te ayudo a revisar el código relevante y los tests para asegurarnos de que todas las acciones críticas quedan registradas en auditoría.
-
-El sistema ya tiene implementado un decorador PermisoAuditoria en los controladores principales, que registra en auditoría las acciones exitosas, denegadas y con error. Sin embargo, para cumplir completamente con el punto pendiente de la lista (“Revisar que cada acción relevante (alta, edición, eliminación, exportación, reserva, entrega, cambio de estado) queda registrada en auditoría”), es necesario:
-
-Verificar que TODAS las acciones críticas de todos los módulos usan el decorador o llaman explícitamente a auditoria_model.registrar_evento (incluyendo intentos fallidos y acciones denegadas).
-Asegurar que los métodos de exportación, reserva, entrega y cambio de estado también registran en auditoría (no solo altas/ediciones/eliminaciones).
-Unificar el formato de registro para que siempre quede: usuario, módulo, tipo de acción, detalle, IP, resultado (éxito/error/denegado).
-Agregar tests de integración que verifiquen que cada acción relevante deja un registro en la tabla auditorias_sistema.
-¿Quieres que comencemos revisando un módulo específico (por ejemplo, Inventario) o hacemos un barrido por todos los controladores para asegurar la cobertura de auditoría?
+Actualiza este archivo cada vez que resuelvas un punto o detectes uno nuevo.

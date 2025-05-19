@@ -64,8 +64,16 @@ class MainWindow(QMainWindow):
             self.stack.addWidget(v)
         content_layout.addWidget(self.stack)
 
-        # Conectar sidebar con stack
+        # Permisos y visibilidad dinámica de módulos
+        self._modulos_nombres = [
+            'Inventario', 'Obras', 'Logística', 'Usuarios', 'Configuración'
+        ]
+        self._usuario_permisos = None  # Se debe setear tras login
+        self._modulos_permitidos_indices = list(range(len(self.views)))  # Por defecto todos
+
+        # Conectar sidebar con stack y navegación segura
         self.sidebar.set_main_stack(self.stack)
+        self.sidebar.pageChanged.connect(self._on_sidebar_page_changed)
 
         # Persistencia de módulo activo
         last_index = config.get("modulo_activo", 0)
@@ -110,3 +118,40 @@ class MainWindow(QMainWindow):
                             v.setStyleSheet(f.read())
                 except Exception as e:
                     print(f"No se pudo recargar el QSS en la vista {v}: {e}")
+
+    def set_usuario_actual(self, usuario, permisos_modulos):
+        """
+        Llamar tras login. Recibe el usuario y la lista de módulos permitidos (nombres).
+        """
+        self._usuario_permisos = permisos_modulos
+        # Filtrar vistas y sidebar según permisos
+        indices_permitidos = [i for i, nombre in enumerate(self._modulos_nombres) if nombre in permisos_modulos]
+        self._modulos_permitidos_indices = indices_permitidos
+        # Ocultar widgets no permitidos
+        for i, v in enumerate(self.views):
+            widget = self.stack.widget(i)
+            if widget is not None:
+                widget.setVisible(i in indices_permitidos)
+        # Actualizar sidebar
+        self.sidebar.set_visible_modules(indices_permitidos)
+        # Seleccionar el primer módulo permitido
+        if indices_permitidos:
+            self.stack.setCurrentIndex(indices_permitidos[0])
+            self.sidebar.set_active(0)
+        else:
+            self.stack.setCurrentIndex(0)
+            self.sidebar.set_active(0)
+
+    def _on_sidebar_page_changed(self, idx):
+        # idx es el índice relativo a los módulos permitidos
+        if not self._modulos_permitidos_indices:
+            return
+        real_idx = self._modulos_permitidos_indices[idx] if idx < len(self._modulos_permitidos_indices) else 0
+        if self._usuario_permisos and real_idx < len(self._modulos_nombres):
+            modulo = self._modulos_nombres[real_idx]
+            if modulo not in self._usuario_permisos:
+                from PyQt6.QtWidgets import QMessageBox
+                QMessageBox.warning(self, "Permiso denegado", f"No tiene permiso para acceder al módulo: {modulo}")
+                return
+        self.stack.setCurrentIndex(real_idx)
+        self.sidebar.set_active(idx)

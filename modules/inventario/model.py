@@ -1,6 +1,8 @@
 """
 FLUJO PASO A PASO DEL MÓDULO INVENTARIO
 
+- Este modelo utiliza InventarioDatabaseConnection (hereda de BaseDatabaseConnection) para garantizar una única conexión persistente y evitar duplicados, según el estándar del sistema (ver README).
+
 1. Alta de ítem/material: agregar_item(datos)
 2. Edición/eliminación: métodos asociados en el controlador
 3. Reserva de material: registrar_reserva(datos)
@@ -13,13 +15,16 @@ FLUJO PASO A PASO DEL MÓDULO INVENTARIO
 """
 
 import pandas as pd  # Asegúrate de tener pandas instalado
-from fpdf import FPDF  # Asegúrate de tener fpdf instalado
-from core.database import DatabaseConnection
+try:
+    from fpdf import FPDF  # Asegúrate de tener fpdf instalado (pip install fpdf)
+except ImportError:
+    FPDF = None  # Permite que la app siga funcionando aunque falte fpdf
+from core.database import InventarioDatabaseConnection
 import re
 
 class InventarioModel:
-    def __init__(self, db_connection):
-        self.db = db_connection
+    def __init__(self, db_connection=None):
+        self.db = db_connection or InventarioDatabaseConnection()
 
     def obtener_items(self):
         query = """
@@ -120,12 +125,19 @@ class InventarioModel:
             return "Inventario exportado a Excel."
 
         elif formato == "pdf":
+            if FPDF is None:
+                print("Error: fpdf no está instalado. Ejecuta 'pip install fpdf'.")
+                return
             pdf = FPDF()
             pdf.add_page()
             pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt="Inventario General", ln=True, align="C")
-            for row in datos:
-                pdf.cell(200, 10, txt=str(row), ln=True)
+            pdf.cell(200, 10, "Inventario General", ln=True, align="C")
+            datos = self.obtener_items()
+            if datos:
+                for row in datos:
+                    pdf.cell(200, 10, str(row), ln=True)
+            else:
+                pdf.cell(200, 10, "Sin datos de inventario", ln=True)
             pdf.output("inventario.pdf")
             return "Inventario exportado a PDF."
 
@@ -282,3 +294,10 @@ class InventarioModel:
         """
         self.db.ejecutar_query(query_reserva, (id_item, cantidad, str(id_obra), 'activa'))
         return True
+
+    def exportar_perfiles(self, perfiles):
+        if perfiles:
+            for perfil in perfiles:
+                print(perfil)
+        else:
+            print("No hay perfiles para exportar.")

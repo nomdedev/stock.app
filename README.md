@@ -1,3 +1,57 @@
+# --- DEPENDENCIAS Y REQUISITOS DEL PROYECTO ---
+
+## Instalación rápida del entorno
+
+Puedes instalar todas las dependencias automáticamente usando los scripts incluidos en la carpeta `scripts`:
+
+- **Windows:**
+  ```powershell
+  .\scripts\install.bat
+  ```
+- **Linux/Mac:**
+  ```bash
+  bash ./scripts/install.sh
+  ```
+
+Esto instalará todas las librerías necesarias usando el archivo `requirements.txt` y el flag `--user` para evitar problemas de permisos.
+
+Si prefieres hacerlo manualmente:
+```powershell
+pip install --user -r requirements.txt
+```
+
+## Dependencias principales
+
+| Paquete           | Versión recomendada |
+|-------------------|--------------------|
+| PyQt6             | 6.9.0              |
+| PyQt6-Qt6         | 6.9.0              |
+| PyQt6-sip         | 13.10.0            |
+| pyodbc            | 5.2.0              |
+| reportlab         | 4.4.1              |
+| qrcode            | 7.4.2              |
+| pandas            | 2.2.2              |
+| matplotlib        | 3.8.4              |
+| pytest            | 8.2.0              |
+| pillow            | 10.3.0             |
+| python-dateutil   | 2.9.0              |
+| pytz              | 2024.1             |
+| tzdata            | 2024.1             |
+| openpyxl          | 3.1.2              |
+| colorama          | 0.4.6              |
+| ttkthemes         | 3.2.2              |
+
+### Actualización automática
+
+La aplicación verifica e instala/actualiza automáticamente todas las dependencias al iniciar, usando el script en `main.py`. Si falta alguna o hay una versión incorrecta, se instalará la versión recomendada y se reiniciará la app.
+
+- Si tienes problemas de permisos, el script usará automáticamente el flag `--user`.
+- Si agregas nuevas dependencias, recuerda actualizar este archivo y el `requirements.txt`.
+
+---
+
+Última actualización: 19 de mayo de 2025
+
 # GUÍA VISUAL Y ESTÁNDARES DE ESTILO (PALETA PASTEL AZUL-CREMA, CONTRASTE Y SOMBRAS)
 
 
@@ -16,11 +70,11 @@
 
 ---
 
-# Guía visual y estándares de estilo (paleta pastel azul-crema, contraste y sombras)
+## Guía visual y estándares de estilo (paleta pastel azul-crema, contraste y sombras)
 
 La aplicación utiliza una paleta pastel moderna basada en azules y cremas, con alto contraste y detalles de sombra para lograr una experiencia visual clara, profesional y agradable. Todos los módulos y widgets deben seguir estos lineamientos visuales y de estilo.
 
-## Paleta de colores principal
+### Paleta de colores principal
 
 - **Fondo general:** `#fff9f3` (crema pastel muy claro)
 - **Azul pastel principal:** `#2563eb` (para texto, íconos y botones principales)
@@ -31,14 +85,14 @@ La aplicación utiliza una paleta pastel moderna basada en azules y cremas, con 
 - **Rojo pastel:** `#ffe5e5` (errores, offline)
 - **Gris pastel:** `#e3e3e3` (bordes, líneas de tabla)
 
-## Contraste y accesibilidad
+### Contraste y accesibilidad
 
 - El texto y los íconos siempre usan azul pastel `#2563eb` sobre fondo claro para máximo contraste.
 - Los mensajes de error usan rojo pastel `#ef4444` sobre fondo claro.
 - Los botones principales tienen fondo celeste pastel y texto azul pastel.
 - Los diálogos y widgets tienen bordes redondeados y sombra sutil para destacar sobre el fondo.
 
-## Botones modernos y sombras
+### Botones modernos y sombras
 
 - Todos los botones usan bordes redondeados de 8px, sombra sutil y colores pastel.
 - El helper `estilizar_boton_icono` aplica tamaño, color y sombra uniforme a los botones con ícono.
@@ -64,7 +118,7 @@ QPushButton:pressed {
 }
 ```
 
-## Ejemplo de helper para botones con ícono (Python)
+### Ejemplo de helper para botones con ícono (Python)
 
 ```python
 from PyQt6.QtWidgets import QPushButton
@@ -93,7 +147,7 @@ def estilizar_boton_icono(boton: QPushButton, tam_icono: int = 20, tam_boton: in
     )
 ```
 
-## Ejemplo visual de tabla y headers
+### Ejemplo visual de tabla y headers
 
 ```css
 QTableWidget {
@@ -112,7 +166,7 @@ QTableWidget QHeaderView::section {
 }
 ```
 
-## Sombra y profundidad
+### Sombra y profundidad
 
 - Los widgets principales y diálogos usan sombra sutil para dar profundidad y separar visualmente del fondo.
 - Ejemplo de sombra en QSS:
@@ -1171,7 +1225,5 @@ class TestVidriosView(unittest.TestCase):
 - `modules/vidrios/view.py` y `tests/test_vidrios_view.py`: **Robustificados y validados**
 - `modules/obras/view.py` y `tests/test_obras_view.py`: **Robustificados y validados**
 - El resto de los módulos principales están en proceso de robustificación y testeo.
-
-> **Nota:** Esta metodología y checklist deben aplicarse a todos los módulos principales para mantener la coherencia, robustez y prevenir regresiones visuales o funcionales.
 
 ---

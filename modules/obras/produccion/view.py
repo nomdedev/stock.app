@@ -7,17 +7,17 @@ from PyQt6.QtGui import QIcon, QColor, QPixmap, QPainter, QAction
 from PyQt6.QtCore import Qt, QSize, QPoint
 from PyQt6.QtPrintSupport import QPrinter
 from functools import partial
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 
 class ProduccionView(QWidget):
     def __init__(self):
         super().__init__()
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(20, 20, 20, 20)
-        self.layout.setSpacing(20)
-
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setSpacing(20)
+        
         # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
         qss_tema = None
         try:
@@ -31,11 +31,10 @@ class ProduccionView(QWidget):
         aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
 
         self.label_titulo = QLabel("Gestión de Producción")
-        self.layout.addWidget(self.label_titulo)
-
+        self.main_layout.addWidget(self.label_titulo)
         self.label = self.label_titulo  # Para compatibilidad con controladores
-        self.buscar_input = None  # No hay campo de búsqueda en esta vista
-        self.id_item_input = None  # No hay campo de ID explícito en esta vista
+        self.buscar_input = None
+        self.id_item_input = None
 
         # Formulario de entrada
         self.form_layout = QFormLayout()
@@ -45,15 +44,13 @@ class ProduccionView(QWidget):
         self.form_layout.addRow("Abertura:", self.abertura_input)
         self.form_layout.addRow("Etapa:", self.etapa_input)
         self.form_layout.addRow("Estado:", self.estado_input)
-        self.layout.addLayout(self.form_layout)
+        self.main_layout.addLayout(self.form_layout)
 
         # Tabla de aberturas
         self.tabla_aberturas = QTableWidget()
         self.tabla_aberturas.setColumnCount(5)
         self.tabla_aberturas.setHorizontalHeaderLabels(["ID", "Código", "Tipo", "Estado", "Fecha Inicio"])
-        self.layout.addWidget(self.tabla_aberturas)
-
-        # Configuración de columnas y persistencia para tabla_aberturas
+        self.main_layout.addWidget(self.tabla_aberturas)
         self.aberturas_headers = ["ID", "Código", "Tipo", "Estado", "Fecha Inicio"]
         self.config_path_aberturas = f"config_produccion_aberturas_columns.json"
         self.columnas_visibles_aberturas = self.cargar_config_columnas(self.config_path_aberturas, self.aberturas_headers)
@@ -68,13 +65,11 @@ class ProduccionView(QWidget):
         self.tabla_aberturas.setHorizontalHeader(header_aberturas)
         self.tabla_aberturas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_aberturas))
 
-        # Tabla de etapas de fabricación (para detalles y finalizar etapa)
+        # Tabla de etapas de fabricación
         self.tabla_etapas = QTableWidget()
         self.tabla_etapas.setColumnCount(5)
         self.tabla_etapas.setHorizontalHeaderLabels(["ID", "Etapa", "Estado", "Fecha Inicio", "Fecha Fin"])
-        self.layout.addWidget(self.tabla_etapas)
-
-        # Configuración de columnas y persistencia para tabla_etapas
+        self.main_layout.addWidget(self.tabla_etapas)
         self.etapas_headers = ["ID", "Etapa", "Estado", "Fecha Inicio", "Fecha Fin"]
         self.config_path_etapas = f"config_produccion_etapas_columns.json"
         self.columnas_visibles_etapas = self.cargar_config_columnas(self.config_path_etapas, self.etapas_headers)
@@ -89,7 +84,7 @@ class ProduccionView(QWidget):
         self.tabla_etapas.setHorizontalHeader(header_etapas)
         self.tabla_etapas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_etapas))
 
-        # Botón principal de acción (Agregar)
+        # Botones principales
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("img/add-etapa.svg"))
@@ -107,7 +102,6 @@ class ProduccionView(QWidget):
         estilizar_boton_icono(self.boton_agregar)
         botones_layout.addWidget(self.boton_agregar)
 
-        # Botón Ver Detalles
         self.boton_ver_detalles = QPushButton()
         self.boton_ver_detalles.setIcon(QIcon("img/viewdetails.svg"))
         self.boton_ver_detalles.setIconSize(QSize(24, 24))
@@ -124,7 +118,6 @@ class ProduccionView(QWidget):
         estilizar_boton_icono(self.boton_ver_detalles)
         botones_layout.addWidget(self.boton_ver_detalles)
 
-        # Botón Finalizar Etapa
         self.boton_finalizar_etapa = QPushButton()
         self.boton_finalizar_etapa.setIcon(QIcon("img/finish-check.svg"))
         self.boton_finalizar_etapa.setIconSize(QSize(24, 24))
@@ -146,9 +139,9 @@ class ProduccionView(QWidget):
         self.boton_finalizar_etapa.clicked.connect(self.accion_finalizar_etapa)
 
         botones_layout.addStretch()
-        self.layout.addLayout(botones_layout)
+        self.main_layout.addLayout(botones_layout)
 
-        self.setLayout(self.layout)
+        self.setLayout(self.main_layout)
 
     def agregar_grafico(self, datos):
         figura = Figure()
@@ -156,7 +149,7 @@ class ProduccionView(QWidget):
         ax = figura.add_subplot(111)
         ax.bar([d[0] for d in datos], [d[1] for d in datos])
         ax.set_title("Eficiencia por Etapa")
-        self.layout.addWidget(canvas)
+        self.main_layout.addWidget(canvas)
 
     def inicializar_kanban(self):
         self.kanban_scroll = QScrollArea()
@@ -179,7 +172,7 @@ class ProduccionView(QWidget):
             self.kanban_layout.addWidget(columna_widget)
 
         self.kanban_scroll.setWidget(self.kanban_frame)
-        self.layout.addWidget(self.kanban_scroll)
+        self.main_layout.addWidget(self.kanban_scroll)
 
     def agregar_tarjeta_kanban(self, etapa, tarjeta_texto):
         if etapa in self.columnas:
@@ -262,7 +255,8 @@ class ProduccionView(QWidget):
         def guardar():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
             if file_path:
-                img.save(file_path)
+                with open(file_path, "wb") as f:
+                    img.save(f)
         def exportar_pdf():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
             if file_path:

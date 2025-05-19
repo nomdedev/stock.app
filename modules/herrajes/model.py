@@ -1,8 +1,11 @@
-from core.database import DatabaseConnection
+from core.database import InventarioDatabaseConnection
 
 class HerrajesModel:
-    def __init__(self, db_connection: DatabaseConnection):
-        self.db = db_connection
+    """
+    Modelo de Herrajes que utiliza InventarioDatabaseConnection (hereda de BaseDatabaseConnection) para conexión persistente y segura.
+    """
+    def __init__(self, db_connection=None):
+        self.db = db_connection or InventarioDatabaseConnection()
 
     def crear_tabla_materiales(self):
         query = """
