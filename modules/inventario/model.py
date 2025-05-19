@@ -167,14 +167,8 @@ class InventarioModel:
 
     def obtener_productos(self):
         query = "SELECT * FROM inventario_perfiles"
-        connection_string = (
-            f"DRIVER={{{self.db.driver}}};"
-            f"SERVER=localhost\\SQLEXPRESS;"
-            f"DATABASE={self.db.database};"
-            f"UID={self.db.username};"
-            f"PWD={self.db.password};"
-            f"TrustServerCertificate=yes;"
-        )
+        from core.database import get_connection_string
+        connection_string = get_connection_string(self.db.driver, self.db.database)
         import pyodbc
         with pyodbc.connect(connection_string, timeout=10) as conn:
             cursor = conn.cursor()

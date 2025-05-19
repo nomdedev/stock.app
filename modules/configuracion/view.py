@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QComboBox, QCheckBox, QPushButton, QSizePolicy, QTabWidget, QHBoxLayout, QGraphicsDropShadowEffect, QTableWidget, QTableWidgetItem
 from PyQt6.QtGui import QIcon, QColor
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, Qt
 from themes.theme_manager import aplicar_tema, guardar_preferencia_tema, cargar_preferencia_tema
 import json
 from core.ui_components import estilizar_boton_icono
@@ -96,18 +96,73 @@ class ConfiguracionView(QWidget):
             self.database_layout = QFormLayout()
             self.database_layout.setHorizontalSpacing(8)
             self.database_layout.setVerticalSpacing(4)
+
             self.server_input = QLineEdit()
-            self.username_input = QLineEdit()
-            self.password_input = QLineEdit()
-            self.port_input = QLineEdit()
-            self.default_db_input = QLineEdit()
-            self.timeout_input = QLineEdit()
+            self.server_input.setPlaceholderText("Ej: 192.168.1.100 o NOMBREPC\\SQLEXPRESS")
+            self.server_input.setToolTip("Dirección IP o nombre del servidor SQL Server")
             self.database_layout.addRow(QLabel("Servidor:"), self.server_input)
+            self.server_help = QLabel("<span style='color:#64748b;font-size:11px'>IP o nombre de la PC donde está SQL Server</span>")
+            self.database_layout.addRow(QLabel(""), self.server_help)
+
+            self.username_input = QLineEdit()
+            self.username_input.setPlaceholderText("Ej: sa")
+            self.username_input.setToolTip("Usuario de SQL Server")
             self.database_layout.addRow(QLabel("Usuario:"), self.username_input)
+            self.username_help = QLabel("<span style='color:#64748b;font-size:11px'>Usuario con permisos en la base de datos</span>")
+            self.database_layout.addRow(QLabel(""), self.username_help)
+
+            self.password_input = QLineEdit()
+            self.password_input.setPlaceholderText("Contraseña segura")
+            self.password_input.setToolTip("Contraseña del usuario de SQL Server")
+            self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
             self.database_layout.addRow(QLabel("Contraseña:"), self.password_input)
+            self.password_help = QLabel("<span style='color:#64748b;font-size:11px'>No se mostrará ni almacenará en texto plano</span>")
+            self.database_layout.addRow(QLabel(""), self.password_help)
+
+            self.port_input = QLineEdit()
+            self.port_input.setPlaceholderText("1433")
+            self.port_input.setToolTip("Puerto de SQL Server (por defecto 1433)")
             self.database_layout.addRow(QLabel("Puerto:"), self.port_input)
+            self.port_help = QLabel("<span style='color:#64748b;font-size:11px'>Puerto TCP/IP, normalmente 1433</span>")
+            self.database_layout.addRow(QLabel(""), self.port_help)
+
+            self.default_db_input = QLineEdit()
+            self.default_db_input.setPlaceholderText("Ej: inventario")
+            self.default_db_input.setToolTip("Nombre de la base de datos a usar por defecto")
             self.database_layout.addRow(QLabel("Base de Datos Predeterminada:"), self.default_db_input)
+            self.db_help = QLabel("<span style='color:#64748b;font-size:11px'>Nombre exacto de la base de datos</span>")
+            self.database_layout.addRow(QLabel(""), self.db_help)
+
+            self.timeout_input = QLineEdit()
+            self.timeout_input.setPlaceholderText("10")
+            self.timeout_input.setToolTip("Tiempo de espera de conexión en segundos")
             self.database_layout.addRow(QLabel("Tiempo de Espera:"), self.timeout_input)
+            self.timeout_help = QLabel("<span style='color:#64748b;font-size:11px'>Recomendado: 10 segundos</span>")
+            self.database_layout.addRow(QLabel(""), self.timeout_help)
+
+            # --- BOTÓN PROBAR CONEXIÓN ---
+            self.boton_probar_conexion = QPushButton("Probar conexión")
+            self.boton_probar_conexion.setIcon(QIcon("img/search_icon.svg"))
+            self.boton_probar_conexion.setIconSize(QSize(20, 20))
+            self.boton_probar_conexion.setFixedHeight(32)
+            self.boton_probar_conexion.setStyleSheet("font-size:13px; font-weight:600; border-radius:8px; background:#2563eb; color:white;")
+            self.database_layout.addRow(QLabel(""), self.boton_probar_conexion)
+            self.resultado_conexion_label = QLabel("")
+            self.resultado_conexion_label.setStyleSheet("font-size:12px; font-weight:500; padding:4px 0 0 0;")
+            self.database_layout.addRow(QLabel(""), self.resultado_conexion_label)
+
+            self.boton_probar_conexion.clicked.connect(self.probar_conexion_sql)
+
+            # --- VALIDACIÓN VISUAL AL GUARDAR ---
+            def resaltar_campos_obligatorios():
+                campos = [self.server_input, self.username_input, self.password_input, self.default_db_input]
+                for campo in campos:
+                    if not campo.text().strip():
+                        campo.setStyleSheet("border:2px solid #ef4444; border-radius:6px;")
+                    else:
+                        campo.setStyleSheet("")
+            self.boton_guardar.clicked.connect(resaltar_campos_obligatorios)
+
             self.database_tab.setLayout(self.database_layout)
 
             # Agregar pestañas al widget
@@ -205,6 +260,35 @@ class ConfiguracionView(QWidget):
             self.tabs.addTab(self.permisos_tab, "Permisos y visibilidad")
             # --- FIN NUEVA PESTAÑA ---
 
+            # --- TUTORIAL DE CONEXIÓN ---
+            self.tutorial_tab = QWidget()
+            self.tutorial_layout = QVBoxLayout()
+            self.tutorial_tab.setLayout(self.tutorial_layout)
+            tutorial_text = (
+                "<h2>¿Cómo conectarse al servidor de base de datos?</h2>"
+                "<ul>"
+                "<li><b>1. Encontrar la IP del servidor:</b> En la PC donde está SQL Server, abre una terminal y ejecuta <code>ipconfig</code>. Copia la dirección IPv4 (ej: 192.168.1.100).</li>"
+                "<li><b>2. Configura los campos:</b>"
+                "<ul>"
+                "<li><b>Servidor:</b> Pon la IP encontrada o el nombre de la PC (ej: 192.168.1.100 o NOMBREPC\\SQLEXPRESS).</li>"
+                "<li><b>Usuario:</b> El usuario de SQL Server (ej: sa).</li>"
+                "<li><b>Contraseña:</b> La contraseña de ese usuario.</li>"
+                "<li><b>Puerto:</b> 1433 (por defecto).</li>"
+                "<li><b>Base de Datos:</b> Elige la base a la que te quieres conectar (ej: inventario).</li>"
+                "</ul>"
+                "<li><b>3. Prueba la conexión:</b> Usa el botón de 'Probar conexión'. Si falla, revisa firewall, usuario, contraseña y que SQL Server acepte conexiones remotas.</li>"
+                "<li><b>4. Guarda los cambios:</b> Si la conexión es exitosa, guarda la configuración. Se usará en todos los inicios y computadoras.</li>"
+                "</ul>"
+            )
+            self.tutorial_label = QLabel()
+            self.tutorial_label.setTextFormat(Qt.TextFormat.RichText)
+            self.tutorial_label.setText(tutorial_text)
+            self.tutorial_label.setWordWrap(True)
+            self.tutorial_layout.addWidget(self.tutorial_label)
+            self.tutorial_layout.addStretch()
+            self.tabs.addTab(self.tutorial_tab, "Tutorial conexión")
+            # --- FIN TUTORIAL ---
+
             self.layout.addWidget(self.tabs)
         except Exception as e:
             print(f"Error al inicializar ConfiguracionView: {e}")
@@ -214,3 +298,27 @@ class ConfiguracionView(QWidget):
         nuevo_tema = "dark" if estado == 2 else "light"
         aplicar_tema(nuevo_tema)
         guardar_preferencia_tema(nuevo_tema)
+
+    def probar_conexion_sql(self):
+        """Prueba la conexión a SQL Server con los datos ingresados en la pestaña Base de Datos."""
+        import pyodbc
+        driver = "ODBC Driver 17 for SQL Server"
+        server = self.server_input.text().strip()
+        user = self.username_input.text().strip()
+        pwd = self.password_input.text().strip()
+        db = self.default_db_input.text().strip()
+        port = self.port_input.text().strip() or "1433"
+        timeout = int(self.timeout_input.text().strip() or "10")
+        connection_string = (
+            f"DRIVER={{{driver}}};"
+            f"SERVER={server},{port};"
+            f"DATABASE={db};"
+            f"UID={user};"
+            f"PWD={pwd};"
+            f"TrustServerCertificate=yes;"
+        )
+        try:
+            with pyodbc.connect(connection_string, timeout=timeout) as conn:
+                self.resultado_conexion_label.setText("<span style='color:#22c55e'>✅ Conexión exitosa</span>")
+        except Exception as e:
+            self.resultado_conexion_label.setText(f"<span style='color:#ef4444'>❌ Error: {e}</span>")

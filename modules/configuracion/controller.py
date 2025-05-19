@@ -55,10 +55,37 @@ class ConfiguracionController:
             # Conectar lógica de la pestaña de permisos y visibilidad
             if hasattr(self.view, "boton_guardar_permisos"):
                 self.conectar_pestana_permisos()
+            # Conectar botón de probar conexión
+            if hasattr(self.view, "boton_probar_conexion"):
+                self.view.boton_probar_conexion.clicked.connect(self.probar_conexion_bd)
         except AttributeError as e:
             print(f"Error en ConfiguracionController: {e}")
         except Exception as e:
             print(f"Error al conectar señales de importación CSV: {e}")
+
+    def mostrar_mensaje(self, mensaje, tipo="info", destino="label"):
+        """
+        Muestra un mensaje visual moderno en el label indicado de la vista.
+        tipo: 'exito', 'error', 'advertencia', 'info'
+        destino: nombre del atributo QLabel en la vista (por defecto 'label')
+        """
+        colores = {
+            "exito": "#22c55e",
+            "error": "#ef4444",
+            "advertencia": "#f59e42",
+            "info": "#2563eb"
+        }
+        iconos = {
+            "exito": "✅",
+            "error": "❌",
+            "advertencia": "⚠️",
+            "info": "ℹ️"
+        }
+        color = colores.get(tipo, "#2563eb")
+        icono = iconos.get(tipo, "ℹ️")
+        label = getattr(self.view, destino, None)
+        if label:
+            label.setText(f"<span style='color:{color};'>{icono} {mensaje}</span>")
 
     @permiso_auditoria_configuracion('ver')
     def cargar_configuracion(self):
@@ -82,7 +109,7 @@ class ConfiguracionController:
                 self.view.notificaciones_checkbox.setChecked(notificaciones)
                 self.view.tamaño_fuente_input.setCurrentText(tamaño_fuente)
         except Exception as e:
-            print(f"Error al cargar configuración: {e}")
+            self.mostrar_mensaje(f"Error al cargar configuración: {e}", tipo="error")
 
     @permiso_auditoria_configuracion('editar')
     def guardar_cambios(self):
@@ -101,38 +128,56 @@ class ConfiguracionController:
             )
             self.model.actualizar_apariencia_usuario(1, datos_apariencia)
 
-            self.view.label.setText("Cambios guardados exitosamente.")
+            self.mostrar_mensaje("Cambios guardados exitosamente.", tipo="exito")
         except Exception as e:
-            print(f"Error al guardar cambios: {e}")
+            self.mostrar_mensaje(f"Error al guardar cambios: {e}", tipo="error")
 
     @permiso_auditoria_configuracion('editar')
     def guardar_configuracion_conexion(self):
         try:
+            campos_obligatorios = [
+                (self.view.server_input, "Servidor"),
+                (self.view.username_input, "Usuario"),
+                (self.view.password_input, "Contraseña"),
+                (self.view.default_db_input, "Base de datos")
+            ]
+            for campo, nombre in campos_obligatorios:
+                if not campo.text().strip():
+                    self.mostrar_mensaje(f"El campo '{nombre}' es obligatorio.", tipo="error", destino="resultado_conexion_label")
+                    return
             datos = {
-                "base_predeterminada": self.view.base_predeterminada_input.text(),
-                "servidor": self.view.servidor_input.text(),
-                "puerto": self.view.puerto_input.text(),
+                "servidor": self.view.server_input.text(),
+                "usuario": self.view.username_input.text(),
+                "contraseña": self.view.password_input.text(),
+                "puerto": self.view.port_input.text(),
+                "base_predeterminada": self.view.default_db_input.text(),
+                "timeout": self.view.timeout_input.text(),
             }
+            # Probar conexión antes de guardar
+            resultado = self.probar_conexion_bd(retornar_resultado=True)
+            if not resultado.get('exito'):
+                self.mostrar_mensaje(f"No se puede guardar: {resultado.get('mensaje')}", tipo="error", destino="resultado_conexion_label")
+                return
             self.model.guardar_configuracion_conexion(datos)
-            self.view.label.setText("Configuración de conexión guardada exitosamente.")
+            self.mostrar_mensaje("Configuración guardada correctamente", tipo="exito", destino="resultado_conexion_label")
         except Exception as e:
-            print(f"Error al guardar configuración de conexión: {e}")
+            self.mostrar_mensaje(f"Error al guardar: {str(e)}", tipo="error", destino="resultado_conexion_label")
 
     @permiso_auditoria_configuracion('editar')
     def activar_modo_offline(self):
         try:
             self.model.activar_modo_offline()
-            self.view.label.setText("Modo offline activado.")
+            self.mostrar_mensaje("Modo offline activado.", tipo="info")
         except Exception as e:
-            print(f"Error al activar el modo offline: {e}")
+            self.mostrar_mensaje(f"Error al activar el modo offline: {e}", tipo="error")
 
     @permiso_auditoria_configuracion('editar')
     def desactivar_modo_offline(self):
         try:
             self.model.desactivar_modo_offline()
-            self.view.label.setText("Modo offline desactivado.")
+            self.mostrar_mensaje("Modo offline desactivado.", tipo="info")
         except Exception as e:
-            print(f"Error al desactivar el modo offline: {e}")
+            self.mostrar_mensaje(f"Error al desactivar el modo offline: {e}", tipo="error")
 
     @permiso_auditoria_configuracion('editar')
     def cambiar_estado_notificaciones(self):
@@ -140,9 +185,9 @@ class ConfiguracionController:
             estado_actual = self.model.obtener_estado_notificaciones()
             nuevo_estado = not estado_actual
             self.model.actualizar_estado_notificaciones(nuevo_estado)
-            self.view.label.setText(f"Notificaciones {'activadas' if nuevo_estado else 'desactivadas'}.")
+            self.mostrar_mensaje(f"Notificaciones {'activadas' if nuevo_estado else 'desactivadas'}.", tipo="info")
         except Exception as e:
-            print(f"Error al cambiar estado de notificaciones: {e}")
+            self.mostrar_mensaje(f"Error al cambiar estado de notificaciones: {e}", tipo="error")
 
     @permiso_auditoria_configuracion('editar')
     def toggle_tema(self, estado):
@@ -156,7 +201,7 @@ class ConfiguracionController:
             if hasattr(app, 'main_window'):
                 app.main_window.recargar_tema()
         except Exception as e:
-            print(f"Error al cambiar tema: {e}")
+            self.mostrar_mensaje(f"Error al cambiar tema: {e}", tipo="error")
 
     # --- Métodos para la pestaña de importación CSV ---
     def seleccionar_archivo_csv(self):
@@ -173,7 +218,7 @@ class ConfiguracionController:
         auditoria_model = getattr(self, 'auditoria_model', None)
         ruta_csv = self.view.csv_file_input.text()
         if not ruta_csv or not ruta_csv.lower().endswith('.csv'):
-            self.view.import_result_label.setText("Selecciona un archivo CSV válido.")
+            self.mostrar_mensaje("Selecciona un archivo CSV válido.", tipo="error", destino="import_result_label")
             if auditoria_model:
                 auditoria_model.registrar_evento(usuario, 'configuracion', 'importar_csv_inventario', ip_origen=ip, resultado="denegado (archivo inválido)")
             return
@@ -241,11 +286,11 @@ class ConfiguracionController:
                 resumen += f"Perfiles omitidos: {len(codigos_omitidos)}\nCódigos omitidos (primeros 10): {codigos_omitidos[:10]}\n"
             if codigos_repetidos:
                 resumen += f"Perfiles omitidos por código repetido: {len(codigos_repetidos)}\nCódigos repetidos: {list(codigos_repetidos)[:10]}\n"
-            self.view.import_result_label.setText(resumen)
+            self.mostrar_mensaje(resumen, tipo="exito" if count else "advertencia", destino="import_result_label")
             if auditoria_model:
                 auditoria_model.registrar_evento(usuario, 'configuracion', 'importar_csv_inventario', ip_origen=ip, resultado=f"éxito ({count} importados, {len(codigos_omitidos)} omitidos, {len(codigos_repetidos)} repetidos)")
         except Exception as e:
-            self.view.import_result_label.setText(f"Error al importar: {e}")
+            self.mostrar_mensaje(f"Error al importar: {e}", tipo="error", destino="import_result_label")
             if auditoria_model:
                 auditoria_model.registrar_evento(usuario, 'configuracion', 'importar_csv_inventario', ip_origen=ip, resultado=f"error: {e}")
 
@@ -274,7 +319,7 @@ class ConfiguracionController:
                         chk.setChecked(permisos.get(accion, False))
                         self.view.tabla_permisos.setCellWidget(row, col, chk)
         except Exception as e:
-            self.view.permisos_result_label.setText(f"Error al cargar permisos: {e}")
+            self.mostrar_mensaje(f"Error al cargar permisos: {e}", tipo="error", destino="permisos_result_label")
 
     def guardar_permisos_modulos(self):
         """
@@ -285,9 +330,7 @@ class ConfiguracionController:
             for row in range(self.view.tabla_permisos.rowCount()):
                 usuario_rol = self.view.tabla_permisos.item(row, 0).text()
                 modulo = self.view.tabla_permisos.item(row, 1).text()
-                # Extraer id_usuario del string usuario_rol
                 usuario = usuario_rol.split(' (')[0]
-                # Buscar id_usuario y rol
                 usuarios = self.usuarios_model.obtener_usuarios()
                 id_usuario = None
                 rol = None
@@ -306,12 +349,18 @@ class ConfiguracionController:
                     'modificar': self.view.tabla_permisos.cellWidget(row, 3).isChecked(),
                     'aprobar': self.view.tabla_permisos.cellWidget(row, 4).isChecked(),
                 }
-            # Guardar en la base de datos
+            if not permisos_dict_por_usuario:
+                self.mostrar_mensaje("No hay permisos para guardar.", tipo="advertencia", destino="permisos_result_label")
+                return
+            usuario_actual_id = self.usuario_actual['id'] if self.usuario_actual and 'id' in self.usuario_actual else None
+            if usuario_actual_id is None:
+                self.mostrar_mensaje("No se puede identificar al usuario actual para registrar cambios.", tipo="error", destino="permisos_result_label")
+                return
             for id_usuario, permisos_dict in permisos_dict_por_usuario.items():
-                self.usuarios_model.actualizar_permisos_modulos_usuario(id_usuario, permisos_dict, self.usuario_actual['id'])
-            self.view.permisos_result_label.setText("Permisos actualizados correctamente.")
+                self.usuarios_model.actualizar_permisos_modulos_usuario(id_usuario, permisos_dict, usuario_actual_id)
+            self.mostrar_mensaje("Permisos actualizados correctamente.", tipo="exito", destino="permisos_result_label")
         except Exception as e:
-            self.view.permisos_result_label.setText(f"Error al guardar permisos: {e}")
+            self.mostrar_mensaje(f"Error al guardar permisos: {e}", tipo="error", destino="permisos_result_label")
 
     def conectar_pestana_permisos(self):
         """
@@ -321,4 +370,36 @@ class ConfiguracionController:
             self.cargar_permisos_modulos()
             self.view.boton_guardar_permisos.clicked.connect(self.guardar_permisos_modulos)
         except Exception as e:
-            self.view.permisos_result_label.setText(f"Error al inicializar pestaña permisos: {e}")
+            self.mostrar_mensaje(f"Error al inicializar pestaña permisos: {e}", tipo="error", destino="permisos_result_label")
+
+    def probar_conexion_bd(self, retornar_resultado=False):
+        """Prueba la conexión a la base de datos con los datos ingresados en la vista y muestra el resultado visualmente. Si retornar_resultado=True, retorna un dict con el resultado."""
+        from core.database import get_connection_string
+        import pyodbc
+        driver = self.view.server_input.text() or 'ODBC Driver 17 for SQL Server'
+        server = self.view.server_input.text()
+        username = self.view.username_input.text()
+        password = self.view.password_input.text()
+        database = self.view.default_db_input.text()
+        port = self.view.port_input.text() or '1433'
+        timeout = int(self.view.timeout_input.text() or '10')
+        connection_string = (
+            f"DRIVER={{{driver}}};"
+            f"SERVER={server},{port};"
+            f"DATABASE={database};"
+            f"UID={username};"
+            f"PWD={password};"
+            f"TrustServerCertificate=yes;"
+        )
+        try:
+            with pyodbc.connect(connection_string, timeout=timeout) as conn:
+                if retornar_resultado:
+                    return {"exito": True, "mensaje": "Conexión exitosa"}
+                self.mostrar_mensaje("Conexión exitosa", tipo="exito", destino="resultado_conexion_label")
+        except Exception as e:
+            if retornar_resultado:
+                return {"exito": False, "mensaje": str(e)}
+            self.mostrar_mensaje(f"Error: {str(e)}", tipo="error", destino="resultado_conexion_label")
+        # Siempre retornar un dict si se solicita resultado
+        if retornar_resultado:
+            return {"exito": False, "mensaje": "Error desconocido al probar la conexión."}

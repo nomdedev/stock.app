@@ -12,6 +12,7 @@
 > 7. [Integración UI + Base de Datos y flujos](#integración-ui--base-de-datos-verificación-automática)
 > 8. [Gestión de permisos y aprobaciones](#gestión-de-permisos-visibilidad-de-módulos-y-aprobaciones-admin-supervisor-usuario)
 > 9. [Errores comunes y soluciones robustas](#errores-comunes-detectados-y-soluciones-aplicadas-en-vistas-principales-2025-05)
+> 10. [Configuración y seguridad de la conexión a la base de datos](#configuración-y-seguridad-de-la-conexión-a-la-base-de-datos)
 
 ---
 
@@ -48,7 +49,6 @@ QPushButton {
     background-color: #e3f6fd;
     color: #2563eb;
     border: 1px solid #e3e3e3;
-    border-radius: 8px;
     padding: 8px 16px;
     font-size: 13px;
     font-weight: bold;
@@ -286,6 +286,53 @@ DB_PASSWORD = "mps.1887"     # Contraseña del usuario
 ### Notas sobre la Conexión a la Base de Datos
 
 El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de que el controlador ODBC esté instalado y configurado correctamente.
+
+---
+
+## Configuración y Seguridad de la Conexión a la Base de Datos
+
+### Seguridad y buenas prácticas
+- **Nunca expongas usuario, contraseña ni IP en el código fuente de los módulos.**
+- Todos los datos sensibles de conexión se encuentran en `core/config.py` y solo deben modificarse allí.
+- El string de conexión se construye siempre usando la función `get_connection_string(driver, database)` de `core/database.py`.
+- No se deben hardcodear strings de conexión ni credenciales en scripts, módulos ni notebooks.
+- El archivo `core/config.py` **no debe subirse al repositorio**. Usa `config.example.py` para compartir ejemplos.
+
+### Conexión multi-PC y configuración visual
+- El sistema permite conectarse desde varias computadoras a la PC/servidor donde están las bases de datos.
+- Desde el módulo de Configuración, pestaña "Base de Datos", puedes:
+  - Ver y editar la IP/servidor, usuario, contraseña y base de datos.
+  - Probar la conexión antes de guardar los cambios.
+  - Guardar la configuración en la base de datos para que persista entre sesiones.
+  - Ver un tutorial visual que explica:
+    - Cómo encontrar la IP del servidor (ejemplo: ejecutar `ipconfig` en la PC del servidor).
+    - Qué poner en cada campo según el caso (red local, remoto, instancia local, etc.).
+    - Qué hacer si falla la conexión (verificar firewall, usuario, contraseña, permisos de SQL Server, etc.).
+
+### Ejemplo de flujo para el usuario
+1. Ir a Configuración > Base de Datos.
+2. Cambiar la IP/servidor si es necesario (por ejemplo, la IP de la PC donde está SQL Server).
+3. Ingresar usuario y contraseña de SQL Server.
+4. Seleccionar la base de datos a la que se quiere conectar (por ejemplo, `inventario`, `usuarios`, etc.).
+5. Probar la conexión con el botón correspondiente.
+6. Si la conexión es exitosa, guardar los cambios. La configuración quedará guardada y se usará en los próximos inicios.
+
+### Notas técnicas
+- El sistema utiliza una única conexión persistente por base de datos, inyectada en los modelos.
+- Si la conexión falla, la app muestra un aviso y permite navegación básica en modo offline.
+- Todas las acciones relevantes quedan registradas en auditoría.
+- Los tests de conexión y guardado de configuración están cubiertos en los tests automáticos.
+
+---
+
+## Cambios recientes en la gestión de conexión
+- Se unificó el uso de la función `get_connection_string` para evitar exposición de credenciales.
+- Se corrigieron nombres de bases de datos y argumentos en los constructores de conexión.
+- Se agregó la posibilidad de editar y guardar la configuración de conexión desde la app.
+- Se agregó un tutorial visual y validación de conexión en el módulo de Configuración.
+- Se documentó el flujo y las buenas prácticas en este README.
+
+---
 
 ## Bases de Datos y Tablas Existentes
 

@@ -1514,3 +1514,8 @@
 2025-05-17 19:35:00,603 - INFO - Aplicación iniciada
 2025-05-17 19:39:41,294 - INFO - Aplicación iniciada
 2025-05-18 10:10:14,089 - INFO - Aplicación iniciada
+2025-05-19 11:00:55,843 - INFO - Aplicación iniciada
+2025-05-19 13:21:31,473 - INFO - Aplicación iniciada
+2025-05-19 15:23:06,526 - INFO - Aplicación iniciada
+2025-05-19 15:23:06,645 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-19 15:23:06,645 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver

@@ -15,42 +15,61 @@ class PermisoAuditoria:
             from functools import wraps
             @wraps(func)
             def wrapper(controller, *args, **kwargs):
+                # --- ESTÁNDAR: Validación de modelos y usuario ---
                 usuario_model = getattr(controller, 'usuarios_model', None)
                 auditoria_model = getattr(controller, 'auditoria_model', None)
                 usuario = getattr(controller, 'usuario_actual', None)
-                ip = usuario.get('ip', '') if usuario and isinstance(usuario, dict) else ''
+                usuario_id = usuario['id'] if usuario and 'id' in usuario else None
+                ip = usuario.get('ip', '') if usuario else ''
+                # --- Feedback visual moderno y registro de error si faltan modelos ---
                 if usuario_model is None or auditoria_model is None:
-                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                        controller.view.label.setText("Error interno: modelo de usuario o auditoría no disponible.")
+                    mensaje = "Error interno: modelo de usuario o auditoría no disponible."
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'mostrar_mensaje'):
+                        controller.view.mostrar_mensaje(mensaje, tipo='error')
+                    elif hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText(mensaje)
                     if auditoria_model:
-                        auditoria_model.registrar_evento(usuario if usuario else {'id': None}, self.modulo, accion, ip_origen=ip, resultado="error (modelo no disponible)")
+                        detalle = f"{accion} - error (modelo no disponible)"
+                        auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+                    from core.logger import log_error
+                    log_error(f"{mensaje} [{self.modulo}/{accion}]")
                     return None
-                # Permitir siempre a admin y supervisor
-                if usuario and usuario.get('rol') in ('admin', 'supervisor'):
-                    try:
-                        resultado = func(controller, *args, **kwargs)
-                        if auditoria_model:
-                            auditoria_model.registrar_evento(usuario, self.modulo, accion, ip_origen=ip, resultado="éxito")
-                        return resultado
-                    except Exception as e:
-                        if auditoria_model:
-                            auditoria_model.registrar_evento(usuario, self.modulo, accion, ip_origen=ip, resultado=f"error: {str(e)}")
-                        raise
+                # --- Validación de permisos ---
                 if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
-                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
-                    if auditoria_model:
-                        auditoria_model.registrar_evento(usuario if usuario else {'id': None}, self.modulo, accion, ip_origen=ip, resultado="denegado")
+                    mensaje = f"No tiene permiso para realizar la acción: {accion}"
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'mostrar_mensaje'):
+                        controller.view.mostrar_mensaje(mensaje, tipo='error')
+                    elif hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText(mensaje)
+                    detalle = f"{accion} - denegado"
+                    auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+                    from core.logger import log_error
+                    log_error(f"Permiso denegado: {accion} [{self.modulo}] usuario_id={usuario_id}")
                     return None
+                # --- Ejecución y registro de auditoría ---
                 try:
                     resultado = func(controller, *args, **kwargs)
-                    if auditoria_model:
-                        auditoria_model.registrar_evento(usuario, self.modulo, accion, ip_origen=ip, resultado="éxito")
+                    detalle = f"{accion} - éxito"
+                    auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return resultado
                 except Exception as e:
-                    if auditoria_model:
-                        auditoria_model.registrar_evento(usuario, self.modulo, accion, ip_origen=ip, resultado=f"error: {str(e)}")
+                    detalle = f"{accion} - error: {e}"
+                    auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+                    from core.logger import log_error
+                    log_error(f"Error en {accion} [{self.modulo}]: {e}")
+                    # Feedback visual de error
+                    mensaje = f"Error interno en la acción: {accion}. Detalle: {e}"
+                    if hasattr(controller, 'view') and hasattr(controller.view, 'mostrar_mensaje'):
+                        controller.view.mostrar_mensaje(mensaje, tipo='error')
+                    elif hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+                        controller.view.label.setText(mensaje)
                     raise
+            # --- Documentación inline del estándar ---
+            # Todos los métodos públicos decorados deben:
+            # - Validar argumentos requeridos
+            # - Usar feedback visual moderno (mostrar_mensaje)
+            # - Registrar evento de auditoría con usuario_id, modulo, accion, detalle, ip
+            # - Loggear errores críticos
             return wrapper
         return decorador
 
@@ -76,6 +95,14 @@ class ObrasController:
         self.cargar_datos_obras()
         self.mostrar_gantt()
         self.actualizar_calendario()
+
+    def _registrar_evento_auditoria(self, tipo_evento, detalle, exito=True):
+        """Utilidad para registrar eventos de auditoría en el formato correcto."""
+        usuario_id = self.usuario_actual['id'] if self.usuario_actual and 'id' in self.usuario_actual else None
+        ip = self.usuario_actual.get('ip', '') if self.usuario_actual else ''
+        estado = "éxito" if exito else "error"
+        detalle_final = f"{detalle} - {estado}"
+        self.auditoria_model.registrar_evento(usuario_id, "obras", tipo_evento, detalle_final, ip)
 
     def _insertar_obras_ejemplo_si_vacio(self):
         datos = self.model.obtener_datos_obras()
@@ -110,7 +137,10 @@ class ObrasController:
         self.cargar_datos_obras()
         self.mostrar_gantt()
         self.actualizar_calendario()
-        self.view.label.setText(f"Estado de la obra actualizado a {nuevo_estado}.")
+        if hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(f"Estado de la obra actualizado a {nuevo_estado}.", tipo='info')
+        elif hasattr(self.view, 'label'):
+            self.view.label.setText(f"Estado de la obra actualizado a {nuevo_estado}.")
 
     def cargar_headers_obras(self):
         try:
@@ -120,8 +150,12 @@ class ObrasController:
             if hasattr(self.view, 'cargar_headers'):
                 self.view.cargar_headers(headers_visibles)
         except Exception as e:
-            if hasattr(self.view, 'label'):
-                self.view.label.setText(f"Error al cargar headers: {e}")
+            mensaje = f"Error al cargar headers: {e}"
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(mensaje, tipo='error')
+            elif hasattr(self.view, 'label'):
+                self.view.label.setText(mensaje)
+            self._registrar_evento_auditoria("cargar_headers", mensaje, exito=False)
 
     def cargar_datos_obras(self):
         try:
@@ -141,18 +175,34 @@ class ObrasController:
                     for col, header in enumerate(self.model.obtener_headers_obras()):
                         self.view.tabla_obras.setItem(row, col, QTableWidgetItem(str(obra.get(header, ''))))
         except Exception as e:
-            self.view.label.setText(f"Error al cargar datos: {e}")
+            mensaje = f"Error al cargar datos: {e}"
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(mensaje, tipo='error')
+            elif hasattr(self.view, 'label'):
+                self.view.label.setText(mensaje)
+            self._registrar_evento_auditoria("cargar_datos", mensaje, exito=False)
 
     def verificar_obra_en_sql(self, nombre, cliente):
         """Verifica si la obra existe en la base de datos SQL Server y muestra el resultado en el label."""
         try:
             datos = self.model.obtener_obra_por_nombre_cliente(nombre, cliente)
             if datos:
-                self.view.label.setText(f"✔ Obra encontrada en SQL: {datos}")
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(f"✔ Obra encontrada en SQL: {datos}", tipo='info')
+                elif hasattr(self.view, 'label'):
+                    self.view.label.setText(f"✔ Obra encontrada en SQL: {datos}")
             else:
-                self.view.label.setText("✖ La obra NO se encuentra en la base de datos SQL.")
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje("✖ La obra NO se encuentra en la base de datos SQL.", tipo='warning')
+                elif hasattr(self.view, 'label'):
+                    self.view.label.setText("✖ La obra NO se encuentra en la base de datos SQL.")
         except Exception as e:
-            self.view.label.setText(f"Error al verificar obra en SQL: {e}")
+            mensaje = f"Error al verificar obra en SQL: {e}"
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(mensaje, tipo='error')
+            elif hasattr(self.view, 'label'):
+                self.view.label.setText(mensaje)
+            self._registrar_evento_auditoria("verificar_obra_sql", mensaje, exito=False)
 
     def verificar_obra_en_sql_dialog(self):
         """Abre un diálogo para ingresar nombre y cliente y verifica la existencia en SQL Server."""
@@ -178,7 +228,10 @@ class ObrasController:
             nombre = nombre_input.text()
             cliente = cliente_input.text()
             if not (nombre and cliente):
-                self.view.label.setText("Debe ingresar nombre y cliente.")
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje("Debe ingresar nombre y cliente.", tipo='warning')
+                elif hasattr(self.view, 'label'):
+                    self.view.label.setText("Debe ingresar nombre y cliente.")
                 return
             self.verificar_obra_en_sql(nombre, cliente)
 
@@ -302,7 +355,10 @@ class ObrasController:
                 fecha_entrega = fecha_entrega_input.date().toString("yyyy-MM-dd")
                 # Validación básica
                 if not (nombre and cliente and direccion and telefono and cantidad_aberturas and fecha_compra and estado and fecha_medicion and dias_entrega and fecha_entrega):
-                    self.view.label.setText("Por favor, complete todos los campos obligatorios.")
+                    if hasattr(self.view, 'mostrar_mensaje'):
+                        self.view.mostrar_mensaje("Por favor, complete todos los campos obligatorios.", tipo='warning')
+                    elif hasattr(self.view, 'label'):
+                        self.view.label.setText("Por favor, complete todos los campos obligatorios.")
                     return
                 # Guardar todos los campos en el modelo
                 self.model.agregar_obra((
@@ -310,11 +366,7 @@ class ObrasController:
                     fecha_medicion, dias_entrega, fecha_entrega, self.usuario_actual['id'] if self.usuario_actual else None
                 ))
                 # Registrar en auditoría con formato unificado
-                if hasattr(self, 'auditoria_model'):
-                    ip = self.usuario_actual.get('ip', '') if self.usuario_actual else ''
-                    self.auditoria_model.registrar_evento(
-                        self.usuario_actual, "obras", f"Alta de obra: {nombre}", ip_origen=ip, resultado="éxito"
-                    )
+                self._registrar_evento_auditoria("alta_obra", f"Alta de obra: {nombre}")
                 mensaje = (
                     f"<b>Obra agregada exitosamente:</b><br>"
                     f"<ul style='margin:0 0 0 16px;padding:0'>"
@@ -346,17 +398,14 @@ class ObrasController:
                 self.cargar_datos_obras()
                 self.mostrar_gantt()
         except Exception as e:
-            print(f"Error al agregar obra: {e}")
+            from core.logger import log_error
+            log_error(f"Error al agregar obra: {e}")
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje(f"Error al agregar la obra: {e}", tipo='error')
-            else:
+            elif hasattr(self.view, 'label'):
                 self.view.label.setText("Error al agregar la obra.")
             # Registrar error en auditoría con formato unificado
-            if hasattr(self, 'auditoria_model'):
-                ip = self.usuario_actual.get('ip', '') if self.usuario_actual else ''
-                self.auditoria_model.registrar_evento(
-                    self.usuario_actual, "obras", f"Error alta obra: {e}", ip_origen=ip, resultado="error"
-                )
+            self._registrar_evento_auditoria("alta_obra", f"Error alta obra: {e}", exito=False)
 
     def editar_fecha_entrega(self, id_obra, fecha_actual):
         from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton
@@ -390,7 +439,10 @@ class ObrasController:
         from PyQt6.QtCore import QDate
         datos = self.model.obtener_obra_por_id(id_obra)
         if not datos:
-            self.view.label.setText("No se encontró la obra para editar.")
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje("No se encontró la obra para editar.", tipo='error')
+            elif hasattr(self.view, 'label'):
+                self.view.label.setText("No se encontró la obra para editar.")
             return
         # Mapear datos actuales
         nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars, fecha_medicion, dias_entrega, fecha_entrega = (
@@ -466,11 +518,7 @@ class ObrasController:
                 fecha_entrega_input.date().toString("yyyy-MM-dd")
             )
             # Registrar en auditoría con formato unificado
-            if hasattr(self, 'auditoria_model'):
-                ip = self.usuario_actual.get('ip', '') if self.usuario_actual else ''
-                self.auditoria_model.registrar_evento(
-                    self.usuario_actual, "obras", f"Edición de obra: {id_obra}", ip_origen=ip, resultado="éxito"
-                )
+            self._registrar_evento_auditoria("editar_obra", f"Edición de obra: {id_obra}")
             self.cargar_datos_obras()
             self.mostrar_gantt()
 
@@ -510,7 +558,12 @@ class ObrasController:
                 # Aquí puedes agregar lógica para resaltar fechas en el calendario
                 print(f"Fecha programada: {fecha}")
         except Exception as e:
-            self.view.label.setText(f"Error al actualizar calendario: {e}")
+            mensaje = f"Error al actualizar calendario: {e}"
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(mensaje, tipo='error')
+            elif hasattr(self.view, 'label'):
+                self.view.label.setText(mensaje)
+            self._registrar_evento_auditoria("actualizar_calendario", mensaje, exito=False)
 
     @permiso_auditoria_obras('crear')
     def asociar_material_a_obra(self, id_obra, id_item, cantidad_necesaria):
@@ -539,73 +592,53 @@ class ObrasController:
                     id_item, -cantidad_necesaria, "Reserva", id_obra
                 )
             # 4. Registrar auditoría con formato unificado
-            ip = self.usuario_actual.get('ip', '') if self.usuario_actual else ''
-            auditoria_model.registrar_evento(
-                self.usuario_actual, "obras", f"Asoció material {id_item} a obra {id_obra} (estado: {estado})", ip_origen=ip, resultado="éxito"
-            )
+            self._registrar_evento_auditoria("asociar_material", f"Asoció material {id_item} a obra {id_obra} (estado: {estado})")
             # 5. Feedback UI
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje(f"✔ Material {id_item} asociado a obra. Estado: {estado}", tipo="exito")
             else:
                 self.view.label.setText(f"✔ Material {id_item} asociado a obra. Estado: {estado}")
         except Exception as e:
+            mensaje = "❌ Error al asociar material: " + str(e)
             if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje("❌ Error al asociar material: " + str(e), tipo="error")
-            else:
-                self.view.label.setText("❌ Error al asociar material: " + str(e))
+                self.view.mostrar_mensaje(mensaje, tipo="error")
+            elif hasattr(self.view, 'label'):
+                self.view.label.setText(mensaje)
             from core.logger import Logger
             Logger().error("Error al asociar material: " + str(e))
             # Registrar error en auditoría con formato unificado
-            if hasattr(self, 'auditoria_model'):
-                ip = self.usuario_actual.get('ip', '') if self.usuario_actual else ''
-                self.auditoria_model.registrar_evento(
-                    self.usuario_actual, "obras", f"Error asociar material: {e}", ip_origen=ip, resultado="error"
-                )
+            self._registrar_evento_auditoria("asociar_material", f"Error asociar material: {e}", exito=False)
 
     @permiso_auditoria_obras('exportar')
     def exportar_cronograma(self, formato, id_obra):
         try:
             mensaje = self.model.exportar_cronograma(formato, id_obra)
-            if hasattr(self, 'auditoria_model'):
-                ip = self.usuario_actual.get('ip', '') if self.usuario_actual else ''
-                self.auditoria_model.registrar_evento(
-                    self.usuario_actual, "obras", f"Exportación de cronograma de obra {id_obra} a {formato}", ip_origen=ip, resultado="éxito"
-                )
+            self._registrar_evento_auditoria("exportar_cronograma", f"Exportación de cronograma de obra {id_obra} a {formato}")
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje(mensaje, tipo='exito')
             else:
                 self.view.label.setText(mensaje)
         except Exception as e:
-            if hasattr(self, 'auditoria_model'):
-                ip = self.usuario_actual.get('ip', '') if self.usuario_actual else ''
-                self.auditoria_model.registrar_evento(
-                    self.usuario_actual, "obras", f"Error exportando cronograma de obra {id_obra}: {e}", ip_origen=ip, resultado="error"
-                )
+            self._registrar_evento_auditoria("exportar_cronograma", f"Error exportando cronograma de obra {id_obra}: {e}", exito=False)
+            mensaje = f"Error al exportar cronograma: {e}"
             if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(f"Error al exportar cronograma: {e}", tipo='error')
-            else:
-                self.view.label.setText(f"Error al exportar cronograma: {e}")
+                self.view.mostrar_mensaje(mensaje, tipo='error')
+            elif hasattr(self.view, 'label'):
+                self.view.label.setText(mensaje)
 
     @permiso_auditoria_obras('eliminar')
     def eliminar_etapa_cronograma(self, id_etapa):
         try:
             self.model.eliminar_etapa_cronograma(id_etapa)
-            if hasattr(self, 'auditoria_model'):
-                ip = self.usuario_actual.get('ip', '') if self.usuario_actual else ''
-                self.auditoria_model.registrar_evento(
-                    self.usuario_actual, "obras", f"Eliminación de etapa de cronograma {id_etapa}", ip_origen=ip, resultado="éxito"
-                )
+            self._registrar_evento_auditoria("eliminar_etapa", f"Eliminación de etapa de cronograma {id_etapa}")
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje(f"Etapa {id_etapa} eliminada correctamente.", tipo='exito')
             else:
                 self.view.label.setText(f"Etapa {id_etapa} eliminada correctamente.")
         except Exception as e:
-            if hasattr(self, 'auditoria_model'):
-                ip = self.usuario_actual.get('ip', '') if self.usuario_actual else ''
-                self.auditoria_model.registrar_evento(
-                    self.usuario_actual, "obras", f"Error eliminando etapa de cronograma {id_etapa}: {e}", ip_origen=ip, resultado="error"
-                )
+            self._registrar_evento_auditoria("eliminar_etapa", f"Error eliminando etapa de cronograma {id_etapa}: {e}", exito=False)
+            mensaje = f"Error al eliminar etapa: {e}"
             if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(f"Error al eliminar etapa: {e}", tipo='error')
-            else:
-                self.view.label.setText(f"Error al eliminar etapa: {e}")
+                self.view.mostrar_mensaje(mensaje, tipo='error')
+            elif hasattr(self.view, 'label'):
+                self.view.label.setText(mensaje)

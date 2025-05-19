@@ -27,84 +27,139 @@ class AuditoriaModel:
             return self.db.ejecutar_query(query, tuple(filtros.values()))
         return self.db.ejecutar_query(query)
 
-    def exportar_auditorias(self, formato):
+    def exportar_auditorias(self, formato="excel", filename=None):
+        """
+        Exporta los registros de auditoría a Excel o PDF.
+        Args:
+            formato (str): 'excel' o 'pdf'.
+            filename (str): Nombre de archivo opcional.
+        Returns:
+            str: Mensaje de resultado.
+        """
         query = """
         SELECT fecha_hora, usuario_id, modulo_afectado, tipo_evento, detalle, ip_origen
         FROM auditorias_sistema
         """
         datos = self.db.ejecutar_query(query)
-
+        columnas = ["Fecha/Hora", "Usuario", "Módulo", "Evento", "Detalle", "IP"]
+        if not datos or len(datos) == 0:
+            return "No hay datos de auditoría para exportar."
+        if not filename:
+            filename = "auditorias.xlsx" if formato == "excel" else "auditorias.pdf"
         if formato == "excel":
-            df = pd.DataFrame(datos, columns=["Fecha", "Usuario", "Módulo", "Evento", "Detalle", "IP"])
-            df.to_excel("auditorias.xlsx", index=False)
-            return "Auditorías exportadas a Excel."
-
+            try:
+                import pandas as pd
+                df = pd.DataFrame(datos, columns=columnas)
+                df.to_excel(filename, index=False)
+                return f"Auditorías exportadas a Excel: {filename}"
+            except Exception as e:
+                return f"Error al exportar a Excel: {e}"
         elif formato == "pdf":
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt="Auditorías del Sistema", ln=True, align="C")
-            for row in datos:
-                pdf.cell(200, 10, txt=str(row), ln=True)
-            pdf.output("auditorias.pdf")
-            return "Auditorías exportadas a PDF."
+            try:
+                from fpdf import FPDF
+                pdf = FPDF()
+                pdf.add_page()
+                pdf.set_font("Arial", size=10)
+                pdf.cell(200, 10, "Auditorías del Sistema", ln=True, align="C")
+                for row in datos:
+                    fila = " | ".join([str(x) for x in row])
+                    pdf.cell(0, 8, fila, ln=True)
+                pdf.output(filename)
+                return f"Auditorías exportadas a PDF: {filename}"
+            except Exception as e:
+                return f"Error al exportar a PDF: {e}"
+        return "Formato no soportado. Usa 'excel' o 'pdf'."
 
-        return "Formato no soportado."
-
-    def exportar_logs(self, formato):
-        query = """
-        SELECT fecha_hora, usuario_id, modulo_afectado, tipo_evento, detalle, ip_origen
-        FROM auditorias_sistema
+    def registrar_evento(self, usuario_id, modulo, tipo_evento, detalle, ip_origen):
         """
-        datos = self.db.ejecutar_query(query)
-
-        if formato == "excel":
-            df = pd.DataFrame(datos, columns=["Fecha", "Usuario", "Módulo", "Evento", "Detalle", "IP"])
-            df.to_excel("logs_auditoria.xlsx", index=False)
-            return "Logs exportados a Excel."
-
-        elif formato == "pdf":
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt="Logs de Auditoría", ln=True, align="C")
-            for row in datos:
-                pdf.cell(200, 10, txt=str(row), ln=True)
-            pdf.output("logs_auditoria.pdf")
-            return "Logs exportados a PDF."
-
-        return "Formato no soportado."
-
-    def registrar_evento(self, usuario, modulo, accion, ip_origen=None, resultado=None):
+        Registra un evento en la tabla auditorias_sistema.
+        Args:
+            usuario_id (int): ID del usuario (obligatorio).
+            modulo (str): Nombre del módulo afectado.
+            tipo_evento (str): Tipo de evento.
+            detalle (str): Detalle del evento.
+            ip_origen (str): IP de origen (opcional).
+        Returns:
+            bool: True si se registró correctamente, False si hubo error.
         """
-        Registra un evento de auditoría con formato unificado: 
-        detalle = f"{accion} | resultado: {resultado if resultado else 'N/A'}"
-        """
+        if usuario_id is None or not modulo or not tipo_evento:
+            try:
+                from core.logger import log_error
+                log_error(f"registrar_evento: Argumentos faltantes: usuario_id={usuario_id}, modulo={modulo}, tipo_evento={tipo_evento}")
+            except Exception:
+                pass
+            return False
         query = """
         INSERT INTO auditorias_sistema (usuario_id, modulo_afectado, tipo_evento, detalle, ip_origen)
         VALUES (?, ?, ?, ?, ?)
         """
-        usuario_id = usuario['id'] if usuario and 'id' in usuario else None
-        detalle = accion
-        if resultado:
-            detalle = f"{accion} | resultado: {resultado}"
-        self.db.ejecutar_query(query, (usuario_id, modulo, 'accion', detalle, ip_origen))
+        try:
+            self.db.ejecutar_query(query, (usuario_id, modulo, tipo_evento, detalle, ip_origen))
+            return True
+        except Exception as e:
+            try:
+                from core.logger import log_error
+                log_error(f"Error en registrar_evento: {e}")
+            except Exception:
+                pass
+            return False
 
     def registrar_evento_obra(self, usuario, detalle, ip_origen=None):
-        """Registra un evento de auditoría para acciones sobre obras."""
+        """
+        Registra un evento de auditoría para acciones sobre obras.
+        Args:
+            usuario (dict): Debe contener 'id'.
+            detalle (str): Descripción del evento.
+            ip_origen (str): IP de origen (opcional).
+        Returns:
+            bool: True si se registró correctamente, False si hubo error.
+        """
         modulo_afectado = 'obras'
         tipo_evento = 'asociar_material_a_obra'
         usuario_id = usuario['id'] if usuario and 'id' in usuario else None
+        if usuario_id is None:
+            try:
+                from core.logger import log_error
+                log_error(f"registrar_evento_obra: usuario sin id: {usuario}")
+            except Exception:
+                pass
+            return False
         query = "INSERT INTO auditorias_sistema (usuario_id, modulo_afectado, tipo_evento, detalle, ip_origen) VALUES (?, ?, ?, ?, ?)"
-        self.db.ejecutar_query(query, (usuario_id, modulo_afectado, tipo_evento, detalle, ip_origen))
+        try:
+            self.db.ejecutar_query(query, (usuario_id, modulo_afectado, tipo_evento, detalle, ip_origen))
+            return True
+        except Exception as e:
+            try:
+                from core.logger import log_error
+                log_error(f"Error en registrar_evento_obra: {e}")
+            except Exception:
+                pass
+            return False
 
     def obtener_logs(self, modulo_afectado):
         query = "SELECT * FROM auditorias_sistema WHERE modulo_afectado = ?"
         result = self.db.ejecutar_query(query, (modulo_afectado,))
         return result if result is not None else []
 
-    def consultar_auditoria(self, fecha_inicio, fecha_fin, usuario):
-        query = "SELECT * FROM auditoria WHERE fecha >= ? AND fecha <= ? AND usuario LIKE ?"
-        parametros = (fecha_inicio, fecha_fin, f"%{usuario}%")
+    def consultar_auditoria(self, fecha_inicio, fecha_fin, usuario_id=None):
+        """
+        Consulta auditorías filtrando por fecha y usuario_id (opcional).
+        Args:
+            fecha_inicio (str): Fecha inicio (YYYY-MM-DD).
+            fecha_fin (str): Fecha fin (YYYY-MM-DD).
+            usuario_id (int, opcional): ID del usuario. Si es None, no filtra por usuario.
+        Returns:
+            list: Resultados de la consulta.
+        """
+        if usuario_id:
+            query = """
+            SELECT * FROM auditorias_sistema WHERE fecha_hora >= ? AND fecha_hora <= ? AND usuario_id = ?
+            """
+            parametros = (fecha_inicio, fecha_fin, usuario_id)
+        else:
+            query = """
+            SELECT * FROM auditorias_sistema WHERE fecha_hora >= ? AND fecha_hora <= ?
+            """
+            parametros = (fecha_inicio, fecha_fin)
         resultados = self.db.ejecutar_query(query, parametros)
-        return resultados
+        return resultados if resultados is not None else []

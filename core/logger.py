@@ -61,3 +61,12 @@ class Logger:
 
     def log_auditoria(self, usuario, accion, detalles):
         self.logger.info(f"Auditoría - Usuario: {usuario}, Acción: {accion}, Detalles: {detalles}")
+
+def log_error(msg):
+    """Función utilitaria para loguear errores desde cualquier módulo."""
+    try:
+        logger = Logger()
+        logger.error(msg)
+    except Exception:
+        # Fallback: print si el logger falla
+        print(f"[ERROR] {msg}")

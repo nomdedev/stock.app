@@ -6,6 +6,7 @@ from core.base_controller import BaseController
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
+from core.logger import log_error
 
 class PermisoAuditoria:
     def __init__(self, modulo):
@@ -18,34 +19,37 @@ class PermisoAuditoria:
                 auditoria_model = getattr(controller, 'auditoria_model', None)
                 usuario = getattr(controller, 'usuario_actual', None)
                 ip = usuario.get('ip', '') if usuario else ''
-                if not usuario or not usuario_model:
+                if not usuario or not usuario_model or not auditoria_model:
                     if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                         controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
-                    if auditoria_model:
-                        auditoria_model.registrar_evento(usuario if usuario else {'id': None}, self.modulo, f"{accion} - denegado", ip_origen=ip)
                     return None
                 if usuario['rol'] not in ('admin', 'supervisor'):
                     modulos_permitidos = usuario_model.obtener_modulos_permitidos(usuario)
                     if self.modulo not in modulos_permitidos:
                         if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                             controller.view.label.setText(f"No tiene permiso para acceder al módulo: {self.modulo}")
-                        if auditoria_model:
-                            auditoria_model.registrar_evento(usuario, self.modulo, f"{accion} - denegado (módulo)", ip_origen=ip)
+                        usuario_id = usuario.get('id') if usuario else None
+                        detalle = f"{accion} - denegado (módulo)"
+                        auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                         return None
                 if not usuario_model.tiene_permiso(usuario, self.modulo, accion):
                     if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                         controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
-                    if auditoria_model:
-                        auditoria_model.registrar_evento(usuario, self.modulo, f"{accion} - denegado (permiso)", ip_origen=ip)
+                    usuario_id = usuario.get('id') if usuario else None
+                    detalle = f"{accion} - denegado (permiso)"
+                    auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return None
                 try:
                     resultado = func(controller, *args, **kwargs)
-                    if auditoria_model:
-                        auditoria_model.registrar_evento(usuario, self.modulo, f"{accion} - éxito", ip_origen=ip)
+                    usuario_id = usuario.get('id') if usuario else None
+                    detalle = f"{accion} - éxito"
+                    auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return resultado
                 except Exception as e:
-                    if auditoria_model:
-                        auditoria_model.registrar_evento(usuario, self.modulo, f"{accion} - error: {str(e)}", ip_origen=ip)
+                    usuario_id = usuario.get('id') if usuario else None
+                    detalle = f"{accion} - error: {e}"
+                    auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+                    log_error(f"Error en {accion}: {e}")
                     raise
             return wrapper
         return decorador
@@ -115,10 +119,7 @@ class UsuariosController(BaseController):
 
         self.model.agregar_usuario((nombre, email, rol))
         self.view.label.setText("Usuario agregado exitosamente.")
-        usuario = getattr(self, 'usuario_actual', None)
-        ip = usuario.get('ip', '') if usuario else ''
-        if hasattr(self, 'auditoria_model'):
-            self.auditoria_model.registrar_evento(usuario, 'usuarios', 'agregar', ip_origen=ip, resultado="éxito")
+        self._registrar_evento_auditoria('agregar', estado="éxito")
         self.view.email_input.setStyleSheet("")
         self.view.nombre_input.setStyleSheet("")
 
@@ -127,19 +128,14 @@ class UsuariosController(BaseController):
         try:
             self.model.actualizar_usuario(id_usuario, datos, fecha_actualizacion)
             self.view.label.setText("Usuario actualizado exitosamente.")
-            if hasattr(self, 'auditoria_model'):
-                usuario = getattr(self, 'usuario_actual', None)
-                ip = usuario.get('ip', '') if usuario else ''
-                self.auditoria_model.registrar_evento(usuario, 'usuarios', 'actualizar', ip_origen=ip, resultado="éxito")
+            self._registrar_evento_auditoria('actualizar', estado="éxito")
         except Exception as e:
             self.view.label.setText(f"Error: {str(e)}")
+            log_error(f"Error actualizando usuario: {e}")
 
     def marcar_como_favorito(self):
         self.view.parent().agregar_a_favoritos("Usuarios")
-        if hasattr(self, 'auditoria_model'):
-            usuario = getattr(self, 'usuario_actual', None)
-            ip = usuario.get('ip', '') if usuario else ''
-            self.auditoria_model.registrar_evento(usuario, 'usuarios', 'marcar_favorito', ip_origen=ip, resultado="éxito")
+        self._registrar_evento_auditoria('marcar_favorito', estado="éxito")
 
     def registrar_login_fallido(self, ip, usuario):
         self.model.db.registrar_login_fallido(ip, usuario, datetime.now().isoformat(), "fallido")
@@ -242,10 +238,7 @@ class UsuariosController(BaseController):
         self.model.actualizar_estado_usuario(usuario_id, nuevo_estado)
         self.view.label.setText(f"Estado del usuario con ID {usuario_id} cambiado a {nuevo_estado}.")
         self.cargar_usuarios()
-        if hasattr(self, 'auditoria_model'):
-            usuario = getattr(self, 'usuario_actual', None)
-            ip = usuario.get('ip', '') if usuario else ''
-            self.auditoria_model.registrar_evento(usuario, 'usuarios', 'cambiar_estado', ip_origen=ip, resultado="éxito")
+        self._registrar_evento_auditoria('cambiar_estado', estado="éxito")
 
     def _mostrar_roles_permisos(self):
         # Carga la tabla de roles y permisos con checkboxes
@@ -360,3 +353,14 @@ class UsuariosController(BaseController):
         # Guardar en la tabla permisos_usuario usando username
         self.model.actualizar_permisos_usuario(username, nuevos_permisos)
         QMessageBox.information(self.view, "Permisos actualizados", "Los permisos de módulos han sido actualizados para el usuario seleccionado.")
+
+    def _registrar_evento_auditoria(self, accion, detalle_extra="", estado=""):
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
+        usuario_id = usuario.get('id') if usuario else None
+        detalle = f"{accion}{' - ' + detalle_extra if detalle_extra else ''}{' - ' + estado if estado else ''}"
+        try:
+            if self.auditoria_model:
+                self.auditoria_model.registrar_evento(usuario_id, 'usuarios', accion, detalle, ip)
+        except Exception as e:
+            log_error(f"Error registrando evento auditoría: {e}")

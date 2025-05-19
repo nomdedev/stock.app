@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QMessageBox
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
+from core.logger import log_error
 
 class PermisoAuditoria:
     def __init__(self, modulo):
@@ -10,27 +11,33 @@ class PermisoAuditoria:
         def decorador(func):
             @wraps(func)
             def wrapper(controller, *args, **kwargs):
-                db_connection = getattr(controller, 'db_connection', None)
                 usuario_model = getattr(controller, 'usuarios_model', None)
                 auditoria_model = getattr(controller, 'auditoria_model', None)
-                if usuario_model is None and db_connection is not None:
-                    from modules.usuarios.model import UsuariosModel
-                    usuario_model = UsuariosModel(db_connection)
-                if auditoria_model is None and db_connection is not None:
-                    from modules.auditoria.model import AuditoriaModel
-                    auditoria_model = AuditoriaModel(db_connection)
                 usuario = getattr(controller, 'usuario_actual', None)
+                ip = usuario.get('ip', '') if usuario else ''
                 if not usuario or not usuario_model or not auditoria_model:
                     if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                        controller.view.label.setText("Error interno: modelo de usuario o auditoría no disponible.")
+                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
                     return None
                 if not usuario_model.tiene_permiso(usuario, self.modulo, accion):
                     if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                         controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                    usuario_id = usuario.get('id') if usuario else None
+                    detalle = f"{accion} - denegado"
+                    auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return None
-                resultado = func(controller, *args, **kwargs)
-                auditoria_model.registrar_evento(usuario, self.modulo, accion)
-                return resultado
+                try:
+                    resultado = func(controller, *args, **kwargs)
+                    usuario_id = usuario.get('id') if usuario else None
+                    detalle = f"{accion} - éxito"
+                    auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+                    return resultado
+                except Exception as e:
+                    usuario_id = usuario.get('id') if usuario else None
+                    detalle = f"{accion} - error: {e}"
+                    auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+                    log_error(f"Error en {accion}: {e}")
+                    raise
             return wrapper
         return decorador
 
@@ -46,19 +53,28 @@ class HerrajesController:
         self.db_connection = db_connection
         self.view.boton_agregar.clicked.connect(self.agregar_material)
 
+    def _registrar_evento_auditoria(self, accion, detalle_extra="", estado=""):
+        usuario = getattr(self, 'usuario_actual', None)
+        ip = usuario.get('ip', '') if usuario else ''
+        usuario_id = usuario.get('id') if usuario else None
+        detalle = f"{accion}{' - ' + detalle_extra if detalle_extra else ''}{' - ' + estado if estado else ''}"
+        try:
+            if self.auditoria_model:
+                self.auditoria_model.registrar_evento(usuario_id, 'herrajes', accion, detalle, ip)
+        except Exception as e:
+            log_error(f"Error registrando evento auditoría: {e}")
+
     @permiso_auditoria_herrajes('editar')
     def agregar_material(self):
         usuario = getattr(self, 'usuario_actual', None)
         ip = usuario.get('ip', '') if usuario else ''
-        auditoria_model = getattr(self, 'auditoria_model', None)
         try:
             nombre = self.view.nombre_input.text()
             cantidad = self.view.cantidad_input.text()
             proveedor = self.view.proveedor_input.text()
             if not (nombre and cantidad and proveedor):
                 self.view.label.setText("Por favor, complete todos los campos.")
-                if auditoria_model:
-                    auditoria_model.registrar_evento(usuario, 'herrajes', 'agregar_material', ip_origen=ip, resultado="denegado (faltan campos)")
+                self._registrar_evento_auditoria('agregar_material', 'faltan campos', 'denegado')
                 return
             if self.model.verificar_material_existente(nombre):
                 QMessageBox.warning(
@@ -67,15 +83,13 @@ class HerrajesController:
                     "Ya existe un material con el mismo nombre."
                 )
                 self.view.nombre_input.setStyleSheet("border: 1px solid red;")
-                if auditoria_model:
-                    auditoria_model.registrar_evento(usuario, 'herrajes', 'agregar_material', ip_origen=ip, resultado="denegado (material existente)")
+                self._registrar_evento_auditoria('agregar_material', 'material existente', 'denegado')
                 return
             self.model.agregar_material((nombre, cantidad, proveedor))
             self.view.label.setText("Material agregado exitosamente.")
             self.view.nombre_input.setStyleSheet("")
-            if auditoria_model:
-                auditoria_model.registrar_evento(usuario, 'herrajes', 'agregar_material', ip_origen=ip, resultado="éxito")
+            self._registrar_evento_auditoria('agregar_material', '', 'éxito')
         except Exception as e:
             self.view.label.setText(f"Error al agregar material: {e}")
-            if auditoria_model:
-                auditoria_model.registrar_evento(usuario, 'herrajes', 'agregar_material', ip_origen=ip, resultado=f"error: {e}")
+            self._registrar_evento_auditoria('agregar_material', f"error: {e}", 'error')
+            log_error(f"Error en agregar_material: {e}")

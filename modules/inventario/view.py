@@ -408,14 +408,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 QMessageBox.warning(dialog, "Falta código", "Ingrese un código de proveedor.")
                 return
             query = "SELECT id, codigo, descripcion, stock FROM inventario_perfiles WHERE codigo LIKE ?"
-            connection_string = (
-                f"DRIVER={{{self.db_connection.driver}}};"
-                f"SERVER=localhost\\SQLEXPRESS;"
-                f"DATABASE={self.db_connection.database};"
-                f"UID={self.db_connection.username};"
-                f"PWD={self.db_connection.password};"
-                f"TrustServerCertificate=yes;"
-            )
+            from core.database import get_connection_string
+            connection_string = get_connection_string(self.db_connection.driver, self.db_connection.database)
             import pyodbc
             try:
                 with pyodbc.connect(connection_string, timeout=10) as conn:
@@ -465,14 +459,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
             if not pedidos:
                 QMessageBox.warning(dialog, "Nada para pedir", "No hay cantidades válidas para pedir.")
                 return
-            connection_string = (
-                f"DRIVER={{{self.db_connection.driver}}};"
-                f"SERVER=localhost\\SQLEXPRESS;"
-                f"DATABASE={self.db_connection.database};"
-                f"UID={self.db_connection.username};"
-                f"PWD={self.db_connection.password};"
-                f"TrustServerCertificate=yes;"
-            )
+            from core.database import get_connection_string
+            connection_string = get_connection_string(self.db_connection.driver, self.db_connection.database)
             import pyodbc
             try:
                 with pyodbc.connect(connection_string, timeout=10) as conn:

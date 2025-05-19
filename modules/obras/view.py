@@ -6,6 +6,7 @@ import os
 from functools import partial
 from core.table_responsive_mixin import TableResponsiveMixin
 from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
+from core.database import get_connection_string
 
 class ObrasView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default", db_connection=None):
@@ -103,15 +104,8 @@ class ObrasView(QWidget, TableResponsiveMixin):
         # Intenta obtener headers dinámicamente desde la base de datos
         if self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"]):
             import pyodbc
+            connection_string = get_connection_string(self.db_connection.driver, self.db_connection.database)
             query = f"SELECT TOP 0 * FROM {tabla}"
-            connection_string = (
-                f"DRIVER={{{self.db_connection.driver}}};"
-                f"SERVER=localhost\\SQLEXPRESS;"
-                f"DATABASE={self.db_connection.database};"
-                f"UID={self.db_connection.username};"
-                f"PWD={self.db_connection.password};"
-                f"TrustServerCertificate=yes;"
-            )
             try:
                 with pyodbc.connect(connection_string, timeout=10) as conn:
                     cursor = conn.cursor()

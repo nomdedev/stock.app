@@ -522,57 +522,60 @@ def chequear_conexion_bd():
 
 def chequear_conexion_bd_gui():
     from PyQt6.QtWidgets import QApplication, QMessageBox
-    DB_DRIVER = os.environ.get('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
-    # Permitir conexión por IP o nombre de servidor
-    DB_SERVER = os.environ.get('DB_SERVER', '192.168.1.100\\SQLEXPRESS')  # Cambia por la IP real o usa variable de entorno
-    DB_DATABASE = os.environ.get('DB_DATABASE', 'inventario')
-    DB_USERNAME = os.environ.get('DB_USERNAME', 'sa')
-    DB_PASSWORD = os.environ.get('DB_PASSWORD', 'mps.1887')
-    try:
-        connection_string = (
-            f"DRIVER={{{DB_DRIVER}}};"
-            f"SERVER={DB_SERVER};"
-            f"DATABASE={DB_DATABASE};"
-            f"UID={DB_USERNAME};"
-            f"PWD={DB_PASSWORD};"
-            f"TrustServerCertificate=yes;"
-        )
-        import pyodbc
-        with pyodbc.connect(connection_string, timeout=5) as conn:
-            print("✅ Conexión exitosa a la base de datos.")
-    except Exception as e:
-        app = QApplication.instance() or QApplication(sys.argv)
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Critical)
-        msg.setWindowTitle("Error de conexión a la base de datos")
-        msg.setText("❌ No se pudo conectar a la base de datos.")
-        msg.setInformativeText("Verifica usuario, contraseña, servidor (puede ser IP o nombre) y que SQL Server acepte autenticación SQL.\n\n" + str(e))
-        # Estilo minimalista, letra pequeña, padding simétrico, centrado, bordes redondeados, fondo claro
-        msg.setStyleSheet("""
-            QMessageBox {
-                background: #f1f5f9;
-                color: #ef4444;
-                font-size: 10px;
-                font-family: 'Segoe UI', 'Roboto', sans-serif;
-                font-weight: 500;
-                border-radius: 12px;
-                padding: 20px 24px 20px 24px;
-            }
-            QLabel {
-                qproperty-alignment: 'AlignCenter';
-                font-size: 10px;
-            }
-            QPushButton {
-                min-width: 80px;
-                min-height: 28px;
-                border-radius: 8px;
-                font-size: 10px;
-                font-family: 'Segoe UI', 'Roboto', sans-serif;
-                padding: 4px 16px;
-            }
-        """)
-        msg.exec()
-        sys.exit(1)
+    # Usar SIEMPRE los parámetros centralizados de core.config
+    from core.config import DB_SERVER, DB_SERVER_ALTERNATE, DB_USERNAME, DB_PASSWORD, DB_DEFAULT_DATABASE, DB_TIMEOUT
+    DB_DRIVER = 'ODBC Driver 17 for SQL Server'
+    # Intentar primero con la IP, luego con el nombre de instancia alternativo
+    servidores = [DB_SERVER, DB_SERVER_ALTERNATE]
+    for DB_SERVER_ACTUAL in servidores:
+        try:
+            connection_string = (
+                f"DRIVER={{{DB_DRIVER}}};"
+                f"SERVER={DB_SERVER_ACTUAL};"
+                f"DATABASE={DB_DEFAULT_DATABASE};"
+                f"UID={DB_USERNAME};"
+                f"PWD={DB_PASSWORD};"
+                f"TrustServerCertificate=yes;"
+            )
+            import pyodbc
+            with pyodbc.connect(connection_string, timeout=DB_TIMEOUT) as conn:
+                print(f"✅ Conexión exitosa a la base de datos: {DB_SERVER_ACTUAL}")
+                return
+        except Exception as e:
+            print(f"❌ Error de conexión a la base de datos ({DB_SERVER_ACTUAL}): {e}")
+    # Si falla todo, mostrar error GUI
+    app = QApplication.instance() or QApplication(sys.argv)
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Icon.Critical)
+    msg.setWindowTitle("Error de conexión a la base de datos")
+    msg.setText("❌ No se pudo conectar a la base de datos.")
+    msg.setInformativeText(f"Verifica usuario, contraseña, servidor (puede ser IP o nombre) y que SQL Server acepte autenticación SQL.\n\nIntentado con: {DB_SERVER} y {DB_SERVER_ALTERNATE}")
+    # Estilo minimalista, letra pequeña, padding simétrico, centrado, bordes redondeados, fondo claro
+    msg.setStyleSheet("""
+        QMessageBox {
+            background: #f1f5f9;
+            color: #ef4444;
+            font-size: 10px;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            font-weight: 500;
+            border-radius: 12px;
+            padding: 20px 24px 20px 24px;
+        }
+        QLabel {
+            qproperty-alignment: 'AlignCenter';
+            font-size: 10px;
+        }
+        QPushButton {
+            min-width: 80px;
+            min-height: 28px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            padding: 4px 16px;
+        }
+    """)
+    msg.exec()
+    sys.exit(1)
 
 # --- BASE DE MEJORES PRÁCTICAS DE DISEÑO PARA TODA LA APP ---
 # 1. Todos los diálogos y mensajes deben tener padding simétrico, bordes redondeados y fondo claro.
