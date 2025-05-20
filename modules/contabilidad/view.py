@@ -8,7 +8,7 @@ from PyQt6.QtGui import QIcon, QColor, QPixmap, QPainter, QAction
 from PyQt6.QtCore import QSize
 from PyQt6.QtPrintSupport import QPrinter
 from functools import partial
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from core.table_responsive_mixin import TableResponsiveMixin
 from core.ui_components import estilizar_boton_icono
@@ -129,12 +129,14 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.input_dolar.setToolTip("Ingrese el valor del dólar para conversión")
         controles_layout.addWidget(QLabel("Dólar:"))
         controles_layout.addWidget(self.input_dolar)
-        self.boton_actualizar_grafico = QPushButton("Actualizar gráfico")
-        self.boton_actualizar_grafico.setToolTip("Actualizar estadísticas con los filtros seleccionados")
+        self.boton_actualizar_grafico = QPushButton()
+        self.boton_actualizar_grafico.setIcon(QIcon("img/actualizar.svg"))
+        self.boton_actualizar_grafico.setToolTip("Actualizar gráfico")
         estilizar_boton_icono(self.boton_actualizar_grafico)
         controles_layout.addWidget(self.boton_actualizar_grafico)
-        self.boton_estadistica_personalizada = QPushButton("Estadística Personalizada")
-        self.boton_estadistica_personalizada.setToolTip("Crear y guardar una estadística personalizada")
+        self.boton_estadistica_personalizada = QPushButton()
+        self.boton_estadistica_personalizada.setIcon(QIcon("img/estadistica.svg"))
+        self.boton_estadistica_personalizada.setToolTip("Estadística Personalizada")
         estilizar_boton_icono(self.boton_estadistica_personalizada)
         controles_layout.addWidget(self.boton_estadistica_personalizada)
         self.boton_estadistica_personalizada.clicked.connect(self.abrir_dialogo_estadistica_personalizada)
@@ -249,13 +251,18 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             accion.setChecked(columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, tabla, idx, header, columnas_visibles, config_path))
             menu.addAction(accion)
-        menu.exec(tabla.horizontalHeader().mapToGlobal(pos))
+        header = tabla.horizontalHeader()
+        if header is not None:
+            menu.exec(header.mapToGlobal(pos))
+        else:
+            menu.exec(pos)
 
     def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
         header = tabla.horizontalHeader()
-        pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-        self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
+        if header is not None:
+            pos = header.sectionPosition(idx)
+            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+            self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
 
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):
         columnas_visibles[header] = checked
@@ -287,8 +294,14 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         qr_label.setPixmap(pixmap)
         vbox.addWidget(qr_label)
         btns = QHBoxLayout()
-        btn_guardar = QPushButton("Guardar QR como imagen")
-        btn_pdf = QPushButton("Exportar QR a PDF")
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+        btn_guardar.setToolTip("Guardar QR como imagen")
+        estilizar_boton_icono(btn_guardar)
+        btn_pdf = QPushButton()
+        btn_pdf.setIcon(QIcon("img/pdf.svg"))
+        btn_pdf.setToolTip("Exportar QR a PDF")
+        estilizar_boton_icono(btn_pdf)
         btns.addWidget(btn_guardar)
         btns.addWidget(btn_pdf)
         vbox.addLayout(btns)
@@ -339,7 +352,10 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         form.addRow("Destinatario:", destinatario_input)
         layout.addLayout(form)
         btns = QHBoxLayout()
-        btn_agregar = QPushButton("Agregar")
+        btn_agregar = QPushButton()
+        btn_agregar.setIcon(QIcon("img/agregar.svg"))
+        btn_agregar.setToolTip("Agregar")
+        estilizar_boton_icono(btn_agregar)
         btn_cancelar = QPushButton("Cancelar")
         btns.addStretch()
         btns.addWidget(btn_agregar)
@@ -401,7 +417,10 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         layout.addLayout(form)
         # Botones
         btns = QHBoxLayout()
-        btn_guardar = QPushButton("Guardar y Mostrar")
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+        btn_guardar.setToolTip("Guardar y mostrar estadística personalizada")
+        estilizar_boton_icono(btn_guardar)
         btn_cancelar = QPushButton("Cancelar")
         btns.addStretch()
         btns.addWidget(btn_guardar)
@@ -439,7 +458,8 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
 
     def setup_exportar_grafico_btn(self):
         if not hasattr(self, 'boton_exportar_grafico'):
-            self.boton_exportar_grafico = QPushButton("Exportar gráfico")
+            self.boton_exportar_grafico = QPushButton()
+            self.boton_exportar_grafico.setIcon(QIcon("img/pdf.svg"))
             self.boton_exportar_grafico.setToolTip("Exportar gráfico a imagen o PDF")
             estilizar_boton_icono(self.boton_exportar_grafico)
             self.boton_exportar_grafico.clicked.connect(self.exportar_grafico)

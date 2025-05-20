@@ -20,6 +20,28 @@ Si prefieres hacerlo manualmente:
 pip install --user -r requirements.txt
 ```
 
+## Instalación de dependencias y problemas comunes en Windows
+
+> **IMPORTANTE:** Para minimizar problemas de instalación en Windows (especialmente errores de compilación de paquetes como `pyodbc` o `pandas`), el archivo `requirements.txt` ha sido optimizado para usar versiones que cuentan con instaladores binarios (wheels) para la mayoría de versiones de Python y Windows.
+
+- Si al instalar dependencias ves errores relacionados con compilación ("error: Microsoft Visual C++..." o "Unable to find vcvarsall.bat"), prueba lo siguiente:
+  1. Asegúrate de estar usando una versión de Python soportada (recomendado: 3.10, 3.11 o 3.12 de 64 bits).
+  2. Usa el archivo `requirements.txt` incluido, que ya sugiere versiones compatibles.
+  3. Si falla la instalación de algún paquete (por ejemplo, `pyodbc` o `pandas`), prueba la versión alternativa sugerida en el comentario del archivo `requirements.txt`.
+  4. Si el error persiste, instala manualmente el paquete wheel desde https://www.lfd.uci.edu/~gohlke/pythonlibs/ (descarga el archivo `.whl` correspondiente a tu versión de Python y Windows y ejecuta: `pip install <archivo.whl>`).
+  5. Solo como último recurso, instala las [Build Tools de Visual Studio](https://visualstudio.microsoft.com/visual-cpp-build-tools/) (no es necesario en la mayoría de los casos si usas las versiones recomendadas).
+
+- Si usas un entorno virtual (recomendado), activa el entorno antes de instalar dependencias.
+- Si distribuyes la app a usuarios finales, considera usar un empaquetador como PyInstaller para evitar que tengan que instalar Python y dependencias manualmente.
+
+### Ejemplo de instalación manual de un wheel descargado:
+
+```powershell
+pip install C:\ruta\a\pyodbc‑5.0.1‑cp311‑cp311‑win_amd64.whl
+```
+
+---
+
 ## Dependencias principales
 
 | Paquete           | Versión recomendada |
@@ -177,6 +199,27 @@ QWidget, QDialog, QFrame, QPushButton, QTableWidget, QLabel {
     box-shadow: 0 2px 8px rgba(37,99,235,0.08);
 }
 ```
+
+---
+
+## Estándar obligatorio para botones de acción
+
+- Todos los botones principales y secundarios deben ser solo ícono, sin texto visible.
+- El ícono debe ser representativo de la acción (ejemplo: tilde para aceptar/guardar, cruz para cancelar/cerrar, disquete para guardar, PDF para exportar, etc.).
+- Usar siempre el helper estilizar_boton_icono para tamaño, color y sombra uniforme.
+- El ícono debe estar en la carpeta img/ en formato SVG, fondo transparente, mínimo 20x20px.
+- Si no existe el ícono, debe crearse y documentarse en checklist_botones_iconos.txt.
+- Ejemplo de implementación:
+
+```python
+btn_aceptar = QPushButton()
+btn_aceptar.setIcon(QIcon("img/finish-check.svg"))
+btn_aceptar.setToolTip("Aceptar")
+estilizar_boton_icono(btn_aceptar)
+```
+
+- No se permite texto en los botones de acción principales ni secundarios.
+- Documentar cualquier excepción justificada en checklist_botones_iconos.txt y en el código.
 
 ---
 
@@ -655,9 +698,9 @@ Este patrón debe aplicarse a todos los módulos que presenten tablas.
 
 ---
 
-## Patrón universal de tablas responsive (QTableWidget)
+## Patrones obligatorios de tablas y responsive (QTableWidget)
 
-Todas las tablas principales de la aplicación (QTableWidget) deben aplicar el mixin `TableResponsiveMixin` y el método `make_table_responsive` para garantizar que la tabla se expanda y adapte correctamente al modo fullscreen o maximizado, tanto en ancho como en alto.
+- Todas las tablas principales de la aplicación (QTableWidget) deben aplicar el mixin `TableResponsiveMixin` y el método `make_table_responsive` para garantizar que la tabla se expanda y adapte correctamente al modo fullscreen o maximizado, tanto en ancho como en alto.
 
 **Ejemplo de uso:**
 
@@ -673,6 +716,23 @@ class MiVista(QWidget, TableResponsiveMixin):
 ```
 
 Esto asegura una experiencia de usuario moderna y consistente en todos los módulos.
+
+- Siempre que accedas al header de una tabla (horizontalHeader), debes comprobar con un solo if si es None antes de operar. No uses múltiples if anidados ni hasattr para métodos estándar.
+- Ejemplo correcto:
+
+```python
+header = tabla.horizontalHeader()
+if header is not None:
+    # Usar header con confianza
+    menu.exec(header.mapToGlobal(pos))
+else:
+    # Feedback visual o fallback
+    self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
+```
+
+- Justificación: El header puede ser None si la tabla no está inicializada o si hay un error de layout. Usar solo un if para None es más claro, robusto y fácil de mantener. No uses hasattr para métodos estándar de QHeaderView.
+
+- Este patrón es obligatorio en todos los módulos y vistas que usen QTableWidget.
 
 ---
 
@@ -820,7 +880,7 @@ Implementar un sistema robusto de permisos y visibilidad de módulos, donde:
 #### 1. Estructura de Permisos y Visibilidad
 
 - Crear una tabla o archivo de configuración (`permisos_modulos` o similar) que relacione usuarios/roles con los módulos visibles y permisos de acción (ver, modificar, aprobar).
-- Al iniciar sesión, cargar la configuración de permisos y construir el sidebar y el QStackedWidget solo con los módulos permitidos para ese usuario.
+- Al iniciar sesión, cargar la configuración de permisos y construir el sidebar y el QStackedWidget solo con los módulos visibles para ese usuario.
 - El admin debe tener acceso a una interfaz en el módulo de Configuración para gestionar la visibilidad de módulos por usuario y rol (checkboxes por módulo y usuario/rol).
 
 #### 2. Lógica de Aprobación y Modificación
@@ -1080,7 +1140,7 @@ A continuación se describe un flujo típico de trabajo que atraviesa varios mó
 
 ---
 
-## Errores comunes detectados y soluciones aplicadas en vistas principales (2025-05)
+## Errores comunes detectados y soluciones robustas en vistas principales (2025-05)
 
 A continuación se documentan los errores más frecuentes encontrados en las vistas principales (Inventario, Usuarios, Pedidos, etc.) y las soluciones/estándares aplicados para robustecer y mantener la coherencia del código:
 
@@ -1135,7 +1195,38 @@ A continuación se documentan los errores más frecuentes encontrados en las vis
 - **Error:** Usar headers fijos en vez de obtenerlos dinámicamente desde la base de datos.
 - **Solución:** Implementar obtención dinámica de headers si la conexión lo permite, con fallback seguro.
 
-### 10. Documentar y justificar excepciones
+### 10. Manejo de headers en tablas (QTableWidget/horizontalHeader)
+
+- **Error común:** Usar múltiples if, hasattr o try/except para acceder a métodos del header.
+- **Solución estándar:**
+
+  - Solo comprobar si el header es None con un único if antes de operar.
+  - Ejemplo:
+
+    ```python
+    header = tabla.horizontalHeader()
+    if header is not None:
+        # Operar normalmente
+        ...
+    else:
+        # Feedback visual o fallback
+        ...
+    ```
+
+- **Nunca** usar:
+
+    ```python
+    if header is not None and hasattr(header, 'mapToGlobal'):
+        ...
+    ```
+
+  ni variantes similares. Los métodos estándar siempre están presentes si el header no es None.
+
+- **Justificación:** Simplifica el código, evita errores de tipo y mantiene la base de código coherente.
+
+- **Referencia cruzada:** Este estándar también está documentado en la sección de patrones obligatorios de tablas.
+
+### 11. Documentar y justificar excepciones
 
 - **Solución:** Cualquier excepción a estos estándares debe estar documentada en el código y en este README.
 

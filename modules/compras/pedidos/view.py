@@ -1,10 +1,10 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QScrollArea, QFrame, QTableWidget, QTableWidgetItem, QPushButton, QSizePolicy, QHBoxLayout, QMenu, QFileDialog, QDialog
 from PyQt6.QtCore import Qt, QSize, QPoint
 from PyQt6 import QtGui, QtCore
-from PyQt6.QtGui import QPixmap, QAction
+from PyQt6.QtGui import QPixmap, QAction, QIcon
 from PyQt6.QtPrintSupport import QPrinter
 from PyQt6.QtGui import QPainter
-from core.ui_components import CustomButton
+from core.ui_components import CustomButton, estilizar_boton_icono
 from core.table_responsive_mixin import TableResponsiveMixin
 import json
 import os
@@ -15,17 +15,17 @@ from functools import partial
 class Pedidos(QWidget):
     def __init__(self):
         super().__init__()
-        self.layout = QVBoxLayout()
+        main_layout = QVBoxLayout()
         self.label_titulo = QLabel("Vista de Pedidos")
-        self.layout.addWidget(self.label_titulo)
-        self.setLayout(self.layout)
+        main_layout.addWidget(self.label_titulo)
+        self.setLayout(main_layout)
 
 class PedidosView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(20, 20, 20, 20)
-        self.layout.setSpacing(20)
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(20, 20, 20, 20)
+        main_layout.setSpacing(20)
 
         # Cargar el stylesheet visual moderno para Pedidos según el tema activo
         try:
@@ -56,18 +56,25 @@ class PedidosView(QWidget, TableResponsiveMixin):
             boton.setFixedSize(48, 48)
             boton.setStyleSheet("")
             botones_layout.addWidget(boton)
-        self.layout.addLayout(botones_layout)
+        main_layout.addLayout(botones_layout)
 
         # Tabla principal de pedidos (si existe)
         self.tabla_pedidos = QTableWidget()
         self.make_table_responsive(self.tabla_pedidos)
-        self.layout.addWidget(self.tabla_pedidos)
+        main_layout.addWidget(self.tabla_pedidos)
 
         # Si tienes una tabla principal, aplica el patrón universal
         if hasattr(self, 'tabla_pedidos'):
             self.make_table_responsive(self.tabla_pedidos)
-            self.pedidos_headers = [self.tabla_pedidos.horizontalHeaderItem(i).text() if self.tabla_pedidos.columnCount() > 0 else f"Columna {i+1}" for i in range(self.tabla_pedidos.columnCount())]
-            if not self.pedidos_headers:
+            col_count = self.tabla_pedidos.columnCount()
+            self.pedidos_headers = []
+            for i in range(col_count):
+                header_item = self.tabla_pedidos.horizontalHeaderItem(i)
+                if header_item is not None and hasattr(header_item, 'text'):
+                    self.pedidos_headers.append(header_item.text())
+                else:
+                    self.pedidos_headers.append(f"Columna {i+1}")
+            if not self.pedidos_headers or any(h is None for h in self.pedidos_headers):
                 self.pedidos_headers = ["id", "proveedor", "fecha", "estado", "total"]
                 self.tabla_pedidos.setColumnCount(len(self.pedidos_headers))
                 self.tabla_pedidos.setHorizontalHeaderLabels(self.pedidos_headers)
@@ -75,14 +82,16 @@ class PedidosView(QWidget, TableResponsiveMixin):
             self.columnas_visibles_pedidos = self.cargar_config_columnas(self.config_path_pedidos, self.pedidos_headers)
             self.aplicar_columnas_visibles(self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos)
             header_pedidos = self.tabla_pedidos.horizontalHeader()
-            header_pedidos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            header_pedidos.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos, self.config_path_pedidos))
-            header_pedidos.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_pedidos))
-            header_pedidos.setSectionsMovable(True)
-            header_pedidos.setSectionsClickable(True)
-            header_pedidos.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos, self.config_path_pedidos))
-            self.tabla_pedidos.setHorizontalHeader(header_pedidos)
+            if header_pedidos is not None:
+                header_pedidos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+                header_pedidos.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos, self.config_path_pedidos))
+                header_pedidos.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_pedidos))
+                header_pedidos.setSectionsMovable(True)
+                header_pedidos.setSectionsClickable(True)
+                header_pedidos.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos, self.config_path_pedidos))
+                self.tabla_pedidos.setHorizontalHeader(header_pedidos)
             self.tabla_pedidos.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_pedidos))
+        self.setLayout(main_layout)
 
     def resaltar_items_bajo_stock(self, items):
         for item in items:
@@ -139,15 +148,24 @@ class PedidosView(QWidget, TableResponsiveMixin):
         if not selected:
             return
         row = selected[0].row()
-        codigo = tabla.item(row, 0).text()  # Usar el primer campo como dato QR
+        item = tabla.item(row, 0)
+        if item is None or not hasattr(item, 'text'):
+            return
+        codigo = item.text()
         if not codigo:
             return
         qr = qrcode.QRCode(version=1, box_size=6, border=2)
         qr.add_data(codigo)
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
+        # Convertir a PIL si es necesario
+        try:
+            pil_img = img.get_image()
+        except AttributeError:
+            pil_img = img  # Ya es PIL
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-            img.save(tmp.name)
+            with open(tmp.name, "wb") as f:
+                pil_img.save(f)
             pixmap = QPixmap(tmp.name)
         dialog = QDialog(self)
         dialog.setWindowTitle(f"Código QR para {codigo}")
@@ -156,15 +174,22 @@ class PedidosView(QWidget, TableResponsiveMixin):
         qr_label.setPixmap(pixmap)
         vbox.addWidget(qr_label)
         btns = QHBoxLayout()
-        btn_guardar = QPushButton("Guardar QR como imagen")
-        btn_pdf = QPushButton("Exportar QR a PDF")
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+        btn_guardar.setToolTip("Guardar QR como imagen")
+        estilizar_boton_icono(btn_guardar)
+        btn_pdf = QPushButton()
+        btn_pdf.setIcon(QIcon("img/pdf.svg"))
+        btn_pdf.setToolTip("Exportar QR a PDF")
+        estilizar_boton_icono(btn_pdf)
         btns.addWidget(btn_guardar)
         btns.addWidget(btn_pdf)
         vbox.addLayout(btns)
         def guardar():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
             if file_path:
-                img.save(file_path)
+                with open(file_path, "wb") as f:
+                    pil_img.save(f)
         def exportar_pdf():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
             if file_path:

@@ -74,9 +74,6 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             if hasattr(header, 'customContextMenuRequested'):
                 header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
-            # Solo conectar si existe el método
-            if hasattr(self, 'autoajustar_columna') and hasattr(header, 'sectionDoubleClicked'):
-                header.sectionDoubleClicked.connect(self.autoajustar_columna)
             if hasattr(header, 'setSectionsMovable'):
                 header.setSectionsMovable(True)
             if hasattr(header, 'setSectionsClickable'):
@@ -96,7 +93,9 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.tabla_permisos_modulos = QTableWidget()
         self.make_table_responsive(self.tabla_permisos_modulos)
         tab_permisos_layout.addWidget(self.tabla_permisos_modulos)
-        self.boton_guardar_permisos = QPushButton("Guardar permisos")
+        self.boton_guardar_permisos = QPushButton()
+        self.boton_guardar_permisos.setIcon(QIcon("img/guardar-permisos.svg"))
+        self.boton_guardar_permisos.setToolTip("Guardar permisos")
         estilizar_boton_icono(self.boton_guardar_permisos)
         tab_permisos_layout.addWidget(self.boton_guardar_permisos)
 
@@ -153,15 +152,15 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             accion.setChecked(self.columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
-        viewport = self.tabla_usuarios.viewport() if hasattr(self.tabla_usuarios, 'viewport') else None
-        if viewport is not None and hasattr(viewport, 'mapToGlobal'):
-            menu.exec(viewport.mapToGlobal(pos))
+        header = self.tabla_usuarios.horizontalHeader()
+        if header is not None:
+            menu.exec(header.mapToGlobal(pos))
         else:
             menu.exec(pos)
 
     def mostrar_menu_columnas_header(self, idx):
-        header = self.tabla_usuarios.horizontalHeader() if hasattr(self.tabla_usuarios, 'horizontalHeader') else None
-        if header is not None and hasattr(header, 'sectionPosition') and hasattr(header, 'mapToGlobal') and hasattr(header, 'sectionViewportPosition'):
+        header = self.tabla_usuarios.horizontalHeader()
+        if header is not None:
             pos = header.sectionPosition(idx)
             global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
             self.mostrar_menu_columnas(global_pos)
@@ -194,8 +193,14 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 qr_label.setPixmap(pixmap)
                 vbox.addWidget(qr_label)
                 btns = QHBoxLayout()
-                btn_guardar = QPushButton("Guardar QR como imagen")
-                btn_pdf = QPushButton("Exportar QR a PDF")
+                btn_guardar = QPushButton()
+                btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+                btn_guardar.setToolTip("Guardar QR como imagen")
+                estilizar_boton_icono(btn_guardar)
+                btn_pdf = QPushButton()
+                btn_pdf.setIcon(QIcon("img/pdf.svg"))
+                btn_pdf.setToolTip("Exportar QR a PDF")
+                estilizar_boton_icono(btn_pdf)
                 btns.addWidget(btn_guardar)
                 btns.addWidget(btn_pdf)
                 vbox.addLayout(btns)

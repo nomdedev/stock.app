@@ -355,6 +355,9 @@ class ObrasController:
 
             dialog.setLayout(layout)
             if dialog.exec() == QDialog.DialogCode.Accepted:
+                # --- SIMULACIÓN DE ERROR DE BASE DE DATOS (descomentar para probar feedback visual) ---
+                # raise Exception("Simulación de error de base de datos en alta de obra (prueba de feedback visual)")
+                # --- FIN SIMULACIÓN ---
                 nombre = nombre_input.text().strip()
                 apellido = apellido_input.text().strip()
                 cliente = cliente_input.text().strip()

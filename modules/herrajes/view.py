@@ -40,12 +40,9 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         # Menú contextual en el header y autoajuste de columna
         header = self.tabla_herrajes.horizontalHeader()
         if header is not None:
-            if hasattr(header, 'setContextMenuPolicy'):
-                header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            if hasattr(header, 'customContextMenuRequested'):
-                header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
-            if hasattr(header, 'sectionDoubleClicked'):
-                header.sectionDoubleClicked.connect(self.autoajustar_columna)
+            header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
+            header.sectionDoubleClicked.connect(self.autoajustar_columna)
 
         # Botón principal de acción (Agregar)
         botones_layout = QHBoxLayout()
@@ -98,10 +95,17 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
         header = self.tabla_herrajes.horizontalHeader()
-        if header is not None and hasattr(header, 'mapToGlobal'):
+        if header is not None:
             menu.exec(header.mapToGlobal(pos))
         else:
             menu.exec(pos)
+
+    def mostrar_menu_columnas_header(self, idx):
+        header = self.tabla_herrajes.horizontalHeader()
+        if header is not None:
+            pos = header.sectionPosition(idx)
+            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+            self.mostrar_menu_columnas(global_pos)
 
     def toggle_columna(self, idx, header, checked):
         self.columnas_visibles[header] = checked
@@ -130,13 +134,14 @@ class MaterialesView(QWidget, TableResponsiveMixin):
 
         # Menú contextual en el header
         header = self.tabla_materiales.horizontalHeader()
-        header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
-        header.sectionDoubleClicked.connect(self.auto_ajustar_columna)
-        header.setSectionsMovable(True)
-        header.setSectionsClickable(True)
-        header.sectionClicked.connect(self.mostrar_menu_columnas_header)
-        self.tabla_materiales.setHorizontalHeader(header)
+        if header is not None:
+            header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
+            header.sectionDoubleClicked.connect(self.auto_ajustar_columna)
+            header.setSectionsMovable(True)
+            header.setSectionsClickable(True)
+            header.sectionClicked.connect(self.mostrar_menu_columnas_header)
+            self.tabla_materiales.setHorizontalHeader(header)
 
         # Botón principal de acción (Agregar)
         botones_layout = QHBoxLayout()
@@ -181,13 +186,18 @@ class MaterialesView(QWidget, TableResponsiveMixin):
             accion.setChecked(self.columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
-        menu.exec(self.tabla_materiales.horizontalHeader().mapToGlobal(pos))
+        header = self.tabla_materiales.horizontalHeader()
+        if header is not None:
+            menu.exec(header.mapToGlobal(pos))
+        else:
+            menu.exec(pos)
 
     def mostrar_menu_columnas_header(self, idx):
-        pos = self.tabla_materiales.horizontalHeader().sectionPosition(idx)
         header = self.tabla_materiales.horizontalHeader()
-        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-        self.mostrar_menu_columnas(global_pos)
+        if header is not None:
+            pos = header.sectionPosition(idx)
+            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+            self.mostrar_menu_columnas(global_pos)
 
     def toggle_columna(self, idx, header, checked):
         self.columnas_visibles[header] = checked

@@ -82,7 +82,16 @@ def verificar_e_instalar_dependencias():
             if not in_venv:
                 pip_args.append("--user")
             pip_args += (faltantes + actualizar)
-            subprocess.check_call(pip_args)
+            try:
+                result = subprocess.run(pip_args)
+                if result.returncode != 0:
+                    print(f"\n[ERROR] Falló la instalación de dependencias. Código de salida: {result.returncode}")
+                    print(f"Comando ejecutado: {' '.join(pip_args)}")
+                    print("\nPor favor, ejecuta el comando anterior manualmente en tu terminal para ver el error completo y solucionarlo.")
+                    
+            except Exception as e:
+                print(f"Error al instalar/actualizar dependencias: {e}")
+                sys.exit(1)
         except Exception as e:
             print(f"Error al instalar/actualizar dependencias: {e}")
             sys.exit(1)

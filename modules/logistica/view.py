@@ -266,13 +266,18 @@ pip install PyQt6-WebEngine
             accion.setChecked(columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, tabla, idx, header, columnas_visibles, config_path))
             menu.addAction(accion)
-        menu.exec(tabla.horizontalHeader().mapToGlobal(pos))
+        header = tabla.horizontalHeader()
+        if header is not None:
+            menu.exec(header.mapToGlobal(pos))
+        else:
+            menu.exec(pos)
 
     def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
         header = tabla.horizontalHeader()
-        pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-        self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
+        if header is not None:
+            pos = header.sectionPosition(idx)
+            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+            self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
 
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):
         columnas_visibles[header] = checked

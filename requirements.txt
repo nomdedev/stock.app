@@ -1,10 +1,14 @@
+# Requisitos mínimos para evitar compilación en Windows
+# Si falla la instalación de algún paquete, prueba con la versión anterior sugerida en el comentario.
+
 PyQt6==6.9.0
-PyQt6-Qt6==6.9.0
-PyQt6-sip==13.10.0
-pyodbc==5.2.0
+# PyQt6-Qt6 y PyQt6-sip se instalan automáticamente con PyQt6, no es necesario fijar versión salvo error específico
+# PyQt6-Qt6==6.9.0
+# PyQt6-sip==13.10.0
+pyodbc==5.0.1  # Si falla, prueba 4.0.35
 reportlab==4.4.1
 qrcode==7.4.2
-pandas==2.2.2
+pandas==2.2.2  # Si falla, prueba 2.1.4
 matplotlib==3.8.4
 pytest==8.2.0
 pillow==10.3.0

@@ -69,19 +69,21 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.main_layout.addLayout(top_btns_layout)  # Cambiar insertLayout por addLayout para asegurar el orden
 
         # Botón para ver obras pendientes de este material
-        self.btn_ver_obras_pendientes = QPushButton("Ver obras pendientes de este material")
-        self.btn_ver_obras_pendientes.setIcon(QIcon("img/viewdetails.svg"))
+        self.btn_ver_obras_pendientes = QPushButton()
+        self.btn_ver_obras_pendientes.setIcon(QIcon("img/obras-pendientes.svg"))
         self.btn_ver_obras_pendientes.setIconSize(QSize(20, 20))
         self.btn_ver_obras_pendientes.setToolTip("Mostrar obras a las que les falta este material")
         self.btn_ver_obras_pendientes.clicked.connect(self.ver_obras_pendientes_material)
+        estilizar_boton_icono(self.btn_ver_obras_pendientes)
         self.main_layout.addWidget(self.btn_ver_obras_pendientes)
 
         # Botón para abrir reserva avanzada por lote
-        self.btn_reserva_lote = QPushButton("Reserva avanzada por lote")
-        self.btn_reserva_lote.setIcon(QIcon("img/reserve-stock.svg"))
+        self.btn_reserva_lote = QPushButton()
+        self.btn_reserva_lote.setIcon(QIcon("img/lote.svg"))
         self.btn_reserva_lote.setIconSize(QSize(20, 20))
         self.btn_reserva_lote.setToolTip("Abrir ventana de reserva avanzada por lote")
         self.btn_reserva_lote.clicked.connect(self.abrir_reserva_lote_perfiles)
+        estilizar_boton_icono(self.btn_reserva_lote)
         self.main_layout.addWidget(self.btn_reserva_lote)
 
         # Obtener headers desde la base de datos
@@ -100,14 +102,10 @@ class InventarioView(QWidget, TableResponsiveMixin):
         if h_header is not None:
             h_header.setHighlightSections(False)
             h_header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
-            if hasattr(h_header, 'sectionDoubleClicked'):
-                h_header.sectionDoubleClicked.connect(self.autoajustar_columna)
-            if hasattr(h_header, 'setContextMenuPolicy'):
-                h_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            if hasattr(h_header, 'customContextMenuRequested'):
-                h_header.customContextMenuRequested.connect(self.mostrar_menu_header)
-            if hasattr(h_header, 'sectionClicked'):
-                h_header.sectionClicked.connect(self.mostrar_menu_columnas_header)
+            h_header.sectionDoubleClicked.connect(self.autoajustar_columna)
+            h_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            h_header.customContextMenuRequested.connect(self.mostrar_menu_header)
+            h_header.sectionClicked.connect(self.mostrar_menu_columnas_header)
         self.tabla_inventario.cellClicked.connect(self.toggle_expandir_fila)
         self.filas_expandidas = set()
         self.main_layout.addWidget(self.tabla_inventario)
@@ -181,9 +179,9 @@ class InventarioView(QWidget, TableResponsiveMixin):
             accion.setChecked(self.columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
-        viewport = self.tabla_inventario.viewport() if hasattr(self.tabla_inventario, 'viewport') else None
-        if viewport is not None and hasattr(viewport, 'mapToGlobal'):
-            menu.exec(viewport.mapToGlobal(pos))
+        header = self.tabla_inventario.horizontalHeader()
+        if header is not None:
+            menu.exec(header.mapToGlobal(pos))
         else:
             menu.exec(pos)
 
@@ -196,9 +194,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
         menu = QMenu(self)
         accion_autoajustar = QAction("Autoajustar todas las columnas", self)
         accion_autoajustar.triggered.connect(self.autoajustar_todas_columnas)
-        menu.addAction(accion_autoajustar)
-        h_header = self.tabla_inventario.horizontalHeader() if hasattr(self.tabla_inventario, 'horizontalHeader') else None
-        if h_header is not None and hasattr(h_header, 'mapToGlobal'):
+        h_header = self.tabla_inventario.horizontalHeader()
+        if h_header is not None:
             menu.exec(h_header.mapToGlobal(pos))
         else:
             menu.exec(pos)
@@ -209,6 +206,13 @@ class InventarioView(QWidget, TableResponsiveMixin):
     def autoajustar_todas_columnas(self):
         for idx in range(self.tabla_inventario.columnCount()):
             self.tabla_inventario.resizeColumnToContents(idx)
+
+    def mostrar_menu_columnas_header(self, idx):
+        header = self.tabla_inventario.horizontalHeader()
+        if header is not None:
+            pos = header.sectionPosition(idx)
+            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+            self.mostrar_menu_columnas(global_pos)
 
     def obtener_id_item_seleccionado(self):
         # Devuelve el ID del ítem seleccionado en la tabla (robustecida)
@@ -247,13 +251,6 @@ class InventarioView(QWidget, TableResponsiveMixin):
             QMessageBox.information(self, "Éxito", f"Inventario exportado correctamente a {file_path}")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"No se pudo exportar: {e}")
-
-    def mostrar_menu_columnas_header(self, idx):
-        header = self.tabla_inventario.horizontalHeader()
-        if header is not None and hasattr(header, 'sectionPosition') and hasattr(header, 'mapToGlobal') and hasattr(header, 'sectionViewportPosition'):
-            pos = header.sectionPosition(idx)
-            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-            self.mostrar_menu_columnas(global_pos)
 
     def ver_obras_pendientes_material(self):
         id_item = self.obtener_id_item_seleccionado()
@@ -294,7 +291,10 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 codigo = r.get("codigo_reserva", "")
                 label = QLabel(f"Obra: <b>{obra}</b> | Cantidad: <b>{cantidad}</b> | Estado: <b>{estado}</b> | Código: <b>{codigo}</b>")
                 layout.addWidget(label)
-            btn_cerrar = QPushButton("Cerrar")
+            btn_cerrar = QPushButton()
+            btn_cerrar.setIcon(QIcon("img/cerrar.svg"))
+            btn_cerrar.setToolTip("Cerrar")
+            estilizar_boton_icono(btn_cerrar)
             btn_cerrar.clicked.connect(dialog.accept)
             layout.addWidget(btn_cerrar)
             dialog.setLayout(layout)

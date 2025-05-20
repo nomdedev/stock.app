@@ -55,14 +55,15 @@ class ProduccionView(QWidget):
         self.config_path_aberturas = f"config_produccion_aberturas_columns.json"
         self.columnas_visibles_aberturas = self.cargar_config_columnas(self.config_path_aberturas, self.aberturas_headers)
         self.aplicar_columnas_visibles(self.tabla_aberturas, self.aberturas_headers, self.columnas_visibles_aberturas)
-        header_aberturas = self.tabla_aberturas.horizontalHeader()
-        header_aberturas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header_aberturas.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_aberturas, self.aberturas_headers, self.columnas_visibles_aberturas, self.config_path_aberturas))
-        header_aberturas.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_aberturas))
-        header_aberturas.setSectionsMovable(True)
-        header_aberturas.setSectionsClickable(True)
-        header_aberturas.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_aberturas, self.aberturas_headers, self.columnas_visibles_aberturas, self.config_path_aberturas))
-        self.tabla_aberturas.setHorizontalHeader(header_aberturas)
+        if self.tabla_aberturas is not None and self.tabla_aberturas.horizontalHeader() is not None:
+            header_aberturas = self.tabla_aberturas.horizontalHeader()
+            header_aberturas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header_aberturas.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_aberturas, self.aberturas_headers, self.columnas_visibles_aberturas, self.config_path_aberturas))
+            header_aberturas.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_aberturas))
+            header_aberturas.setSectionsMovable(True)
+            header_aberturas.setSectionsClickable(True)
+            header_aberturas.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_aberturas, self.aberturas_headers, self.columnas_visibles_aberturas, self.config_path_aberturas))
+            self.tabla_aberturas.setHorizontalHeader(header_aberturas)
         self.tabla_aberturas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_aberturas))
 
         # Tabla de etapas de fabricación
@@ -74,14 +75,15 @@ class ProduccionView(QWidget):
         self.config_path_etapas = f"config_produccion_etapas_columns.json"
         self.columnas_visibles_etapas = self.cargar_config_columnas(self.config_path_etapas, self.etapas_headers)
         self.aplicar_columnas_visibles(self.tabla_etapas, self.etapas_headers, self.columnas_visibles_etapas)
-        header_etapas = self.tabla_etapas.horizontalHeader()
-        header_etapas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header_etapas.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_etapas, self.etapas_headers, self.columnas_visibles_etapas, self.config_path_etapas))
-        header_etapas.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_etapas))
-        header_etapas.setSectionsMovable(True)
-        header_etapas.setSectionsClickable(True)
-        header_etapas.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_etapas, self.etapas_headers, self.columnas_visibles_etapas, self.config_path_etapas))
-        self.tabla_etapas.setHorizontalHeader(header_etapas)
+        if self.tabla_etapas is not None and self.tabla_etapas.horizontalHeader() is not None:
+            header_etapas = self.tabla_etapas.horizontalHeader()
+            header_etapas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header_etapas.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_etapas, self.etapas_headers, self.columnas_visibles_etapas, self.config_path_etapas))
+            header_etapas.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_etapas))
+            header_etapas.setSectionsMovable(True)
+            header_etapas.setSectionsClickable(True)
+            header_etapas.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_etapas, self.etapas_headers, self.columnas_visibles_etapas, self.config_path_etapas))
+            self.tabla_etapas.setHorizontalHeader(header_etapas)
         self.tabla_etapas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_etapas))
 
         # Botones principales
@@ -247,11 +249,20 @@ class ProduccionView(QWidget):
         qr_label.setPixmap(pixmap)
         vbox.addWidget(qr_label)
         btns = QHBoxLayout()
-        btn_guardar = QPushButton("Guardar QR como imagen")
-        btn_pdf = QPushButton("Exportar QR a PDF")
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+        btn_guardar.setToolTip("Guardar QR como imagen")
+        estilizar_boton_icono(btn_guardar)
+        btn_pdf = QPushButton()
+        btn_pdf.setIcon(QIcon("img/pdf.svg"))
+        btn_pdf.setToolTip("Exportar QR a PDF")
+        estilizar_boton_icono(btn_pdf)
         btns.addWidget(btn_guardar)
         btns.addWidget(btn_pdf)
         vbox.addLayout(btns)
+        main_layout = QVBoxLayout()
+        main_layout.addLayout(vbox)
+        self.setLayout(main_layout)
         def guardar():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
             if file_path:
@@ -286,7 +297,7 @@ class ProduccionView(QWidget):
 class Produccion(QWidget):
     def __init__(self):
         super().__init__()
-        self.layout = QVBoxLayout()
+        self.main_layout = QVBoxLayout()
         self.label = QLabel("Vista de Producción")
-        self.layout.addWidget(self.label)
-        self.setLayout(self.layout)
+        self.main_layout.addWidget(self.label)
+        self.setLayout(self.main_layout)

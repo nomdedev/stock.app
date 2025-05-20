@@ -176,21 +176,17 @@ class VidriosView(QWidget, TableResponsiveMixin):
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
         header = self.tabla_vidrios.horizontalHeader()
-        if header is not None and hasattr(header, 'mapToGlobal'):
+        if header is not None:
             menu.exec(header.mapToGlobal(pos))
         else:
             menu.exec(pos)
 
     def mostrar_menu_columnas_header(self, idx):
         header = self.tabla_vidrios.horizontalHeader()
-        # Chequeo robusto de existencia de header y métodos
-        if not header or not hasattr(header, 'sectionPosition') or not hasattr(header, 'mapToGlobal') or not hasattr(header, 'sectionViewportPosition'):
-            return
-        if idx < 0 or idx >= self.tabla_vidrios.columnCount():
-            return
-        pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-        self.mostrar_menu_columnas(global_pos)
+        if header is not None:
+            pos = header.sectionPosition(idx)
+            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+            self.mostrar_menu_columnas(global_pos)
 
     def toggle_columna(self, idx, header, checked):
         self.columnas_visibles[header] = checked
@@ -243,9 +239,13 @@ class VidriosView(QWidget, TableResponsiveMixin):
         qr_label.setPixmap(pixmap)
         vbox.addWidget(qr_label)
         btns = QHBoxLayout()
-        btn_guardar = QPushButton("Guardar QR como imagen")
-        btn_pdf = QPushButton("Exportar QR a PDF")
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+        btn_guardar.setToolTip("Guardar QR como imagen")
         estilizar_boton_icono(btn_guardar)
+        btn_pdf = QPushButton()
+        btn_pdf.setIcon(QIcon("img/pdf.svg"))
+        btn_pdf.setToolTip("Exportar QR a PDF")
         estilizar_boton_icono(btn_pdf)
         btns.addWidget(btn_guardar)
         btns.addWidget(btn_pdf)

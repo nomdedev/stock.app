@@ -9,11 +9,12 @@ from PyQt6.QtPrintSupport import QPrinter
 from functools import partial
 from modules.compras.pedidos.view import PedidosView  # Importar desde el módulo correcto
 from core.table_responsive_mixin import TableResponsiveMixin
+from core.ui_components import estilizar_boton_icono
 
 class ComprasView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
-        self.layout = QVBoxLayout(self)
+        self.main_layout = QVBoxLayout(self)
         self.inicializar_botones()
 
         # Cargar el stylesheet visual moderno para Compras según el tema activo
@@ -39,7 +40,7 @@ class ComprasView(QWidget, TableResponsiveMixin):
             self.tab_pedidos.make_table_responsive(self.tab_pedidos.tabla_pedidos)
 
         # Agregar el QTabWidget al layout principal
-        self.layout.addWidget(self.tab_widget)
+        self.main_layout.addWidget(self.tab_widget)
 
         self.comparacion_headers = ["proveedor", "precio_total", "comentarios"]
         self.config_path_comparacion = f"config_compras_comparacion_columns.json"
@@ -63,7 +64,7 @@ class ComprasView(QWidget, TableResponsiveMixin):
         self.boton_nuevo.setGraphicsEffect(sombra)
         botones_layout.addWidget(self.boton_nuevo)
         botones_layout.addStretch()
-        self.layout.addLayout(botones_layout)
+        self.main_layout.addLayout(botones_layout)
 
     def mostrar_comparacion_presupuestos(self, presupuestos):
         self.tabla_comparacion = QTableWidget()
@@ -77,18 +78,19 @@ class ComprasView(QWidget, TableResponsiveMixin):
             self.tabla_comparacion.setItem(row_idx, 1, QTableWidgetItem(str(presupuesto[1])))
             self.tabla_comparacion.setItem(row_idx, 2, QTableWidgetItem(presupuesto[2]))
 
-        self.layout.addWidget(self.tabla_comparacion)
+        self.main_layout.addWidget(self.tabla_comparacion)
 
         # Configuración de columnas y persistencia para tabla_comparacion
         self.aplicar_columnas_visibles(self.tabla_comparacion, self.comparacion_headers, self.columnas_visibles_comparacion)
         header_comp = self.tabla_comparacion.horizontalHeader()
-        header_comp.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header_comp.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_comparacion, self.comparacion_headers, self.columnas_visibles_comparacion, self.config_path_comparacion))
-        header_comp.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_comparacion))
-        header_comp.setSectionsMovable(True)
-        header_comp.setSectionsClickable(True)
-        header_comp.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_comparacion, self.comparacion_headers, self.columnas_visibles_comparacion, self.config_path_comparacion))
-        self.tabla_comparacion.setHorizontalHeader(header_comp)
+        if header_comp:
+            header_comp.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header_comp.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_comparacion, self.comparacion_headers, self.columnas_visibles_comparacion, self.config_path_comparacion))
+            header_comp.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_comparacion))
+            header_comp.setSectionsMovable(True)
+            header_comp.setSectionsClickable(True)
+            header_comp.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_comparacion, self.comparacion_headers, self.columnas_visibles_comparacion, self.config_path_comparacion))
+            self.tabla_comparacion.setHorizontalHeader(header_comp)
         self.tabla_comparacion.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_comparacion))
 
     def cargar_config_columnas(self, config_path, headers):
@@ -148,8 +150,9 @@ class ComprasView(QWidget, TableResponsiveMixin):
         qr.add_data(codigo)
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
+        pil_img = img.get_image() if hasattr(img, 'get_image') else img
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-            img.save(tmp.name)
+            pil_img.save(tmp)
             pixmap = QPixmap(tmp.name)
         dialog = QDialog(self)
         dialog.setWindowTitle(f"Código QR para {codigo}")
@@ -158,15 +161,22 @@ class ComprasView(QWidget, TableResponsiveMixin):
         qr_label.setPixmap(pixmap)
         vbox.addWidget(qr_label)
         btns = QHBoxLayout()
-        btn_guardar = QPushButton("Guardar QR como imagen")
-        btn_pdf = QPushButton("Exportar QR a PDF")
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+        btn_guardar.setToolTip("Guardar QR como imagen")
+        estilizar_boton_icono(btn_guardar)
+        btn_pdf = QPushButton()
+        btn_pdf.setIcon(QIcon("img/pdf.svg"))
+        btn_pdf.setToolTip("Exportar QR a PDF")
+        estilizar_boton_icono(btn_pdf)
         btns.addWidget(btn_guardar)
         btns.addWidget(btn_pdf)
         vbox.addLayout(btns)
         def guardar():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
             if file_path:
-                img.save(file_path)
+                with open(file_path, "wb") as f:
+                    img.save(f)
         def exportar_pdf():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
             if file_path:

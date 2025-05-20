@@ -10,8 +10,8 @@ class PedidosView(QWidget):
     def __init__(self, usuario_actual="default"):
         super().__init__()
         self.usuario_actual = usuario_actual
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
+        self.main_layout = QVBoxLayout()
+        self.setLayout(self.main_layout)
 
         # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
         qss_tema = None
@@ -31,7 +31,7 @@ class PedidosView(QWidget):
         self.tabla_pedidos.setHorizontalHeaderLabels([
             "id", "obra", "fecha", "estado", "observaciones"
         ])
-        self.layout.addWidget(self.tabla_pedidos)
+        self.main_layout.addWidget(self.tabla_pedidos)
 
         # Configuración de columnas
         self.config_path = f"config_pedidos_columns_{self.usuario_actual}.json"
@@ -62,7 +62,7 @@ class PedidosView(QWidget):
         self.form_layout.addRow("Fecha de Pedido:", self.fecha_pedido)
         self.form_layout.addRow("Lista de Materiales:", self.materiales_input)
         self.form_layout.addRow("Observaciones:", self.observaciones_input)
-        self.layout.addLayout(self.form_layout)
+        self.main_layout.addLayout(self.form_layout)
 
         # Botón principal de acción (Agregar pedido)
         self.botones_layout = QHBoxLayout()
@@ -82,12 +82,12 @@ class PedidosView(QWidget):
         estilizar_boton_icono(self.boton_nuevo)
         self.botones_layout.addWidget(self.boton_nuevo)
         self.botones_layout.addStretch()
-        self.layout.addLayout(self.botones_layout)
+        self.main_layout.addLayout(self.botones_layout)
 
         # Ajustar espaciado y alineación para asegurar visibilidad
         self.botones_layout.setSpacing(10)
         self.botones_layout.setContentsMargins(0, 10, 0, 10)
-        self.layout.setSpacing(15)
+        self.main_layout.setSpacing(15)
 
         # Verificar estilos aplicados
         print("Estilos aplicados correctamente a PedidosView.")
@@ -119,15 +119,15 @@ class PedidosView(QWidget):
             accion.setChecked(self.columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
-        header = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
-        if header is not None and hasattr(header, 'mapToGlobal'):
+        header = self.tabla_pedidos.horizontalHeader()
+        if header is not None:
             menu.exec(header.mapToGlobal(pos))
         else:
             menu.exec(pos)
 
     def mostrar_menu_columnas_header(self, idx):
-        header = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
-        if header is not None and hasattr(header, 'sectionPosition') and hasattr(header, 'mapToGlobal') and hasattr(header, 'sectionViewportPosition'):
+        header = self.tabla_pedidos.horizontalHeader()
+        if header is not None:
             pos = header.sectionPosition(idx)
             from PyQt6.QtCore import QPoint
             global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
@@ -171,11 +171,20 @@ class PedidosView(QWidget):
         qr_label.setPixmap(pixmap)
         vbox.addWidget(qr_label)
         btns = QHBoxLayout()
-        btn_guardar = QPushButton("Guardar QR como imagen")
-        btn_pdf = QPushButton("Exportar QR a PDF")
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+        btn_guardar.setToolTip("Guardar QR como imagen")
+        estilizar_boton_icono(btn_guardar)
+        btn_pdf = QPushButton()
+        btn_pdf.setIcon(QIcon("img/pdf.svg"))
+        btn_pdf.setToolTip("Exportar QR a PDF")
+        estilizar_boton_icono(btn_pdf)
         btns.addWidget(btn_guardar)
         btns.addWidget(btn_pdf)
         vbox.addLayout(btns)
+        main_layout = QVBoxLayout()
+        main_layout.addLayout(vbox)
+        self.setLayout(main_layout)
         def guardar():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
             if file_path:

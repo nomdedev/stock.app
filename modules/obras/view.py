@@ -43,10 +43,9 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.main_layout.addLayout(botones_layout)
 
         # Botón para verificar obra en SQL
-        self.boton_verificar_obra = QPushButton("Verificar obra en SQL")
-        self.boton_verificar_obra.setIcon(QIcon("img/search_icon.svg"))
-        self.boton_verificar_obra.setIconSize(QSize(20, 20))
-        self.boton_verificar_obra.setToolTip("Verificar existencia de obra en la base de datos SQL")
+        self.boton_verificar_obra = QPushButton()
+        self.boton_verificar_obra.setIcon(QIcon("img/verificar.svg"))
+        self.boton_verificar_obra.setToolTip("Verificar obra en SQL")
         estilizar_boton_icono(self.boton_verificar_obra)
         self.main_layout.addWidget(self.boton_verificar_obra)
 

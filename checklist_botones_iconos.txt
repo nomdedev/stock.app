@@ -1,0 +1,45 @@
+# Checklist de botones fuera de estándar visual (solo ícono, sin texto)
+
+## Botones con texto (deben ser solo ícono):
+# (Todos los botones cumplen el estándar visual de solo ícono)
+
+## Íconos utilizados actualmente (carpeta img/):
+- add-material.svg
+- add-etapa.svg
+- add-entrega.svg
+- agregar-user.svg
+- ajustar-stock.svg
+- approve.svg
+- calendar_icon.svg
+- calendar-plus.svg
+- hoja-de-ruta.svg
+- offline_icon.svg
+- pdf_icon.svg
+- plus_icon.svg
+- qr_icon.svg
+- refresh-icon.svg
+- refresh-stock.svg
+- reject.svg
+- reserve-stock.svg
+- search_icon.svg
+- settings_icon.svg
+- viewdetails.svg
+- actualizar.svg
+- notificaciones.svg
+- guardar-permisos.svg
+- guardar-qr.svg
+- agregar.svg
+- verificar.svg
+- lote.svg
+- obras-pendientes.svg
+- pdf.svg
+- cerrar.svg
+- estadistica.svg
+
+## Sugerencia de íconos faltantes para cumplir estándar:
+# (vacío, todos los íconos requeridos están disponibles)
+
+## Notas:
+- Todos los botones de acción deben usar solo ícono, sin texto, y el helper estilizar_boton_icono.
+- Los íconos deben estar en formato SVG, fondo transparente, 20x20px mínimo.
+- Documentar cualquier excepción justificada en el código y en este checklist.

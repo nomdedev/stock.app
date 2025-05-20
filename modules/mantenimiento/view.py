@@ -13,9 +13,9 @@ from core.ui_components import estilizar_boton_icono
 class MantenimientoView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(20, 20, 20, 20)
-        self.layout.setSpacing(20)
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setSpacing(20)
 
         # Cargar el stylesheet visual moderno para Mantenimiento según el tema activo
         try:
@@ -46,12 +46,12 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         estilizar_boton_icono(self.boton_agregar)
         botones_layout.addWidget(self.boton_agregar)
         botones_layout.addStretch()
-        self.layout.addLayout(botones_layout)
+        self.main_layout.addLayout(botones_layout)
 
         # Tabla de tareas
         self.tabla_tareas = QTableWidget()
         self.make_table_responsive(self.tabla_tareas)
-        self.layout.addWidget(self.tabla_tareas)
+        self.main_layout.addWidget(self.tabla_tareas)
 
         self.tareas_headers = [self.tabla_tareas.horizontalHeaderItem(i).text() if self.tabla_tareas.columnCount() > 0 else f"Columna {i+1}" for i in range(self.tabla_tareas.columnCount())]
         if not self.tareas_headers:
@@ -71,7 +71,7 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         self.tabla_tareas.setHorizontalHeader(header_tareas)
         self.tabla_tareas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_tareas))
 
-        self.setLayout(self.layout)
+        self.setLayout(self.main_layout)
 
     def cargar_config_columnas(self, config_path, headers):
         if os.path.exists(config_path):
@@ -102,13 +102,18 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
             accion.setChecked(columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, tabla, idx, header, columnas_visibles, config_path))
             menu.addAction(accion)
-        menu.exec(tabla.horizontalHeader().mapToGlobal(pos))
+        header = tabla.horizontalHeader()
+        if header is not None:
+            menu.exec(header.mapToGlobal(pos))
+        else:
+            menu.exec(pos)
 
     def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
         header = tabla.horizontalHeader()
-        pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-        self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
+        if header is not None:
+            pos = header.sectionPosition(idx)
+            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+            self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
 
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):
         columnas_visibles[header] = checked
@@ -140,25 +145,30 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         qr_label.setPixmap(pixmap)
         vbox.addWidget(qr_label)
         btns = QHBoxLayout()
-        btn_guardar = QPushButton("Guardar QR como imagen")
-        btn_pdf = QPushButton("Exportar QR a PDF")
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+        btn_guardar.setToolTip("Guardar QR como imagen")
+        estilizar_boton_icono(btn_guardar)
+        btn_pdf = QPushButton()
+        btn_pdf.setIcon(QIcon("img/pdf.svg"))
+        btn_pdf.setToolTip("Exportar QR a PDF")
+        estilizar_boton_icono(btn_pdf)
         btns.addWidget(btn_guardar)
         btns.addWidget(btn_pdf)
         vbox.addLayout(btns)
         def guardar():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
             if file_path:
-                img.save(file_path)
+                with open(file_path, "wb") as f:
+                    img.save(f)
         def exportar_pdf():
+            from reportlab.pdfgen import canvas
+            from reportlab.lib.pagesizes import letter
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
             if file_path:
-                printer = QPrinter(QPrinter.PrinterMode.HighResolution)
-                printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
-                printer.setOutputFileName(file_path)
-                painter = QPainter(printer)
-                pixmap_scaled = pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio)
-                painter.drawPixmap(100, 100, pixmap_scaled)
-                painter.end()
+                c = canvas.Canvas(file_path, pagesize=letter)
+                c.drawInlineImage(tmp.name, 100, 500, 200, 200)
+                c.save()
         btn_guardar.clicked.connect(guardar)
         btn_pdf.clicked.connect(exportar_pdf)
         dialog.exec()
