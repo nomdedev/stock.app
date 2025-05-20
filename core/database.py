@@ -68,18 +68,17 @@ class BaseDatabaseConnection:
                 return cursor.fetchall()
             self.connection.commit()
         except pyodbc.OperationalError as e:
-            self.logger.error(f"Error de conexión: {e}")
-            raise RuntimeError(
-                "No se pudo conectar a la base de datos. Verifica lo siguiente:\n"
-                "- El nombre del servidor o la dirección IP es correcta.\n"
-                "- El puerto 1433 está habilitado y accesible.\n"
-                "- Las credenciales de usuario y contraseña son válidas.\n"
-                "- SQL Server está configurado para aceptar conexiones remotas.\n"
-                "- El firewall no está bloqueando el puerto de SQL Server."
-            ) from e
+            from core.logger import Logger
+            Logger().log_error_popup(
+                "No se pudo conectar a la base de datos.\n\nVerifica el servidor, credenciales y que SQL Server acepte conexiones remotas.\n\nError: " + str(e)
+            )
+            return None
         except Exception as e:
-            self.logger.error(f"Error al ejecutar la consulta: {e}")
-            raise RuntimeError("Error al ejecutar la consulta en la base de datos.") from e
+            from core.logger import Logger
+            Logger().log_error_popup(
+                "Error al ejecutar la consulta en la base de datos.\n\n" + str(e)
+            )
+            return None
 
 class InventarioDatabaseConnection(BaseDatabaseConnection):
     def __init__(self):
@@ -144,18 +143,17 @@ class DatabaseConnection:
                     return cursor.fetchall()
                 conn.commit()
         except pyodbc.OperationalError as e:
-            self.logger.error(f"Error de conexión: {e}")
-            raise RuntimeError(
-                "No se pudo conectar a la base de datos. Verifica lo siguiente:\n"
-                "- El nombre del servidor o la dirección IP es correcta.\n"
-                "- El puerto 1433 está habilitado y accesible.\n"
-                "- Las credenciales de usuario y contraseña son válidas.\n"
-                "- SQL Server está configurado para aceptar conexiones remotas.\n"
-                "- El firewall no está bloqueando el puerto de SQL Server."
-            ) from e
+            from core.logger import Logger
+            Logger().log_error_popup(
+                "No se pudo conectar a la base de datos.\n\nVerifica el servidor, credenciales y que SQL Server acepte conexiones remotas.\n\nError: " + str(e)
+            )
+            return None
         except Exception as e:
-            self.logger.error(f"Error al ejecutar la consulta: {e}")
-            raise RuntimeError("Error al ejecutar la consulta en la base de datos.") from e
+            from core.logger import Logger
+            Logger().log_error_popup(
+                "Error al ejecutar la consulta en la base de datos.\n\n" + str(e)
+            )
+            return None
 
     @staticmethod
     def listar_bases_de_datos():

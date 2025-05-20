@@ -115,33 +115,75 @@ class InventarioModel:
         query = "UPDATE inventario_perfiles SET qr = ? WHERE id = ?"
         self.db.ejecutar_query(query, (qr, id_item))
 
-    def exportar_inventario(self, formato):
+    def exportar_inventario(self, formato: str) -> str:
+        """
+        Exporta el inventario completo en el formato solicitado ('excel' o 'pdf').
+        Incluye todos los campos de la tabla inventario_perfiles.
+        Si no hay datos, retorna un mensaje de advertencia.
+        Si ocurre un error, retorna un mensaje de error claro.
+        El nombre del archivo incluye fecha y hora para evitar sobrescritura.
+        """
         query = "SELECT * FROM inventario_perfiles"
-        datos = self.db.ejecutar_query(query)
-
-        if formato == "excel":
-            df = pd.DataFrame(datos, columns=["ID", "Código", "Nombre", "Tipo", "Unidad", "Stock Actual", "Stock Mínimo", "Ubicación", "Descripción", "QR", "Imagen"])
-            df.to_excel("inventario.xlsx", index=False)
-            return "Inventario exportado a Excel."
-
-        elif formato == "pdf":
-            if FPDF is None:
-                print("Error: fpdf no está instalado. Ejecuta 'pip install fpdf'.")
-                return
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, "Inventario General", ln=True, align="C")
-            datos = self.obtener_items()
-            if datos:
-                for row in datos:
-                    pdf.cell(200, 10, str(row), ln=True)
-            else:
-                pdf.cell(200, 10, "Sin datos de inventario", ln=True)
-            pdf.output("inventario.pdf")
-            return "Inventario exportado a PDF."
-
-        return "Formato no soportado."
+        try:
+            datos = self.db.ejecutar_query(query) or []
+            if not datos:
+                return "No hay datos de inventario para exportar."
+            formato = (formato or '').lower().strip()
+            if formato not in ("excel", "pdf"):
+                return "Formato no soportado. Use 'excel' o 'pdf'."
+            # Obtener nombres de columnas dinámicamente
+            columnas = []
+            try:
+                # Intentar obtener los headers desde la metadata de la base de datos
+                self.db.conectar()
+                if not self.db.connection:
+                    raise RuntimeError("No se pudo establecer la conexión para obtener los headers.")
+                cursor = self.db.connection.cursor()
+                cursor.execute("SELECT * FROM inventario_perfiles WHERE 1=0")
+                columnas = [column[0] for column in cursor.description]
+                cursor.close()
+            except Exception:
+                # Alternativa: headers fijos si no es posible obtenerlos dinámicamente
+                columnas = [
+                    'id', 'codigo', 'nombre', 'tipo_material', 'unidad', 'stock_actual', 'stock_minimo',
+                    'ubicacion', 'descripcion', 'qr', 'imagen_referencia', 'tipo', 'acabado', 'numero', 'vs',
+                    'proveedor', 'longitud', 'ancho', 'alto', 'necesarias', 'stock', 'faltan', 'ped_min', 'emba',
+                    'pedido', 'importe', 'fecha_creacion', 'fecha_actualizacion'
+                ]
+            fecha_str = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
+            if formato == "excel":
+                nombre_archivo = f"inventario_completo_{fecha_str}.xlsx"
+                try:
+                    df = pd.DataFrame(datos, columns=columnas)
+                    df.to_excel(nombre_archivo, index=False)
+                    return f"Inventario exportado a Excel: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a Excel: {e}"
+            elif formato == "pdf":
+                if FPDF is None:
+                    return "La librería FPDF no está instalada. Instale con 'pip install fpdf'."
+                nombre_archivo = f"inventario_completo_{fecha_str}.pdf"
+                try:
+                    pdf = FPDF()
+                    pdf.add_page()
+                    pdf.set_font("Arial", size=8)
+                    pdf.cell(200, 10, "Inventario Completo", ln=True, align="C")
+                    # Encabezados
+                    for col in columnas:
+                        pdf.cell(35, 8, str(col), border=1)
+                    pdf.ln()
+                    # Filas
+                    for row in datos:
+                        for i, col in enumerate(columnas):
+                            valor = str(row[i]) if i < len(row) else ""
+                            pdf.cell(35, 8, valor, border=1)
+                        pdf.ln()
+                    pdf.output(nombre_archivo)
+                    return f"Inventario exportado a PDF: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a PDF: {e}"
+        except Exception as e:
+            return f"Error al exportar el inventario: {e}"
 
     def transformar_reserva_en_entrega(self, id_reserva):
         # Obtener datos de la reserva

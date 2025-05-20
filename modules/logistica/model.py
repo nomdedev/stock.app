@@ -81,29 +81,49 @@ class LogisticaModel:
             })
         return hoja_de_ruta
 
-    def exportar_historial_entregas(self, formato):
+    def exportar_historial_entregas(self, formato: str) -> str:
+        """
+        Exporta el historial de entregas en el formato solicitado ('excel' o 'pdf').
+        Si no hay datos, retorna un mensaje de advertencia.
+        Si ocurre un error, retorna un mensaje de error.
+        El nombre del archivo incluye fecha y hora para evitar sobrescritura.
+        """
         query = """
         SELECT id, id_obra, fecha_programada, fecha_realizada, estado, vehiculo_asignado, chofer_asignado, observaciones
         FROM entregas_obras
         """
-        datos = self.db.ejecutar_query(query)
-
-        if formato == "excel":
-            df = pd.DataFrame(datos, columns=["ID", "Obra", "Fecha Programada", "Fecha Realizada", "Estado", "Vehículo", "Chofer", "Observaciones"])
-            df.to_excel("historial_entregas.xlsx", index=False)
-            return "Historial de entregas exportado a Excel."
-
-        elif formato == "pdf":
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt="Historial de Entregas", ln=True, align="C")
-            for row in datos:
-                pdf.cell(200, 10, txt=str(row), ln=True)
-            pdf.output("historial_entregas.pdf")
-            return "Historial de entregas exportado a PDF."
-
-        return "Formato no soportado."
+        try:
+            datos = self.db.ejecutar_query(query) or []
+            if not datos:
+                return "No hay datos de entregas para exportar."
+            formato = (formato or '').lower().strip()
+            if formato not in ("excel", "pdf"):
+                return "Formato no soportado. Use 'excel' o 'pdf'."
+            fecha_str = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
+            columnas = ["ID", "Obra", "Fecha Programada", "Fecha Realizada", "Estado", "Vehículo", "Chofer", "Observaciones"]
+            if formato == "excel":
+                nombre_archivo = f"historial_entregas_{fecha_str}.xlsx"
+                try:
+                    df = pd.DataFrame(datos, columns=columnas)
+                    df.to_excel(nombre_archivo, index=False)
+                    return f"Historial de entregas exportado a Excel: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a Excel: {e}"
+            elif formato == "pdf":
+                nombre_archivo = f"historial_entregas_{fecha_str}.pdf"
+                try:
+                    pdf = FPDF()
+                    pdf.add_page()
+                    pdf.set_font("Arial", size=12)
+                    pdf.cell(200, 10, "Historial de Entregas", ln=True, align="C")
+                    for row in datos:
+                        pdf.cell(200, 10, str(row), ln=True)
+                    pdf.output(nombre_archivo)
+                    return f"Historial de entregas exportado a PDF: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a PDF: {e}"
+        except Exception as e:
+            return f"Error al exportar el historial de entregas: {e}"
 
     def exportar_acta_entrega(self, id_entrega):
         query = """

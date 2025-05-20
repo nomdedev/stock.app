@@ -1215,7 +1215,7 @@ class TestVidriosView(unittest.TestCase):
         self.view.tabla_vidrios.setItem(0, 0, QTableWidgetItem("VIDRIO-TEST"))
         self.view.tabla_vidrios.selectRow(0)
         try:
-            self.view.mostrar_qr_item_seleccionado()
+            self.view.m
         except Exception as e:
             self.fail(f"Selección válida lanzó excepción: {e}")
 ```
@@ -1242,3 +1242,42 @@ No debe usarse ni importarse desde `widgets/sidebar.py` (ese archivo lanza Impor
 - Si necesitas personalizar la Sidebar, hazlo siempre en `mps/ui/components/sidebar.py`.
 
 ---
+
+## Patrón de Auditoría y Decorador PermisoAuditoria
+
+### Registro centralizado de acciones
+
+Todas las acciones relevantes de los módulos principales (Inventario, Obras, Logística, Herrajes, Configuración, Contabilidad, Pedidos, Notificaciones, Vidrios, Mantenimiento, etc.) deben registrar eventos en el módulo de Auditoría.
+
+#### Decorador PermisoAuditoria
+
+- Se utiliza el decorador `@PermisoAuditoria('accion')` (o la instancia por módulo, por ejemplo, `@permiso_auditoria_mantenimiento('accion')`) en cada método público relevante del controlador.
+- El decorador valida permisos, registra el evento en auditoría (usuario, módulo, acción, detalle, ip, estado) y muestra feedback visual inmediato ante denegación o error.
+- Para casos personalizados, se puede usar una función interna como `_registrar_evento_auditoria()`.
+
+**Ejemplo de uso:**
+
+```python
+@permiso_auditoria_mantenimiento('registrar_mantenimiento')
+def registrar_mantenimiento(self):
+    ...
+```
+
+#### Obligatorio para trazabilidad y seguridad
+
+Este patrón es obligatorio para cumplir con los estándares de seguridad, trazabilidad y experiencia SAP-like del sistema. Todos los intentos de acción no permitida, solicitudes de aprobación, aprobaciones y rechazos deben quedar registrados en Auditoría.
+
+---
+
+## Exportación de datos: estándar y robustez
+
+Todos los métodos de exportación de datos (inventario, obras, mantenimientos, entregas, balances, etc.) siguen el siguiente estándar:
+
+- Soportan los formatos 'excel' y 'pdf'.
+- Si no hay datos, retornan un mensaje de advertencia amigable.
+- Si ocurre un error (por ejemplo, permisos de archivo, error de librería), retornan un mensaje de error claro.
+- El nombre del archivo exportado incluye fecha y hora para evitar sobrescritura accidental y facilitar la trazabilidad.
+- El feedback al usuario siempre es explícito: éxito, advertencia o error.
+- El código de exportación está documentado y validado en todos los modelos principales.
+
+**Ejemplo de uso en cualquier modelo:**

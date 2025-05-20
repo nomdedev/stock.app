@@ -40,9 +40,8 @@ CHECKLIST FUNCIONAL Y VISUAL:
 - [x] Registro de logs/auditoría de acciones sensibles.
 - [x] Suspensión/reactivación de cuentas.
 - [x] Clonado de permisos entre roles.
-- [x] Exportación de usuarios (si aplica en la vista/controlador).
-- [x] Cumplimiento de permisos y restricciones por rol.
-- [x] Integración con módulo de auditoría.
+- [x] Exportación de usuarios (si aplica en la vista/controlador): método robusto implementado en UsuariosModel y UsuariosController siguiendo el estándar de exportación (Excel/PDF, feedback, validación, nombres únicos, docstring, permisos/auditoría).
+- [ ] Exportación de logs de usuarios (pendiente si se requiere).
 
 REQUISITOS DE AUDITORÍA Y PERMISOS:
 - Todas las acciones sensibles deben registrar log en logs_usuarios.
@@ -284,3 +283,54 @@ class UsuariosModel:
         except Exception:
             # Alternativa: devolver headers fijos si no es posible obtenerlos dinámicamente
             return ['id', 'nombre', 'apellido', 'email', 'usuario', 'password_hash', 'rol', 'estado', 'fecha_creacion', 'fecha_actualizacion']
+
+    def exportar_usuarios(self, formato: str) -> str:
+        """
+        Exporta la lista de usuarios en el formato solicitado ('excel' o 'pdf').
+        Si no hay datos, retorna un mensaje de advertencia.
+        Si ocurre un error, retorna un mensaje de error.
+        El nombre del archivo incluye fecha y hora para evitar sobrescritura.
+        Cumple el estándar de robustez y feedback documentado en README.md.
+        """
+        query = "SELECT id, nombre, apellido, email, usuario, rol, estado, fecha_creacion, fecha_actualizacion FROM usuarios"
+        try:
+            datos = self.db.ejecutar_query(query) or []
+            if not datos:
+                return "No hay usuarios para exportar."
+            formato = (formato or '').lower().strip()
+            if formato not in ("excel", "pdf"):
+                return "Formato no soportado. Use 'excel' o 'pdf'."
+            import pandas as pd
+            from datetime import datetime
+            fecha_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+            columnas = ["ID", "Nombre", "Apellido", "Email", "Usuario", "Rol", "Estado", "Fecha Creación", "Fecha Actualización"]
+            if formato == "excel":
+                nombre_archivo = f"usuarios_{fecha_str}.xlsx"
+                try:
+                    df = pd.DataFrame(datos, columns=columnas)
+                    df.to_excel(nombre_archivo, index=False)
+                    return f"Usuarios exportados a Excel: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a Excel: {e}"
+            elif formato == "pdf":
+                nombre_archivo = f"usuarios_{fecha_str}.pdf"
+                try:
+                    from fpdf import FPDF
+                    pdf = FPDF()
+                    pdf.add_page()
+                    pdf.set_font("Arial", size=12)
+                    pdf.cell(200, 10, "Listado de Usuarios", ln=True, align="C")
+                    # Encabezados
+                    pdf.set_font("Arial", style="B", size=10)
+                    header = " | ".join(columnas)
+                    pdf.cell(0, 8, header, ln=True)
+                    pdf.set_font("Arial", size=10)
+                    for row in datos:
+                        fila = " | ".join([str(x) if x is not None else "" for x in row])
+                        pdf.cell(0, 8, fila, ln=True)
+                    pdf.output(nombre_archivo)
+                    return f"Usuarios exportados a PDF: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a PDF: {e}"
+        except Exception as e:
+            return f"Error al exportar los usuarios: {e}"

@@ -73,68 +73,97 @@ class MantenimientoModel:
         self.db.ejecutar_query(query, (id_tarea,))
         return True
 
-    def exportar_reporte_mantenimiento(self, formato):
+    def exportar_reporte_mantenimiento(self, formato: str) -> str:
         """
         Exporta el reporte de mantenimientos en el formato solicitado.
+        Soporta 'excel' y 'pdf'.
+        Si no hay datos, retorna un mensaje de advertencia.
+        Si ocurre un error, retorna un mensaje de error.
+        El nombre del archivo incluye fecha y hora para evitar sobrescritura.
         """
-        query = """
-        SELECT tipo_mantenimiento, fecha_realizacion, realizado_por, observaciones, firma_digital
-        FROM mantenimientos
-        """
-        datos = self.db.ejecutar_query(query)
+        query = (
+            """
+            SELECT tipo_mantenimiento, fecha_realizacion, realizado_por, observaciones, firma_digital
+            FROM mantenimientos
+            """
+        )
+        try:
+            datos = self.db.ejecutar_query(query) or []
+            if not datos:
+                return "No hay datos de mantenimiento para exportar."
+            formato = (formato or '').lower().strip()
+            if formato not in ("excel", "pdf"):
+                return "Formato no soportado. Use 'excel' o 'pdf'."
+            fecha_str = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
+            if formato == "excel":
+                nombre_archivo = f"reporte_mantenimiento_{fecha_str}.xlsx"
+                try:
+                    df = pd.DataFrame(datos, columns=["Tipo", "Fecha", "Realizado Por", "Observaciones", "Firma Digital"])
+                    df.to_excel(nombre_archivo, index=False)
+                    return f"Reporte de mantenimiento exportado a Excel: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a Excel: {e}"
+            elif formato == "pdf":
+                nombre_archivo = f"reporte_mantenimiento_{fecha_str}.pdf"
+                try:
+                    pdf = FPDF()
+                    pdf.add_page()
+                    pdf.set_font("Arial", size=12)
+                    pdf.cell(200, 10, "Reporte de Mantenimiento", ln=True, align="C")
+                    for row in datos:
+                        pdf.cell(200, 10, str(row), ln=True)
+                    pdf.output(nombre_archivo)
+                    return f"Reporte de mantenimiento exportado a PDF: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a PDF: {e}"
+        except Exception as e:
+            return f"Error al exportar el reporte: {e}"
 
-        if formato == "excel":
-            df = pd.DataFrame(datos, columns=["Tipo", "Fecha", "Realizado Por", "Observaciones", "Firma Digital"])
-            df.to_excel("reporte_mantenimiento.xlsx", index=False)
-            return "Reporte de mantenimiento exportado a Excel."
-
-        elif formato == "pdf":
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt="Reporte de Mantenimiento", ln=True, align="C")
-            for row in datos:
-                pdf.cell(200, 10, txt=str(row), ln=True)
-            pdf.output("reporte_mantenimiento.pdf")
-            return "Reporte de mantenimiento exportado a PDF."
-
-        return "Formato no soportado."
-
-    def registrar_repuesto_utilizado(self, datos):
-        # datos: (id_mantenimiento, id_item, cantidad_utilizada)
-        query = """
-        INSERT INTO repuestos_usados (id_mantenimiento, id_item, cantidad_utilizada)
-        VALUES (?, ?, ?)
-        """
-        self.db.ejecutar_query(query, datos)
-        return True
-
-    def exportar_historial_mantenimientos(self, formato):
+    def exportar_historial_mantenimientos(self, formato: str) -> str:
         """
         Exporta el historial de mantenimientos en el formato solicitado.
+        Soporta 'excel' y 'pdf'.
+        Si no hay datos, retorna un mensaje de advertencia.
+        Si ocurre un error, retorna un mensaje de error.
+        El nombre del archivo incluye fecha y hora para evitar sobrescritura.
         """
-        query = """
-        SELECT tipo_mantenimiento, fecha_realizacion, realizado_por, observaciones, firma_digital
-        FROM mantenimientos
-        """
-        datos = self.db.ejecutar_query(query)
-
-        if formato == "excel":
-            df = pd.DataFrame(datos, columns=["Tipo", "Fecha", "Realizado Por", "Observaciones", "Firma Digital"])
-            df.to_excel("historial_mantenimientos.xlsx", index=False)
-            return "Historial de mantenimientos exportado a Excel."
-
-        elif formato == "pdf":
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt="Historial de Mantenimientos", ln=True, align="C")
-            for row in datos:
-                pdf.cell(200, 10, txt=str(row), ln=True)
-            pdf.output("historial_mantenimientos.pdf")
-            return "Historial de mantenimientos exportado a PDF."
-
-        return "Formato no soportado."
+        query = (
+            """
+            SELECT tipo_mantenimiento, fecha_realizacion, realizado_por, observaciones, firma_digital
+            FROM mantenimientos
+            """
+        )
+        try:
+            datos = self.db.ejecutar_query(query) or []
+            if not datos:
+                return "No hay historial de mantenimientos para exportar."
+            formato = (formato or '').lower().strip()
+            if formato not in ("excel", "pdf"):
+                return "Formato no soportado. Use 'excel' o 'pdf'."
+            fecha_str = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
+            if formato == "excel":
+                nombre_archivo = f"historial_mantenimientos_{fecha_str}.xlsx"
+                try:
+                    df = pd.DataFrame(datos, columns=["Tipo", "Fecha", "Realizado Por", "Observaciones", "Firma Digital"])
+                    df.to_excel(nombre_archivo, index=False)
+                    return f"Historial de mantenimientos exportado a Excel: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a Excel: {e}"
+            elif formato == "pdf":
+                nombre_archivo = f"historial_mantenimientos_{fecha_str}.pdf"
+                try:
+                    pdf = FPDF()
+                    pdf.add_page()
+                    pdf.set_font("Arial", size=12)
+                    pdf.cell(200, 10, "Historial de Mantenimientos", ln=True, align="C")
+                    for row in datos:
+                        pdf.cell(200, 10, str(row), ln=True)
+                    pdf.output(nombre_archivo)
+                    return f"Historial de mantenimientos exportado a PDF: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a PDF: {e}"
+        except Exception as e:
+            return f"Error al exportar el historial: {e}"
 
     def obtener_historial_mantenimientos(self, id_objeto):
         query = "SELECT * FROM mantenimientos WHERE id_objeto = ?"

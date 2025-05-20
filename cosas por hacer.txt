@@ -27,17 +27,19 @@ Actualiza este archivo a medida que completes tareas o surjan nuevas necesidades
 - [x] Validar que todas las tablas principales obtienen headers dinámicamente desde la base de datos (sin hardcode).
 - [x] Implementar menú contextual para mostrar/ocultar columnas en todas las QTableWidget.
 - [x] Verificar que todos los módulos usan el mixin TableResponsiveMixin para tablas responsive.
-- [x] Revisar que cada acción relevante (alta, edición, eliminación, exportación, reserva, entrega, cambio de estado) queda registrada en auditoría.
+- [x] Revisar que cada acción relevante (alta, edición, eliminación, exportación, reserva, entrega, cambio de estado) queda registrada en auditoría. (Mantenimiento: decorador aplicado y documentado; patrón de auditoría documentado en README y docstring)
 - [x] Validar que los permisos y visibilidad de módulos se cargan dinámicamente según el usuario (sidebar y QStackedWidget).
 - [x] Implementar y testear el flujo de solicitudes de aprobación para usuarios sin permiso de modificación (tabla solicitudes_aprobacion).
 - [x] Revisar feedback visual en todas las acciones (mensajes de éxito, error, advertencia, permiso denegado).
+- [x] Validar que todos los modelos usan los nombres exactos de tablas según README y License. (Auditoría completada, sin discrepancias)
+- [x] Exportación robusta de usuarios (Excel/PDF, feedback, validación, nombres únicos, docstring, permisos/auditoría) implementada en UsuariosModel y UsuariosController.
+- [ ] Exportación de logs de usuarios (opcional, pendiente si se requiere).
 
 # Mejoras técnicas sugeridas:
 - [ALTA] Unificar y documentar el uso de la clase BaseDatabaseConnection en todos los módulos (evitar conexiones duplicadas). Todos los modelos principales ahora documentan el patrón correcto y no crean conexiones internas duplicadas.
-- [ALTA] Validar que todos los modelos usan los nombres exactos de tablas según README y License.
 - [MEDIA] Revisar que todos los formularios validan correctamente antes de insertar/actualizar datos.
-- [ALTA] Implementar manejo de errores global para caídas de conexión a la base de datos (mostrar aviso, no crashear la app).
-- [ALTA] Revisar que todos los módulos registran acciones relevantes en auditoría (decorador o función centralizada).
+- [ALTA] Implementar manejo de errores global para caídas de conexión a la base de datos (mostrar aviso, no crashear la app). Ahora todos los métodos de conexión muestran un mensaje visual y no detienen la app ante errores de conexión o consulta.
+- [ALTA] Revisar que todos los módulos registran acciones relevantes en auditoría (decorador o función centralizada). (Mantenimiento: completado y documentado)
 - [MEDIA] Verificar que la exportación a Excel y PDF respeta filtros y columnas visibles.
 - [MEDIA] Revisar que la interfaz visual cumple con los lineamientos de bordes redondeados, botones con sombra y soporte de tema claro/oscuro en todos los widgets.
 - [MEDIA] Validar que la app puede iniciar y funcionar en modo offline (sin DB), mostrando advertencia y permitiendo navegación básica.

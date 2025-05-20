@@ -27,6 +27,23 @@ class PermisoAuditoria:
 permiso_auditoria_configuracion = PermisoAuditoria('configuracion')
 
 class ConfiguracionController:
+    """
+    Controlador para el módulo de Configuración.
+    
+    Todas las acciones públicas relevantes están decoradas con @permiso_auditoria_configuracion,
+    lo que garantiza el registro automático en el módulo de auditoría.
+    
+    Patrón de auditoría:
+    - Decorador @permiso_auditoria_configuracion('accion') en cada método público relevante.
+    - El decorador valida permisos, registra el evento en auditoría (usuario, módulo, acción, detalle, ip, estado).
+    - Feedback visual inmediato ante denegación o error.
+    - Para casos personalizados, se puede usar self._registrar_evento_auditoria().
+    
+    Ejemplo de uso:
+        @permiso_auditoria_configuracion('editar')
+        def guardar_cambios(self):
+            ...
+    """
     def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None):
         self.model = model
         self.view = view

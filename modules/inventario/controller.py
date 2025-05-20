@@ -69,6 +69,23 @@ class PermisoAuditoria:
 permiso_auditoria_inventario = PermisoAuditoria('inventario')
 
 class InventarioController:
+    """
+    Controlador para el módulo de Inventario.
+    
+    Todas las acciones públicas relevantes están decoradas con @permiso_auditoria_inventario,
+    lo que garantiza el registro automático en el módulo de auditoría.
+    
+    Patrón de auditoría:
+    - Decorador @permiso_auditoria_inventario('accion') en cada método público relevante.
+    - El decorador valida permisos, registra el evento en auditoría (usuario, módulo, acción, detalle, ip, estado).
+    - Feedback visual inmediato ante denegación o error.
+    - Para casos personalizados, se puede usar self._registrar_evento_auditoria().
+    
+    Ejemplo de uso:
+        @permiso_auditoria_inventario('editar')
+        def agregar_item(self):
+            ...
+    """
     def __init__(self, model, view, db_connection, usuario_actual=None):
         self.model = model
         self.view = view
@@ -288,6 +305,7 @@ class InventarioController:
                         self._registrar_evento_auditoria('error', f"Error al crear reserva: {e}", exito=False)
                 reservar_button.clicked.connect(on_reservar)
                 cancelar_button.clicked.connect(dialog.reject)
+                dialog.setLayout(layout)
                 dialog.exec()
             except Exception as e:
                 log_error(f"Error al abrir la ventana de reserva: {e}")
@@ -348,6 +366,7 @@ class InventarioController:
                         self._registrar_evento_auditoria('error', f"Error al ajustar stock: {e}", exito=False)
                 ajustar_button.clicked.connect(on_ajustar)
                 cancelar_button.clicked.connect(dialog.reject)
+                dialog.setLayout(layout)
                 dialog.exec()
             except Exception as e:
                 log_error(f"Error al abrir la ventana de ajuste de stock: {e}")

@@ -44,6 +44,24 @@ class PermisoAuditoria:
 permiso_auditoria_contabilidad = PermisoAuditoria('contabilidad')
 
 class ContabilidadController(BaseController):
+    """
+    Controlador para el módulo de Contabilidad.
+    
+    Todas las acciones públicas relevantes están decoradas con @permiso_auditoria_contabilidad,
+    lo que garantiza el registro automático en el módulo de auditoría.
+    
+    Patrón de auditoría:
+    - Decorador @permiso_auditoria_contabilidad('accion') en cada método público relevante.
+    - El decorador valida permisos, registra el evento en auditoría (usuario, módulo, acción, detalle, ip, estado).
+    - Feedback visual inmediato ante denegación o error.
+    - Para casos personalizados, se puede usar self._registrar_evento_auditoria().
+    
+    Ejemplo de uso:
+        @permiso_auditoria_contabilidad('agregar_recibo')
+        def agregar_recibo(self):
+            ...
+    """
+
     def __init__(self, model, view, db_connection, usuarios_model, obras_model=None, usuario_actual=None):
         super().__init__(model, view)
         self.usuario_actual = usuario_actual

@@ -145,27 +145,50 @@ class ObrasModel:
         cantidad_reservada = cantidad if estado == "Reservado" else 0
         self.db_connection.ejecutar_query(query, (id_obra, id_item, cantidad, cantidad_reservada, estado))
 
-    def exportar_cronograma(self, formato, id_obra):
+    def exportar_cronograma(self, formato: str, id_obra) -> str:
+        """
+        Exporta el cronograma de una obra en el formato solicitado ('excel' o 'pdf').
+        Si no hay datos, retorna un mensaje de advertencia.
+        Si ocurre un error, retorna un mensaje de error.
+        El nombre del archivo incluye fecha y hora para evitar sobrescritura.
+        """
         query = """
         SELECT etapa, fecha_programada, fecha_realizada, estado, responsable
         FROM cronograma_obras
         WHERE id_obra = ?
         """
-        datos = self.db_connection.ejecutar_query(query, (id_obra,))
-        if formato == "excel":
-            df = pd.DataFrame(datos, columns=["Etapa", "Fecha Programada", "Fecha Realizada", "Estado", "Responsable"])
-            df.to_excel(f"cronograma_obra_{id_obra}.xlsx", index=False)
-            return "Cronograma exportado a Excel."
-        elif formato == "pdf":
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt=f"Cronograma de Obra {id_obra}", ln=True, align="C")
-            for row in datos:
-                pdf.cell(200, 10, txt=str(row), ln=True)
-            pdf.output(f"cronograma_obra_{id_obra}.pdf")
-            return "Cronograma exportado a PDF."
-        return "Formato no soportado."
+        try:
+            datos = self.db_connection.ejecutar_query(query, (id_obra,)) or []
+            if not datos:
+                return f"No hay cronograma para la obra {id_obra}."
+            formato = (formato or '').lower().strip()
+            if formato not in ("excel", "pdf"):
+                return "Formato no soportado. Use 'excel' o 'pdf'."
+            fecha_str = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
+            columnas = ["Etapa", "Fecha Programada", "Fecha Realizada", "Estado", "Responsable"]
+            if formato == "excel":
+                nombre_archivo = f"cronograma_obra_{id_obra}_{fecha_str}.xlsx"
+                try:
+                    df = pd.DataFrame(datos, columns=columnas)
+                    df.to_excel(nombre_archivo, index=False)
+                    return f"Cronograma exportado a Excel: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a Excel: {e}"
+            elif formato == "pdf":
+                nombre_archivo = f"cronograma_obra_{id_obra}_{fecha_str}.pdf"
+                try:
+                    pdf = FPDF()
+                    pdf.add_page()
+                    pdf.set_font("Arial", size=12)
+                    pdf.cell(200, 10, f"Cronograma de Obra {id_obra}", ln=True, align="C")
+                    for row in datos:
+                        pdf.cell(200, 10, str(row), ln=True)
+                    pdf.output(nombre_archivo)
+                    return f"Cronograma exportado a PDF: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a PDF: {e}"
+        except Exception as e:
+            return f"Error al exportar el cronograma: {e}"
 
     def eliminar_etapa_cronograma(self, id_etapa):
         query = "DELETE FROM cronograma_obras WHERE id = ?"

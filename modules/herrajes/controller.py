@@ -44,6 +44,23 @@ class PermisoAuditoria:
 permiso_auditoria_herrajes = PermisoAuditoria('herrajes')
 
 class HerrajesController:
+    """
+    Controlador para el módulo de Herrajes.
+    
+    Todas las acciones públicas relevantes están decoradas con @permiso_auditoria_herrajes,
+    lo que garantiza el registro automático en el módulo de auditoría.
+    
+    Patrón de auditoría:
+    - Decorador @permiso_auditoria_herrajes('accion') en cada método público relevante.
+    - El decorador valida permisos, registra el evento en auditoría (usuario, módulo, acción, detalle, ip, estado).
+    - Feedback visual inmediato ante denegación o error.
+    - Para casos personalizados, se puede usar self._registrar_evento_auditoria().
+    
+    Ejemplo de uso:
+        @permiso_auditoria_herrajes('editar')
+        def agregar_material(self):
+            ...
+    """
     def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None):
         self.model = model
         self.view = view

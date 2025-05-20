@@ -272,7 +272,7 @@ class UsuariosController(BaseController):
                 estados.append(1 if chk.isChecked() else 0)
             permisos_a_actualizar[modulo] = estados
             # Llamar al modelo por cada módulo
-            self.model.actualizar_permisos(rol, {modulo: permisos_a_actualizar[modulo]})
+            self.model.actualizacion_permisos(rol, {modulo: permisos_a_actualizar[modulo]})
         self.view.label.setText("Permisos guardados exitosamente.")
 
     @permiso_auditoria_usuarios('exportar_logs')
@@ -280,6 +280,16 @@ class UsuariosController(BaseController):
         logs = self.model.obtener_logs()
         # Lógica para exportar logs a un archivo (ejemplo: CSV o Excel)
         self.view.label.setText("Logs exportados exitosamente.")
+
+    @permiso_auditoria_usuarios('exportar_usuarios')
+    def exportar_usuarios(self, formato):
+        """
+        Exporta la lista de usuarios en el formato solicitado ('excel' o 'pdf') usando el método robusto del modelo.
+        Muestra feedback visual y registra auditoría.
+        """
+        mensaje = self.model.exportar_usuarios(formato)
+        self.view.label.setText(mensaje)
+        self._registrar_evento_auditoria('exportar_usuarios', estado="éxito" if 'exportado' in mensaje else "error")
 
     def verificar_permiso(self, usuario_id, modulo, accion):
         permisos = self.model.obtener_permisos_por_usuario(usuario_id, modulo)
