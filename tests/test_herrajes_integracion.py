@@ -1,4 +1,3 @@
-import unittest
 from unittest.mock import Mock
 from modules.herrajes.model import HerrajesModel
 
@@ -32,7 +31,7 @@ class MockHerrajesView:
     def actualizar_tabla(self, data):
         self.tabla_data = data
 
-class TestHerrajesIntegracion(unittest.TestCase):
+class TestHerrajesIntegracion:
     def setUp(self):
         self.mock_db = MockDBConnection()
         self.model = HerrajesModel(self.mock_db)
@@ -63,6 +62,3 @@ class TestHerrajesIntegracion(unittest.TestCase):
         self.assertFalse(any(m[0] == id_material for m in materiales))
         self.view.actualizar_tabla(materiales)
         self.assertEqual(self.view.tabla_data, materiales)
-
-if __name__ == "__main__":
-    unittest.main()

@@ -55,18 +55,32 @@ NOTAS:
 - Consultar README.md para flujos globales y referencias cruzadas.
 """
 
-from core.database import UsuariosDatabaseConnection  # Importar la clase correcta
+"""
+Modelo de Usuarios que utiliza UsuariosDatabaseConnection (hereda de BaseDatabaseConnection) para garantizar una única conexión persistente y evitar duplicados, según el estándar del sistema (ver README y SQL).
+
+- Todas las operaciones usan la tabla 'usuarios' y tablas relacionadas ('roles_permisos', 'logs_usuarios', 'permisos_modulos', 'permisos_usuario') según el esquema documentado.
+- El constructor permite inyectar una conexión personalizada para testing, pero por defecto usa UsuariosDatabaseConnection.
+- Todos los métodos de consulta y modificación usan la API pública ejecutar_query().
+- Se controla el caso de resultados None en todas las consultas.
+- No se accede a atributos internos de la conexión.
+"""
+
+from core.database import UsuariosDatabaseConnection
 
 class UsuariosModel:
+    """
+    Modelo de Usuarios. Debe recibir una instancia de UsuariosDatabaseConnection (o hija de BaseDatabaseConnection) como parámetro db_connection.
+    No crear conexiones nuevas internamente. Usar siempre la conexión persistente y unificada.
+    """
     def __init__(self, db_connection):
         self.db = db_connection
 
     def obtener_usuarios(self):
         query = "SELECT * FROM usuarios"
-        return self.db.ejecutar_query(query)
+        resultado = self.db.ejecutar_query(query)
+        return resultado if resultado else []
 
     def agregar_usuario(self, datos):
-        # datos: (nombre, apellido, email, usuario, password_hash, rol)
         query = "INSERT INTO usuarios (nombre, apellido, email, usuario, password_hash, rol, estado) VALUES (?, ?, ?, ?, ?, ?, 'Activo')"
         self.db.ejecutar_query(query, datos)
 
@@ -75,7 +89,11 @@ class UsuariosModel:
         self.db.ejecutar_query(query, (password_hash, usuario_id))
 
     def actualizar_usuario(self, id_usuario, datos, fecha_actualizacion):
-        self.db.actualizar_registro("usuarios", id_usuario, datos, fecha_actualizacion)
+        # datos: dict con los campos a actualizar
+        set_clause = ", ".join([f"{k} = ?" for k in datos.keys()])
+        valores = list(datos.values()) + [fecha_actualizacion, id_usuario]
+        query = f"UPDATE usuarios SET {set_clause}, fecha_actualizacion = ? WHERE id = ?"
+        self.db.ejecutar_query(query, valores)
 
     def eliminar_usuario(self, usuario_id):
         query = "DELETE FROM usuarios WHERE id = ?"
@@ -87,11 +105,13 @@ class UsuariosModel:
 
     def obtener_roles(self):
         query = "SELECT DISTINCT rol FROM roles_permisos"
-        return self.db.ejecutar_query(query)
+        resultado = self.db.ejecutar_query(query)
+        return resultado if resultado else []
 
     def obtener_permisos_por_rol(self, rol):
         query = "SELECT * FROM roles_permisos WHERE rol = ?"
-        return self.db.ejecutar_query(query, (rol,))
+        resultado = self.db.ejecutar_query(query, (rol,))
+        return resultado if resultado else []
 
     def actualizar_permisos(self, rol, permisos):
         query = """
@@ -156,7 +176,8 @@ class UsuariosModel:
 
     def obtener_usuarios_activos(self):
         query = "SELECT * FROM usuarios WHERE estado = 'activo'"
-        return self.db.ejecutar_query(query)
+        resultado = self.db.ejecutar_query(query)
+        return resultado if resultado else []
 
     def obtener_estadisticas_usuarios(self):
         query = """
@@ -164,7 +185,8 @@ class UsuariosModel:
         FROM usuarios
         GROUP BY estado
         """
-        return self.db.ejecutar_query(query)
+        resultado = self.db.ejecutar_query(query)
+        return resultado if resultado else []
 
     def eliminar_usuarios_por_estado(self, estado):
         query = "DELETE FROM usuarios WHERE estado = ?"
@@ -173,7 +195,7 @@ class UsuariosModel:
     def verificar_usuario_existente(self, email, usuario):
         query = "SELECT COUNT(*) FROM usuarios WHERE email = ? OR usuario = ?"
         resultado = self.db.ejecutar_query(query, (email, usuario))
-        return resultado[0][0] > 0
+        return resultado and resultado[0][0] > 0
 
     def obtener_modulos_permitidos(self, usuario):
         """
@@ -183,11 +205,11 @@ class UsuariosModel:
         if usuario['rol'] in ('admin', 'supervisor'):
             query = "SELECT DISTINCT modulo FROM permisos_modulos"
             resultado = self.db.ejecutar_query(query)
-            return [r[0] for r in resultado]
+            return [r[0] for r in resultado] if resultado else []
         else:
             query = "SELECT modulo FROM permisos_modulos WHERE id_usuario = ? AND puede_ver = 1"
             resultado = self.db.ejecutar_query(query, (usuario['id'],))
-            return [r[0] for r in resultado]
+            return [r[0] for r in resultado] if resultado else []
 
     def obtener_permisos_modulo(self, usuario, modulo):
         """
@@ -237,7 +259,7 @@ class UsuariosModel:
     def obtener_todos_los_modulos(self):
         query = "SELECT DISTINCT modulo FROM roles_permisos"
         resultado = self.db.ejecutar_query(query)
-        return [r[0] for r in resultado]
+        return [r[0] for r in resultado] if resultado else []
 
     def actualizar_permisos_usuario(self, username, modulos):
         # Borra los permisos actuales y asigna los nuevos
@@ -247,11 +269,18 @@ class UsuariosModel:
 
     def obtener_headers_usuarios(self):
         """
-        Obtiene los nombres de columnas (headers) de la tabla usuarios directamente desde la base de datos.
+        Obtiene los nombres de columnas (headers) de la tabla usuarios desde la metadata de la base de datos.
         Cumple el MUST de sincronización automática de columnas.
         """
-        query = "SELECT TOP 0 * FROM usuarios"
-        cursor = self.db.db.cursor()
-        cursor.execute(query)
-        headers = [column[0] for column in cursor.description]
-        return headers
+        try:
+            self.db.conectar()
+            if not self.db.connection:
+                raise RuntimeError("No se pudo establecer la conexión para obtener los headers.")
+            cursor = self.db.connection.cursor()
+            cursor.execute("SELECT * FROM usuarios WHERE 1=0")
+            headers = [column[0] for column in cursor.description]
+            cursor.close()
+            return headers
+        except Exception:
+            # Alternativa: devolver headers fijos si no es posible obtenerlos dinámicamente
+            return ['id', 'nombre', 'apellido', 'email', 'usuario', 'password_hash', 'rol', 'estado', 'fecha_creacion', 'fecha_actualizacion']

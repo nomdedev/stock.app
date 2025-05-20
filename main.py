@@ -176,7 +176,7 @@ from modules.herrajes.model import HerrajesModel
 
 # Importar componentes
 from components.sidebar_button import SidebarButton
-from widgets.sidebar import Sidebar
+from mps.ui.components.sidebar import Sidebar
 
 # Clase principal
 class MainWindow(QMainWindow):

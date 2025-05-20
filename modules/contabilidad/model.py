@@ -3,6 +3,10 @@ from fpdf import FPDF
 import hashlib
 
 class ContabilidadModel:
+    """
+    Modelo de Contabilidad. Debe recibir una instancia de ContabilidadDatabaseConnection (o hija de BaseDatabaseConnection) como parámetro db_connection.
+    No crear conexiones nuevas internamente. Usar siempre la conexión persistente y unificada.
+    """
     def __init__(self, db_connection):
         self.db = db_connection
 

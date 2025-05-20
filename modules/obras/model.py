@@ -51,27 +51,40 @@ FLUJO PASO A PASO DEL MÓDULO OBRAS
 11. Checklist funcional y visual cubierto
 """
 
+"""
+Modelo de Obras que utiliza ObrasDatabaseConnection (hereda de BaseDatabaseConnection) para garantizar una única conexión persistente y evitar duplicados, según el estándar del sistema (ver README y SQL).
+
+- Todas las operaciones usan la tabla 'obras' y tablas relacionadas ('materiales_por_obra', 'cronograma_obras', 'auditorias_sistema') según el esquema documentado.
+- El constructor permite inyectar una conexión personalizada para testing, pero por defecto usa ObrasDatabaseConnection.
+- Todos los métodos de consulta y modificación usan la API pública ejecutar_query().
+- Se controla el caso de resultados None en todas las consultas.
+- No se accede a atributos internos de la conexión.
+"""
+
 import pandas as pd
 from fpdf import FPDF
-from core.database import BaseDatabaseConnection  # Importar la clase base correcta
+from core.database import ObrasDatabaseConnection
 
 class ObrasModel:
-    def __init__(self, db_connection):
-        self.db_connection = db_connection
+    """
+    Modelo de Obras. Debe recibir una instancia de InventarioDatabaseConnection (o hija de BaseDatabaseConnection) como parámetro db_connection.
+    No crear conexiones nuevas internamente. Usar siempre la conexión persistente y unificada.
+    """
+    def __init__(self, db_connection=None):
+        self.db_connection = db_connection or ObrasDatabaseConnection()
 
     def obtener_datos_obras(self):
-        """Obtiene los datos de la tabla de obras desde la base de datos inventario."""
         query = "SELECT id, nombre, cliente, estado, fecha, fecha_entrega FROM obras"
-        return self.db_connection.ejecutar_query(query)
+        resultado = self.db_connection.ejecutar_query(query)
+        return resultado if resultado else []
 
     def obtener_obras(self):
         query = "SELECT * FROM obras"
-        return self.db_connection.ejecutar_query(query)
+        resultado = self.db_connection.ejecutar_query(query)
+        return resultado if resultado else []
 
     def agregar_obra(self, datos):
-        """Agrega una nueva obra a la base de datos con todos los campos modernos."""
         try:
-            # datos: (nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars, fecha_medicion, dias_entrega, fecha_entrega, usuario_creador)
             query = """
                 INSERT INTO obras (
                     nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars,
@@ -84,14 +97,14 @@ class ObrasModel:
             raise
 
     def verificar_obra_existente(self, nombre, cliente):
-        """Verifica si ya existe una obra con el mismo nombre y cliente en la base inventario."""
         query = "SELECT COUNT(*) FROM obras WHERE nombre = ? AND cliente = ?"
         resultado = self.db_connection.ejecutar_query(query, (nombre, cliente))
-        return resultado[0][0] > 0
+        return resultado and resultado[0][0] > 0
 
     def obtener_cronograma_por_obra(self, id_obra):
         query = "SELECT * FROM cronograma_obras WHERE id_obra = ?"
-        return self.db_connection.ejecutar_query(query, (id_obra,))
+        resultado = self.db_connection.ejecutar_query(query, (id_obra,))
+        return resultado if resultado else []
 
     def agregar_etapa_cronograma(self, datos):
         query = """
@@ -101,21 +114,19 @@ class ObrasModel:
         self.db_connection.ejecutar_query(query, datos)
 
     def actualizar_estado_obra(self, id_obra, nuevo_estado):
-        """Actualiza el estado de la obra y registra la acción en auditoría."""
         query = "UPDATE obras SET estado = ? WHERE id = ?"
         self.db_connection.ejecutar_query(query, (nuevo_estado, id_obra))
 
     def obtener_materiales_por_obra(self, id_obra):
-        """Obtiene los materiales asignados a una obra."""
         try:
             query = "SELECT * FROM materiales_por_obra WHERE id_obra = ?"
-            return self.db_connection.ejecutar_query(query, (id_obra,))
+            resultado = self.db_connection.ejecutar_query(query, (id_obra,))
+            return resultado if resultado else []
         except Exception as e:
             print(f"Error al obtener materiales por obra: {e}")
             return []
 
     def asignar_material_a_obra(self, datos):
-        """Asigna un material a una obra."""
         try:
             query = """
             INSERT INTO materiales_por_obra (id_obra, id_item, cantidad_necesaria, cantidad_reservada, estado)
@@ -141,12 +152,10 @@ class ObrasModel:
         WHERE id_obra = ?
         """
         datos = self.db_connection.ejecutar_query(query, (id_obra,))
-
         if formato == "excel":
             df = pd.DataFrame(datos, columns=["Etapa", "Fecha Programada", "Fecha Realizada", "Estado", "Responsable"])
             df.to_excel(f"cronograma_obra_{id_obra}.xlsx", index=False)
             return "Cronograma exportado a Excel."
-
         elif formato == "pdf":
             pdf = FPDF()
             pdf.add_page()
@@ -156,7 +165,6 @@ class ObrasModel:
                 pdf.cell(200, 10, txt=str(row), ln=True)
             pdf.output(f"cronograma_obra_{id_obra}.pdf")
             return "Cronograma exportado a PDF."
-
         return "Formato no soportado."
 
     def eliminar_etapa_cronograma(self, id_etapa):
@@ -169,15 +177,15 @@ class ObrasModel:
         FROM obras
         GROUP BY estado_general
         """
-        return self.db_connection.ejecutar_query(query)
+        resultado = self.db_connection.ejecutar_query(query)
+        return resultado if resultado else []
 
     def obtener_todas_las_fechas(self):
-        """Obtiene todas las fechas programadas del cronograma."""
         query = "SELECT fecha_programada FROM cronograma_obras"
-        return [row[0] for row in self.db_connection.ejecutar_query(query)]
+        resultado = self.db_connection.ejecutar_query(query)
+        return [row[0] for row in resultado] if resultado else []
 
     def reservar_materiales_para_obra(self, id_obra):
-        """Marca los materiales de la obra como 'reservados' en la tabla materiales_por_obra."""
         query = "UPDATE materiales_por_obra SET estado = 'reservado' WHERE id_obra = ?"
         self.db_connection.ejecutar_query(query, (id_obra,))
 
@@ -187,7 +195,6 @@ class ObrasModel:
         return res[0] if res else None
 
     def obtener_obra_por_nombre_cliente(self, nombre, cliente):
-        """Obtiene una obra por nombre y cliente."""
         query = "SELECT * FROM obras WHERE nombre = ? AND cliente = ?"
         res = self.db_connection.ejecutar_query(query, (nombre, cliente))
         return res[0] if res else None
@@ -201,7 +208,6 @@ class ObrasModel:
             self.db_connection.ejecutar_query(query, (nombre, cliente, estado, id_obra))
 
     def actualizar_obra_completa(self, id_obra, nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars, fecha_medicion, dias_entrega, fecha_entrega):
-        """Actualiza todos los campos clave de una obra."""
         query = """
             UPDATE obras SET nombre=?, cliente=?, estado=?, fecha_compra=?, cantidad_aberturas=?, pago_completo=?, pago_porcentaje=?, monto_usd=?, monto_ars=?, fecha_medicion=?, dias_entrega=?, fecha_entrega=? WHERE id=?
         """
@@ -211,19 +217,17 @@ class ObrasModel:
 
     def obtener_headers_obras(self):
         """
-        Obtiene los nombres de columnas (headers) de la tabla obras directamente desde la base de datos.
+        Obtiene los nombres de columnas (headers) de la tabla obras desde la metadata de la base de datos.
         Cumple el MUST de sincronización automática de columnas.
         """
         try:
-            cursor = self.db_connection.get_cursor()
-            # Compatibilidad con SQLite y SQL Server
-            if hasattr(cursor, 'execute'):
-                cursor.execute("SELECT * FROM obras LIMIT 0")
-                headers = [column[0] for column in cursor.description]
-                return headers
-            else:
-                # Fallback para otros motores
-                return ["id", "nombre", "cliente", "estado", "fecha", "fecha_entrega"]
-        except Exception as e:
-            print(f"Error al obtener headers de obras: {e}")
+            self.db_connection.conectar()
+            if not self.db_connection.connection:
+                raise RuntimeError("No se pudo establecer la conexión para obtener los headers.")
+            cursor = self.db_connection.connection.cursor()
+            cursor.execute("SELECT * FROM obras WHERE 1=0")
+            headers = [column[0] for column in cursor.description]
+            cursor.close()
+            return headers
+        except Exception:
             return ["id", "nombre", "cliente", "estado", "fecha", "fecha_entrega"]

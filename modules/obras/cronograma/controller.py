@@ -1,3 +1,5 @@
+from modules.obras.cronograma.view import CronogramaView  # Import correcto de la vista
+from modules.obras.cronograma.model import CronogramaModel  # Si existe el modelo, importar aquí
 import datetime
 
 class CronogramaController:

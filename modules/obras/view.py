@@ -1,4 +1,6 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QDialog, QLineEdit
+from PyQt6.QtWidgets import (QDialog, QGraphicsDropShadowEffect, QHeaderView, QLabel, QLineEdit,
+                               QMenu, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget,
+                               QHBoxLayout, QMessageBox)
 from PyQt6.QtGui import QIcon, QColor, QAction
 from PyQt6.QtCore import QSize, Qt, QPoint
 import json

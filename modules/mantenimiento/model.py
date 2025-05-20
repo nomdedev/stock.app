@@ -2,6 +2,10 @@ import pandas as pd
 from fpdf import FPDF
 
 class MantenimientoModel:
+    """
+    Modelo de Mantenimiento. Debe recibir una instancia de MantenimientoDatabaseConnection (o hija de BaseDatabaseConnection) como parámetro db_connection.
+    No crear conexiones nuevas internamente. Usar siempre la conexión persistente y unificada.
+    """
     def __init__(self, db_connection):
         self.db = db_connection
 

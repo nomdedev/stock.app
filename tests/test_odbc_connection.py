@@ -1,5 +1,3 @@
-import pyodbc
-
 def probar_conexion(driver, server, username, password, database):
     try:
         print(f"Probando conexión con el controlador: {driver}")

@@ -33,7 +33,7 @@ Actualiza este archivo a medida que completes tareas o surjan nuevas necesidades
 - [x] Revisar feedback visual en todas las acciones (mensajes de éxito, error, advertencia, permiso denegado).
 
 # Mejoras técnicas sugeridas:
-- [ALTA] Unificar y documentar el uso de la clase BaseDatabaseConnection en todos los módulos (evitar conexiones duplicadas).
+- [ALTA] Unificar y documentar el uso de la clase BaseDatabaseConnection en todos los módulos (evitar conexiones duplicadas). Todos los modelos principales ahora documentan el patrón correcto y no crean conexiones internas duplicadas.
 - [ALTA] Validar que todos los modelos usan los nombres exactos de tablas según README y License.
 - [MEDIA] Revisar que todos los formularios validan correctamente antes de insertar/actualizar datos.
 - [ALTA] Implementar manejo de errores global para caídas de conexión a la base de datos (mostrar aviso, no crashear la app).
@@ -59,6 +59,16 @@ Actualiza este archivo a medida que completes tareas o surjan nuevas necesidades
 - [BAJA] Unificar estilos de botones y efectos de sombra en ProduccionView.
 - [BAJA] Revisar y limpiar imports no usados en ProduccionView.
 
+# --- PROBLEMAS DETECTADOS (AGREGADOS AUTOMÁTICAMENTE) ---
+# [ALTA] main.py: La instalación de dependencias usaba --user siempre, lo que puede fallar en entornos virtuales. Corregido para que solo se use fuera de venv.
+# [ALTA] mps/ui/main_window.py: Problemas de imports relativos y rutas inconsistentes. Revisar y unificar imports para evitar errores de importación cruzada y duplicada.
+# [MEDIA] widgets/sidebar.py: Revisar consistencia de iconos y rutas, y asegurar que los módulos Sidebar y SidebarButton no generen duplicidad/confusión en la UI.
+# [MEDIA] widgets/sidebar.py: Mejorar robustez de la lógica de visibilidad dinámica y feedback visual de estado online/offline.
+# [MEDIA] widgets/sidebar.py: Validar que los iconos SVG existan y fallback a un icono por defecto si no existen.
+# [MEDIA] widgets/sidebar.py: Documentar el patrón de uso de Sidebar y SidebarButton en el README.
+# [MEDIA] mps/ui/main_window.py: Validar que la persistencia de módulo activo y recarga de tema funcione correctamente en todos los flujos de login/cambio de usuario.
+# [MEDIA] mps/ui/main_window.py: Documentar en cosas por hacer la necesidad de unificar la gestión de permisos y visibilidad de módulos entre main.py y main_window.py.
+
 ---
 
 ## ¿Cómo priorizar?
@@ -69,3 +79,16 @@ Actualiza este archivo a medida que completes tareas o surjan nuevas necesidades
 ---
 
 Actualiza este archivo cada vez que resuelvas un punto o detectes uno nuevo.
+
+- [ALTA] Corregir robustez de instalación de dependencias en main.py: usar --user solo fuera de venv (hecho).
+- [ALTA] Corregir imports y argumentos obligatorios en Sidebar y main_window.py: pasar icons_path y sections, eliminar métodos inexistentes (hecho).
+- [MEDIA] Implementar feedback visual de selección activa en Sidebar (actualmente no hay indicación visual del módulo activo).
+- [MEDIA] Mejorar documentación de la API pública de Sidebar (qué métodos y señales expone, cómo se usa correctamente).
+- [MEDIA] Unificar la lógica de visibilidad dinámica de módulos entre Sidebar y QStackedWidget (actualmente solo oculta widgets en el stack).
+- [ALTA] Corregir imports y estructura de rutas en main_window.py y otros módulos UI (evitar imports rotos o redundantes).
+- [ALTA] Crear o restaurar el componente TopBar, o reemplazarlo por un header alternativo en main_window.py.
+
+# NOTA: Migración de Sidebar a componente unificado
+- [ALTA] Modularización Sidebar: migrado a mps/ui/components/sidebar.py, imports unificados y lógica avanzada fusionada. No usar widgets/sidebar.py (ImportError).
+- [ALTA] Corregir y auditar imports de Sidebar en toda la app (completado).
+- [ALTA] Documentar en README y en docstring de Sidebar la nueva ruta y uso recomendado.

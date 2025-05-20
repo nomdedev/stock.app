@@ -1227,3 +1227,18 @@ class TestVidriosView(unittest.TestCase):
 - El resto de los módulos principales están en proceso de robustificación y testeo.
 
 ---
+
+## Sidebar modular
+
+La clase Sidebar para la navegación de módulos ha sido migrada y centralizada en:
+
+```python
+from mps.ui.components.sidebar import Sidebar
+```
+
+No debe usarse ni importarse desde `widgets/sidebar.py` (ese archivo lanza ImportError y solo existe por compatibilidad).
+
+- La Sidebar acepta los mismos argumentos y expone los mismos métodos que la versión anterior, pero ahora es la única fuente oficial.
+- Si necesitas personalizar la Sidebar, hazlo siempre en `mps/ui/components/sidebar.py`.
+
+---

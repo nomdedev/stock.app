@@ -1,5 +1,3 @@
-import importlib
-
 def test_dependencias():
     deps = [
         "PyQt6", "pyodbc", "reportlab", "qrcode", "pandas", "matplotlib", "pytest",

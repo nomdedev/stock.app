@@ -1,18 +1,20 @@
 import sys
 import os
+import json
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QStackedWidget, QSizePolicy
 from PyQt6.QtCore import Qt
-import os, json
 
-from mps.ui.components.topbar import TopBar
+# Importar componentes UI
+# from mps.ui.components.topbar import TopBar  # ERROR: No existe el archivo topbar.py en mps/ui/components/
+# TODO: Crear o restaurar el componente TopBar, o reemplazarlo por un header alternativo.
 from mps.ui.components.sidebar import Sidebar
-from mps.modules.inventario.view import InventarioView
-from mps.modules.obras.view import ObrasView
-from mps.modules.logistica.view import LogisticaView
-from mps.modules.usuarios.view import UsuariosView
-from mps.modules.configuracion.view import ConfiguracionView
+from modules.inventario.view import InventarioView
+from modules.obras.view import ObrasView
+from modules.logistica.view import LogisticaView
+from modules.usuarios.view import UsuariosView
+from modules.configuracion.view import ConfiguracionView
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), '../../config/config.json')
 QSS_PATH = os.path.join(os.path.dirname(__file__), '../../themes')
@@ -36,8 +38,8 @@ class MainWindow(QMainWindow):
         main_layout.setSpacing(0)
 
         # TopBar
-        self.topbar = TopBar(usuario=config.get("usuario", "admin"))
-        main_layout.addWidget(self.topbar)
+        # self.topbar = TopBar(usuario=config.get("usuario", "admin"))
+        # main_layout.addWidget(self.topbar)
 
         # Layout central (sidebar + stack)
         content_layout = QHBoxLayout()
@@ -46,7 +48,14 @@ class MainWindow(QMainWindow):
         main_layout.addLayout(content_layout)
 
         # Sidebar
-        self.sidebar = Sidebar()
+        sidebar_sections = [
+            ("Inventario", os.path.join("utils", "inventario.svg")),
+            ("Obras", os.path.join("utils", "obras.svg")),
+            ("Logística", os.path.join("utils", "logistica.svg")),
+            ("Usuarios", os.path.join("utils", "users.svg")),
+            ("Configuración", os.path.join("utils", "configuracion.svg")),
+        ]
+        self.sidebar = Sidebar(icons_path="utils", sections=sidebar_sections, mostrar_nombres=True)
         self.sidebar.setFixedWidth(200)
         content_layout.addWidget(self.sidebar)
 
@@ -72,13 +81,12 @@ class MainWindow(QMainWindow):
         self._modulos_permitidos_indices = list(range(len(self.views)))  # Por defecto todos
 
         # Conectar sidebar con stack y navegación segura
-        self.sidebar.set_main_stack(self.stack)
         self.sidebar.pageChanged.connect(self._on_sidebar_page_changed)
 
         # Persistencia de módulo activo
         last_index = config.get("modulo_activo", 0)
         self.stack.setCurrentIndex(last_index)
-        self.sidebar.set_active(last_index)
+        # self.sidebar.set_active(last_index)  # Eliminar: Sidebar no tiene este método
         self.stack.currentChanged.connect(self._save_active_index)
 
     def _load_config(self):
@@ -133,14 +141,14 @@ class MainWindow(QMainWindow):
             if widget is not None:
                 widget.setVisible(i in indices_permitidos)
         # Actualizar sidebar
-        self.sidebar.set_visible_modules(indices_permitidos)
+        # self.sidebar.set_visible_modules(indices_permitidos)  # Eliminar: Sidebar no tiene este método
         # Seleccionar el primer módulo permitido
         if indices_permitidos:
             self.stack.setCurrentIndex(indices_permitidos[0])
-            self.sidebar.set_active(0)
+            # self.sidebar.set_active(0)  # Eliminar: Sidebar no tiene este método
         else:
             self.stack.setCurrentIndex(0)
-            self.sidebar.set_active(0)
+            # self.sidebar.set_active(0)  # Eliminar: Sidebar no tiene este método
 
     def _on_sidebar_page_changed(self, idx):
         # idx es el índice relativo a los módulos permitidos
@@ -154,4 +162,4 @@ class MainWindow(QMainWindow):
                 QMessageBox.warning(self, "Permiso denegado", f"No tiene permiso para acceder al módulo: {modulo}")
                 return
         self.stack.setCurrentIndex(real_idx)
-        self.sidebar.set_active(idx)
+        # self.sidebar.set_active(idx)  # Eliminar: Sidebar no tiene este método

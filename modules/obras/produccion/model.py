@@ -1,5 +1,3 @@
-from core.database import ProduccionDatabaseConnection  # Importar la clase correcta
-
 class ProduccionModel:
     def __init__(self, db_connection):
         self.db = db_connection
