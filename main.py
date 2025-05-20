@@ -53,65 +53,38 @@ import subprocess
 import os
 import pkg_resources
 
-def verificar_e_instalar_dependencias():
+def verificar_dependencias():
+    """
+    Solo verifica si las dependencias críticas están instaladas y muestra advertencia si falta alguna.
+    No instala automáticamente para evitar demoras en el arranque.
+    """
     requeridos = [
         ("PyQt6", "6.9.0"), ("PyQt6-Qt6", "6.9.0"), ("PyQt6-sip", "13.10.0"),
         ("pyodbc", "5.2.0"), ("reportlab", "4.4.1"), ("qrcode", "7.4.2"),
         ("pandas", "2.2.2"), ("matplotlib", "3.8.4"), ("pytest", "8.2.0"),
         ("pillow", "10.3.0"), ("python-dateutil", "2.9.0"), ("pytz", "2024.1"),
-        ("tzdata", "2024.1"), ("openpyxl", "3.1.2"), ("colorama", "0.4.6"), ("ttkthemes", "3.2.2")
+        ("tzdata", "2024.1"), ("openpyxl", "3.1.2"), ("colorama", "0.4.6"), ("ttkthemes", "3.2.2"),
+        ("fpdf", None)
     ]
     faltantes = []
-    actualizar = []
     for paquete, version in requeridos:
         try:
-            pkg_resources.require(f"{paquete}=={version}")
-        except pkg_resources.DistributionNotFound:
-            faltantes.append(f"{paquete}=={version}")
-        except pkg_resources.VersionConflict:
-            actualizar.append(f"{paquete}=={version}")
-    if faltantes or actualizar:
-        print(f"Instalando/actualizando paquetes: {', '.join(faltantes + actualizar)}")
-        try:
-            # Detectar si estamos en un entorno virtual
-            in_venv = (
-                hasattr(sys, 'real_prefix') or
-                (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
-            )
-            pip_args = [sys.executable, "-m", "pip", "install", "--upgrade"]
-            if not in_venv:
-                pip_args.append("--user")
-            pip_args += (faltantes + actualizar)
-            try:
-                result = subprocess.run(pip_args)
-                if result.returncode != 0:
-                    print(f"\n[ERROR] Falló la instalación de dependencias. Código de salida: {result.returncode}")
-                    print(f"Comando ejecutado: {' '.join(pip_args)}")
-                    print("\nPor favor, ejecuta el comando anterior manualmente en tu terminal para ver el error completo y solucionarlo.")
-                    
-            except Exception as e:
-                print(f"Error al instalar/actualizar dependencias: {e}")
-                sys.exit(1)
-        except Exception as e:
-            print(f"Error al instalar/actualizar dependencias: {e}")
-            sys.exit(1)
-        print("Dependencias instaladas/actualizadas. Reiniciando la aplicación...")
-        os.execv(sys.executable, [sys.executable] + sys.argv)
-
-def test_dependencias():
-    try:
-        import PyQt6
-        import pyodbc
-        import reportlab
-        import qrcode
-        import pandas
-        print("✅ Todas las dependencias críticas están instaladas correctamente.")
-    except Exception as e:
-        print(f"❌ Error en la verificación de dependencias: {e}")
+            if version:
+                pkg_resources.require(f"{paquete}=={version}")
+            else:
+                __import__(paquete)
+        except Exception:
+            faltantes.append(f"{paquete}{'==' + version if version else ''}")
+    if faltantes:
+        print("[ADVERTENCIA] Faltan dependencias críticas:")
+        for f in faltantes:
+            print(f"  - {f}")
+        print("Por favor, ejecuta 'pip install -r requirements.txt' o el script install.bat antes de iniciar la app.")
         sys.exit(1)
+    else:
+        print("✅ Todas las dependencias críticas están instaladas correctamente.")
 
-verificar_e_instalar_dependencias()
-test_dependencias()
+verificar_dependencias()
 
 import os
 # Refuerzo para evitar errores de OpenGL/Skia/Chromium en Windows

@@ -33,7 +33,7 @@ Actualiza este archivo a medida que completes tareas o surjan nuevas necesidades
 - [x] Revisar feedback visual en todas las acciones (mensajes de éxito, error, advertencia, permiso denegado).
 - [x] Validar que todos los modelos usan los nombres exactos de tablas según README y License. (Auditoría completada, sin discrepancias)
 - [x] Exportación robusta de usuarios (Excel/PDF, feedback, validación, nombres únicos, docstring, permisos/auditoría) implementada en UsuariosModel y UsuariosController.
-- [ ] Exportación de logs de usuarios (opcional, pendiente si se requiere).
+- [x] Exportación de logs de usuarios (opcional, pendiente si se requiere). Ahora implementada: método robusto en UsuariosModel y UsuariosController, feedback validado, nombres únicos, soporte Excel/PDF.
 
 # Mejoras técnicas sugeridas:
 - [ALTA] Unificar y documentar el uso de la clase BaseDatabaseConnection en todos los módulos (evitar conexiones duplicadas). Todos los modelos principales ahora documentan el patrón correcto y no crean conexiones internas duplicadas.

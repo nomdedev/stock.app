@@ -276,10 +276,14 @@ class UsuariosController(BaseController):
         self.view.label.setText("Permisos guardados exitosamente.")
 
     @permiso_auditoria_usuarios('exportar_logs')
-    def exportar_logs(self):
-        logs = self.model.obtener_logs()
-        # Lógica para exportar logs a un archivo (ejemplo: CSV o Excel)
-        self.view.label.setText("Logs exportados exitosamente.")
+    def exportar_logs(self, formato):
+        """
+        Exporta los logs de usuarios en el formato solicitado ('excel' o 'pdf') usando el método robusto del modelo.
+        Muestra feedback visual y registra auditoría.
+        """
+        mensaje = self.model.exportar_logs_usuarios(formato)
+        self.view.label.setText(mensaje)
+        self._registrar_evento_auditoria('exportar_logs', estado="éxito" if 'exportado' in mensaje else "error")
 
     @permiso_auditoria_usuarios('exportar_usuarios')
     def exportar_usuarios(self, formato):

@@ -41,7 +41,7 @@ CHECKLIST FUNCIONAL Y VISUAL:
 - [x] Suspensión/reactivación de cuentas.
 - [x] Clonado de permisos entre roles.
 - [x] Exportación de usuarios (si aplica en la vista/controlador): método robusto implementado en UsuariosModel y UsuariosController siguiendo el estándar de exportación (Excel/PDF, feedback, validación, nombres únicos, docstring, permisos/auditoría).
-- [ ] Exportación de logs de usuarios (pendiente si se requiere).
+- [x] Exportación de logs de usuarios (pendiente si se requiere).
 
 REQUISITOS DE AUDITORÍA Y PERMISOS:
 - Todas las acciones sensibles deben registrar log en logs_usuarios.
@@ -334,3 +334,62 @@ class UsuariosModel:
                     return f"Error al exportar a PDF: {e}"
         except Exception as e:
             return f"Error al exportar los usuarios: {e}"
+
+    def obtener_logs_usuarios(self):
+        """
+        Obtiene todos los logs de usuarios desde la tabla logs_usuarios.
+        Devuelve una lista de tuplas con los campos: id, usuario_id, accion, modulo, fecha_hora, detalle, ip_origen.
+        """
+        query = "SELECT id, usuario_id, accion, modulo, fecha_hora, detalle, ip_origen FROM logs_usuarios ORDER BY fecha_hora DESC"
+        resultado = self.db.ejecutar_query(query)
+        return resultado if resultado else []
+
+    def exportar_logs_usuarios(self, formato: str) -> str:
+        """
+        Exporta los logs de usuarios en el formato solicitado ('excel' o 'pdf').
+        Si no hay datos, retorna un mensaje de advertencia.
+        Si ocurre un error, retorna un mensaje de error.
+        El nombre del archivo incluye fecha y hora para evitar sobrescritura.
+        Cumple el estándar de robustez y feedback documentado en README.md.
+        """
+        try:
+            datos = self.obtener_logs_usuarios()
+            if not datos:
+                return "No hay logs de usuarios para exportar."
+            formato = (formato or '').lower().strip()
+            if formato not in ("excel", "pdf"):
+                return "Formato no soportado. Use 'excel' o 'pdf'."
+            import pandas as pd
+            from datetime import datetime
+            fecha_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+            columnas = ["ID", "Usuario ID", "Acción", "Módulo", "Fecha/Hora", "Detalle", "IP Origen"]
+            if formato == "excel":
+                nombre_archivo = f"logs_usuarios_{fecha_str}.xlsx"
+                try:
+                    df = pd.DataFrame(datos, columns=columnas)
+                    df.to_excel(nombre_archivo, index=False)
+                    return f"Logs de usuarios exportados a Excel: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a Excel: {e}"
+            elif formato == "pdf":
+                nombre_archivo = f"logs_usuarios_{fecha_str}.pdf"
+                try:
+                    from fpdf import FPDF
+                    pdf = FPDF()
+                    pdf.add_page()
+                    pdf.set_font("Arial", size=12)
+                    pdf.cell(200, 10, "Logs de Usuarios", ln=True, align="C")
+                    # Encabezados
+                    pdf.set_font("Arial", style="B", size=10)
+                    header = " | ".join(columnas)
+                    pdf.cell(0, 8, header, ln=True)
+                    pdf.set_font("Arial", size=10)
+                    for row in datos:
+                        fila = " | ".join([str(x) if x is not None else "" for x in row])
+                        pdf.cell(0, 8, fila, ln=True)
+                    pdf.output(nombre_archivo)
+                    return f"Logs de usuarios exportados a PDF: {nombre_archivo}"
+                except Exception as e:
+                    return f"Error al exportar a PDF: {e}"
+        except Exception as e:
+            return f"Error al exportar los logs de usuarios: {e}"

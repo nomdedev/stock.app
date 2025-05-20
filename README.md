@@ -1362,13 +1362,13 @@ Este patrón es obligatorio para cumplir con los estándares de seguridad, traza
 
 ## Exportación de datos: estándar y robustez
 
-Todos los métodos de exportación de datos (inventario, obras, mantenimientos, entregas, balances, etc.) siguen el siguiente estándar:
+Todos los métodos de exportación de datos (inventario, usuarios, obras, mantenimientos, entregas, balances, etc.) siguen el siguiente estándar:
 
 - Soportan los formatos 'excel' y 'pdf'.
 - Si no hay datos, retornan un mensaje de advertencia amigable.
 - Si ocurre un error (por ejemplo, permisos de archivo, error de librería), retornan un mensaje de error claro.
 - El nombre del archivo exportado incluye fecha y hora para evitar sobrescritura accidental y facilitar la trazabilidad.
 - El feedback al usuario siempre es explícito: éxito, advertencia o error.
-- El código de exportación está documentado y validado en todos los modelos principales.
+- El código de exportación está documentado y validado en todos los modelos principales, incluyendo inventario y usuarios.
 
 **Ejemplo de uso en cualquier modelo:**
