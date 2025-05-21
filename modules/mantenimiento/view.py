@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTabWidget, QHBoxLayout, QPushButton, QGraphicsDropShadowEffect, QTableWidget, QMenu, QFileDialog, QDialog
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QTabWidget, QHBoxLayout, QPushButton, QGraphicsDropShadowEffect, QTableWidget, QMenu, QFileDialog, QDialog, QMessageBox
 from PyQt6.QtGui import QIcon, QColor, QPixmap, QPainter, QAction
 from PyQt6.QtCore import QSize, Qt, QPoint
 from PyQt6.QtPrintSupport import QPrinter
@@ -8,25 +8,18 @@ import tempfile
 import qrcode
 from functools import partial
 from core.table_responsive_mixin import TableResponsiveMixin
-from core.ui_components import estilizar_boton_icono
+from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
+from core.logger import log_error
 
 class MantenimientoView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
+        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path="themes/light.qss")
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(20)
-
-        # Cargar el stylesheet visual moderno para Mantenimiento según el tema activo
-        try:
-            with open("themes/config.json", "r", encoding="utf-8") as f:
-                config = json.load(f)
-            tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
-            with open(archivo_qss, "r", encoding="utf-8") as f:
-                self.setStyleSheet(f.read())
-        except Exception as e:
-            print(f"No se pudo cargar el archivo de estilos: {e}")
+        self.label_feedback = QLabel()
+        self.main_layout.addWidget(self.label_feedback)
 
         # Botón principal de acción (Agregar)
         botones_layout = QHBoxLayout()
@@ -53,7 +46,12 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         self.make_table_responsive(self.tabla_tareas)
         self.main_layout.addWidget(self.tabla_tareas)
 
-        self.tareas_headers = [self.tabla_tareas.horizontalHeaderItem(i).text() if self.tabla_tareas.columnCount() > 0 else f"Columna {i+1}" for i in range(self.tabla_tareas.columnCount())]
+        # Obtener headers de la tabla de forma segura
+        self.tareas_headers = []
+        if self.tabla_tareas.columnCount() > 0:
+            for i in range(self.tabla_tareas.columnCount()):
+                item = self.tabla_tareas.horizontalHeaderItem(i)
+                self.tareas_headers.append(item.text() if item is not None else f"Columna {i+1}")
         if not self.tareas_headers:
             self.tareas_headers = ["id", "tarea", "responsable", "fecha", "estado"]
             self.tabla_tareas.setColumnCount(len(self.tareas_headers))
@@ -62,83 +60,137 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         self.columnas_visibles_tareas = self.cargar_config_columnas(self.config_path_tareas, self.tareas_headers)
         self.aplicar_columnas_visibles(self.tabla_tareas, self.tareas_headers, self.columnas_visibles_tareas)
         header_tareas = self.tabla_tareas.horizontalHeader()
-        header_tareas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header_tareas.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_tareas, self.tareas_headers, self.columnas_visibles_tareas, self.config_path_tareas))
-        header_tareas.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_tareas))
-        header_tareas.setSectionsMovable(True)
-        header_tareas.setSectionsClickable(True)
-        header_tareas.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_tareas, self.tareas_headers, self.columnas_visibles_tareas, self.config_path_tareas))
-        self.tabla_tareas.setHorizontalHeader(header_tareas)
+        if header_tareas is not None:
+            header_tareas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header_tareas.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_tareas, self.tareas_headers, self.columnas_visibles_tareas, self.config_path_tareas))
+            header_tareas.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_tareas))
+            header_tareas.setSectionsMovable(True)
+            header_tareas.setSectionsClickable(True)
+            header_tareas.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_tareas, self.tareas_headers, self.columnas_visibles_tareas, self.config_path_tareas))
+            self.tabla_tareas.setHorizontalHeader(header_tareas)
         self.tabla_tareas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_tareas))
 
         self.setLayout(self.main_layout)
+
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+        colores = {
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "advertencia": "#fbbf24",
+            "error": "#ef4444"
+        }
+        color = colores.get(tipo, "#2563eb")
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px;")
+        self.label_feedback.setText(mensaje)
+        if tipo == "error":
+            log_error(mensaje)
+            QMessageBox.critical(self, "Error", mensaje)
+        elif tipo == "advertencia":
+            QMessageBox.warning(self, "Advertencia", mensaje)
+        elif tipo == "exito":
+            QMessageBox.information(self, "Éxito", mensaje)
 
     def cargar_config_columnas(self, config_path, headers):
         if os.path.exists(config_path):
             try:
                 with open(config_path, "r", encoding="utf-8") as f:
                     return json.load(f)
-            except Exception:
-                pass
+            except Exception as e:
+                log_error(f"Error al cargar configuración de columnas: {e}")
+                self.mostrar_mensaje(f"Error al cargar configuración de columnas: {e}", "error")
         return {header: True for header in headers}
 
     def guardar_config_columnas(self, config_path, columnas_visibles):
         try:
             with open(config_path, "w", encoding="utf-8") as f:
                 json.dump(columnas_visibles, f, ensure_ascii=False, indent=2)
-        except Exception:
-            pass
+            self.mostrar_mensaje("Configuración de columnas guardada", "exito")
+        except Exception as e:
+            log_error(f"Error al guardar configuración de columnas: {e}")
+            self.mostrar_mensaje(f"Error al guardar configuración de columnas: {e}", "error")
 
     def aplicar_columnas_visibles(self, tabla, headers, columnas_visibles):
-        for idx, header in enumerate(headers):
-            visible = columnas_visibles.get(header, True)
-            tabla.setColumnHidden(idx, not visible)
+        try:
+            for idx, header in enumerate(headers):
+                visible = columnas_visibles.get(header, True)
+                tabla.setColumnHidden(idx, not visible)
+        except Exception as e:
+            log_error(f"Error al aplicar columnas visibles: {e}")
+            self.mostrar_mensaje(f"Error al aplicar columnas visibles: {e}", "error")
 
     def mostrar_menu_columnas(self, tabla, headers, columnas_visibles, config_path, pos):
-        menu = QMenu(self)
-        for idx, header in enumerate(headers):
-            accion = QAction(header, self)
-            accion.setCheckable(True)
-            accion.setChecked(columnas_visibles.get(header, True))
-            accion.toggled.connect(partial(self.toggle_columna, tabla, idx, header, columnas_visibles, config_path))
-            menu.addAction(accion)
-        header = tabla.horizontalHeader()
-        if header is not None:
-            menu.exec(header.mapToGlobal(pos))
-        else:
-            menu.exec(pos)
+        try:
+            menu = QMenu(self)
+            for idx, header in enumerate(headers):
+                accion = QAction(header, self)
+                accion.setCheckable(True)
+                accion.setChecked(columnas_visibles.get(header, True))
+                accion.toggled.connect(partial(self.toggle_columna, tabla, idx, header, columnas_visibles, config_path))
+                menu.addAction(accion)
+            header = tabla.horizontalHeader()
+            if header is not None:
+                menu.exec(header.mapToGlobal(pos))
+            else:
+                log_error("No se puede mostrar el menú de columnas: header no disponible")
+                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
+        except Exception as e:
+            log_error(f"Error al mostrar menú de columnas: {e}")
+            self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
 
     def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
-        header = tabla.horizontalHeader()
-        if header is not None:
-            pos = header.sectionPosition(idx)
-            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-            self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
+        try:
+            header = tabla.horizontalHeader()
+            if header is not None:
+                pos = header.sectionPosition(idx)
+                global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+                self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
+            else:
+                log_error("No se puede mostrar el menú de columnas: header no disponible")
+                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
+        except Exception as e:
+            log_error(f"Error al mostrar menú de columnas desde header: {e}")
+            self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
 
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):
-        columnas_visibles[header] = checked
-        tabla.setColumnHidden(idx, not checked)
-        self.guardar_config_columnas(config_path, columnas_visibles)
+        try:
+            columnas_visibles[header] = checked
+            tabla.setColumnHidden(idx, not checked)
+            self.guardar_config_columnas(config_path, columnas_visibles)
+            self.mostrar_mensaje(f"Columna '{header}' {'mostrada' if checked else 'ocultada'}", "info")
+        except Exception as e:
+            log_error(f"Error al alternar columna: {e}")
+            self.mostrar_mensaje(f"Error al alternar columna: {e}", "error")
 
     def auto_ajustar_columna(self, tabla, idx):
-        tabla.resizeColumnToContents(idx)
+        try:
+            tabla.resizeColumnToContents(idx)
+        except Exception as e:
+            log_error(f"Error al autoajustar columna: {e}")
+            self.mostrar_mensaje(f"Error al autoajustar columna: {e}", "error")
 
     def mostrar_qr_item_seleccionado(self, tabla):
-        selected = tabla.selectedItems()
-        if not selected:
+        try:
+            selected = tabla.selectedItems()
+            if not selected:
+                return
+            row = selected[0].row()
+            codigo = tabla.item(row, 0).text()  # Usar el primer campo como dato QR
+            if not codigo:
+                self.mostrar_mensaje("No se pudo obtener el código para el QR.", "error")
+                return
+            qr = qrcode.QRCode(version=1, box_size=6, border=2)
+            qr.add_data(codigo)
+            qr.make(fit=True)
+            img = qr.make_image(fill_color="black", back_color="white")
+            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+                img.save(tmp)
+                tmp.flush()
+                tmp_path = tmp.name
+                pixmap = QPixmap(tmp_path)
+        except Exception as e:
+            log_error(f"Error al generar QR: {e}")
+            self.mostrar_mensaje(f"Error al generar QR: {e}", "error")
             return
-        row = selected[0].row()
-        codigo = tabla.item(row, 0).text()  # Usar el primer campo como dato QR
-        if not codigo:
-            return
-        qr = qrcode.QRCode(version=1, box_size=6, border=2)
-        qr.add_data(codigo)
-        qr.make(fit=True)
-        img = qr.make_image(fill_color="black", back_color="white")
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-            with open(tmp.name, "wb") as f:
-                img.save(f)
-            pixmap = QPixmap(tmp.name)
         dialog = QDialog(self)
         dialog.setWindowTitle(f"Código QR para {codigo}")
         vbox = QVBoxLayout(dialog)
@@ -158,18 +210,26 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         btns.addWidget(btn_pdf)
         vbox.addLayout(btns)
         def guardar():
-            file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
-            if file_path:
-                with open(file_path, "wb") as f:
-                    img.save(f)
+            try:
+                file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
+                if file_path:
+                    with open(tmp_path, "rb") as src, open(file_path, "wb") as dst:
+                        dst.write(src.read())
+            except Exception as e:
+                log_error(f"Error al guardar imagen QR: {e}")
+                self.mostrar_mensaje(f"Error al guardar imagen QR: {e}", "error")
         def exportar_pdf():
-            from reportlab.pdfgen import canvas
-            from reportlab.lib.pagesizes import letter
-            file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
-            if file_path:
-                c = canvas.Canvas(file_path, pagesize=letter)
-                c.drawInlineImage(tmp.name, 100, 500, 200, 200)
-                c.save()
+            try:
+                from reportlab.pdfgen import canvas
+                from reportlab.lib.pagesizes import letter
+                file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
+                if file_path:
+                    c = canvas.Canvas(file_path, pagesize=letter)
+                    c.drawInlineImage(tmp_path, 100, 500, 200, 200)
+                    c.save()
+            except Exception as e:
+                log_error(f"Error al exportar QR a PDF: {e}")
+                self.mostrar_mensaje(f"Error al exportar QR a PDF: {e}", "error")
         btn_guardar.clicked.connect(guardar)
         btn_pdf.clicked.connect(exportar_pdf)
         dialog.exec()

@@ -1,3 +1,19 @@
+# Documentación y estándares del proyecto
+
+Este proyecto utiliza una estructura de documentación modular. Todos los estándares y guías obligatorias están en la carpeta `docs/`.
+
+## Índice de estándares y guías
+
+- [Estándares visuales](docs/estandares_visuales.md)
+- [Estándares de logging y feedback visual](docs/estandares_logging.md)
+- [Estándares de seguridad y manejo de datos sensibles](docs/estandares_seguridad.md)
+- [Estándares de feedback visual y procedimientos de carga](docs/estandares_feedback.md)
+- [Estándares de auditoría y registro de acciones](docs/estandares_auditoria.md)
+
+Lee y respeta cada estándar antes de modificar o agregar código. Cualquier excepción debe estar documentada en el archivo correspondiente y en el código.
+
+---
+
 # --- DEPENDENCIAS Y REQUISITOS DEL PROYECTO ---
 
 ## Instalación rápida del entorno
@@ -155,6 +171,8 @@ La aplicación verifica e instala/actualiza automáticamente todas las dependenc
 > 12. [Importación de inventario desde CSV (solo admin)](#importación-de-inventario-desde-csv-solo-admin)
 > 13. [Abreviaturas de colores PVC](#abreviaturas-de-colores-pvc-inventario-rehau)
 > 14. [Seguridad y manejo de datos sensibles](#seguridad-y-manejo-de-datos-sensibles)
+> 15. [Estándar visual y técnico para pestañas de configuración](#estándar-visual-y-técnico-para-pestañas-de-configuración-qtabwidget)
+> 16. [Sidebar: estándar visual obligatorio](#sidebar-estándar-visual-obligatorio)
 
 ---
 
@@ -268,6 +286,22 @@ QWidget, QDialog, QFrame, QPushButton, QTableWidget, QLabel {
 
 ---
 
+## Sidebar: estándar visual obligatorio
+
+> El sidebar debe cumplir SIEMPRE con los siguientes parámetros estéticos (no modificables):
+>
+> - Fondo blanco.
+> - Botones con bordes redondeados de 8px y borde gris pastel (#e3e3e3) por defecto.
+> - El botón activo tiene borde azul (#2563eb) en todo el contorno y el borde izquierdo más grueso, pero fondo blanco.
+> - El texto del botón activo es azul (#2563eb), el resto gris oscuro (#1f2937).
+> - El tamaño de fuente de los botones es 12px, nunca mayor.
+> - El padding horizontal es 10px, el ancho mínimo 120px y máximo 160px, altura mínima 32px.
+> - No usar transiciones ni efectos no soportados por QSS.
+> - El hover solo cambia el fondo a gris claro (#f3f4f6), nunca azul.
+> - Estos parámetros son OBLIGATORIOS y deben respetarse en todos los módulos y temas.
+
+---
+
 ## Estándar obligatorio para botones de acción
 
 - Todos los botones principales y secundarios deben ser solo ícono, sin texto visible.
@@ -291,8 +325,12 @@ estilizar_boton_icono(btn_aceptar)
 
 ## PRINCIPIOS Y PARÁMETROS DE DISEÑO UI/UX PARA TODA LA APP
 
-Estos lineamientos deben aplicarse SIEMPRE al crear cualquier ventana, diálogo, botón, label, input, tabla, etc.
-Si se requiere una excepción, debe justificarse y documentarse.
+> ⚠️ **IMPORTANTE:**
+> 
+> **Estos parámetros estéticos y de diseño son OBLIGATORIOS y NO pueden ser modificados ni ignorados bajo ninguna circunstancia.**
+> Si se requiere una excepción, debe estar justificada y documentada aquí y en el código correspondiente.
+> 
+> **Este bloque debe ser respetado SIEMPRE en toda la app.**
 
 1. Padding y márgenes:
    - Padding mínimo en diálogos y widgets: 20px vertical, 24px horizontal.
@@ -342,6 +380,103 @@ Si se requiere una excepción, debe justificarse y documentarse.
 ---
 
 Estos principios son OBLIGATORIOS para todo el desarrollo de la app. Si se requiere una excepción, debe estar documentada en el código y en este archivo.
+
+---
+
+## Estándar visual y técnico para pestañas de configuración (QTabWidget)
+
+> **Este estándar debe aplicarse a todas las pestañas de configuración y cualquier sección nueva que se agregue en el futuro.**
+
+### Paleta de colores y estilo
+- Fondo general: `#fff9f3` (crema pastel muy claro)
+- Azul pastel principal: `#2563eb` (texto, íconos, botones principales)
+- Celeste pastel: `#e3f6fd` (fondos de botones, headers, pestañas activas)
+- Gris pastel: `#e3e3e3` (bordes, líneas de tabla)
+- Verde pastel: `#d1f7e7` (éxito)
+- Rojo pastel: `#ffe5e5` (errores)
+- Lila pastel: `#f3eaff` (hover)
+- Sombra sutil: `box-shadow: 0 2px 8px rgba(37,99,235,0.08)`
+
+### QTabWidget y QTabBar
+- Bordes redondeados: 12px en el panel y 8px en las pestañas.
+- Pestañas con fondo celeste pastel y texto azul pastel.
+- Pestaña activa: fondo crema, borde azul pastel.
+- Padding horizontal: 24px, vertical: 20px en el contenido de cada pestaña.
+- Espaciado entre pestañas: 8px.
+
+#### QSS recomendado para QTabWidget
+```css
+QTabWidget::pane {
+    border-radius: 12px;
+    background: #f1f5f9;
+}
+QTabBar::tab {
+    min-width: 160px;
+    min-height: 36px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 24px;
+    margin-right: 8px;
+    background: #e3f6fd;
+    color: #2563eb;
+}
+QTabBar::tab:selected {
+    background: #fff9f3;
+    color: #2563eb;
+    border: 2px solid #2563eb;
+}
+```
+
+### Layout interno de cada pestaña
+- Usar siempre QVBoxLayout con `setContentsMargins(24, 20, 24, 20)` y `setSpacing(16)`.
+- Título principal: QLabel, fuente 18px, bold, color azul pastel, alineado al centro.
+- Labels secundarios: fuente 13px, color #1e293b, alineados al centro.
+- Botones: solo ícono, fondo celeste pastel, borde 1.5px gris pastel, sombra sutil, sin texto visible, tamaño mínimo 32x32px. Usar helper `estilizar_boton_icono`.
+- Tablas: headers con fondo celeste pastel, celdas con fondo crema, bordes redondeados 8px, color de texto azul pastel.
+- Feedback visual: QLabel con color y emoji según tipo (éxito, error, advertencia, info), fondo claro, bordes redondeados, padding 8px 16px.
+- Siempre usar `addStretch()` al final para mantener el contenido arriba y el espacio visual limpio.
+
+#### Ejemplo de layout de una pestaña
+```python
+layout = QVBoxLayout(tab_widget)
+layout.setContentsMargins(24, 20, 24, 20)
+layout.setSpacing(16)
+label_titulo = QLabel("Título de la sección")
+label_titulo.setStyleSheet("font-size: 18px; font-weight: bold; color: #2563eb;")
+label_titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+layout.addWidget(label_titulo)
+# ...otros widgets...
+layout.addStretch()
+```
+
+### Feedback visual dentro de pestañas
+- Usar QLabel para mensajes de feedback inmediato.
+- Colores y emojis según tipo:
+  - Éxito: verde pastel, "✅"
+  - Error: rojo pastel, "❌"
+  - Advertencia: naranja pastel, "⚠️"
+  - Info: azul pastel, "ℹ️"
+- Ejemplo de uso:
+```python
+label_feedback = QLabel()
+label_feedback.setStyleSheet("font-size: 13px; padding: 8px 0;")
+label_feedback.setText("<span style='color:#22c55e;'>✅ Acción realizada con éxito</span>")
+```
+
+### Tooltips y ayuda contextual
+- Todos los botones y campos deben tener `setToolTip()` con una descripción clara de su función.
+- Si la pestaña es compleja, agregar un ícono de ayuda ("img/info.svg") que muestre un QDialog con instrucciones.
+
+### Excepciones visuales
+- Si una pestaña requiere un diseño diferente, debe justificarse en el código y documentarse aquí.
+- Ejemplo: "La pestaña X utiliza un layout especial por requerimiento de UX para ..."
+
+---
+
+**Este estándar debe copiarse y adaptarse en cada módulo nuevo que agregue pestañas o secciones de configuración.**
+
+---
 
 ## Instrucciones de Instalación y Configuración
 
@@ -633,162 +768,6 @@ Para garantizar que todas las tablas críticas del sistema tengan la estructura,
 - Todos los scripts y módulos deben reutilizar la clase `InventarioDatabaseConnection` (o la correspondiente) para acceder a la base de datos, evitando duplicidad y errores de seguridad.
 - Si cambias la configuración de la base, hazlo solo en el archivo centralizado y no en cada script.
 - El script de importación de inventario (`procesar_e_importar_inventario.py`) ya utiliza esta conexión centralizada y no requiere variables de entorno ni archivos de configuración adicionales.
-
----
-
-## Flujo seguro de importación de inventario
-
-1. El usuario arrastra el archivo CSV o Excel.
-2. El script limpia, normaliza y valida los datos (incluyendo duplicados y formato de columnas).
-3. Se genera un backup SQL de la tabla antes de modificar datos.
-4. Solo si el usuario confirma, se realiza la importación.
-5. Todos los errores y advertencias se muestran antes de modificar la base.
-
----
-
-## Eliminación de scripts innecesarios
-
-- Solo se mantiene el script principal `procesar_e_importar_inventario.py` en la carpeta `scripts`.
-- Todos los scripts auxiliares de limpieza, importación y validación han sido eliminados para evitar confusión y mejorar la seguridad.
-
----
-
-## Flujo de testeo automático: importación y visualización de inventario
-
-Para asegurar la robustez y trazabilidad del proceso de importación de datos de inventario desde archivos CSV a la base de datos SQL Server, el sistema cuenta con tests automáticos que validan tanto la importación como la visualización de los datos en la aplicación.
-
-### Objetivo
-- Garantizar que la importación de inventario desde CSV a la tabla `inventario_perfiles` se realiza correctamente, sin errores y con los datos completos.
-- Verificar que los datos importados pueden ser consultados y visualizados correctamente desde la aplicación.
-- Detectar rápidamente cualquier cambio en el formato del CSV, en la estructura de la tabla o en la lógica de importación que pueda afectar la robustez del sistema.
-
-### Ejecución de los tests automáticos
-
-1. **Ubicación de los tests:**
-   - Los tests se encuentran en la carpeta `tests/`.
-   - Los principales son:
-     - `tests/test_importar_inventario_csv.py`: Valida la importación desde CSV.
-     - `tests/test_query_inventario_perfiles.py`: Verifica la consulta y visualización de los datos importados.
-
-2. **Comando para ejecutar todos los tests:**
-   ```bash
-   pytest tests/
-   ```
-   O bien, para ejecutar solo el test de importación:
-   ```bash
-   pytest tests/test_importar_inventario_csv.py
-   ```
-
-3. **Salida esperada:**
-   - Todos los tests deben pasar (`PASSED`).
-   - Ejemplo de salida:
-     ```
-     ============================= test session starts =============================
-     collected 3 items
-
-     tests/test_importar_inventario_csv.py ...                             [100%]
-
-     ========================== 3 passed in 2.10s ================================
-     ```
-   - Si algún test falla, se mostrará el motivo y la línea exacta del error.
-
-### Buenas prácticas y recomendaciones
-- Antes de importar un nuevo archivo CSV, ejecutar los tests para validar que el formato es compatible y que la importación será exitosa.
-- Si se modifica la estructura de la tabla `inventario_perfiles` o el script de importación, actualizar y volver a ejecutar los tests.
-- Mantener los tests actualizados ante cualquier cambio en el flujo de importación o visualización.
-- Documentar en los tests cualquier supuesto sobre el formato del CSV o la estructura de la base de datos.
-
-### Estándar de robustez esperado
-- El proceso de importación debe:
-  - Detectar y reportar errores de formato o columnas faltantes en el CSV.
-  - Validar que los campos clave no sean nulos tras la importación.
-  - Garantizar que la tabla contiene registros después de la importación.
-  - Permitir la consulta y visualización inmediata de los datos importados.
-- Los tests automáticos deben ejecutarse sin intervención manual y pasar en todos los entornos compatibles.
-
----
-
-## Importación de inventario desde CSV (solo admin)
-
-- Solo el usuario admin puede cargar el inventario desde el archivo `inventario/inventario_perfiles_final.csv`.
-- El botón de importación está en la pestaña de configuración.
-- El sistema valida el rol y muestra un mensaje de éxito o error.
-- El proceso borra la tabla y carga todos los registros del CSV a SQL Server.
-- Si ocurre un error, se muestra el detalle en pantalla.
-
-### Requisitos
-- El archivo debe estar generado y actualizado.
-- La estructura de la tabla `inventario_perfiles` debe coincidir con las columnas del CSV.
-
-### Ejemplo de feedback
-- "Inventario cargado correctamente (2549 filas)."
-- "Solo el usuario admin puede importar el inventario."
-- "Error al cargar inventario: ..."
-
----
-
-## Abreviaturas de colores PVC (Inventario REHAU)
-
-| Abreviatura | Color real      |
-|-------------|----------------|
-| Rob         | Roble          |
-| Nog         | Nogal          |
-| Win         | Winchester     |
-| Nut         | Nutmeg         |
-| Hab         | Habano         |
-| B.Smoke     | Black Smoke    |
-| B.Brow      | Black Brown    |
-| Qua         | Quartz         |
-| Sheff       | Sheffield      |
-| Tit         | Titanium       |
-| N.M         | Negro M        |
-| Ant L       | Ant L          |
-| Ant M       | Ant M          |
-| Turn        | Turner         |
-| Mon         | Monument       |
-| Bco         | Blanco         |
-
-> Estas abreviaturas se usan para desglosar y mapear los colores de los perfiles PVC en la base de datos proveniente del proveedor REHAU. Es fundamental respetar este mapeo en el módulo de inventario para asegurar la correcta identificación y visualización de los productos.
-
----
-
-## Seguridad y manejo de datos sensibles
-
-### Prácticas seguras en la app
-
-- **Nunca expongas credenciales ni datos sensibles en el código fuente.**
-- La configuración de la base de datos (host, usuario, contraseña, nombre de base, driver) se gestiona mediante variables de entorno y el paquete `python-dotenv`.
-- El archivo `.env` debe estar en la raíz del proyecto y nunca subirse a repositorios públicos. Usa el archivo `.env.example` como plantilla.
-- El script principal lee automáticamente las variables de entorno y no funcionará si faltan datos críticos.
-- Si compartes el proyecto, elimina o ignora cualquier archivo `.env` real.
-
-### Ejemplo de archivo `.env` (no subir a git):
-
-```
-DB_SERVER=192.168.88.205
-DB_DATABASE=inventario
-DB_USERNAME=sa
-DB_PASSWORD=mps.1887
-DB_DRIVER=ODBC Driver 17 for SQL Server
-```
-
-### Cómo se usa en el código
-
-```python
-from dotenv import load_dotenv
-import os
-load_dotenv()
-DB_CONFIG = {
-    'server': os.getenv('DB_SERVER', ''),
-    'database': os.getenv('DB_DATABASE', ''),
-    'username': os.getenv('DB_USERNAME', ''),
-    'password': os.getenv('DB_PASSWORD', ''),
-    'driver': os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
-}
-```
-
-- Si alguna variable falta, el script lo notificará y no se conectará a la base de datos.
-- El backup de la base de datos se guarda en la carpeta `inventario/backups_sql` antes de cualquier importación masiva.
 
 ---
 

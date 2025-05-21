@@ -10,6 +10,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from core.table_responsive_mixin import TableResponsiveMixin
 from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
+from core.logger import log_error
 
 class VidriosView(QWidget, TableResponsiveMixin):
     """
@@ -22,6 +23,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
     """
     def __init__(self, usuario_actual="default", headers_dinamicos=None):
         super().__init__()
+        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path="themes/light.qss")
         self.usuario_actual = usuario_actual
         # Inicializar headers ANTES de cualquier uso
         self.vidrios_headers = headers_dinamicos if headers_dinamicos else ["tipo", "ancho", "alto", "cantidad", "proveedor", "fecha_entrega"]
@@ -62,17 +64,6 @@ class VidriosView(QWidget, TableResponsiveMixin):
                 header.setSectionsClickable(True)
             if hasattr(header, 'sectionClicked'):
                 header.sectionClicked.connect(self.mostrar_menu_columnas_header)
-
-        # Cargar y aplicar QSS global y tema visual
-        qss_tema = None
-        try:
-            with open("themes/config.json", "r", encoding="utf-8") as f:
-                config = json.load(f)
-            tema = config.get("tema", "claro")
-            qss_tema = f"themes/{tema}.qss"
-        except Exception:
-            pass
-        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
 
         # Botones principales como iconos (con sombra real)
         botones_layout = QHBoxLayout()
@@ -118,9 +109,31 @@ class VidriosView(QWidget, TableResponsiveMixin):
         botones_layout.addStretch()
         self.main_layout.addLayout(botones_layout)
 
+        # Feedback visual
+        self.label_feedback = QLabel()
+        self.main_layout.addWidget(self.label_feedback)
+
         self.tabla_vidrios.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
 
         self.setLayout(self.main_layout)
+
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+        colores = {
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "advertencia": "#fbbf24",
+            "error": "#ef4444"
+        }
+        color = colores.get(tipo, "#2563eb")
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px;")
+        self.label_feedback.setText(mensaje)
+        if tipo == "error":
+            log_error(mensaje)
+            QMessageBox.critical(self, "Error", mensaje)
+        elif tipo == "advertencia":
+            QMessageBox.warning(self, "Advertencia", mensaje)
+        elif tipo == "exito":
+            QMessageBox.information(self, "Éxito", mensaje)
 
     def create_form_layout(self):
         form_layout = QFormLayout()
@@ -151,52 +164,81 @@ class VidriosView(QWidget, TableResponsiveMixin):
                 with open(self.config_path, "r", encoding="utf-8") as f:
                     return json.load(f)
             except Exception as e:
-                QMessageBox.warning(self, "Error de configuración", f"No se pudo cargar la configuración de columnas: {e}")
+                log_error(f"Error al cargar configuración de columnas: {e}")
+                self.mostrar_mensaje(f"Error al cargar configuración de columnas: {e}", "error")
         return {header: True for header in self.vidrios_headers}
 
     def guardar_config_columnas(self):
         try:
             with open(self.config_path, "w", encoding="utf-8") as f:
                 json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
-            QMessageBox.information(self, "Configuración guardada", "La configuración de columnas se ha guardado correctamente.")
+            self.mostrar_mensaje("Configuración de columnas guardada", "exito")
         except Exception as e:
-            QMessageBox.critical(self, "Error al guardar", f"No se pudo guardar la configuración: {e}")
+            log_error(f"Error al guardar configuración de columnas: {e}")
+            self.mostrar_mensaje(f"Error al guardar configuración de columnas: {e}", "error")
 
     def aplicar_columnas_visibles(self):
-        for idx, header in enumerate(self.vidrios_headers):
-            visible = self.columnas_visibles.get(header, True)
-            self.tabla_vidrios.setColumnHidden(idx, not visible)
+        try:
+            for idx, header in enumerate(self.vidrios_headers):
+                visible = self.columnas_visibles.get(header, True)
+                self.tabla_vidrios.setColumnHidden(idx, not visible)
+        except Exception as e:
+            log_error(f"Error al aplicar columnas visibles: {e}")
+            self.mostrar_mensaje(f"Error al aplicar columnas visibles: {e}", "error")
 
     def mostrar_menu_columnas(self, pos):
-        menu = QMenu(self)
-        for idx, header in enumerate(self.vidrios_headers):
-            accion = QAction(header, self)
-            accion.setCheckable(True)
-            accion.setChecked(self.columnas_visibles.get(header, True))
-            accion.toggled.connect(partial(self.toggle_columna, idx, header))
-            menu.addAction(accion)
-        header = self.tabla_vidrios.horizontalHeader()
-        if header is not None:
-            menu.exec(header.mapToGlobal(pos))
-        else:
-            menu.exec(pos)
+        try:
+            menu = QMenu(self)
+            for idx, header in enumerate(self.vidrios_headers):
+                accion = QAction(header, self)
+                accion.setCheckable(True)
+                accion.setChecked(self.columnas_visibles.get(header, True))
+                accion.toggled.connect(partial(self.toggle_columna, idx, header))
+                menu.addAction(accion)
+            header = self.tabla_vidrios.horizontalHeader()
+            if header is not None:
+                menu.exec(header.mapToGlobal(pos))
+            else:
+                log_error("No se puede mostrar el menú de columnas: header no disponible")
+                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
+        except Exception as e:
+            log_error(f"Error al mostrar menú de columnas: {e}")
+            self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
 
     def mostrar_menu_columnas_header(self, idx):
-        header = self.tabla_vidrios.horizontalHeader()
-        if header is not None:
-            pos = header.sectionPosition(idx)
-            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-            self.mostrar_menu_columnas(global_pos)
+        try:
+            header = self.tabla_vidrios.horizontalHeader()
+            if header is not None:
+                pos = header.sectionPosition(idx)
+                global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+                self.mostrar_menu_columnas(global_pos)
+            else:
+                log_error("No se puede mostrar el menú de columnas: header no disponible")
+                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
+        except Exception as e:
+            log_error(f"Error al mostrar menú de columnas desde header: {e}")
+            self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
 
     def toggle_columna(self, idx, header, checked):
-        self.columnas_visibles[header] = checked
-        self.tabla_vidrios.setColumnHidden(idx, not checked)
-        self.guardar_config_columnas()
+        try:
+            self.columnas_visibles[header] = checked
+            self.tabla_vidrios.setColumnHidden(idx, not checked)
+            self.guardar_config_columnas()
+            self.mostrar_mensaje(f"Columna '{header}' {'mostrada' if checked else 'ocultada'}", "info")
+        except Exception as e:
+            log_error(f"Error al alternar columna: {e}")
+            self.mostrar_mensaje(f"Error al alternar columna: {e}", "error")
 
     def auto_ajustar_columna(self, idx):
-        if idx < 0 or idx >= self.tabla_vidrios.columnCount():
-            return
-        self.tabla_vidrios.resizeColumnToContents(idx)
+        try:
+            if idx < 0 or idx >= self.tabla_vidrios.columnCount():
+                self.mostrar_mensaje("Índice de columna inválido", "error")
+                log_error(f"Índice de columna inválido: {idx}")
+                return
+            self.tabla_vidrios.resizeColumnToContents(idx)
+        except Exception as e:
+            log_error(f"Error al autoajustar columna: {e}")
+            self.mostrar_mensaje(f"Error al autoajustar columna: {e}", "error")
 
     def mostrar_qr_item_seleccionado(self):
         selected = self.tabla_vidrios.selectedItems()
@@ -205,23 +247,23 @@ class VidriosView(QWidget, TableResponsiveMixin):
         row = selected[0].row()
         item_codigo = self.tabla_vidrios.item(row, 0)
         if item_codigo is None:
-            QMessageBox.warning(self, "Error de selección", "No se pudo obtener el código para el QR.")
+            self.mostrar_mensaje("No se pudo obtener el código para el QR.", "error")
             return
         codigo = item_codigo.text()
         if not codigo:
-            QMessageBox.warning(self, "Error de datos", "El campo de código está vacío.")
+            self.mostrar_mensaje("El campo de código está vacío.", "error")
             return
         try:
             qr = qrcode.QRCode(version=1, box_size=6, border=2)
             qr.add_data(codigo)
             qr.make(fit=True)
             img = qr.make_image(fill_color="black", back_color="white")
-            # Convertir a formato PIL si es necesario
             if not hasattr(img, 'save'):
                 from PIL import Image
                 img = img.get_image()
         except Exception as e:
-            QMessageBox.critical(self, "Error al generar QR", f"No se pudo generar el código QR: {e}")
+            log_error(f"Error al generar QR: {e}")
+            self.mostrar_mensaje(f"Error al generar QR: {e}", "error")
             return
         try:
             with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
@@ -230,7 +272,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
                 tmp_path = tmp.name
                 pixmap = QPixmap(tmp_path)
         except Exception as e:
-            QMessageBox.critical(self, "Error de imagen", f"No se pudo crear la imagen temporal: {e}")
+            log_error(f"Error al crear imagen temporal: {e}")
+            self.mostrar_mensaje(f"Error al crear imagen temporal: {e}", "error")
             return
         dialog = QDialog(self)
         dialog.setWindowTitle(f"Código QR para {codigo}")
@@ -257,7 +300,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
                     with open(tmp_path, "rb") as src, open(file_path, "wb") as dst:
                         dst.write(src.read())
             except Exception as e:
-                QMessageBox.critical(dialog, "Error al guardar", f"No se pudo guardar la imagen: {e}")
+                log_error(f"Error al guardar imagen QR: {e}")
+                self.mostrar_mensaje(f"Error al guardar imagen QR: {e}", "error")
         def exportar_pdf():
             try:
                 file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
@@ -266,7 +310,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
                     c.drawInlineImage(tmp_path, 100, 500, 200, 200)
                     c.save()
             except Exception as e:
-                QMessageBox.critical(dialog, "Error al exportar PDF", f"No se pudo exportar el QR a PDF: {e}")
+                log_error(f"Error al exportar QR a PDF: {e}")
+                self.mostrar_mensaje(f"Error al exportar QR a PDF: {e}", "error")
         btn_guardar.clicked.connect(guardar)
         btn_pdf.clicked.connect(exportar_pdf)
         dialog.exec()

@@ -9,6 +9,8 @@ from functools import partial
 from modules.vidrios.view import VidriosView
 from core.table_responsive_mixin import TableResponsiveMixin
 from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
+from core.logger import Logger, log_error
+from core.database import get_connection_string
 
 class InventarioView(QWidget, TableResponsiveMixin):
     # Señales para acciones principales
@@ -25,6 +27,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
 
     def __init__(self, db_connection=None, usuario_actual="default"):
         super().__init__()
+        self.logger = Logger()
         self.setObjectName("InventarioView")
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(32, 32, 32, 32)
@@ -41,8 +44,11 @@ class InventarioView(QWidget, TableResponsiveMixin):
         conexion_valida = self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])
         if not conexion_valida:
             error_label = QLabel("❌ Error: No se pudo conectar a la base de datos de inventario.\nVerifique la configuración o contacte al administrador.")
-            error_label.setStyleSheet("color: #ef4444; font-size: 16px; font-weight: bold; padding: 16px;")
+            error_label.setStyleSheet("color: #ef4444; font-size: 13px; font-weight: bold; padding: 16px;")
+            error_label.setToolTip("Error de conexión a la base de datos. Consulte al administrador.")
             self.main_layout.addWidget(error_label)
+            self.logger.log_error_popup("InventarioView: No se pudo conectar a la base de datos de inventario para usuario %s" % self.usuario_actual)
+            log_error(f"InventarioView: No se pudo conectar a la base de datos de inventario para usuario {self.usuario_actual}")
             self.setLayout(self.main_layout)
             return
 
@@ -134,31 +140,25 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 config = json.load(f)
             tema = config.get("tema", "claro")
             qss_tema = f"themes/{tema}.qss"
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.warning(f"No se pudo cargar el tema visual: {e}")
         aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
 
         # Conectar la señal exportar_excel_signal al método exportar_tabla_a_excel
         self.exportar_excel_signal.connect(self.exportar_tabla_a_excel)
 
     def obtener_headers_desde_db(self, tabla):
-        if self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"]):
-            query = f"SELECT TOP 0 * FROM {tabla}"
-            connection_string = (
-                f"DRIVER={{{self.db_connection.driver}}};"
-                f"SERVER=localhost\\SQLEXPRESS;"
-                f"DATABASE={self.db_connection.database};"
-                f"UID={self.db_connection.username};"
-                f"PWD={self.db_connection.password};"
-                f"TrustServerCertificate=yes;"
-            )
-            try:
+        try:
+            if self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"]):
+                query = f"SELECT TOP 0 * FROM {tabla}"
+                connection_string = get_connection_string(self.db_connection.driver, self.db_connection.database)
                 with pyodbc.connect(connection_string, timeout=10) as conn:
                     cursor = conn.cursor()
                     cursor.execute(query)
                     return [column[0] for column in cursor.description]
-            except Exception:
-                return []
+        except Exception as e:
+            self.logger.log_error_popup(f"Error al obtener headers de la tabla {tabla}: {e}")
+            log_error(f"Error al obtener headers de la tabla {tabla}: {e}")
         return []
 
     def cargar_config_columnas(self):
@@ -255,27 +255,24 @@ class InventarioView(QWidget, TableResponsiveMixin):
             df.to_excel(file_path, index=False)
             QMessageBox.information(self, "Éxito", f"Inventario exportado correctamente a {file_path}")
         except Exception as e:
+            self.logger.log_error_popup(f"Error al exportar inventario a Excel: {e}")
             QMessageBox.critical(self, "Error", f"No se pudo exportar: {e}")
 
     def ver_obras_pendientes_material(self):
         id_item = self.obtener_id_item_seleccionado()
         if not id_item:
             QMessageBox.warning(self, "Sin selección", "Seleccione un material en la tabla.")
+            self.logger.warning("Intento de ver obras pendientes sin selección de material.")
+            log_error("Intento de ver obras pendientes sin selección de material.")
             return
         if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])):
             QMessageBox.critical(self, "Error", "No hay conexión válida a la base de datos.")
+            self.logger.log_error_popup("InventarioView: Conexión inválida al intentar ver obras pendientes.")
+            log_error("InventarioView: Conexión inválida al intentar ver obras pendientes.")
             return
-        # Buscar reservas activas o pendientes para este material
         try:
             query = "SELECT referencia_obra, cantidad_reservada, estado, codigo_reserva FROM reservas_materiales WHERE id_item = ? AND estado IN ('activa', 'pendiente')"
-            connection_string = (
-                f"DRIVER={{{self.db_connection.driver}}};"
-                f"SERVER=localhost\\SQLEXPRESS;"
-                f"DATABASE={self.db_connection.database};"
-                f"UID={self.db_connection.username};"
-                f"PWD={self.db_connection.password};"
-                f"TrustServerCertificate=yes;"
-            )
+            connection_string = get_connection_string(self.db_connection.driver, self.db_connection.database)
             with pyodbc.connect(connection_string, timeout=10) as conn:
                 cursor = conn.cursor()
                 cursor.execute(query, (id_item,))
@@ -305,6 +302,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
             dialog.setLayout(layout)
             dialog.exec()
         except Exception as e:
+            self.logger.log_error_popup(f"Error al consultar reservas de material: {e}")
+            log_error(f"Error al consultar reservas de material: {e}")
             QMessageBox.critical(self, "Error", f"Error al consultar reservas: {e}")
 
     def toggle_expandir_fila(self, row, col):
@@ -320,20 +319,14 @@ class InventarioView(QWidget, TableResponsiveMixin):
             self.filas_expandidas.add((row, id_item))
 
     def expandir_fila(self, row, id_item):
-        # Consultar reservas activas/pendientes para este material
         if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])):
             QMessageBox.critical(self, "Error", "No hay conexión válida a la base de datos.")
+            self.logger.log_error_popup("InventarioView: Conexión inválida al expandir fila.")
+            log_error("InventarioView: Conexión inválida al expandir fila.")
             return
         try:
             query = "SELECT referencia_obra, cantidad_reservada, estado, codigo_reserva FROM reservas_materiales WHERE id_item = ? AND estado IN ('activa', 'pendiente')"
-            connection_string = (
-                f"DRIVER={{{self.db_connection.driver}}};"
-                f"SERVER=localhost\\SQLEXPRESS;"
-                f"DATABASE={self.db_connection.database};"
-                f"UID={self.db_connection.username};"
-                f"PWD={self.db_connection.password};"
-                f"TrustServerCertificate=yes;"
-            )
+            connection_string = get_connection_string(self.db_connection.driver, self.db_connection.database)
             with pyodbc.connect(connection_string, timeout=10) as conn:
                 cursor = conn.cursor()
                 cursor.execute(query, (id_item,))
@@ -358,6 +351,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 self.tabla_inventario.setCellWidget(insert_at, 0, label)
                 insert_at += 1
         except Exception as e:
+            self.logger.log_error_popup(f"Error al expandir fila de reservas: {e}")
+            log_error(f"Error al expandir fila de reservas: {e}")
             QMessageBox.critical(self, "Error", f"Error al consultar reservas: {e}")
 
     def colapsar_fila(self, row):
@@ -407,17 +402,16 @@ class InventarioView(QWidget, TableResponsiveMixin):
         def buscar_perfiles():
             if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])):
                 QMessageBox.critical(dialog, "Error", "No hay conexión válida a la base de datos.")
+                self.logger.log_error_popup("InventarioView: Conexión inválida al buscar perfiles.")
+                log_error("InventarioView: Conexión inválida al buscar perfiles.")
                 return
             codigo = codigo_proveedor_input.text().strip()
             if not codigo:
                 QMessageBox.warning(dialog, "Falta código", "Ingrese un código de proveedor.")
                 return
             query = "SELECT id, codigo, descripcion, stock FROM inventario_perfiles WHERE codigo LIKE ?"
-            from core.database import get_connection_string
-            connection_string = get_connection_string(self.db_connection.driver, self.db_connection.database)
-            import pyodbc
             try:
-                with pyodbc.connect(connection_string, timeout=10) as conn:
+                with pyodbc.connect(get_connection_string(self.db_connection.driver, self.db_connection.database), timeout=10) as conn:
                     cursor = conn.cursor()
                     cursor.execute(query, (f"%{codigo}%",))
                     perfiles = cursor.fetchall()
@@ -443,10 +437,14 @@ class InventarioView(QWidget, TableResponsiveMixin):
                             perfiles_encontrados[idx]["faltan"].setText(str(faltan))
                         cantidad_pedir.textChanged.connect(actualizar_faltan)
             except Exception as e:
+                self.logger.log_error_popup(f"Error al buscar perfiles: {e}")
+                log_error(f"Error al buscar perfiles: {e}")
                 QMessageBox.critical(dialog, "Error", f"Error al buscar perfiles: {e}")
         def pedir_lote():
             if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])):
                 QMessageBox.critical(dialog, "Error", "No hay conexión válida a la base de datos.")
+                self.logger.log_error_popup("InventarioView: Conexión inválida al pedir lote.")
+                log_error("InventarioView: Conexión inválida al pedir lote.")
                 return
             pedidos = []
             for perfil in perfiles_encontrados:
@@ -464,11 +462,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
             if not pedidos:
                 QMessageBox.warning(dialog, "Nada para pedir", "No hay cantidades válidas para pedir.")
                 return
-            from core.database import get_connection_string
-            connection_string = get_connection_string(self.db_connection.driver, self.db_connection.database)
-            import pyodbc
             try:
-                with pyodbc.connect(connection_string, timeout=10) as conn:
+                with pyodbc.connect(get_connection_string(self.db_connection.driver, self.db_connection.database), timeout=10) as conn:
                     cursor = conn.cursor()
                     for id_item, cantidad, estado in pedidos:
                         cursor.execute("INSERT INTO reservas_materiales (id_item, cantidad_reservada, referencia_obra, estado) VALUES (?, ?, ?, ?)", (id_item, cantidad, "OBRA", estado))
@@ -477,6 +472,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 dialog.accept()
                 self.actualizar_signal.emit()
             except Exception as e:
+                self.logger.log_error_popup(f"Error al registrar pedido: {e}")
+                log_error(f"Error al registrar pedido: {e}")
                 QMessageBox.critical(dialog, "Error", f"Error al registrar pedido: {e}")
         btn_buscar.clicked.connect(buscar_perfiles)
         btn_reservar.clicked.connect(pedir_lote)
@@ -537,20 +534,13 @@ class InventarioView(QWidget, TableResponsiveMixin):
             if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])):
                 return []
             try:
-                import pyodbc
-                connection_string = (
-                    f"DRIVER={{{self.db_connection.driver}}};"
-                    f"SERVER=localhost\\SQLEXPRESS;"
-                    f"DATABASE={self.db_connection.database};"
-                    f"UID={self.db_connection.username};"
-                    f"PWD={self.db_connection.password};"
-                    f"TrustServerCertificate=yes;"
-                )
-                with pyodbc.connect(connection_string, timeout=10) as conn:
+                with pyodbc.connect(get_connection_string(self.db_connection.driver, self.db_connection.database), timeout=10) as conn:
                     cursor = conn.cursor()
                     cursor.execute("SELECT id, codigo, descripcion, stock_actual FROM inventario_perfiles")
                     return [dict(zip([column[0] for column in cursor.description], row)) for row in cursor.fetchall()]
-            except Exception:
+            except Exception as e:
+                self.logger.log_error_popup(f"Error al cargar perfiles para autocompletar: {e}")
+                log_error(f"Error al cargar perfiles para autocompletar: {e}")
                 return []
         perfiles_cache = cargar_perfiles_cache()
         codigos = [p["codigo"] for p in perfiles_cache]
@@ -647,6 +637,9 @@ class InventarioView(QWidget, TableResponsiveMixin):
             self.ajustes_stock_guardados.emit(cambios)
             dialog.accept()
             QMessageBox.information(self, "Ajuste de stock", "Ajustes guardados correctamente.")
+            self.logger.info(f"Ajustes de stock guardados por usuario {self.usuario_actual}.")
+            # Logging de auditoría
+            log_error(f"Ajustes de stock guardados por usuario {self.usuario_actual}.")
 
         btn_guardar.clicked.connect(guardar_ajustes)
         btn_cancelar.clicked.connect(dialog.reject)

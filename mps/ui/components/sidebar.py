@@ -23,6 +23,7 @@ class Sidebar(QWidget):
         self._mostrar_nombres = mostrar_nombres
         self._icons_path = icons_path
         self._layout = layout
+        self.current_index = None
 
         # Fondo blanco para el modo claro
         self.setStyleSheet("""
@@ -33,17 +34,26 @@ class Sidebar(QWidget):
                 background-color: white;
                 color: #1f2937;
                 border-radius: 8px;
-                padding: 8px 16px;
-                font-size: 14px;
+                padding: 4px 10px;
+                font-size: 12px;
                 font-weight: 500;
                 text-align: center;
+                border: 1.5px solid #e3e3e3;
+                border-left: 3px solid transparent;
+                min-height: 32px;
+                min-width: 120px;
+                max-width: 160px;
             }
             QPushButton#botonMenu:hover {
                 background-color: #f3f4f6;
             }
             QPushButton#botonMenuActivo {
-                background-color: #2563eb;
-                color: white;
+                background-color: white;
+                color: #2563eb;
+                border-radius: 8px;
+                border: 1.5px solid #2563eb;
+                border-left: 3px solid #2563eb;
+                font-weight: bold;
             }
         """)
 
@@ -89,13 +99,16 @@ class Sidebar(QWidget):
                 section_name = section
                 icon_file = None
             button = QPushButton()
-            button.setObjectName("botonMenu")
+            # Marcar el botón activo con el objectName especial
+            if hasattr(self, 'current_index') and index == self.current_index:
+                button.setObjectName("botonMenuActivo")
+            else:
+                button.setObjectName("botonMenu")
             button.setFixedHeight(40)
             if self._expanded:
                 button.setFixedWidth(180)
             else:
                 button.setFixedSize(180 if self._mostrar_nombres else 44, 40)
-            # Usar SVG de utils si existe
             icon_path = icon_file or os.path.join(self._icons_path, f"{section_name.lower()}.svg")
             if not os.path.exists(icon_path):
                 icon_path = os.path.join('img', f"{section_name.lower()}.svg")
@@ -105,9 +118,14 @@ class Sidebar(QWidget):
             if self._mostrar_nombres:
                 button.setText(section_name)
                 button.setStyleSheet("text-align: left; padding-left: 12px;")
-            button.clicked.connect(lambda _, idx=index: self.pageChanged.emit(idx))
+            button.clicked.connect(lambda _, idx=index: self._on_button_clicked(idx))
             self._layout.addWidget(button)
             self._buttons.append(button)
+
+    def _on_button_clicked(self, idx):
+        self.current_index = idx
+        self._create_buttons()
+        self.pageChanged.emit(idx)
 
     def set_expanded(self, expanded: bool):
         if self._expanded != expanded:

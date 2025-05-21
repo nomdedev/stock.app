@@ -1524,3 +1524,18 @@
 2025-05-21 12:37:54,423 - INFO - Aplicación iniciada
 2025-05-21 12:37:54,656 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-21 12:37:54,656 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-21 13:05:48,091 - INFO - Aplicación iniciada
+2025-05-21 13:05:48,217 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-21 13:05:48,217 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-21 13:11:10,949 - INFO - Aplicación iniciada
+2025-05-21 13:11:11,051 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-21 13:11:11,051 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-21 13:20:59,825 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=editar
+2025-05-21 13:20:59,825 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=editar
+2025-05-21 13:20:59,825 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=editar
+2025-05-21 13:22:20,650 - INFO - Aplicación iniciada
+2025-05-21 13:22:20,751 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-21 13:22:20,751 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-21 16:01:30,372 - ERROR - Error en test_importar_csv_y_consultar: No results.  Previous SQL was not a query.
+2025-05-21 16:03:11,237 - ERROR - Error en test_importar_csv_y_consultar: No results.  Previous SQL was not a query.
+2025-05-21 16:04:44,246 - ERROR - Error en test_importar_csv_y_consultar: No results.  Previous SQL was not a query.

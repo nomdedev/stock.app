@@ -11,29 +11,34 @@ from functools import partial
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from core.table_responsive_mixin import TableResponsiveMixin
-from core.ui_components import estilizar_boton_icono
+from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
+from core.logger import log_error
 
 class ContabilidadView(QWidget, TableResponsiveMixin):
     def __init__(self, db_connection=None, obras_model=None):
         super().__init__()
+        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path="themes/light.qss")
         self.db_connection = db_connection
         self.obras_model = obras_model
         # Inicialización segura de headers para evitar AttributeError
         self.balance_headers = []
         self.recibos_headers = []
         self.pagos_headers = []
-        self.layout = QVBoxLayout()
-        self.layout.setContentsMargins(20, 20, 20, 20)
-        self.layout.setSpacing(0)
+        self.main_layout = QVBoxLayout()
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setSpacing(0)
 
         self.label_titulo = QLabel("Gestión de Contabilidad y Recibos")
         self.label_titulo.setProperty("class", "contabilidad-titulo")
-        self.layout.addWidget(self.label_titulo)
+        self.main_layout.addWidget(self.label_titulo)
+
+        self.label_feedback = QLabel()
+        self.main_layout.addWidget(self.label_feedback)
 
         # QTabWidget para las tres pestañas
         self.tabs = QTabWidget()
         self.tabs.setObjectName("contabilidad-tabs")
-        self.layout.addWidget(self.tabs)
+        self.main_layout.addWidget(self.tabs)
 
         # --- Filtros y búsqueda rápida ---
         self.filtro_balance = QLineEdit()
@@ -160,7 +165,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.combo_mes.currentIndexChanged.connect(self.actualizar_grafico_estadisticas)
         self.input_dolar.editingFinished.connect(self.actualizar_grafico_estadisticas)
 
-        self.setLayout(self.layout)
+        self.setLayout(self.main_layout)
 
         # --- Sincronización dinámica de headers ---
         self.sync_headers()
@@ -178,31 +183,52 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
 
         # Menú de columnas y QR para cada tabla
         header_balance = self.tabla_balance.horizontalHeader()
-        header_balance.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header_balance.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_balance, self.balance_headers, self.columnas_visibles_balance, self.config_path_balance))
-        header_balance.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_balance))
-        header_balance.setSectionsMovable(True)
-        header_balance.setSectionsClickable(True)
-        self.tabla_balance.setHorizontalHeader(header_balance)
+        if header_balance is not None:
+            header_balance.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header_balance.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_balance, self.balance_headers, self.columnas_visibles_balance, self.config_path_balance))
+            header_balance.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_balance))
+            header_balance.setSectionsMovable(True)
+            header_balance.setSectionsClickable(True)
+            self.tabla_balance.setHorizontalHeader(header_balance)
 
         header_pagos = self.tabla_pagos.horizontalHeader()
-        header_pagos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header_pagos.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_pagos, self.pagos_headers, self.columnas_visibles_pagos, self.config_path_pagos))
-        header_pagos.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_pagos))
-        header_pagos.setSectionsMovable(True)
-        header_pagos.setSectionsClickable(True)
-        self.tabla_pagos.setHorizontalHeader(header_pagos)
+        if header_pagos is not None:
+            header_pagos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header_pagos.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_pagos, self.pagos_headers, self.columnas_visibles_pagos, self.config_path_pagos))
+            header_pagos.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_pagos))
+            header_pagos.setSectionsMovable(True)
+            header_pagos.setSectionsClickable(True)
+            self.tabla_pagos.setHorizontalHeader(header_pagos)
 
         header_recibos = self.tabla_recibos.horizontalHeader()
-        header_recibos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header_recibos.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_recibos, self.recibos_headers, self.columnas_visibles_recibos, self.config_path_recibos))
-        header_recibos.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_recibos))
-        header_recibos.setSectionsMovable(True)
-        header_recibos.setSectionsClickable(True)
-        self.tabla_recibos.setHorizontalHeader(header_recibos)
+        if header_recibos is not None:
+            header_recibos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header_recibos.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_recibos, self.recibos_headers, self.columnas_visibles_recibos, self.config_path_recibos))
+            header_recibos.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_recibos))
+            header_recibos.setSectionsMovable(True)
+            header_recibos.setSectionsClickable(True)
+            self.tabla_recibos.setHorizontalHeader(header_recibos)
         self.tabla_recibos.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_recibos))
 
         self.boton_agregar_recibo.clicked.connect(self.abrir_dialogo_nuevo_recibo)
+
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+        colores = {
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "advertencia": "#fbbf24",
+            "error": "#ef4444"
+        }
+        color = colores.get(tipo, "#2563eb")
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px;")
+        self.label_feedback.setText(mensaje)
+        if tipo == "error":
+            log_error(mensaje)
+            QMessageBox.critical(self, "Error", mensaje)
+        elif tipo == "advertencia":
+            QMessageBox.warning(self, "Advertencia", mensaje)
+        elif tipo == "exito":
+            QMessageBox.information(self, "Éxito", mensaje)
 
     def sync_headers(self):
         # Sincroniza los headers de las tablas con la base de datos
@@ -227,67 +253,102 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             try:
                 with open(config_path, "r", encoding="utf-8") as f:
                     return json.load(f)
-            except Exception:
-                pass
+            except Exception as e:
+                log_error(f"Error al cargar configuración de columnas: {e}")
+                self.mostrar_mensaje(f"Error al cargar configuración de columnas: {e}", "error")
         return {header: True for header in headers}
 
     def guardar_config_columnas(self, config_path, columnas_visibles):
         try:
             with open(config_path, "w", encoding="utf-8") as f:
                 json.dump(columnas_visibles, f, ensure_ascii=False, indent=2)
-        except Exception:
-            pass
+            self.mostrar_mensaje("Configuración de columnas guardada", "exito")
+        except Exception as e:
+            log_error(f"Error al guardar configuración de columnas: {e}")
+            self.mostrar_mensaje(f"Error al guardar configuración de columnas: {e}", "error")
 
     def aplicar_columnas_visibles(self, tabla, headers, columnas_visibles):
-        for idx, header in enumerate(headers):
-            visible = columnas_visibles.get(header, True)
-            tabla.setColumnHidden(idx, not visible)
+        try:
+            for idx, header in enumerate(headers):
+                visible = columnas_visibles.get(header, True)
+                tabla.setColumnHidden(idx, not visible)
+        except Exception as e:
+            log_error(f"Error al aplicar columnas visibles: {e}")
+            self.mostrar_mensaje(f"Error al aplicar columnas visibles: {e}", "error")
 
     def mostrar_menu_columnas(self, tabla, headers, columnas_visibles, config_path, pos):
-        menu = QMenu(self)
-        for idx, header in enumerate(headers):
-            accion = QAction(header, self)
-            accion.setCheckable(True)
-            accion.setChecked(columnas_visibles.get(header, True))
-            accion.toggled.connect(partial(self.toggle_columna, tabla, idx, header, columnas_visibles, config_path))
-            menu.addAction(accion)
-        header = tabla.horizontalHeader()
-        if header is not None:
-            menu.exec(header.mapToGlobal(pos))
-        else:
-            menu.exec(pos)
+        try:
+            menu = QMenu(self)
+            for idx, header in enumerate(headers):
+                accion = QAction(header, self)
+                accion.setCheckable(True)
+                accion.setChecked(columnas_visibles.get(header, True))
+                accion.toggled.connect(partial(self.toggle_columna, tabla, idx, header, columnas_visibles, config_path))
+                menu.addAction(accion)
+            header = tabla.horizontalHeader()
+            if header is not None:
+                menu.exec(header.mapToGlobal(pos))
+            else:
+                log_error("No se puede mostrar el menú de columnas: header no disponible")
+                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
+        except Exception as e:
+            log_error(f"Error al mostrar menú de columnas: {e}")
+            self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
 
     def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
-        header = tabla.horizontalHeader()
-        if header is not None:
-            pos = header.sectionPosition(idx)
-            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-            self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
+        try:
+            header = tabla.horizontalHeader()
+            if header is not None:
+                pos = header.sectionPosition(idx)
+                global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+                self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
+            else:
+                log_error("No se puede mostrar el menú de columnas: header no disponible")
+                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
+        except Exception as e:
+            log_error(f"Error al mostrar menú de columnas desde header: {e}")
+            self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
 
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):
-        columnas_visibles[header] = checked
-        tabla.setColumnHidden(idx, not checked)
-        self.guardar_config_columnas(config_path, columnas_visibles)
+        try:
+            columnas_visibles[header] = checked
+            tabla.setColumnHidden(idx, not checked)
+            self.guardar_config_columnas(config_path, columnas_visibles)
+            self.mostrar_mensaje(f"Columna '{header}' {'mostrada' if checked else 'ocultada'}", "info")
+        except Exception as e:
+            log_error(f"Error al alternar columna: {e}")
+            self.mostrar_mensaje(f"Error al alternar columna: {e}", "error")
 
     def auto_ajustar_columna(self, tabla, idx):
-        tabla.resizeColumnToContents(idx)
+        try:
+            tabla.resizeColumnToContents(idx)
+        except Exception as e:
+            log_error(f"Error al autoajustar columna: {e}")
+            self.mostrar_mensaje(f"Error al autoajustar columna: {e}", "error")
 
     def mostrar_qr_item_seleccionado(self, tabla):
-        selected = tabla.selectedItems()
-        if not selected:
+        try:
+            selected = tabla.selectedItems()
+            if not selected:
+                return
+            row = selected[0].row()
+            codigo = tabla.item(row, 0).text()  # Usar el primer campo como dato QR
+            if not codigo:
+                self.mostrar_mensaje("No se pudo obtener el código para el QR.", "error")
+                return
+            qr = qrcode.QRCode(version=1, box_size=6, border=2)
+            qr.add_data(codigo)
+            qr.make(fit=True)
+            img = qr.make_image(fill_color="black", back_color="white")
+            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+                img.save(tmp)
+                tmp.flush()
+                tmp_path = tmp.name
+                pixmap = QPixmap(tmp_path)
+        except Exception as e:
+            log_error(f"Error al generar QR: {e}")
+            self.mostrar_mensaje(f"Error al generar QR: {e}", "error")
             return
-        row = selected[0].row()
-        codigo = tabla.item(row, 0).text()  # Usar el primer campo como dato QR
-        if not codigo:
-            return
-        qr = qrcode.QRCode(version=1, box_size=6, border=2)
-        qr.add_data(codigo)
-        qr.make(fit=True)
-        img = qr.make_image(fill_color="black", back_color="white")
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-            with open(tmp.name, "wb") as f:
-                img.save(f)
-            pixmap = QPixmap(tmp.name)
         dialog = QDialog(self)
         dialog.setWindowTitle(f"Código QR para {codigo}")
         vbox = QVBoxLayout(dialog)
@@ -307,80 +368,90 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         btns.addWidget(btn_pdf)
         vbox.addLayout(btns)
         def guardar():
-            file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
-            if file_path:
-                with open(file_path, "wb") as f:
-                    img.save(f)
+            try:
+                file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
+                if file_path:
+                    with open(tmp_path, "rb") as src, open(file_path, "wb") as dst:
+                        dst.write(src.read())
+            except Exception as e:
+                log_error(f"Error al guardar imagen QR: {e}")
+                self.mostrar_mensaje(f"Error al guardar imagen QR: {e}", "error")
         def exportar_pdf():
-            file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
-            if file_path:
-                printer = QPrinter(QPrinter.PrinterMode.HighResolution)
-                printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
-                printer.setOutputFileName(file_path)
-                painter = QPainter(printer)
-                pixmap_scaled = pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio)
-                painter.drawPixmap(100, 100, pixmap_scaled)
-                painter.end()
+            try:
+                from reportlab.pdfgen import canvas
+                from reportlab.lib.pagesizes import letter
+                file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
+                if file_path:
+                    c = canvas.Canvas(file_path, pagesize=letter)
+                    c.drawInlineImage(tmp_path, 100, 500, 200, 200)
+                    c.save()
+            except Exception as e:
+                log_error(f"Error al exportar QR a PDF: {e}")
+                self.mostrar_mensaje(f"Error al exportar QR a PDF: {e}", "error")
         btn_guardar.clicked.connect(guardar)
         btn_pdf.clicked.connect(exportar_pdf)
         dialog.exec()
 
     def abrir_dialogo_nuevo_recibo(self):
-        dialog = QDialog(self)
-        dialog.setWindowTitle("Agregar nuevo recibo")
-        layout = QVBoxLayout(dialog)
-        form = QFormLayout()
-        fecha_input = QLineEdit()
-        fecha_input.setPlaceholderText("YYYY-MM-DD")
-        fecha_input.setToolTip("Fecha de emisión del recibo")
-        obra_combo = QComboBox()
-        obras = self.obtener_obras_para_selector()
-        for obra in obras:
-            obra_id, nombre, cliente = obra[0], obra[1], obra[2]
-            obra_combo.addItem(f"{obra_id} - {nombre} ({cliente})", obra_id)
-        monto_input = QLineEdit()
-        monto_input.setPlaceholderText("Monto total")
-        monto_input.setToolTip("Monto total del recibo")
-        concepto_input = QLineEdit()
-        concepto_input.setPlaceholderText("Concepto")
-        concepto_input.setToolTip("Concepto del recibo")
-        destinatario_input = QLineEdit()
-        destinatario_input.setPlaceholderText("Destinatario")
-        destinatario_input.setToolTip("Destinatario del recibo")
-        form.addRow("Fecha de Emisión:", fecha_input)
-        form.addRow("Obra:", obra_combo)
-        form.addRow("Monto Total:", monto_input)
-        form.addRow("Concepto:", concepto_input)
-        form.addRow("Destinatario:", destinatario_input)
-        layout.addLayout(form)
-        btns = QHBoxLayout()
-        btn_agregar = QPushButton()
-        btn_agregar.setIcon(QIcon("img/agregar.svg"))
-        btn_agregar.setToolTip("Agregar")
-        estilizar_boton_icono(btn_agregar)
-        btn_cancelar = QPushButton("Cancelar")
-        btns.addStretch()
-        btns.addWidget(btn_agregar)
-        btns.addWidget(btn_cancelar)
-        layout.addLayout(btns)
-        def agregar_recibo():
-            datos = [
-                fecha_input.text(),
-                obra_combo.currentData(),
-                monto_input.text(),
-                concepto_input.text(),
-                destinatario_input.text(),
-                "pendiente"
-            ]
-            if not all(datos[:-1]):
-                QMessageBox.warning(dialog, "Campos requeridos", "Complete todos los campos.")
-                return
-            if hasattr(self, 'controller'):
-                self.controller.agregar_recibo(datos)
-            dialog.accept()
-        btn_agregar.clicked.connect(agregar_recibo)
-        btn_cancelar.clicked.connect(dialog.reject)
-        dialog.exec()
+        try:
+            dialog = QDialog(self)
+            dialog.setWindowTitle("Agregar nuevo recibo")
+            layout = QVBoxLayout(dialog)
+            form = QFormLayout()
+            fecha_input = QLineEdit()
+            fecha_input.setPlaceholderText("YYYY-MM-DD")
+            fecha_input.setToolTip("Fecha de emisión del recibo")
+            obra_combo = QComboBox()
+            obras = self.obtener_obras_para_selector()
+            for obra in obras:
+                obra_id, nombre, cliente = obra[0], obra[1], obra[2]
+                obra_combo.addItem(f"{obra_id} - {nombre} ({cliente})", obra_id)
+            monto_input = QLineEdit()
+            monto_input.setPlaceholderText("Monto total")
+            monto_input.setToolTip("Monto total del recibo")
+            concepto_input = QLineEdit()
+            concepto_input.setPlaceholderText("Concepto")
+            concepto_input.setToolTip("Concepto del recibo")
+            destinatario_input = QLineEdit()
+            destinatario_input.setPlaceholderText("Destinatario")
+            destinatario_input.setToolTip("Destinatario del recibo")
+            form.addRow("Fecha de Emisión:", fecha_input)
+            form.addRow("Obra:", obra_combo)
+            form.addRow("Monto Total:", monto_input)
+            form.addRow("Concepto:", concepto_input)
+            form.addRow("Destinatario:", destinatario_input)
+            layout.addLayout(form)
+            btns = QHBoxLayout()
+            btn_agregar = QPushButton()
+            btn_agregar.setIcon(QIcon("img/agregar.svg"))
+            btn_agregar.setToolTip("Agregar")
+            estilizar_boton_icono(btn_agregar)
+            btn_cancelar = QPushButton("Cancelar")
+            btns.addStretch()
+            btns.addWidget(btn_agregar)
+            btns.addWidget(btn_cancelar)
+            layout.addLayout(btns)
+            def agregar_recibo():
+                datos = [
+                    fecha_input.text(),
+                    obra_combo.currentData(),
+                    monto_input.text(),
+                    concepto_input.text(),
+                    destinatario_input.text(),
+                    "pendiente"
+                ]
+                if not all(datos[:-1]):
+                    self.mostrar_mensaje("Complete todos los campos.", "advertencia")
+                    return
+                if hasattr(self, 'controller'):
+                    self.controller.agregar_recibo(datos)
+                dialog.accept()
+            btn_agregar.clicked.connect(agregar_recibo)
+            btn_cancelar.clicked.connect(dialog.reject)
+            dialog.exec()
+        except Exception as e:
+            log_error(f"Error al abrir diálogo de nuevo recibo: {e}")
+            self.mostrar_mensaje(f"Error al abrir diálogo de nuevo recibo: {e}", "error")
 
     def abrir_dialogo_nuevo_movimiento(self, *args, **kwargs):
         # TODO: Implementar el diálogo real de nuevo movimiento

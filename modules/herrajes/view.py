@@ -5,12 +5,18 @@ import json
 import os
 from functools import partial
 from core.table_responsive_mixin import TableResponsiveMixin
-from core.ui_components import estilizar_boton_icono
+from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
+from core.logger import log_error
 
 class HerrajesView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
+        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path="themes/light.qss")
         self.main_layout = QVBoxLayout(self)
+
+        # Feedback visual centralizado
+        self.label_feedback = QLabel()
+        self.main_layout.addWidget(self.label_feedback)
 
         self.label_titulo = QLabel("Gestión de Herrajes")
         self.main_layout.addWidget(self.label_titulo)
@@ -63,14 +69,33 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         botones_layout.addWidget(self.boton_agregar)
         self.main_layout.addLayout(botones_layout)
 
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+        colores = {
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "advertencia": "#fbbf24",
+            "error": "#ef4444"
+        }
+        color = colores.get(tipo, "#2563eb")
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px;")
+        self.label_feedback.setText(mensaje)
+        if tipo == "error":
+            log_error(mensaje)
+            QMessageBox.critical(self, "Error", mensaje)
+        elif tipo == "advertencia":
+            QMessageBox.warning(self, "Advertencia", mensaje)
+        elif tipo == "exito":
+            QMessageBox.information(self, "Éxito", mensaje)
+
     def cargar_config_columnas(self):
         import os, json
-        if os.path.exists(self.config_path):
-            try:
+        try:
+            if os.path.exists(self.config_path):
                 with open(self.config_path, "r", encoding="utf-8") as f:
                     return json.load(f)
-            except Exception:
-                pass
+        except Exception as e:
+            log_error(f"Error al cargar configuración de columnas: {e}")
+            self.mostrar_mensaje(f"Error al cargar configuración de columnas: {e}", "error")
         return {header: True for header in self.herrajes_headers}
 
     def guardar_config_columnas(self):
@@ -78,42 +103,69 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         try:
             with open(self.config_path, "w", encoding="utf-8") as f:
                 json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
-        except Exception:
-            pass
+            self.mostrar_mensaje("Configuración de columnas guardada", "exito")
+        except Exception as e:
+            log_error(f"Error al guardar configuración de columnas: {e}")
+            self.mostrar_mensaje(f"Error al guardar configuración de columnas: {e}", "error")
 
     def aplicar_columnas_visibles(self):
-        for idx, header in enumerate(self.herrajes_headers):
-            visible = self.columnas_visibles.get(header, True)
-            self.tabla_herrajes.setColumnHidden(idx, not visible)
+        try:
+            for idx, header in enumerate(self.herrajes_headers):
+                visible = self.columnas_visibles.get(header, True)
+                self.tabla_herrajes.setColumnHidden(idx, not visible)
+        except Exception as e:
+            log_error(f"Error al aplicar columnas visibles: {e}")
+            self.mostrar_mensaje(f"Error al aplicar columnas visibles: {e}", "error")
 
     def mostrar_menu_columnas(self, pos):
-        menu = QMenu(self)
-        for idx, header in enumerate(self.herrajes_headers):
-            accion = QAction(header, self)
-            accion.setCheckable(True)
-            accion.setChecked(self.columnas_visibles.get(header, True))
-            accion.toggled.connect(partial(self.toggle_columna, idx, header))
-            menu.addAction(accion)
-        header = self.tabla_herrajes.horizontalHeader()
-        if header is not None:
-            menu.exec(header.mapToGlobal(pos))
-        else:
-            menu.exec(pos)
+        try:
+            menu = QMenu(self)
+            for idx, header in enumerate(self.herrajes_headers):
+                accion = QAction(header, self)
+                accion.setCheckable(True)
+                accion.setChecked(self.columnas_visibles.get(header, True))
+                accion.toggled.connect(partial(self.toggle_columna, idx, header))
+                menu.addAction(accion)
+            header = self.tabla_herrajes.horizontalHeader()
+            if header is not None:
+                menu.exec(header.mapToGlobal(pos))
+            else:
+                log_error("No se puede mostrar el menú de columnas: header no disponible")
+                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
+        except Exception as e:
+            log_error(f"Error al mostrar menú de columnas: {e}")
+            self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
 
     def mostrar_menu_columnas_header(self, idx):
-        header = self.tabla_herrajes.horizontalHeader()
-        if header is not None:
-            pos = header.sectionPosition(idx)
-            global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-            self.mostrar_menu_columnas(global_pos)
+        try:
+            header = self.tabla_herrajes.horizontalHeader()
+            if header is not None:
+                pos = header.sectionPosition(idx)
+                global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+                self.mostrar_menu_columnas(global_pos)
+            else:
+                log_error("No se puede mostrar el menú de columnas: header no disponible")
+                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
+        except Exception as e:
+            log_error(f"Error al mostrar menú de columnas desde header: {e}")
+            self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
 
     def toggle_columna(self, idx, header, checked):
-        self.columnas_visibles[header] = checked
-        self.tabla_herrajes.setColumnHidden(idx, not checked)
-        self.guardar_config_columnas()
+        try:
+            self.columnas_visibles[header] = checked
+            self.tabla_herrajes.setColumnHidden(idx, not checked)
+            self.guardar_config_columnas()
+            self.mostrar_mensaje(f"Columna '{header}' {'mostrada' if checked else 'ocultada'}", "info")
+        except Exception as e:
+            log_error(f"Error al alternar columna: {e}")
+            self.mostrar_mensaje(f"Error al alternar columna: {e}", "error")
 
     def autoajustar_columna(self, idx):
-        self.tabla_herrajes.resizeColumnToContents(idx)
+        try:
+            self.tabla_herrajes.resizeColumnToContents(idx)
+        except Exception as e:
+            log_error(f"Error al autoajustar columna: {e}")
+            self.mostrar_mensaje(f"Error al autoajustar columna: {e}", "error")
 
 class MaterialesView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default"):
