@@ -107,6 +107,7 @@ class InventarioController:
         self.view.actualizar_signal.connect(self.actualizar_inventario)
         self.view.ajustar_stock_signal.connect(self.ajustar_stock)
         self.view.reservar_signal.connect(self.abrir_reserva_lote_perfiles)
+        self.view.ajustes_stock_guardados.connect(self.procesar_ajustes_stock)
 
         self.actualizar_inventario()
         self.cargar_productos()
@@ -373,6 +374,34 @@ class InventarioController:
                 self._feedback(f"Error al abrir la ventana de ajuste de stock: {e}", tipo='error')
                 self._registrar_evento_auditoria('error', f"Error al abrir ventana ajuste stock: {e}", exito=False)
         return self._solicitud_aprobacion_o_ejecucion('ajustar_stock', {}, ejecutar)
+
+    @permiso_auditoria_inventario('editar')
+    def procesar_ajustes_stock(self, ajustes):
+        """
+        Recibe una lista de dicts: {id, cantidad, motivo} y procesa los ajustes de stock en lote.
+        Valida, actualiza la base y registra en auditoría.
+        """
+        exitos = 0
+        errores = []
+        for ajuste in ajustes:
+            id_item = ajuste.get('id')
+            cantidad = ajuste.get('cantidad')
+            motivo = ajuste.get('motivo')
+            if not id_item or cantidad is None or not motivo:
+                errores.append(f"Faltan datos en ajuste: {ajuste}")
+                continue
+            try:
+                self.model.actualizar_stock(id_item, cantidad)
+                self.model.registrar_movimiento(id_item, cantidad, 'ajuste', motivo)
+                self._registrar_evento_auditoria('ajuste_stock', f"Ajuste de stock: {id_item} cantidad {cantidad} motivo {motivo}")
+                exitos += 1
+            except Exception as e:
+                errores.append(f"Error en id {id_item}: {e}")
+        if exitos:
+            self._feedback(f"{exitos} ajustes de stock guardados correctamente.", tipo='success')
+            self.actualizar_inventario()
+        if errores:
+            self._feedback("\n".join(errores), tipo='error')
 
     @permiso_auditoria_inventario('ver')
     def ver_movimientos(self):

@@ -21,6 +21,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
     generar_qr_signal = pyqtSignal()
     actualizar_signal = pyqtSignal()
     ajustar_stock_signal = pyqtSignal()
+    ajustes_stock_guardados = pyqtSignal(list)  # Señal para emitir los ajustes de stock guardados
 
     def __init__(self, db_connection=None, usuario_actual="default"):
         super().__init__()
@@ -56,6 +57,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
             ("pdf_icon.svg", "Exportar a PDF", self.exportar_pdf_signal),
             ("search_icon.svg", "Buscar ítem", self.buscar_signal),
             ("qr_icon.svg", "Generar código QR", self.generar_qr_signal),
+            ("ajustar-stock.svg", "Ajustar stock de perfiles", None),  # Nuevo botón
         ]
         for icono, tooltip, signal in iconos:
             btn = QPushButton()
@@ -63,7 +65,10 @@ class InventarioView(QWidget, TableResponsiveMixin):
             btn.setIconSize(QSize(24, 24))
             btn.setToolTip(tooltip)
             btn.setText("")
-            btn.clicked.connect(signal.emit)
+            if signal is not None:
+                btn.clicked.connect(signal.emit)
+            elif icono == "ajustar-stock.svg":
+                btn.clicked.connect(self.abrir_ajuste_stock)
             estilizar_boton_icono(btn)
             top_btns_layout.addWidget(btn)
         self.main_layout.addLayout(top_btns_layout)  # Cambiar insertLayout por addLayout para asegurar el orden
@@ -480,3 +485,172 @@ class InventarioView(QWidget, TableResponsiveMixin):
 
     # Reemplazar la función antigua por la nueva
     abrir_reserva_lote_perfiles = abrir_pedido_material_obra
+
+    def abrir_ajuste_stock_perfiles(self):
+        """
+        Ventana moderna para ajuste de stock de perfiles:
+        - Input de código con búsqueda instantánea y autocompletado de descripción.
+        - Al seleccionar/agregar, se muestra en una tabla editable (código, descripción, stock actual, cantidad a ajustar, motivo).
+        - Permite editar cantidad y motivo.
+        - Botón para guardar todos los ajustes, con feedback visual y validación.
+        - Feedback visual moderno y registro en auditoría (emitir señal o llamar a callback del controlador).
+        """
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Ajuste de stock de perfiles")
+        dialog.setMinimumSize(900, 540)
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(32, 32, 32, 32)
+        layout.setSpacing(16)
+
+        # Input de búsqueda
+        form_layout = QFormLayout()
+        codigo_input = QLineEdit()
+        codigo_input.setPlaceholderText("Buscar código o descripción de perfil...")
+        descripcion_label = QLabel("")
+        descripcion_label.setStyleSheet("color: #2563eb; font-size: 13px; font-weight: 500;")
+        form_layout.addRow("Código/Descripción:", codigo_input)
+        form_layout.addRow("Descripción:", descripcion_label)
+        layout.addLayout(form_layout)
+
+        # Tabla de ajustes
+        tabla_ajustes = QTableWidget()
+        tabla_ajustes.setColumnCount(5)
+        tabla_ajustes.setHorizontalHeaderLabels([
+            "Código", "Descripción", "Stock actual", "Cantidad a ajustar (+/-)", "Motivo"
+        ])
+        tabla_ajustes.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        tabla_ajustes.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        tabla_ajustes.setAlternatingRowColors(True)
+        h_header = tabla_ajustes.horizontalHeader()
+        if h_header is not None:
+            h_header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        layout.addWidget(tabla_ajustes)
+
+        # Lista interna de ajustes
+        ajustes = []  # Cada ajuste: {codigo, descripcion, stock, cantidad_input, motivo_input}
+
+        # --- Autocompletado y búsqueda instantánea ---
+        from PyQt6.QtWidgets import QCompleter
+        perfiles_cache = []
+        def cargar_perfiles_cache():
+            # Cargar todos los perfiles para autocompletar (solo código y descripción)
+            if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])):
+                return []
+            try:
+                import pyodbc
+                connection_string = (
+                    f"DRIVER={{{self.db_connection.driver}}};"
+                    f"SERVER=localhost\\SQLEXPRESS;"
+                    f"DATABASE={self.db_connection.database};"
+                    f"UID={self.db_connection.username};"
+                    f"PWD={self.db_connection.password};"
+                    f"TrustServerCertificate=yes;"
+                )
+                with pyodbc.connect(connection_string, timeout=10) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("SELECT id, codigo, descripcion, stock_actual FROM inventario_perfiles")
+                    return [dict(zip([column[0] for column in cursor.description], row)) for row in cursor.fetchall()]
+            except Exception:
+                return []
+        perfiles_cache = cargar_perfiles_cache()
+        codigos = [p["codigo"] for p in perfiles_cache]
+        descripciones = [p["descripcion"] for p in perfiles_cache]
+        autocompletar = QCompleter(codigos + descripciones)
+        autocompletar.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        codigo_input.setCompleter(autocompletar)
+
+        def buscar_perfil(texto):
+            texto = texto.strip().lower()
+            for p in perfiles_cache:
+                if texto in (p["codigo"] or "").lower() or texto in (p["descripcion"] or "").lower():
+                    return p
+            return None
+
+        def agregar_a_tabla(perfil):
+            # Evitar duplicados
+            for i in range(tabla_ajustes.rowCount()):
+                item_codigo = tabla_ajustes.item(i, 0)
+                if item_codigo is not None and item_codigo.text() == perfil["codigo"]:
+                    return
+            row = tabla_ajustes.rowCount()
+            tabla_ajustes.insertRow(row)
+            tabla_ajustes.setItem(row, 0, QTableWidgetItem(perfil["codigo"]))
+            tabla_ajustes.setItem(row, 1, QTableWidgetItem(perfil["descripcion"]))
+            tabla_ajustes.setItem(row, 2, QTableWidgetItem(str(perfil["stock_actual"])))
+            cantidad_input = QLineEdit()
+            cantidad_input.setPlaceholderText("Ej: 5 o -3")
+            cantidad_input.setFixedWidth(80)
+            motivo_input = QLineEdit()
+            motivo_input.setPlaceholderText("Motivo del ajuste")
+            motivo_input.setFixedWidth(180)
+            tabla_ajustes.setCellWidget(row, 3, cantidad_input)
+            tabla_ajustes.setCellWidget(row, 4, motivo_input)
+            ajustes.append({
+                "id": perfil["id"],
+                "codigo": perfil["codigo"],
+                "descripcion": perfil["descripcion"],
+                "stock": perfil["stock_actual"],
+                "cantidad_input": cantidad_input,
+                "motivo_input": motivo_input
+            })
+
+        def on_codigo_enter():
+            texto = codigo_input.text()
+            perfil = buscar_perfil(texto)
+            if perfil:
+                descripcion_label.setText(perfil["descripcion"])
+                agregar_a_tabla(perfil)
+                codigo_input.clear()
+                descripcion_label.setText("")
+            else:
+                descripcion_label.setText("No encontrado")
+
+        codigo_input.returnPressed.connect(on_codigo_enter)
+        # También agregar al seleccionar del autocompletado
+        autocompletar.activated.connect(lambda _: on_codigo_enter())
+
+        # --- Botones inferiores ---
+        btn_guardar = QPushButton("Guardar ajustes")
+        btn_guardar.setIcon(QIcon("img/ajustar-stock.svg"))
+        estilizar_boton_icono(btn_guardar)
+        btn_cancelar = QPushButton("Cancelar")
+        btn_cancelar.setIcon(QIcon("img/cerrar.svg"))
+        estilizar_boton_icono(btn_cancelar)
+        btns = QHBoxLayout()
+        btns.addStretch()
+        btns.addWidget(btn_guardar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+
+        # --- Guardar ajustes: validación y feedback visual ---
+        def guardar_ajustes():
+            cambios = []
+            for i, ajuste in enumerate(ajustes):
+                try:
+                    cantidad = int(ajuste["cantidad_input"].text())
+                except Exception:
+                    cantidad = None
+                motivo = ajuste["motivo_input"].text().strip()
+                if cantidad is None or cantidad == 0 or not motivo:
+                    tabla_ajustes.selectRow(i)
+                    QMessageBox.warning(dialog, "Validación", f"Fila {i+1}: Ingrese cantidad válida y motivo.")
+                    return
+                cambios.append({
+                    "id": ajuste["id"],
+                    "cantidad": cantidad,
+                    "motivo": motivo
+                })
+            if not cambios:
+                QMessageBox.warning(dialog, "Sin cambios", "No hay ajustes válidos para guardar.")
+                return
+            # Emitir señal para que el controlador procese los cambios
+            self.ajustes_stock_guardados.emit(cambios)
+            dialog.accept()
+            QMessageBox.information(self, "Ajuste de stock", "Ajustes guardados correctamente.")
+
+        btn_guardar.clicked.connect(guardar_ajustes)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
+
+    # Alias para compatibilidad
+    abrir_ajuste_stock = abrir_ajuste_stock_perfiles

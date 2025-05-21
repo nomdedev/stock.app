@@ -3,6 +3,10 @@ from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
 from PyQt6.QtWidgets import QApplication, QTableWidgetItem, QCheckBox
+import pandas as pd
+import pyodbc
+import os
+from scripts.procesar_e_importar_inventario import importar_inventario_desde_archivo
 
 class PermisoAuditoria:
     def __init__(self, modulo):
@@ -50,6 +54,7 @@ class ConfiguracionController:
         self.usuario_actual = usuario_actual
         self.usuarios_model = usuarios_model
         self.auditoria_model = AuditoriaModel(db_connection)
+        self.db_connection = db_connection
         try:
             # Validar y conectar botones
             if hasattr(self.view, "save_button"):
@@ -227,89 +232,41 @@ class ConfiguracionController:
         if archivo:
             self.view.csv_file_input.setText(archivo)
 
+    @permiso_auditoria_configuracion('editar')
     def importar_csv_inventario(self):
-        import csv, re
-        from core.database import DatabaseConnection
-        usuario = getattr(self, 'usuario_actual', None)
-        ip = usuario.get('ip', '') if usuario else ''
-        auditoria_model = getattr(self, 'auditoria_model', None)
-        ruta_csv = self.view.csv_file_input.text()
-        if not ruta_csv or not ruta_csv.lower().endswith('.csv'):
-            self.mostrar_mensaje("Selecciona un archivo CSV válido.", tipo="error", destino="import_result_label")
-            if auditoria_model:
-                auditoria_model.registrar_evento(usuario, 'configuracion', 'importar_csv_inventario', ip_origen=ip, resultado="denegado (archivo inválido)")
+        """
+        Importa el inventario desde un archivo CSV/Excel usando el flujo seguro y centralizado del sistema.
+        - Solo admin puede ejecutar.
+        - Usa la conexión centralizada (core/database.py).
+        - Feedback visual claro y uniforme.
+        """
+        if not self.usuario_actual or not getattr(self.usuario_actual, 'rol', None) == 'admin':
+            self.view.mostrar_mensaje("Solo el usuario admin puede importar el inventario.", tipo="error")
             return
-        db = self.model.db
-        count = 0
-        codigos_omitidos = []
-        codigos_repetidos = set()
-        codigos_vistos = set()
-        def extraer_desde_descripcion(descripcion):
-            tipo = ''
-            acabado = ''
-            longitud = ''
-            if descripcion:
-                tipo_match = re.search(r'^(.*?)\s*Euro-Design', descripcion, re.IGNORECASE)
-                if tipo_match:
-                    tipo = tipo_match.group(1).strip()
-                acabado_match = re.search(r'Euro-Design\s*\d+\s*([\w\-/]+)', descripcion, re.IGNORECASE)
-                if acabado_match:
-                    acabado = acabado_match.group(1).strip()
-                longitud_match = re.search(r'([\d,.]+)\s*m', descripcion)
-                if longitud_match:
-                    longitud = longitud_match.group(1).replace(',', '.')
-            return tipo, acabado, longitud
-        try:
-            with open(ruta_csv, encoding='latin1') as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    codigo = None
-                    for value in row.values():
-                        if isinstance(value, str) and re.match(r'^\d{6}\.\d{3}$', value.strip()):
-                            codigo = value.strip()
-                            break
-                    if not codigo:
-                        codigo = row.get('codigo') or row.get('Código')
-                    if not codigo or not isinstance(codigo, str) or not re.match(r'^\d{6}\.\d{3}$', codigo):
-                        codigos_omitidos.append(str(codigo))
-                        continue
-                    if codigo in codigos_vistos:
-                        codigos_repetidos.add(codigo)
-                        continue
-                    codigos_vistos.add(codigo)
-                    nombre = row.get('nombre') or row.get('Nombre') or row.get('descripcion') or row.get('Descripción')
-                    tipo_material = row.get('tipo_material') or row.get('Tipo de material') or 'PVC'
-                    unidad = row.get('unidad') or row.get('Unidad') or 'unidad'
-                    stock_actual = row.get('stock_actual') or row.get('Stock') or 0
-                    stock_minimo = row.get('stock_minimo') or row.get('Stock mínimo') or 0
-                    ubicacion = row.get('ubicacion') or row.get('Ubicación') or ''
-                    descripcion = row.get('descripcion') or row.get('Descripción') or ''
-                    qr = row.get('qr') or f'QR-{codigo}'
-                    imagen_referencia = row.get('imagen_referencia') or ''
-                    tipo, acabado, longitud = extraer_desde_descripcion(descripcion)
-                    try:
-                        db.ejecutar_query('''
-                            INSERT INTO inventario_perfiles (
-                                codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr, imagen_referencia, tipo, acabado, longitud
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        ''', (
-                            codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr, imagen_referencia, tipo, acabado, longitud
-                        ))
-                        count += 1
-                    except Exception as e:
-                        codigos_omitidos.append(f"{codigo} (error: {e})")
-            resumen = f"Perfiles importados: {count}\n"
-            if codigos_omitidos:
-                resumen += f"Perfiles omitidos: {len(codigos_omitidos)}\nCódigos omitidos (primeros 10): {codigos_omitidos[:10]}\n"
-            if codigos_repetidos:
-                resumen += f"Perfiles omitidos por código repetido: {len(codigos_repetidos)}\nCódigos repetidos: {list(codigos_repetidos)[:10]}\n"
-            self.mostrar_mensaje(resumen, tipo="exito" if count else "advertencia", destino="import_result_label")
-            if auditoria_model:
-                auditoria_model.registrar_evento(usuario, 'configuracion', 'importar_csv_inventario', ip_origen=ip, resultado=f"éxito ({count} importados, {len(codigos_omitidos)} omitidos, {len(codigos_repetidos)} repetidos)")
-        except Exception as e:
-            self.mostrar_mensaje(f"Error al importar: {e}", tipo="error", destino="import_result_label")
-            if auditoria_model:
-                auditoria_model.registrar_evento(usuario, 'configuracion', 'importar_csv_inventario', ip_origen=ip, resultado=f"error: {e}")
+        ruta_csv = self.view.csv_file_input.text().strip() if hasattr(self.view, 'csv_file_input') else ''
+        if not ruta_csv or not os.path.exists(ruta_csv):
+            self.view.mostrar_mensaje(f"No se encontró el archivo: {ruta_csv}", tipo="error")
+            return
+        def confirmar(df, resultado):
+            self.view.mostrar_preview(df)
+            self.view.mostrar_advertencias(resultado["advertencias"])
+            return self.view.confirmar_importacion(len(df))
+        resultado = importar_inventario_desde_archivo(ruta_csv, self.usuario_actual, confirmar_importacion_callback=confirmar)
+        if resultado["exito"]:
+            self.view.mostrar_exito(resultado["mensajes"])
+        else:
+            self.view.mostrar_errores(resultado["errores"])
+            if resultado["mensajes"]:
+                self.view.mostrar_mensaje("\n".join(resultado["mensajes"]), tipo="info")
+        self.view.mostrar_advertencias(resultado["advertencias"])
+
+    def _mostrar_mensaje(self, mensaje, error=False):
+        if hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(mensaje, error=error)
+        elif hasattr(self.view, 'label'):
+            self.view.label.setText(mensaje)
+        else:
+            print(mensaje)
 
     # --- Métodos para la pestaña de permisos y visibilidad ---
     def cargar_permisos_modulos(self):
@@ -345,78 +302,15 @@ class ConfiguracionController:
         try:
             permisos_dict_por_usuario = {}
             for row in range(self.view.tabla_permisos.rowCount()):
-                usuario_rol = self.view.tabla_permisos.item(row, 0).text()
+                usuario_modulo = self.view.tabla_permisos.item(row, 0).text()
                 modulo = self.view.tabla_permisos.item(row, 1).text()
-                usuario = usuario_rol.split(' (')[0]
-                usuarios = self.usuarios_model.obtener_usuarios()
-                id_usuario = None
-                rol = None
-                for u in usuarios:
-                    nombre_usuario = u[3] if isinstance(u, (list, tuple)) else u.get('usuario')
-                    if nombre_usuario == usuario:
-                        id_usuario = u[0] if isinstance(u, (list, tuple)) else u.get('id')
-                        rol = u[6] if isinstance(u, (list, tuple)) else u.get('rol')
-                        break
-                if id_usuario is None:
-                    continue
-                if id_usuario not in permisos_dict_por_usuario:
-                    permisos_dict_por_usuario[id_usuario] = {}
-                permisos_dict_por_usuario[id_usuario][modulo] = {
+                permisos = {
                     'ver': self.view.tabla_permisos.cellWidget(row, 2).isChecked(),
                     'modificar': self.view.tabla_permisos.cellWidget(row, 3).isChecked(),
-                    'aprobar': self.view.tabla_permisos.cellWidget(row, 4).isChecked(),
+                    'aprobar': self.view.tabla_permisos.cellWidget(row, 4).isChecked()
                 }
-            if not permisos_dict_por_usuario:
-                self.mostrar_mensaje("No hay permisos para guardar.", tipo="advertencia", destino="permisos_result_label")
-                return
-            usuario_actual_id = self.usuario_actual['id'] if self.usuario_actual and 'id' in self.usuario_actual else None
-            if usuario_actual_id is None:
-                self.mostrar_mensaje("No se puede identificar al usuario actual para registrar cambios.", tipo="error", destino="permisos_result_label")
-                return
-            for id_usuario, permisos_dict in permisos_dict_por_usuario.items():
-                self.usuarios_model.actualizar_permisos_modulos_usuario(id_usuario, permisos_dict, usuario_actual_id)
-            self.mostrar_mensaje("Permisos actualizados correctamente.", tipo="exito", destino="permisos_result_label")
+                permisos_dict_por_usuario.setdefault(usuario_modulo, {})[modulo] = permisos
+            self.usuarios_model.guardar_permisos_modulos(permisos_dict_por_usuario)
+            self.mostrar_mensaje("Permisos guardados exitosamente.", tipo="exito", destino="permisos_result_label")
         except Exception as e:
             self.mostrar_mensaje(f"Error al guardar permisos: {e}", tipo="error", destino="permisos_result_label")
-
-    def conectar_pestana_permisos(self):
-        """
-        Conecta los botones y carga inicial de la pestaña de permisos y visibilidad.
-        """
-        try:
-            self.cargar_permisos_modulos()
-            self.view.boton_guardar_permisos.clicked.connect(self.guardar_permisos_modulos)
-        except Exception as e:
-            self.mostrar_mensaje(f"Error al inicializar pestaña permisos: {e}", tipo="error", destino="permisos_result_label")
-
-    def probar_conexion_bd(self, retornar_resultado=False):
-        """Prueba la conexión a la base de datos con los datos ingresados en la vista y muestra el resultado visualmente. Si retornar_resultado=True, retorna un dict con el resultado."""
-        from core.database import get_connection_string
-        import pyodbc
-        driver = self.view.server_input.text() or 'ODBC Driver 17 for SQL Server'
-        server = self.view.server_input.text()
-        username = self.view.username_input.text()
-        password = self.view.password_input.text()
-        database = self.view.default_db_input.text()
-        port = self.view.port_input.text() or '1433'
-        timeout = int(self.view.timeout_input.text() or '10')
-        connection_string = (
-            f"DRIVER={{{driver}}};"
-            f"SERVER={server},{port};"
-            f"DATABASE={database};"
-            f"UID={username};"
-            f"PWD={password};"
-            f"TrustServerCertificate=yes;"
-        )
-        try:
-            with pyodbc.connect(connection_string, timeout=timeout) as conn:
-                if retornar_resultado:
-                    return {"exito": True, "mensaje": "Conexión exitosa"}
-                self.mostrar_mensaje("Conexión exitosa", tipo="exito", destino="resultado_conexion_label")
-        except Exception as e:
-            if retornar_resultado:
-                return {"exito": False, "mensaje": str(e)}
-            self.mostrar_mensaje(f"Error: {str(e)}", tipo="error", destino="resultado_conexion_label")
-        # Siempre retornar un dict si se solicita resultado
-        if retornar_resultado:
-            return {"exito": False, "mensaje": "Error desconocido al probar la conexión."}

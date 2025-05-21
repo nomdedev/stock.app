@@ -285,7 +285,8 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-            img.save(tmp.name)
+            with open(tmp.name, "wb") as f:
+                img.save(f)
             pixmap = QPixmap(tmp.name)
         dialog = QDialog(self)
         dialog.setWindowTitle(f"Código QR para {codigo}")
@@ -308,7 +309,8 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         def guardar():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
             if file_path:
-                img.save(file_path)
+                with open(file_path, "wb") as f:
+                    img.save(f)
         def exportar_pdf():
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
             if file_path:
@@ -549,7 +551,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
                     obra = d.get('obra', 'Sin Obra')
                     monto = float(d['monto']) * (valor_dolar if d.get('moneda', 'ARS') == 'USD' and valor_dolar else 1)
                     obras[obra] = obras.get(obra, 0) + monto
-            ax.bar(obras.keys(), obras.values(), color='#2563eb')
+            ax.bar(list(obras.keys()), list(obras.values()), color='#2563eb')
             ax.set_title('Cobros por Obra (en Pesos)')
             ax.set_ylabel('Monto (ARS)')
             self.label_resumen.setText(f"Cobros por obra: {len(obras)} obras")
@@ -560,24 +562,16 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
                     obra = d.get('obra', 'Sin Obra')
                     monto = float(d['monto']) * (valor_dolar if d.get('moneda', 'ARS') == 'USD' and valor_dolar else 1)
                     obras[obra] = obras.get(obra, 0) + monto
-            ax.bar(obras.keys(), obras.values(), color='#ef4444')
+            ax.bar(list(obras.keys()), list(obras.values()), color='#ef4444')
             ax.set_title('Pagos por Obra (en Pesos)')
             ax.set_ylabel('Monto (ARS)')
             self.label_resumen.setText(f"Pagos por obra: {len(obras)} obras")
         elif tipo == "Evolución Mensual":
             import calendar
             meses = [calendar.month_abbr[m] for m in range(1, 13)]
-            entradas = [0]*12
-            salidas = [0]*12
-            for d in datos:
-                if not d.get('fecha'): continue
-                fecha = d['fecha']
-                m = int(fecha[5:7]) - 1
-                monto = float(d['monto']) * (valor_dolar if d.get('moneda', 'ARS') == 'USD' and valor_dolar else 1)
-                if d['tipo'].lower() == 'entrada':
-                    entradas[m] += monto
-                elif d['tipo'].lower() == 'salida':
-                    salidas[m] += monto
+            entradas, salidas = self.procesar_movimientos(datos)
+            entradas = [entradas.get(m, 0.0) for m in range(1, 13)]
+            salidas = [salidas.get(m, 0.0) for m in range(1, 13)]
             ax.plot(meses, entradas, label='Entradas', color='#22c55e', marker='o')
             ax.plot(meses, salidas, label='Salidas', color='#ef4444', marker='o')
             ax.set_title('Evolución Mensual')
@@ -592,6 +586,18 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             self.label_resumen.setText(f"Total en Pesos: ${ars:,.2f} | Total en Dólares: U$D {usd:,.2f}")
         fig.tight_layout()
         self.grafico_canvas.draw()
+
+    def procesar_movimientos(self, movimientos):
+        entradas = {}
+        salidas = {}
+        for mov in movimientos:
+            m = mov['mes']
+            monto = float(mov['monto'])
+            if mov['tipo'] == 'entrada':
+                entradas[m] = entradas.get(m, 0.0) + monto
+            else:
+                salidas[m] = salidas.get(m, 0.0) + monto
+        return entradas, salidas
 
     def cargar_estadisticas_personalizadas(self):
         config_path = "estadisticas_personalizadas.json"

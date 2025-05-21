@@ -136,7 +136,8 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-            img.save(tmp.name)
+            with open(tmp.name, "wb") as f:
+                img.save(f)
             pixmap = QPixmap(tmp.name)
         dialog = QDialog(self)
         dialog.setWindowTitle(f"Código QR para {codigo}")

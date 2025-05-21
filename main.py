@@ -52,37 +52,207 @@ import sys
 import subprocess
 import os
 import pkg_resources
+import platform
+
+# --- INSTALACIÓN AUTOMÁTICA DE DEPENDENCIAS CRÍTICAS (WHEELS) PARA TODA LA APP ---
+def instalar_dependencias_criticas():
+    """
+    Instala automáticamente pandas y pyodbc usando wheels precompilados si la instalación normal falla.
+    Esto evita errores de compilación en Windows y asegura que la app pueda iniciar en cualquier entorno.
+    """
+    import urllib.request
+    py_version = f"{sys.version_info.major}{sys.version_info.minor}"  # Ej: 311 para Python 3.11
+    arch = platform.architecture()[0]
+    py_tag = f"cp{py_version}"
+    win_tag = "win_amd64" if arch == "64bit" else "win32"
+    wheels = {
+        "pandas": f"pandas-2.2.2-{py_tag}-{py_tag}-{win_tag}.whl",
+        "pyodbc": f"pyodbc-5.0.1-{py_tag}-{py_tag}-{win_tag}.whl"
+    }
+    url_base = "https://download.lfd.uci.edu/pythonlibs/archive/"
+    def instalar_wheel(paquete, wheel_file):
+        url = url_base + wheel_file
+        local_path = os.path.join(os.getcwd(), wheel_file)
+        try:
+            print(f"Descargando e instalando wheel para {paquete}...")
+            urllib.request.urlretrieve(url, local_path)
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", local_path])
+            os.remove(local_path)
+            print(f"✅ {paquete} instalado desde wheel.")
+            return True
+        except Exception as e:
+            print(f"❌ Error instalando {paquete} desde wheel: {e}")
+            return False
+    def instalar_dependencia(paquete, version):
+        try:
+            if version:
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", f"{paquete}=={version}", "--prefer-binary"])
+            else:
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", paquete, "--prefer-binary"])
+            print(f"✅ {paquete} instalado normalmente.")
+            return True
+        except Exception:
+            if paquete in wheels:
+                return instalar_wheel(paquete, wheels[paquete])
+            return False
+    requeridos = [("pandas", "2.2.2"), ("pyodbc", "5.0.1")]
+    for paquete, version in requeridos:
+        instalar_dependencia(paquete, version)
+    # Instalar el resto de requirements.txt
+    try:
+        print("Instalando el resto de dependencias desde requirements.txt...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "--prefer-binary", "-r", "requirements.txt"])
+        print("✅ Todas las dependencias instaladas correctamente.")
+    except Exception as e:
+        print(f"❌ Error instalando requirements.txt: {e}")
+        print("Por favor, revisa los logs y ejecuta manualmente si es necesario.")
+
+# Ejecutar instalación automática antes de cualquier importación pesada o arranque de la app
+def _verificar_e_instalar_dependencias():
+    try:
+        import pandas
+        import pyodbc
+    except ImportError:
+        print("Instalando dependencias críticas automáticamente...")
+        instalar_dependencias_criticas()
+
+_verificar_e_instalar_dependencias()
+
+def mostrar_mensaje_dependencias(titulo, texto, detalles, tipo="error"):
+    from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QVBoxLayout, QPushButton
+    from PyQt6.QtGui import QPixmap
+    from PyQt6.QtCore import Qt
+    app = QApplication.instance() or QApplication(sys.argv)
+    dialog = QDialog()
+    dialog.setWindowTitle(titulo)
+    dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
+    dialog.setFixedWidth(420)
+    dialog.setStyleSheet("""
+        QDialog {
+            background: #fff9f3;
+            border-radius: 18px;
+            border: 2px solid #e3e3e3;
+        }
+        QLabel#titulo {
+            color: #2563eb;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px 0 0 0;
+            qproperty-alignment: AlignCenter;
+        }
+        QLabel#mensaje {
+            color: #1e293b;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 0 0 0;
+            qproperty-alignment: AlignCenter;
+        }
+        QLabel#detalles {
+            color: #ef4444 if tipo=="error" else #fbbf24;
+            font-size: 13px;
+            font-weight: 500;
+            background: #ffe5e5 if tipo=="error" else #fef9c3;
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin: 12px 0 0 0;
+            qproperty-alignment: AlignCenter;
+        }
+        QPushButton {
+            background: #2563eb;
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            min-width: 100px;
+            min-height: 32px;
+            padding: 8px 24px;
+            margin-top: 18px;
+        }
+        QPushButton:hover {
+            background: #1e40af;
+        }
+    """)
+    layout = QVBoxLayout()
+    # Ícono grande
+    icon_label = QLabel()
+    if tipo == "error":
+        icon_label.setPixmap(QPixmap("img/reject.svg").scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+    else:
+        icon_label.setPixmap(QPixmap("img/warning.svg").scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+    icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    layout.addWidget(icon_label)
+    # Título
+    titulo_label = QLabel(titulo)
+    titulo_label.setObjectName("titulo")
+    layout.addWidget(titulo_label)
+    # Mensaje principal
+    mensaje_label = QLabel(texto)
+    mensaje_label.setObjectName("mensaje")
+    mensaje_label.setWordWrap(True)
+    layout.addWidget(mensaje_label)
+    # Detalles (lista de dependencias)
+    detalles_label = QLabel(detalles)
+    detalles_label.setObjectName("detalles")
+    detalles_label.setWordWrap(True)
+    layout.addWidget(detalles_label)
+    # Botón de cierre
+    btn = QPushButton("Cerrar")
+    btn.clicked.connect(dialog.accept)
+    layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignCenter)
+    dialog.setLayout(layout)
+    dialog.exec()
 
 def verificar_dependencias():
     """
-    Solo verifica si las dependencias críticas están instaladas y muestra advertencia si falta alguna.
-    No instala automáticamente para evitar demoras en el arranque.
+    Verifica si las dependencias críticas y secundarias están instaladas.
+    Si falta una CRÍTICA (PyQt6, pandas, pyodbc), muestra un error y cierra.
+    Si faltan secundarias, muestra advertencia visual pero permite iniciar la app.
     """
-    requeridos = [
-        ("PyQt6", "6.9.0"), ("PyQt6-Qt6", "6.9.0"), ("PyQt6-sip", "13.10.0"),
-        ("pyodbc", "5.2.0"), ("reportlab", "4.4.1"), ("qrcode", "7.4.2"),
-        ("pandas", "2.2.2"), ("matplotlib", "3.8.4"), ("pytest", "8.2.0"),
-        ("pillow", "10.3.0"), ("python-dateutil", "2.9.0"), ("pytz", "2024.1"),
-        ("tzdata", "2024.1"), ("openpyxl", "3.1.2"), ("colorama", "0.4.6"), ("ttkthemes", "3.2.2"),
-        ("fpdf", None)
+    from PyQt6.QtWidgets import QApplication
+    requeridos_criticos = [
+        ("PyQt6", "6.9.0"), ("pandas", "2.2.2"), ("pyodbc", "5.0.1")
     ]
-    faltantes = []
-    for paquete, version in requeridos:
+    requeridos_secundarios = [
+        ("reportlab", "4.4.1"), ("qrcode", "7.4.2"), ("matplotlib", "3.8.4"),
+        ("pytest", "8.2.0"), ("pillow", "10.3.0"), ("python-dateutil", "2.9.0"),
+        ("pytz", "2024.1"), ("tzdata", "2024.1"), ("openpyxl", "3.1.2"),
+        ("colorama", "0.4.6"), ("ttkthemes", "3.2.2"), ("fpdf", None)
+    ]
+    faltantes_criticos = []
+    faltantes_secundarios = []
+    for paquete, version in requeridos_criticos:
         try:
             if version:
-                pkg_resources.require(f"{paquete}=={version}")
+                pkg_resources.require(f"{paquete}>={version}")
             else:
                 __import__(paquete)
         except Exception:
-            faltantes.append(f"{paquete}{'==' + version if version else ''}")
-    if faltantes:
-        print("[ADVERTENCIA] Faltan dependencias críticas:")
-        for f in faltantes:
-            print(f"  - {f}")
-        print("Por favor, ejecuta 'pip install -r requirements.txt' o el script install.bat antes de iniciar la app.")
+            faltantes_criticos.append(f"{paquete}{' >= ' + version if version else ''}")
+    for paquete, version in requeridos_secundarios:
+        try:
+            if version:
+                pkg_resources.require(f"{paquete}>={version}")
+            else:
+                __import__(paquete)
+        except Exception:
+            faltantes_secundarios.append(f"{paquete}{' >= ' + version if version else ''}")
+    if faltantes_criticos:
+        mostrar_mensaje_dependencias(
+            "Faltan dependencias críticas",
+            "No se puede iniciar la aplicación. Instala las siguientes dependencias críticas:",
+            "\n".join(faltantes_criticos),
+            tipo="error"
+        )
         sys.exit(1)
+    elif faltantes_secundarios:
+        mostrar_mensaje_dependencias(
+            "Dependencias opcionales faltantes",
+            "La aplicación se iniciará, pero faltan dependencias secundarias. Algunas funciones pueden estar limitadas (exportar PDF, QR, gráficos, etc.):",
+            "\n".join(faltantes_secundarios),
+            tipo="warning"
+        )
     else:
-        print("✅ Todas las dependencias críticas están instaladas correctamente.")
+        print("✅ Todas las dependencias críticas y secundarias están instaladas correctamente.")
 
 verificar_dependencias()
 

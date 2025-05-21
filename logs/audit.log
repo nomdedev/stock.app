@@ -1464,3 +1464,8 @@
 2025-05-19 15:23:06,526 - INFO - Aplicación iniciada
 2025-05-19 15:23:06,645 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-19 15:23:06,645 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-21 10:43:44,932 - INFO - Conexión establecida con la base de datos 'inventario'.
+2025-05-21 10:43:44,933 - INFO - Conexión cerrada con la base de datos 'inventario'.
+2025-05-21 12:37:54,423 - INFO - Aplicación iniciada
+2025-05-21 12:37:54,656 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-21 12:37:54,656 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
