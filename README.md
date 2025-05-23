@@ -787,3 +787,9 @@ Para garantizar que todas las tablas críticas del sistema tengan la estructura,
 - Todos los scripts auxiliares de limpieza, importación y validación han sido eliminados para evitar confusión y mejorar la seguridad.
 
 ---
+
+## Bloqueo de tests automáticos de UI (PyQt)
+
+> **Nota:** La cobertura de tests automáticos de UI (PyQt) está documentada en `docs/bloqueo_tests_ui.md`. Allí se explica el diagnóstico, las causas y los próximos pasos sugeridos para poder ejecutar tests de UI en el entorno actual. Revisar ese archivo antes de intentar ampliar o migrar la cobertura de tests visuales.
+
+---

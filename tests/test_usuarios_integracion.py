@@ -5,25 +5,26 @@ from modules.usuarios.model import UsuariosModel
 class MockDBConnection:
     def __init__(self):
         self.usuarios = []
-        self.last_id = 1
-        self.last_query = None
-        self.last_params = None
+        self.last_id = 0
     def ejecutar_query(self, query, params=None):
-        self.last_query = query
-        self.last_params = params
-        if "INSERT INTO usuarios" in query:
-            # (nombre, apellido, email, usuario, password_hash, rol)
-            usuario = (self.last_id,) + tuple(params) + ("Activo",)
-            self.usuarios.append(usuario)
+        if query.startswith("SELECT"):
+            return self.usuarios.copy() if self.usuarios else []
+        elif query.startswith("INSERT") and params:
             self.last_id += 1
-            return None
-        if "SELECT * FROM usuarios" in query:
-            return list(self.usuarios)
-        if "UPDATE usuarios SET estado = ? WHERE id = ?" in query:
-            for i, u in enumerate(self.usuarios):
+            # params: (nombre, apellido, email, username, hash, rol)
+            nuevo = (self.last_id,) + tuple(params)
+            self.usuarios.append(nuevo)
+            return []
+        elif query.startswith("UPDATE") and "estado" in query and params:
+            # params: (nuevo_estado, id_usuario)
+            for idx, u in enumerate(self.usuarios):
                 if u[0] == params[1]:
-                    self.usuarios[i] = u[:6] + (params[0],)
-            return None
+                    actualizado = list(u)
+                    if len(actualizado) < 7:
+                        actualizado += [None] * (7 - len(actualizado))
+                    actualizado[6] = params[0]
+                    self.usuarios[idx] = tuple(actualizado)
+            return []
         return []
 
 class MockUsuariosView:
@@ -31,7 +32,7 @@ class MockUsuariosView:
         self.tabla_data = []
         self.label = Mock()
     def actualizar_tabla(self, data):
-        self.tabla_data = data
+        self.tabla_data = data if data else []
 
 class TestUsuariosIntegracion(unittest.TestCase):
     def setUp(self):
@@ -44,17 +45,20 @@ class TestUsuariosIntegracion(unittest.TestCase):
         datos = ("Juan", "Pérez", "juan.perez@example.com", "juan", "hash", "admin")
         self.model.agregar_usuario(datos)
         usuarios = self.mock_db.ejecutar_query("SELECT * FROM usuarios")
-        self.assertTrue(any(u[3] == "juan.perez@example.com" for u in usuarios))
+        if not usuarios: usuarios = []
+        self.assertTrue(any(u and len(u) > 3 and u[3] == "juan.perez@example.com" for u in usuarios))
         self.view.actualizar_tabla(usuarios)
         self.assertEqual(self.view.tabla_data, usuarios)
     def test_actualizar_estado_usuario(self):
         datos = ("Ana", "Gómez", "ana.gomez@example.com", "ana", "hash2", "usuario")
         self.model.agregar_usuario(datos)
         usuarios = self.mock_db.ejecutar_query("SELECT * FROM usuarios")
+        if not usuarios: usuarios = []
         id_usuario = usuarios[-1][0]
         self.model.actualizar_estado_usuario(id_usuario, "suspendido")
         usuarios = self.mock_db.ejecutar_query("SELECT * FROM usuarios")
-        self.assertTrue(any(u[6] == "suspendido" for u in usuarios))
+        if not usuarios: usuarios = []
+        self.assertTrue(any(u and len(u) > 6 and u[6] == "suspendido" for u in usuarios))
         self.view.actualizar_tabla(usuarios)
         self.assertEqual(self.view.tabla_data, usuarios)
 

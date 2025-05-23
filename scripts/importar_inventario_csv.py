@@ -6,7 +6,7 @@ import re
 import unicodedata
 
 # Ruta al archivo CSV LIMPIO (ahora siempre usará el archivo principal)
-csv_path = os.path.join('data_inventario', 'INVENTARIO_COMPLETO_REHAU_LIMPIO.csv')
+csv_path = os.path.join('data_inventario', 'inventario_formato_final.csv')
 
 # Configuración de conexión (ajusta si es necesario)
 server = "192.168.88.205"

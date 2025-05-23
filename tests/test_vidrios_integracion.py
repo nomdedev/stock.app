@@ -12,17 +12,17 @@ class MockDBConnection:
         self.vidrios_obras = []
         self.last_id = 1
     def ejecutar_query(self, query, params=None):
-        if "INSERT INTO vidrios (" in query:
+        if "INSERT INTO vidrios (" in query and params:
             # (tipo, ancho, alto, cantidad, proveedor, fecha_entrega)
             vidrio = (self.last_id,) + tuple(params)
             self.vidrios.append(vidrio)
             self.last_id += 1
-            return None
+            return []
         if "SELECT * FROM vidrios" in query:
-            return list(self.vidrios)
-        if "INSERT INTO vidrios_obras" in query:
+            return list(self.vidrios) if self.vidrios else []
+        if "INSERT INTO vidrios_obras" in query and params:
             self.vidrios_obras.append(tuple(params))
-            return None
+            return []
         return []
 
 class MockVidriosView:
@@ -30,7 +30,7 @@ class MockVidriosView:
         self.tabla_data = []
         self.label = Mock()
     def actualizar_tabla(self, data):
-        self.tabla_data = data
+        self.tabla_data = data if data else []
 
 class TestVidriosIntegracion(unittest.TestCase):
     def setUp(self):
@@ -57,3 +57,4 @@ class TestVidriosIntegracion(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+# Nota: Este mock elimina dependencias de base real y asegura robustez ante params=None y listas vacías.

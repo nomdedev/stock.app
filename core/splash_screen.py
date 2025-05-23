@@ -79,6 +79,10 @@ class SplashScreen(QSplashScreen):
         self.fade_out.setStartValue(1.0)
         self.fade_out.setEndValue(0.0)
 
+    def mousePressEvent(self, event):
+        # Ignorar cualquier clic del usuario en el splash
+        pass
+
     def show_and_finish(self, main_window_callback):
         self.show()
         self.fade_in.start()

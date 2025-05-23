@@ -8,6 +8,18 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from modules.auditoria.model import AuditoriaModel
 
+# --- TESTS DE AUDITORÍA: USO SEGURO Y AISLADO, SIN CREDENCIALES REALES ---
+# Todos los tests usan MockDBConnection, nunca una base real ni credenciales.
+# Si se detecta un test que intenta conectar a una base real, debe ser refactorizado o migrado a integración.
+#
+# Si necesitas integración real, usa variables de entorno y archivos de configuración fuera del repo.
+# Ejemplo seguro (NO USAR EN TESTS UNITARIOS):
+# import os
+# db_user = os.environ.get('DB_USER')
+# db_pass = os.environ.get('DB_PASS')
+# ...
+# --- FIN DE NOTA DE SEGURIDAD ---
+
 class MockDBConnection:
     def __init__(self):
         self.last_query = None
@@ -40,23 +52,33 @@ class MockDBConnection:
         return self.query_result
 
 class TestAuditoriaModel(unittest.TestCase):
-
     def setUp(self):
-        # Simulación de conexión a base de datos
+        # Simulación de conexión a base de datos (no usa credenciales reales)
         self.mock_db = MockDBConnection()
         self.auditoria_model = AuditoriaModel(self.mock_db)
 
     def test_registrar_evento(self):
-        # Probar registro de un evento de auditoría con usuario_id
-        self.auditoria_model.registrar_evento("usuarios", "inserción", "Usuario creado", "192.168.1.1")
+        """Probar registro de un evento de auditoría con usuario_id explícito."""
+        usuario_id = 1
+        modulo = "usuarios"
+        tipo_evento = "inserción"
+        detalle = "Usuario creado"
+        ip_origen = "192.168.1.1"
+        self.auditoria_model.registrar_evento(usuario_id, modulo, tipo_evento, detalle, ip_origen)
         self.assertIsNotNone(self.mock_db.last_query)
         if self.mock_db.last_query:
             self.assertIn("INSERT INTO auditorias_sistema", self.mock_db.last_query)
-            # Aceptar tanto la versión con usuario_id como la anterior para compatibilidad
-            self.assertTrue(
-                "usuario_id" in self.mock_db.last_query or "modulo_afectado" in self.mock_db.last_query
-            )
-        # No comprobamos los parámetros exactos porque pueden variar según la implementación
+            self.assertIn("usuario_id", self.mock_db.last_query)
+
+    def test_registrar_evento_faltan_argumentos(self):
+        """Debe retornar False y loggear si falta usuario_id, modulo o tipo_evento."""
+        usuario_id = None
+        modulo = "usuarios"
+        tipo_evento = "inserción"
+        detalle = "Usuario creado"
+        ip_origen = "192.168.1.1"
+        resultado = self.auditoria_model.registrar_evento(usuario_id, modulo, tipo_evento, detalle, ip_origen)
+        self.assertFalse(resultado)
 
     def test_obtener_logs(self):
         # Probar obtención de logs de auditoría
@@ -88,28 +110,28 @@ class TestAuditoriaModel(unittest.TestCase):
             ("2025-04-14 11:00:00", "user1", "logística", "modificación", "Actualizó estado de entrega", "192.168.1.2")
         ]
         resultado = self.auditoria_model.exportar_auditorias("excel")
-        self.assertEqual(resultado, "Auditorías exportadas a Excel.")
+        self.assertIn("Auditorías exportadas a Excel", resultado)
 
     def test_registrar_evento_error(self):
-        # Simular excepción en la base de datos
+        """Debe retornar False si la base de datos falla."""
         class FailingDB(MockDBConnection):
             def ejecutar_query(self, query, params=None):
                 raise Exception("DB error")
         auditoria_model = AuditoriaModel(FailingDB())
-        with self.assertRaises(Exception):
-            auditoria_model.registrar_evento("usuarios", "inserción", "Usuario creado", "192.168.1.1")
+        resultado = auditoria_model.registrar_evento(1, "usuarios", "inserción", "Usuario creado", "192.168.1.1")
+        self.assertFalse(resultado)
 
     def test_exportar_auditorias_pdf(self):
         self.mock_db.query_result = [
             ("2025-04-14 10:00:00", "admin", "inventario", "inserción", "Agregó un nuevo ítem", "192.168.1.1")
         ]
         resultado = self.auditoria_model.exportar_auditorias("pdf")
-        self.assertEqual(resultado, "Auditorías exportadas a PDF.")
+        self.assertIn("Auditorías exportadas a PDF", resultado)
 
     def test_exportar_auditorias_formato_no_soportado(self):
         self.mock_db.query_result = []
         resultado = self.auditoria_model.exportar_auditorias("otro")
-        self.assertEqual(resultado, "Formato no soportado.")
+        self.assertIn("Formato no soportado", resultado)
 
     def test_obtener_logs_vacio(self):
         self.mock_db.set_query_result([])
@@ -126,10 +148,14 @@ class TestAuditoriaModel(unittest.TestCase):
         self.assertEqual(auditorias, self.mock_db.query_result)
 
     def test_flujo_integracion_registro_y_lectura(self):
-        # Registrar evento y luego obtenerlo
+        """Registrar evento y luego obtenerlo (flujo completo)."""
+        usuario_id = 1
+        modulo = "usuarios"
+        tipo_evento = "inserción"
+        detalle = "Usuario creado"
+        ip_origen = "192.168.1.1"
         self.mock_db.query_result = []
-        self.auditoria_model.registrar_evento("usuarios", "inserción", "Usuario creado", "192.168.1.1")
-        # Simular que el evento se guardó
+        self.auditoria_model.registrar_evento(usuario_id, modulo, tipo_evento, detalle, ip_origen)
         self.mock_db.set_query_result([
             (1, "2025-05-17 12:00:00", "usuarios", "inserción", "Usuario creado", "192.168.1.1")
         ])

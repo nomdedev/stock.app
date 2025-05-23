@@ -1484,3 +1484,56 @@
 2025-05-21 16:01:30,372 - ERROR - Error en test_importar_csv_y_consultar: No results.  Previous SQL was not a query.
 2025-05-21 16:03:11,237 - ERROR - Error en test_importar_csv_y_consultar: No results.  Previous SQL was not a query.
 2025-05-21 16:04:44,246 - ERROR - Error en test_importar_csv_y_consultar: No results.  Previous SQL was not a query.
+2025-05-21 23:58:12,648 - INFO - Aplicación iniciada
+2025-05-21 23:58:15,027 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-21 23:58:15,027 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-21 23:58:15,027 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-22 00:07:30,051 - INFO - Aplicación iniciada
+2025-05-22 00:07:32,771 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-22 00:07:32,771 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-22 00:07:32,771 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-22 00:14:09,997 - INFO - Aplicación iniciada
+2025-05-22 00:14:12,481 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-22 00:14:12,481 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-22 00:14:12,481 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-22 08:13:56,697 - INFO - Aplicación iniciada
+2025-05-22 08:13:59,767 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-22 08:13:59,767 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-22 08:13:59,767 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-22 20:58:01,846 - ERROR - El campo de código está vacío.
+2025-05-22 20:58:01,846 - ERROR - El campo de código está vacío.
+2025-05-22 20:58:01,846 - ERROR - El campo de código está vacío.
+2025-05-22 20:58:01,846 - ERROR - El campo de código está vacío.
+2025-05-22 20:58:01,846 - ERROR - El campo de código está vacío.
+2025-05-22 20:58:01,846 - ERROR - El campo de código está vacío.
+2025-05-22 20:58:20,596 - ERROR - El campo de código está vacío.
+2025-05-22 20:58:20,596 - ERROR - El campo de código está vacío.
+2025-05-22 20:58:20,596 - ERROR - El campo de código está vacío.
+2025-05-22 20:58:20,596 - ERROR - El campo de código está vacío.
+2025-05-22 20:58:20,596 - ERROR - El campo de código está vacío.
+2025-05-22 20:58:20,596 - ERROR - El campo de código está vacío.
+2025-05-22 21:00:04,261 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:07,894 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:07,894 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:09,363 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:09,363 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:09,363 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:10,715 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:10,715 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:10,715 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:10,715 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:10,723 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:10,723 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:10,723 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:10,723 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:10,723 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:11,523 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:11,523 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:11,523 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:11,523 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:11,523 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-22 21:00:11,523 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 08:29:19,603 - INFO - Aplicación iniciada
+2025-05-23 08:29:19,954 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-23 08:29:19,954 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-23 08:29:19,954 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver

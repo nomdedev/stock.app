@@ -96,15 +96,20 @@ QLineEdit, QComboBox, QSpinBox {
     border: none;
 }
 #Sidebar QPushButton {
-    background: transparent;
-    border: none;
-    color: #E0E0E0;
-    border-radius: 10px;
+    background-color: #F5F5DC;
+    border: 1.5px solid #f3f4f6;
+    color: #1e293b;
+    border-radius: 8px;
     margin: 4px 0;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: left;
+    padding: 4px 10px 4px 18px;
 }
 #Sidebar QPushButton:hover, #Sidebar QPushButton:checked {
-    background: rgba(109,253,195,0.08);
-    color: #6DFDC3;
+    background-color: #f3f4f6;
+    color: #1e293b;
+    border: 2px solid #f3f4f6;
 }
 
 #Sidebar QFrame {
