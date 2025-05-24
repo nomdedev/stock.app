@@ -13,8 +13,25 @@ class ConfiguracionView(QMainWindow):
         self.setMinimumSize(800, 600)
         main_widget = QWidget()
         main_layout = QVBoxLayout(main_widget)
-        main_layout.setContentsMargins(32, 32, 32, 32)
-        main_layout.setSpacing(24)
+        main_layout.setContentsMargins(24, 20, 24, 20)
+        main_layout.setSpacing(16)
+
+        # --- HEADER VISUAL MODERNO ---
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(12)
+        icono_label = QLabel()
+        icono_label.setPixmap(QIcon("img/configuracion.svg").pixmap(36, 36))
+        icono_label.setFixedSize(40, 40)
+        icono_label.setToolTip("Icono de Configuración")
+        icono_label.setAccessibleName("Icono de Configuración")
+        titulo_label = QLabel("Configuración del sistema")
+        titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")
+        titulo_label.setAccessibleName("Título de módulo Configuración")
+        header_layout.addWidget(icono_label)
+        header_layout.addWidget(titulo_label)
+        header_layout.addStretch()
+        main_layout.addLayout(header_layout)
 
         # QTabWidget principal
         self.tabs = QTabWidget()

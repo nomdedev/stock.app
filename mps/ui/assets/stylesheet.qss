@@ -5,8 +5,8 @@ QPushButton {
     color: #EDEDED;
     padding: 10px 20px;
     font-size: 14px;
-    font-weight: 500;    border-radius: 12px;
-    /* box-shadow: 0 2px 8px rgba(0,0,0,0.08);  Eliminado: no soportado por QSS */
+    font-weight: 500;
+    border-radius: 12px;
 }
 QPushButton:hover {
     background-color: #2A2A3D;

@@ -2363,3 +2363,53 @@
 2025-05-24 14:19:00,974 - ERROR - Error al ejecutar la consulta en la base de datos.
 
 ('42S22', "[42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'password' no es válido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 15:08:29,392 - INFO - Aplicación iniciada
+2025-05-24 15:08:29,472 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'roles_permisos' no es válido. (208) (SQLExecDirectW)")
+2025-05-24 15:08:29,472 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'roles_permisos' no es válido. (208) (SQLExecDirectW)")
+2025-05-24 15:33:50,360 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW)")
+2025-05-24 15:33:50,360 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW)")
+2025-05-24 15:33:50,360 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW)")
+2025-05-24 15:33:51,994 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 15:33:51,994 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 15:33:51,994 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 15:33:51,994 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 15:33:57,812 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 15:33:57,812 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 15:33:57,812 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 15:33:57,812 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 15:33:57,812 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 15:33:58,783 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 15:33:58,783 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 15:33:58,783 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 15:33:58,783 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 15:33:58,783 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 15:33:58,783 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 15:33:58,783 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver

@@ -368,29 +368,26 @@ from mps.ui.components.sidebar import Sidebar
 
 # Clase principal
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, usuario, modulos_permitidos):
         super().__init__()
         from PyQt6.QtWidgets import QStatusBar
         self._status_bar = QStatusBar()
         self.setStatusBar(self._status_bar)
-        self.logger = Logger()  # Inicializar el logger
+        self.logger = Logger()
         self.logger.info("Aplicación iniciada")
         self.setWindowTitle("MPS Inventario App")
-
-        # Configurar tamaño inicial de la ventana
-        self.resize(1280, 720)  # Tamaño inicial razonable
-        self.setMinimumSize(1024, 600)  # Tamaño mínimo para evitar errores
-
-        self.initUI()
-        # QLabel para usuario actual, visualmente destacado
+        self.resize(1280, 720)
+        self.setMinimumSize(1024, 600)
+        self.usuario_actual = usuario
+        self.modulos_permitidos = modulos_permitidos
         self.usuario_label = QLabel()
         self.usuario_label.setObjectName("usuarioActualLabel")
         self.usuario_label.setStyleSheet("background: #e0e7ef; color: #1e293b; font-size: 13px; font-weight: bold; border-radius: 8px; padding: 4px 12px; margin-right: 8px;")
         self.usuario_label.setText("")
         self._status_bar.addPermanentWidget(self.usuario_label, 1)
+        self.initUI(usuario, modulos_permitidos)
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
-        """Muestra un mensaje visual en la barra de estado y, si es error, también un QMessageBox."""
         colores = {
             "info": "#2563eb",
             "exito": "#22c55e",
@@ -398,7 +395,6 @@ class MainWindow(QMainWindow):
             "error": "#ef4444"
         }
         color = colores.get(tipo, "#2563eb")
-        # Fondo sutil y texto destacado para feedback moderno
         self._status_bar.setStyleSheet(f"background: #f1f5f9; color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 4px 12px;")
         self._status_bar.showMessage(mensaje, duracion)
         if tipo == "error":
@@ -409,7 +405,6 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Éxito", mensaje)
 
     def actualizar_usuario_label(self, usuario):
-        """Actualiza el label de usuario actual con color según el rol y estilo moderno."""
         rol = usuario.get('rol', '').lower()
         colores = {
             'admin': '#2563eb',
@@ -417,34 +412,26 @@ class MainWindow(QMainWindow):
             'usuario': '#22c55e'
         }
         color = colores.get(rol, '#1e293b')
-        # Fondo sutil, borde y color de texto por rol, consistente con feedback
         self.usuario_label.setStyleSheet(
             f"background: #e0e7ef; color: {color}; font-size: 13px; font-weight: bold; border-radius: 8px; padding: 4px 12px; margin-right: 8px; border: 1.5px solid {color};"
         )
         self.usuario_label.setText(f"Usuario: {usuario['username']} ({usuario['rol']})")
 
-    def on_modulo_cambiado(self, index):
-        nombre_modulo = self.sidebar.sections[index][0] if index < len(self.sidebar.sections) else ""
-        self.mostrar_mensaje(f"Módulo activo: {nombre_modulo}", tipo="info", duracion=2500)
-
-    def initUI(self):
+    def initUI(self, usuario=None, modulos_permitidos=None):
         # Crear conexiones persistentes a las bases de datos (una sola instancia por base)
         self.db_connection_inventario = DatabaseConnection()
         self.db_connection_inventario.conectar_a_base("inventario")
-
         self.db_connection_usuarios = DatabaseConnection()
         self.db_connection_usuarios.conectar_a_base("users")
-
         self.db_connection_auditoria = DatabaseConnection()
         self.db_connection_auditoria.conectar_a_base("auditoria")
+        self.db_connection_pedidos = self.db_connection_inventario
+        self.db_connection_configuracion = self.db_connection_inventario
+        self.db_connection_produccion = self.db_connection_inventario
 
-        self.db_connection_pedidos = self.db_connection_inventario  # Unificar: pedidos usa inventario
-        self.db_connection_configuracion = self.db_connection_inventario  # Unificar: configuración usa inventario
-        self.db_connection_produccion = self.db_connection_inventario  # Unificar: producción usa inventario
-
-        # Crear instancias de modelos con la conexión correspondiente
+        # Crear instancias de modelos
         self.inventario_model = InventarioModel(db_connection=self.db_connection_inventario)
-        self.inventario_model.actualizar_qr_y_campos_por_descripcion()  # Actualiza QR, tipo, acabado y longitud automáticamente
+        self.inventario_model.actualizar_qr_y_campos_por_descripcion()
         self.obras_model = ObrasModel(db_connection=self.db_connection_inventario)
         self.produccion_model = ProduccionModel(db_connection=self.db_connection_produccion)
         self.logistica_model = LogisticaModel(db_connection=self.db_connection_inventario)
@@ -452,150 +439,91 @@ class MainWindow(QMainWindow):
         self.configuracion_model = ConfiguracionModel(db_connection=self.db_connection_configuracion)
         self.herrajes_model = HerrajesModel(self.db_connection_inventario)
         self.usuarios_model = UsuariosModel(db_connection=self.db_connection_usuarios)
-        # Crear usuarios admin y prueba si no existen
         self.usuarios_model.crear_usuarios_iniciales()
 
-        # Mostrar pantalla de login tras el SplashScreen
-        from modules.usuarios.login_view import LoginView
-        from modules.usuarios.login_controller import LoginController
-        self.login_view = LoginView()
-        self.login_controller = LoginController(self.login_view, self.usuarios_model)
-        self.login_view.show()
-        self.login_view.boton_login.clicked.connect(self._on_login_success)
-
-        # Crear instancias de vistas y controladores
-        self.inventario_view = InventarioView(db_connection=self.db_connection_inventario, usuario_actual="admin")
+        # Crear vistas y controladores principales
+        usuario_str = usuario['username'] if isinstance(usuario, dict) and 'username' in usuario else str(usuario)
+        self.inventario_view = InventarioView(db_connection=self.db_connection_inventario, usuario_actual=usuario_str)
         self.inventario_controller = InventarioController(
             model=self.inventario_model, view=self.inventario_view, db_connection=self.db_connection_inventario
         )
-
         self.obras_view = ObrasView()
         self.obras_controller = ObrasController(
-            model=self.obras_model, view=self.obras_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model, logistica_controller=None  # Se setea después
+            model=self.obras_model, view=self.obras_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model, logistica_controller=None
         )
-
         self.produccion_view = ProduccionView()
         self.produccion_controller = ProduccionController(
             model=self.produccion_model, view=self.produccion_view, db_connection=self.db_connection_produccion
         )
-
         self.logistica_view = LogisticaView()
         self.logistica_controller = LogisticaController(
             model=self.logistica_model, view=self.logistica_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
         )
-        # Enlazar referencia cruzada para sincronización
         self.obras_controller.logistica_controller = self.logistica_controller
-
-        # Inicializar el módulo Pedidos dentro de Compras
         self.compras_pedidos_view = ComprasPedidosView()
         self.compras_pedidos_controller = ComprasPedidosController(
             self.pedidos_model, self.compras_pedidos_view, self.db_connection_pedidos, self.usuarios_model
         )
         self.compras_pedidos_controller.cargar_pedidos()
-
-        # Inicializar el módulo Pedidos independiente (si aplica)
         self.pedidos_view = PedidosIndependienteView()
         self.pedidos_controller = PedidosController(self.pedidos_view, self.db_connection_pedidos)
-
-        # Crear instancias de controladores antes de las vistas
         self.usuarios_controller = UsuariosController(
             model=self.usuarios_model, view=None, db_connection=self.db_connection_usuarios
         )
         self.usuarios_view = UsuariosView()
         self.usuarios_controller.view = self.usuarios_view
-
-        try:
-            # Inicializar el módulo Auditoría
-            self.auditoria_view = AuditoriaView()  # Crear instancia de AuditoriaView
-            self.auditoria_model = AuditoriaModel(db_connection=self.db_connection_auditoria)  # Pasar conexión unificada
-            self.auditoria_controller = AuditoriaController(
-                model=self.auditoria_model, view=self.auditoria_view, db_connection=self.db_connection_auditoria
-            )
-        except Exception as e:
-            print(f"Error al inicializar el módulo Auditoría: {e}")
-            self.mostrar_mensaje("El módulo Auditoría está deshabilitado temporalmente.", tipo="advertencia")
-
-        try:
-            # Inicializar el módulo Configuración
-            self.configuracion_view = ConfiguracionView()
-            self.configuracion_controller = ConfiguracionController(
-                model=self.configuracion_model, view=self.configuracion_view, db_connection=self.db_connection_configuracion, usuarios_model=self.usuarios_model
-            )
-        except Exception as e:
-            print(f"Error al inicializar el módulo Configuración: {e}")
-            self.mostrar_mensaje("El módulo Configuración está deshabilitado temporalmente.", tipo="advertencia")
-
-        # Inicializar el módulo Mantenimiento
+        self.auditoria_view = AuditoriaView()
+        self.auditoria_model = AuditoriaModel(db_connection=self.db_connection_auditoria)
+        self.auditoria_controller = AuditoriaController(
+            model=self.auditoria_model, view=self.auditoria_view, db_connection=self.db_connection_auditoria
+        )
+        self.configuracion_view = ConfiguracionView()
+        self.configuracion_controller = ConfiguracionController(
+            model=self.configuracion_model, view=self.configuracion_view, db_connection=self.db_connection_configuracion, usuarios_model=self.usuarios_model
+        )
         self.mantenimiento_view = MantenimientoView()
-        self.mantenimiento_controller = None
-        try:
-            from modules.mantenimiento.controller import MantenimientoController
-            self.mantenimiento_controller = MantenimientoController(
-                model=self.mantenimiento_view, view=self.mantenimiento_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
-            )
-        except Exception as e:
-            print(f"Error al inicializar el módulo Mantenimiento: {e}")
-            self.mostrar_mensaje("El módulo Mantenimiento está deshabilitado temporalmente.", tipo="advertencia")
-
-        # Inicializar el módulo Contabilidad
+        from modules.mantenimiento.controller import MantenimientoController
+        self.mantenimiento_controller = MantenimientoController(
+            model=self.mantenimiento_view, view=self.mantenimiento_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
+        )
         self.contabilidad_view = ContabilidadView()
-        self.contabilidad_controller = None
-        try:
-            from modules.contabilidad.controller import ContabilidadController
-            self.contabilidad_controller = ContabilidadController(
-                model=self.contabilidad_view, view=self.contabilidad_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
-            )
-        except Exception as e:
-            print(f"Error al inicializar el módulo Contabilidad: {e}")
-            self.mostrar_mensaje("El módulo Contabilidad está deshabilitada temporalmente.", tipo="advertencia")
-
-        # Inicializar el módulo Herrajes
+        from modules.contabilidad.controller import ContabilidadController
+        self.contabilidad_controller = ContabilidadController(
+            model=self.contabilidad_view, view=self.contabilidad_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
+        )
         self.herrajes_view = HerrajesView()
         self.herrajes_controller = HerrajesController(
             self.herrajes_model, self.herrajes_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
         )
-
-        # Inicializar el módulo Vidrios de forma robusta
-        try:
-            from modules.vidrios.view import VidriosView
-            from modules.vidrios.controller import VidriosController
-            self.vidrios_view = VidriosView()
-            self.vidrios_controller = VidriosController(
-                model=self.vidrios_view, view=self.vidrios_view, db_connection=self.db_connection_inventario
-            )
-            self.module_stack.addWidget(self.vidrios_view)  # index 5
-        except Exception as e:
-            print(f"Error al inicializar el módulo Vidrios: {e}")
-            self.mostrar_mensaje("El módulo Vidrios está deshabilitado temporalmente.", tipo="advertencia")
+        from modules.vidrios.view import VidriosView
+        from modules.vidrios.controller import VidriosController
+        self.vidrios_view = VidriosView()
+        self.vidrios_controller = VidriosController(
+            model=self.vidrios_view, view=self.vidrios_view, db_connection=self.db_connection_inventario
+        )
 
         # Layout principal
         main_layout = QHBoxLayout()
         central_widget = QWidget()
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
-
-        # Crear QStackedWidget para la navegación entre secciones
         self.module_stack = QStackedWidget()
-        self.module_stack.addWidget(self.obras_view)            # index 0
-        inventario_valido = self.db_connection_inventario and all(hasattr(self.db_connection_inventario, attr) for attr in ["driver", "database", "username", "password"])
-        if inventario_valido:
-            self.module_stack.addWidget(self.inventario_view)   # index 1
-        self.module_stack.addWidget(self.herrajes_view)         # index 2
-        self.module_stack.addWidget(self.compras_pedidos_view)  # index 3
-        self.module_stack.addWidget(self.logistica_view)        # index 4
-        self.module_stack.addWidget(self.mantenimiento_view)    # index 6
-        self.module_stack.addWidget(self.produccion_view)       # index 7
-        self.module_stack.addWidget(self.contabilidad_view)     # index 8
-        self.module_stack.addWidget(self.auditoria_view)        # index 9
-        self.module_stack.addWidget(self.usuarios_view)         # index 10
-        self.module_stack.addWidget(self.configuracion_view)    # index 11
-
-        # Crear el sidebar con los íconos SVG y nombres descriptivos de módulos, en orden de flujo real de trabajo
+        self.module_stack.addWidget(self.obras_view)
+        self.module_stack.addWidget(self.inventario_view)
+        self.module_stack.addWidget(self.herrajes_view)
+        self.module_stack.addWidget(self.compras_pedidos_view)
+        self.module_stack.addWidget(self.logistica_view)
+        self.module_stack.addWidget(self.vidrios_view)
+        self.module_stack.addWidget(self.mantenimiento_view)
+        self.module_stack.addWidget(self.produccion_view)
+        self.module_stack.addWidget(self.contabilidad_view)
+        self.module_stack.addWidget(self.auditoria_view)
+        self.module_stack.addWidget(self.usuarios_view)
+        self.module_stack.addWidget(self.configuracion_view)
         svg_dir = os.path.join(os.path.dirname(__file__), 'utils')
         sidebar_sections = [
             ("Obras", os.path.join(svg_dir, 'obras.svg')),
-            # Solo mostrar Inventario si la conexión es válida
-            *([("Inventario", os.path.join(svg_dir, 'inventario.svg'))] if inventario_valido else []),
+            ("Inventario", os.path.join(svg_dir, 'inventario.svg')),
             ("Herrajes", os.path.join(svg_dir, 'herrajes.svg')),
             ("Compras / Pedidos", os.path.join(svg_dir, 'compras.svg')),
             ("Logística", os.path.join(svg_dir, 'logistica.svg')),
@@ -607,80 +535,31 @@ class MainWindow(QMainWindow):
             ("Usuarios", os.path.join(svg_dir, 'users.svg')),
             ("Configuración", os.path.join(svg_dir, 'configuracion.svg'))
         ]
-        # Robustecer: si algún SVG no existe, usar placeholder
         sidebar_sections_robustos = []
         for nombre, icono in sidebar_sections:
             if not os.path.exists(icono):
-                print(f"[WARN] Icono no encontrado: {icono}, usando placeholder.svg")
                 icono = os.path.join(os.path.dirname(__file__), 'img', 'placeholder.svg')
             sidebar_sections_robustos.append((nombre, icono))
         self.sidebar = Sidebar("utils", sidebar_sections_robustos, mostrar_nombres=True)
         self.sidebar.pageChanged.connect(self.module_stack.setCurrentIndex)
-        self.sidebar.pageChanged.connect(self.on_modulo_cambiado)
         main_layout.addWidget(self.sidebar)
         main_layout.addWidget(self.module_stack)
         self._ajustar_sidebar()
 
-    def _crear_usuarios_iniciales(self):
-        """Crea los usuarios admin, supervisor y comun si no existen."""
-        usuarios = self.usuarios_model.obtener_usuarios()
-        # pyodbc.Row permite acceso por índice o atributo, pero no por string
-        usernames = [getattr(u, 'usuario', u[3]) for u in usuarios] if usuarios else []
-        import hashlib
-        if 'admin' not in usernames:
-            self.usuarios_model.agregar_usuario((
-                'Administrador', 'Admin', 'admin@demo.com', 'admin',
-                hashlib.sha256('admin'.encode()).hexdigest(), 'admin'
-            ))
-        if 'supervisor' not in usernames:
-            self.usuarios_model.agregar_usuario((
-                'Supervisor', 'Supervisor', 'supervisor@demo.com', 'supervisor',
-                hashlib.sha256('1234'.encode()).hexdigest(), 'supervisor'
-            ))
-        if 'usuario' not in usernames:
-            self.usuarios_model.agregar_usuario((
-                'Usuario', 'Comun', 'usuario@demo.com', 'usuario',
-                hashlib.sha256('demo'.encode()).hexdigest(), 'usuario'
-            ))
-
-    def mostrar_modulos_permitidos(self, usuario):
-        # Obtener módulos permitidos según el usuario
+        # Filtrar y mostrar módulos permitidos para el usuario
         modulos_permitidos = self.usuarios_model.obtener_modulos_permitidos(usuario)
-        # Mapear nombre de módulo a índice en module_stack y sidebar_sections
-        modulo_a_indice = {
-            "Obras": 0,
-            "Inventario": 1,
-            "Producción": 2,
-            "Compras / Pedidos": 3,
-            "Herrajes": 4,
-            "Vidrios": 5,
-            "Logística": 6,
-            "Mantenimiento": 7,
-            "Contabilidad": 8,
-            "Auditoría": 9,
-            "Usuarios": 10,
-            "Configuración": 11
-        }
-        # Filtrar sidebar_sections y module_stack según permisos
         secciones_filtradas = []
         indices_permitidos = []
         for i, (nombre, icono) in enumerate(self.sidebar.sections):
             if nombre in modulos_permitidos:
                 secciones_filtradas.append((nombre, icono))
                 indices_permitidos.append(i)
-        # Actualizar sidebar
         self.sidebar.set_sections(secciones_filtradas)
-        # Actualizar module_stack para solo mostrar los permitidos
-        # (Opcional: podrías ocultar widgets no permitidos o bloquear acceso)
         if indices_permitidos:
             self.module_stack.setCurrentIndex(indices_permitidos[0])
         else:
             self.module_stack.setCurrentIndex(0)
 
-    def login_success(self, usuario):
-        # Usar el usuario real autenticado (no hardcodear admin)
-        self.usuario_actual = usuario
-        self.mostrar_modulos_permitidos(usuario)
         # Pasar usuario_actual a los controladores
         self.inventario_controller.usuario_actual = usuario
         self.obras_controller.usuario_actual = usuario
@@ -689,29 +568,9 @@ class MainWindow(QMainWindow):
         self.compras_pedidos_controller.usuario_actual = usuario
         self.pedidos_controller.usuario_actual = usuario
         self.usuarios_controller.usuario_actual = usuario
-        if hasattr(self, 'auditoria_controller'):
-            self.auditoria_controller.usuario_actual = usuario
-        if hasattr(self, 'configuracion_controller'):
-            self.configuracion_controller.usuario_actual = usuario
-        if hasattr(self, 'herrajes_controller'):
-            self.herrajes_controller.usuario_actual = usuario
-        # Mostrar el usuario actual de forma visualmente destacado en la barra de estado
-        self.actualizar_usuario_label(usuario)
-        self.mostrar_mensaje(f"Usuario actual: {usuario['username']} ({usuario['rol']})", tipo="info", duracion=4000)
-
-    def _on_login_success(self):
-        user = self.login_controller.usuario_autenticado
-        if not user:
-            return
-        self.usuario_actual = user
-        self.login_view.close()
-        # Ahora pasar self.usuario_actual a todos los controladores principales
-        # Ejemplo:
-        # self.inventario_controller.usuario_actual = self.usuario_actual
-        # self.vidrios_controller.usuario_actual = self.usuario_actual
-        # ...
-        # Mostrar ventana principal
-        self.show()
+        self.auditoria_controller.usuario_actual = usuario
+        self.configuracion_controller.usuario_actual = usuario
+        self.herrajes_controller.usuario_actual = usuario
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -723,7 +582,6 @@ class MainWindow(QMainWindow):
             self._ajustar_sidebar()
 
     def _ajustar_sidebar(self):
-        # Si la ventana está maximizada o pantalla completa, expandir sidebar
         expanded = self.isMaximized() or self.isFullScreen() or self.width() > 1400
         self.sidebar.set_expanded(expanded)
 
@@ -878,21 +736,42 @@ if __name__ == "__main__":
         error_dependencias = True
         print(f"[LOG 4.4.4] Error inesperado en dependencias: {e}")
 
+    from modules.usuarios.login_view import LoginView
+    from modules.usuarios.login_controller import LoginController
+    from modules.usuarios.model import UsuariosModel
+    from core.database import DatabaseConnection
+
     def continuar_inicio():
         if error_dependencias:
             print("[LOG 4.5] Error de dependencias. Cerrando SplashScreen y abortando inicio de interfaz principal.")
             splash.fade_out.finished.connect(splash.close)
             splash.fade_out.start()
-            QTimer.singleShot(1000, app.quit)  # Forzar cierre de app tras splash
+            QTimer.singleShot(1000, app.quit)
             return
-        print("[LOG 4.6] Inicializando MainWindow...")
-        main_window = MainWindow()
-        print("[LOG 4.7] Mostrando MainWindow...")
-        main_window.show()
-        print("[LOG 4.8] MainWindow visible. Cerrando SplashScreen cuando esté listo...")
-        splash.close_when_ready(main_window)
+        print("[LOG 4.6] Mostrando LoginView...")
+        db_connection_usuarios = DatabaseConnection()
+        db_connection_usuarios.conectar_a_base("users")
+        usuarios_model = UsuariosModel(db_connection=db_connection_usuarios)
+        login_view = LoginView()
+        login_controller = LoginController(login_view, usuarios_model)
+        login_view.show()
 
-    print("[LOG 4.9] Espera activa: cerrando splash y mostrando interfaz cuando corresponda...")
+        def on_login_success():
+            user = login_controller.usuario_autenticado
+            if not user:
+                login_view.mostrar_error("Usuario o contraseña incorrectos.")
+                return
+            login_view.close()
+            modulos_permitidos = usuarios_model.obtener_modulos_permitidos(user)
+            main_window = MainWindow(user, modulos_permitidos)
+            main_window.actualizar_usuario_label(user)
+            main_window.mostrar_mensaje(f"Usuario actual: {user['username']} ({user['rol']})", tipo="info", duracion=4000)
+            main_window.show()
+            splash.close_when_ready(main_window)
+
+        login_view.boton_login.clicked.connect(on_login_success)
+
+    print("[LOG 4.9] Espera activa: cerrando splash y mostrando login cuando corresponda...")
     QTimer.singleShot(600, continuar_inicio)
     print("[LOG 4.10] QApplication loop iniciado.")
     sys.exit(app.exec())
