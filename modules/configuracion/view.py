@@ -89,6 +89,48 @@ class ConfiguracionView(QMainWindow):
         main_widget.setLayout(main_layout)
         self.setCentralWidget(main_widget)
 
+        # Refuerzo de accesibilidad en botones principales
+        for btn in [self.boton_seleccionar_csv, self.boton_importar_csv]:
+            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            font = btn.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            btn.setFont(font)
+            if not btn.toolTip():
+                btn.setToolTip("Botón de acción")
+            if not btn.accessibleName():
+                btn.setAccessibleName("Botón de acción de configuración")
+        # Refuerzo de accesibilidad en tabla de preview
+        self.preview_table.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.preview_table.setStyleSheet(self.preview_table.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        self.preview_table.setToolTip("Tabla de previsualización de inventario")
+        self.preview_table.setAccessibleName("Tabla de preview de configuración")
+        # Refuerzo visual y robustez en header de tabla de preview
+        h_header = self.preview_table.horizontalHeader() if hasattr(self.preview_table, 'horizontalHeader') else None
+        if h_header is not None:
+            try:
+                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            except Exception as e:
+                # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
+                pass
+        else:
+            # EXCEPCIÓN VISUAL: No se puede aplicar refuerzo visual porque el header es None
+            pass
+        # Refuerzo de accesibilidad en QLabel
+        for widget in self.findChildren(QLabel):
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+        # Márgenes y padding en layouts según estándar
+        main_widget = self.centralWidget()
+        layout = main_widget.layout() if main_widget is not None and hasattr(main_widget, 'layout') else None
+        if layout is not None:
+            layout.setContentsMargins(24, 20, 24, 20)
+            layout.setSpacing(16)
+        # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
+
     def mostrar_mensaje(self, mensaje, tipo="info", destino="mensaje_label"):
         colores = {
             "exito": "#22c55e",

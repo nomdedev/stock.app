@@ -71,7 +71,8 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         # Menú contextual en el header
         header = self.tabla_usuarios.horizontalHeader() if hasattr(self.tabla_usuarios, 'horizontalHeader') else None
         if header is not None:
-            header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            if hasattr(header, 'setContextMenuPolicy'):
+                header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             if hasattr(header, 'customContextMenuRequested'):
                 header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
             if hasattr(header, 'setSectionsMovable'):
@@ -80,6 +81,10 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 header.setSectionsClickable(True)
             if hasattr(header, 'sectionClicked'):
                 header.sectionClicked.connect(self.mostrar_menu_columnas_header)
+        else:
+            # EXCEPCIÓN VISUAL: Si el header es None, no se puede aplicar menú contextual ni acciones de header.
+            # Documentar en docs/estandares_visuales.md si ocurre en producción.
+            pass
         # Señal para mostrar QR al seleccionar un ítem
         if hasattr(self.tabla_usuarios, 'itemSelectionChanged'):
             self.tabla_usuarios.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
@@ -220,6 +225,62 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 btn_guardar.clicked.connect(guardar)
                 btn_pdf.clicked.connect(exportar_pdf)
                 dialog.exec()
+        # Refuerzo de accesibilidad en botones principales
+        for btn in [self.boton_agregar, self.boton_guardar_permisos]:
+            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            font = btn.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            btn.setFont(font)
+            if not btn.toolTip():
+                btn.setToolTip("Botón de acción")
+            if not btn.accessibleName():
+                btn.setAccessibleName("Botón de acción de usuarios")
+        # Refuerzo de accesibilidad en tablas principales
+        for tabla in [self.tabla_usuarios, self.tabla_permisos_modulos]:
+            tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+            tabla.setToolTip("Tabla de datos")
+            tabla.setAccessibleName("Tabla principal de usuarios")
+            # Refuerzo visual de headers (fondo celeste pastel, texto azul pastel, bordes redondeados)
+            h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
+            if h_header is not None:
+                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+        # Refuerzo de accesibilidad en QComboBox
+        for widget in self.findChildren(QComboBox):
+            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+            if not widget.toolTip():
+                widget.setToolTip("Seleccionar opción")
+            if not widget.accessibleName():
+                widget.setAccessibleName("Selector de usuario")
+        # Refuerzo de accesibilidad en QLabel
+        for widget in self.findChildren(QLabel):
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+        # Márgenes y padding en layouts según estándar
+        self.main_layout.setContentsMargins(24, 20, 24, 20)
+        self.main_layout.setSpacing(16)
+        for tab in [self.tab_usuarios, self.tab_permisos]:
+            layout = tab.layout() if hasattr(tab, 'layout') else None
+            if layout is not None:
+                layout.setContentsMargins(24, 20, 24, 20)
+                layout.setSpacing(16)
+        # Documentar excepción visual si aplica
+        # EXCEPCIÓN: Este módulo no usa QLineEdit en la vista principal, por lo que no aplica refuerzo en inputs.
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        try:
+            self._reforzar_accesibilidad()
+        except AttributeError:
+            pass
 
 class Usuarios(QWidget):
     def __init__(self):

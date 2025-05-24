@@ -70,12 +70,22 @@ class ObrasView(QWidget, TableResponsiveMixin):
             vh.setVisible(False)
         hh = self.tabla_obras.horizontalHeader()
         if hh is not None:
-            hh.setHighlightSections(False)
-            hh.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
-            hh.sectionDoubleClicked.connect(self.autoajustar_columna)
-            hh.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            hh.customContextMenuRequested.connect(self.mostrar_menu_header)
-            hh.sectionClicked.connect(self.mostrar_menu_columnas_header)
+            if hasattr(hh, 'setHighlightSections'):
+                hh.setHighlightSections(False)
+            if hasattr(hh, 'setSectionResizeMode'):
+                hh.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+            if hasattr(hh, 'sectionDoubleClicked'):
+                hh.sectionDoubleClicked.connect(self.autoajustar_columna)
+            if hasattr(hh, 'setContextMenuPolicy'):
+                hh.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            if hasattr(hh, 'customContextMenuRequested'):
+                hh.customContextMenuRequested.connect(self.mostrar_menu_header)
+            if hasattr(hh, 'sectionClicked'):
+                hh.sectionClicked.connect(self.mostrar_menu_columnas_header)
+        else:
+            # EXCEPCIÓN VISUAL: Si el header es None, no se puede aplicar menú contextual ni acciones de header.
+            # Documentar en docs/estandares_visuales.md si ocurre en producción.
+            pass
         self.main_layout.addWidget(self.tabla_obras)
 
         # Configuración de columnas visibles por usuario
@@ -102,6 +112,37 @@ class ObrasView(QWidget, TableResponsiveMixin):
         except Exception:
             pass
         aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
+
+        # Refuerzo de accesibilidad en botones principales
+        for btn in [self.boton_agregar, self.boton_verificar_obra]:
+            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            font = btn.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            btn.setFont(font)
+            if not btn.toolTip():
+                btn.setToolTip("Botón de acción")
+            if not btn.accessibleName():
+                btn.setAccessibleName("Botón de acción de obras")
+        # Refuerzo de accesibilidad en tabla principal
+        self.tabla_obras.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.tabla_obras.setStyleSheet(self.tabla_obras.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        self.tabla_obras.setToolTip("Tabla de obras")
+        self.tabla_obras.setAccessibleName("Tabla principal de obras")
+        h_header = self.tabla_obras.horizontalHeader() if hasattr(self.tabla_obras, 'horizontalHeader') else None
+        if h_header is not None:
+            h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+        # Refuerzo de accesibilidad en QLabel
+        for widget in self.findChildren(QLabel):
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+        # Márgenes y padding en layouts según estándar
+        self.main_layout.setContentsMargins(24, 20, 24, 20)
+        self.main_layout.setSpacing(16)
+        # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
 
     def obtener_headers_desde_db(self, tabla):
         # Intenta obtener headers dinámicamente desde la base de datos

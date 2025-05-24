@@ -106,6 +106,34 @@ QLineEdit, QComboBox, QSpinBox {
     font-size: 12px;
 }
 
+/* --- Refuerzo de accesibilidad y foco visible en selectores y headers --- */
+QComboBox:focus, QSpinBox:focus, QLineEdit:focus {
+    border: 2px solid #3B82F6; /* Azul pastel accesible */
+    outline: none;
+    box-shadow: 0 0 0 2px #BFE3FF;
+}
+QHeaderView::section:focus {
+    border: 2px solid #3B82F6;
+    outline: none;
+    box-shadow: 0 0 0 2px #BFE3FF;
+}
+QHeaderView::section {
+    background-color: #E4ECF7;
+    color: #2563EB; /* Azul pastel */
+    font-size: 12px;
+    font-weight: bold;
+    border: none;
+    padding: 8px;
+    border-radius: 10px;
+}
+QToolTip {
+    font-size: 12px;
+    background-color: #1E293B;
+    color: white;
+    border-radius: 6px;
+    padding: 6px;
+}
+
 /* Botones inferiores neumórficos Inventario (solo botones, no tabla) */
 #InventarioView QPushButton.inventario-bottom {
     background-color: #1E1E2F;
@@ -155,3 +183,5 @@ QHeaderView::section {
     padding: 3px;
     font-size: 11px;
 }
+
+/* EXCEPCIÓN: Si algún header requiere override local, justificar en el código fuente. */

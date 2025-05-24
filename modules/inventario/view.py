@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QTabWidget, QDialog, QMessageBox, QInputDialog, QCheckBox, QScrollArea, QHeaderView, QMenu, QSizePolicy, QGraphicsDropShadowEffect, QFileDialog
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QTabWidget, QDialog, QMessageBox, QMenu, QHeaderView, QGraphicsDropShadowEffect, QFileDialog
 from PyQt6.QtGui import QColor, QAction, QIcon
 from PyQt6.QtCore import Qt, pyqtSignal, QSize, QPoint
 import json
@@ -214,6 +214,35 @@ class InventarioView(QWidget, TableResponsiveMixin):
 
         # NOTA: Mantener la práctica de tooltips claros en todo botón/campo nuevo para accesibilidad y usabilidad.
 
+        # Refuerzo de accesibilidad en todos los botones principales
+        for btn in self.barra_botones:
+            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            font = btn.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            btn.setFont(font)
+            # Tooltip ya presente, pero reforzamos claridad
+            if not btn.toolTip():
+                btn.setToolTip("Botón de acción")
+        # Refuerzo de accesibilidad en la tabla principal
+        self.tabla_inventario.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.tabla_inventario.setStyleSheet(self.tabla_inventario.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # Refuerzo de accesibilidad en todos los QLineEdit de la vista principal
+        for widget in self.findChildren(QLineEdit):
+            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            widget.setStyleSheet(widget.styleSheet() + "\nQLineEdit:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQLineEdit { font-size: 12px; }")
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+            if not widget.toolTip():
+                widget.setToolTip("Campo de texto")
+            if not widget.accessibleName():
+                widget.setAccessibleName("Campo de texto de inventario")
+        # Documentar excepción visual si algún widget no cumple estándar
+        # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
+
     def _stub_ajuste_stock(self):
         # Stub temporal para botón de ajuste de stock
         # EXCEPCIÓN: Este botón existe por requerimiento de UX, pero la funcionalidad aún no está implementada.
@@ -379,3 +408,20 @@ class InventarioView(QWidget, TableResponsiveMixin):
             )
         # EXCEPCIÓN: Si la tabla está vacía o hay error de escritura, se muestra feedback visual y se documenta en logs.
         # EXCEPCIÓN: El feedback visual de progreso puede ser breve si la tabla es pequeña. Documentado en docs/estandares_feedback.md.
+
+        header = self.tabla_inventario.horizontalHeader() if hasattr(self.tabla_inventario, 'horizontalHeader') else None
+        if header is not None:
+            if hasattr(header, 'setContextMenuPolicy'):
+                header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            if hasattr(header, 'customContextMenuRequested'):
+                header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
+            if hasattr(header, 'setSectionsMovable'):
+                header.setSectionsMovable(True)
+            if hasattr(header, 'setSectionsClickable'):
+                header.setSectionsClickable(True)
+            if hasattr(header, 'sectionClicked'):
+                header.sectionClicked.connect(self.mostrar_menu_columnas_header)
+        else:
+            # EXCEPCIÓN VISUAL: Si el header es None, no se puede aplicar menú contextual ni acciones de header.
+            # Documentar en docs/estandares_visuales.md si ocurre en producción.
+            pass

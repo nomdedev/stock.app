@@ -13,6 +13,8 @@ class MockDBConnection:
         self.last_id = 1
     def ejecutar_query(self, query, params=None):
         if "INSERT INTO inventario_perfiles" in query:
+            if params is None:
+                params = ()
             item = (self.last_id,) + tuple(params)
             self.inventario_perfiles.append(item)
             self.last_id += 1
@@ -20,11 +22,15 @@ class MockDBConnection:
         if "SELECT * FROM inventario_perfiles" in query:
             return list(self.inventario_perfiles)
         if "INSERT INTO movimientos_stock" in query:
+            if params is None:
+                params = ()
             self.movimientos_stock.append(tuple(params))
             return None
         if "SELECT * FROM movimientos_stock" in query:
             return list(self.movimientos_stock)
         if "INSERT INTO reservas_materiales" in query:
+            if params is None:
+                params = ()
             self.reservas_materiales.append(tuple(params))
             return None
         if "SELECT * FROM reservas_materiales" in query:
@@ -47,34 +53,34 @@ class TestInventarioIntegracion(unittest.TestCase):
         self.model = InventarioModel(self.mock_db)
         self.view = MockInventarioView()
     def test_agregar_y_reflejar_item(self):
+        """Probar agregar un ítem y reflejarlo en la vista usando solo mocks y sin DB real."""
         datos = ("C-001", "Material Demo", "PVC", "unidad", 20, 5, "Almacén Central", "Descripción demo", "QR-C-001", "img_demo.jpg")
         self.model.agregar_item(datos)
-        items = self.mock_db.ejecutar_query("SELECT * FROM inventario_perfiles")
-        print('DEBUG items after insert:', items)
+        items = self.mock_db.ejecutar_query("SELECT * FROM inventario_perfiles") or []
         self.assertTrue(any(i[1] == "C-001" for i in items))
         self.view.actualizar_tabla(items)
         self.assertEqual(self.view.tabla_data, items)
+
     def test_movimiento_y_reserva(self):
+        """Probar registrar movimiento y reserva, asegurando aislamiento y sin DB real."""
         datos = ("C-002", "Material Mov", "Aluminio", "kg", 50, 10, "Depósito", "Desc mov", "QR-C-002", "img2.jpg")
         self.model.agregar_item(datos)
-        items = self.mock_db.ejecutar_query("SELECT * FROM inventario_perfiles")
-        print('DEBUG items before movimiento:', items)
+        items = self.mock_db.ejecutar_query("SELECT * FROM inventario_perfiles") or []
         id_item = items[-1][0] if items else None
         self.assertIsNotNone(id_item)
-        mov = (id_item, "entrada", 10, "admin", "Ingreso inicial", "ref-001")
-        self.model.registrar_movimiento(mov)
-        movimientos = self.mock_db.ejecutar_query("SELECT * FROM movimientos_stock")
-        print('DEBUG movimientos:', movimientos)
+        # Llamada correcta según firma: registrar_movimiento(id_item, cantidad, tipo, referencia)
+        self.model.registrar_movimiento(id_item, 10, "entrada", "ref-001")
+        movimientos = self.mock_db.ejecutar_query("SELECT * FROM movimientos_stock") or []
         self.assertTrue(any(m[0] == id_item for m in movimientos))
         reserva = (id_item, 5, "ObraX", "activa")
         self.model.registrar_reserva(reserva)
-        reservas = self.mock_db.ejecutar_query("SELECT * FROM reservas_materiales")
-        print('DEBUG reservas:', reservas)
+        reservas = self.mock_db.ejecutar_query("SELECT * FROM reservas_materiales") or []
         self.assertTrue(any(r[0] == id_item for r in reservas))
         self.view.actualizar_tabla(items)
         self.assertEqual(self.view.tabla_data, items)
+
     def test_reserva_stock_insuficiente(self):
-        # Agregar un item con poco stock
+        """Probar reserva con stock insuficiente, asegurando que no cambia el stock y se lanza excepción."""
         datos = ("C-003", "Material Poco Stock", "PVC", "unidad", 2, 1, "Depósito", "Desc", "QR-C-003", "img3.jpg")
         self.model.agregar_item(datos)
         items = self.mock_db.ejecutar_query("SELECT * FROM inventario_perfiles")
@@ -82,11 +88,9 @@ class TestInventarioIntegracion(unittest.TestCase):
         items = [i for i in items if i is not None]
         id_item = items[-1][0]
         stock_antes = items[-1][4] if len(items[-1]) > 4 else 0
-        # Intentar reservar más de lo disponible
         with self.assertRaises(Exception) as cm:
             self.model.reservar_stock(id_item, 5, id_obra="ObraTest")
         self.assertIn("Stock insuficiente", str(cm.exception))
-        # Verificar que el stock no cambió
         items_despues = self.mock_db.ejecutar_query("SELECT * FROM inventario_perfiles")
         items_despues = items_despues or []
         items_despues = [i for i in items_despues if i is not None]

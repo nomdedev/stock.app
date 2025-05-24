@@ -182,14 +182,25 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.aplicar_columnas_visibles(self.tabla_recibos, self.recibos_headers, self.columnas_visibles_recibos)
 
         # Menú de columnas y QR para cada tabla
-        header_balance = self.tabla_balance.horizontalHeader()
+        header_balance = self.tabla_balance.horizontalHeader() if hasattr(self.tabla_balance, 'horizontalHeader') else None
         if header_balance is not None:
-            header_balance.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            header_balance.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_balance, self.balance_headers, self.columnas_visibles_balance, self.config_path_balance))
-            header_balance.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_balance))
-            header_balance.setSectionsMovable(True)
-            header_balance.setSectionsClickable(True)
+            if hasattr(header_balance, 'setContextMenuPolicy'):
+                header_balance.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            if hasattr(header_balance, 'customContextMenuRequested'):
+                header_balance.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_balance, self.balance_headers, self.columnas_visibles_balance, self.config_path_balance))
+            if hasattr(header_balance, 'sectionDoubleClicked'):
+                header_balance.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_balance))
+            if hasattr(header_balance, 'setSectionsMovable'):
+                header_balance.setSectionsMovable(True)
+            if hasattr(header_balance, 'setSectionsClickable'):
+                header_balance.setSectionsClickable(True)
+            if hasattr(header_balance, 'sectionClicked'):
+                header_balance.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_balance, self.balance_headers, self.columnas_visibles_balance, self.config_path_balance))
             self.tabla_balance.setHorizontalHeader(header_balance)
+        else:
+            # EXCEPCIÓN VISUAL: Si el header es None, no se puede aplicar menú contextual ni acciones de header.
+            # Documentar en docs/estandares_visuales.md si ocurre en producción.
+            pass
 
         header_pagos = self.tabla_pagos.horizontalHeader()
         if header_pagos is not None:
@@ -211,6 +222,81 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.tabla_recibos.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_recibos))
 
         self.boton_agregar_recibo.clicked.connect(self.abrir_dialogo_nuevo_recibo)
+
+        # Refuerzo de accesibilidad en botones principales
+        for btn in [self.boton_agregar_balance, self.boton_agregar_recibo]:
+            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            font = btn.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            btn.setFont(font)
+            if not btn.toolTip():
+                btn.setToolTip("Botón de acción")
+        # Refuerzo de accesibilidad en tablas principales
+        for tabla in [self.tabla_balance, self.tabla_pagos, self.tabla_recibos]:
+            tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # Refuerzo de accesibilidad en QComboBox y QSpinBox
+        for widget in self.findChildren((QComboBox,)):
+            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+            if not widget.toolTip():
+                widget.setToolTip("Seleccionar opción")
+        # EXCEPCIÓN: Si algún combo requiere otro estilo, justificar aquí y en docs/estandares_visuales.md
+
+    def _reforzar_accesibilidad(self):
+        # Refuerzo de accesibilidad en botones principales
+        for btn in [self.boton_agregar_balance, self.boton_agregar_recibo, self.boton_actualizar_grafico, self.boton_estadistica_personalizada]:
+            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            font = btn.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            btn.setFont(font)
+            if not btn.toolTip():
+                btn.setToolTip("Botón de acción")
+            if not btn.accessibleName():
+                btn.setAccessibleName("Botón de acción de contabilidad")
+        # Refuerzo de accesibilidad en tablas principales
+        for tabla in [self.tabla_balance, self.tabla_pagos, self.tabla_recibos]:
+            tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+            tabla.setToolTip("Tabla de datos contables")
+            tabla.setAccessibleName("Tabla principal de contabilidad")
+            h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
+            if h_header is not None:
+                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+        # Refuerzo de accesibilidad en QComboBox
+        for widget in self.findChildren(QComboBox):
+            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+            if not widget.toolTip():
+                widget.setToolTip("Seleccionar opción")
+            if not widget.accessibleName():
+                widget.setAccessibleName("Selector de opción contable")
+        # Refuerzo de accesibilidad en QLabel
+        for widget in self.findChildren(QLabel):
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+        # Márgenes y padding en layouts según estándar
+        self.main_layout.setContentsMargins(24, 20, 24, 20)
+        self.main_layout.setSpacing(16)
+        for tab in [self.tab_balance, self.tab_pagos, self.tab_recibos, self.tab_estadisticas]:
+            layout = tab.layout() if hasattr(tab, 'layout') else None
+            if layout is not None:
+                layout.setContentsMargins(24, 20, 24, 20)
+                layout.setSpacing(16)
+        # Documentar excepción visual si aplica
+        # EXCEPCIÓN: Este módulo no usa QLineEdit en la vista principal fuera de filtros, por lo que no aplica refuerzo en inputs de edición.
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
         colores = {
@@ -749,3 +835,10 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
     def set_controller(self, controller):
         self.controller = controller
         self.cargar_estadisticas_personalizadas()
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        try:
+            self._reforzar_accesibilidad()
+        except AttributeError:
+            pass

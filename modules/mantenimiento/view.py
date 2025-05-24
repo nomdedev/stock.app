@@ -70,6 +70,20 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
             self.tabla_tareas.setHorizontalHeader(header_tareas)
         self.tabla_tareas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_tareas))
 
+        # Refuerzo de accesibilidad en botón principal
+        self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.boton_agregar.setStyleSheet(self.boton_agregar.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        font = self.boton_agregar.font()
+        if font.pointSize() < 12:
+            font.setPointSize(12)
+        self.boton_agregar.setFont(font)
+        if not self.boton_agregar.toolTip():
+            self.boton_agregar.setToolTip("Agregar tarea de mantenimiento")
+        # Refuerzo de accesibilidad en tabla principal
+        self.tabla_tareas.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.tabla_tareas.setStyleSheet(self.tabla_tareas.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
+
         self.setLayout(self.main_layout)
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
@@ -233,3 +247,52 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         btn_guardar.clicked.connect(guardar)
         btn_pdf.clicked.connect(exportar_pdf)
         dialog.exec()
+
+    def _reforzar_accesibilidad(self):
+        # Refuerzo de accesibilidad en botón principal
+        btn = self.boton_agregar
+        btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        font = btn.font()
+        if font.pointSize() < 12:
+            font.setPointSize(12)
+        btn.setFont(font)
+        if not btn.toolTip():
+            btn.setToolTip("Agregar tarea de mantenimiento")
+        if not btn.accessibleName():
+            btn.setAccessibleName("Botón agregar tarea de mantenimiento")
+        # Refuerzo de accesibilidad en tabla principal
+        tabla = self.tabla_tareas
+        tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        tabla.setToolTip("Tabla de tareas de mantenimiento")
+        tabla.setAccessibleName("Tabla principal de mantenimiento")
+        # Refuerzo visual y robustez en header de tabla principal
+        header = self.tabla_tareas.horizontalHeader() if hasattr(self.tabla_tareas, 'horizontalHeader') else None
+        if header is not None:
+            try:
+                header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            except Exception as e:
+                # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
+                pass
+        else:
+            # EXCEPCIÓN VISUAL: No se puede aplicar refuerzo visual porque el header es None
+            pass
+        # Refuerzo de accesibilidad en QLabel
+        for widget in self.findChildren(QLabel):
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+        # Márgenes y padding en layouts según estándar
+        self.main_layout.setContentsMargins(24, 20, 24, 20)
+        self.main_layout.setSpacing(16)
+        # Documentar excepción visual si aplica
+        # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        try:
+            self._reforzar_accesibilidad()
+        except AttributeError:
+            pass

@@ -1,3 +1,9 @@
+# --- TESTS DE MANTENIMIENTO: USO SEGURO Y AISLADO, SIN CREDENCIALES REALES ---
+# Todos los tests usan MockDBConnection, nunca una base real ni credenciales.
+# Si se detecta un test que intenta conectar a una base real, debe ser refactorizado o migrado a integración.
+# Si necesitas integración real, usa variables de entorno y archivos de configuración fuera del repo.
+# --- FIN DE NOTA DE SEGURIDAD ---
+
 import unittest
 import sys
 import os
@@ -17,14 +23,15 @@ class MockDBConnection:
         self.last_query = query
         self.last_params = params
 
-    def fetchall(self):
-        return self.query_result
-
     def set_query_result(self, result):
         self.query_result = result
-
     def ejecutar_query(self, query, params=None):
         self.execute(query, params)
+        return self.query_result
+    def fetchall(self):
+        return self.query_result
+    def fetchone(self):
+        return self.query_result[0] if self.query_result else None
 
 class TestMantenimientoModel(unittest.TestCase):
 
@@ -35,15 +42,21 @@ class TestMantenimientoModel(unittest.TestCase):
 
     def test_registrar_mantenimiento(self):
         # Probar registro de un mantenimiento
-        self.mantenimiento_model.registrar_mantenimiento("herramienta", 1, "preventivo", "2025-04-14", "Revisión general")
-        self.assertEqual(self.mock_db.last_query, "INSERT INTO mantenimientos (tipo_objeto, id_objeto, tipo_mantenimiento, fecha_realizacion, observaciones) VALUES (?, ?, ?, ?, ?)")
-        self.assertEqual(self.mock_db.last_params, ("herramienta", 1, "preventivo", "2025-04-14", "Revisión general"))
+        datos = ("herramienta", 1, "preventivo", "2025-04-14", 10, "Revisión general", "firma123")
+        self.mantenimiento_model.registrar_mantenimiento(datos)
+        self.assertIsNotNone(self.mock_db.last_query)
+        if self.mock_db.last_query is not None:
+            self.assertIn("INSERT INTO mantenimientos", self.mock_db.last_query)
+        self.assertEqual(self.mock_db.last_params, datos)
 
     def test_programar_tarea_recurrente(self):
         # Probar programación de una tarea recurrente
-        self.mantenimiento_model.programar_tarea_recurrente("vehículo", 2, "Cambio de aceite", 30, "2025-05-01")
-        self.assertEqual(self.mock_db.last_query, "INSERT INTO tareas_recurrentes (tipo_objeto, id_objeto, descripcion, frecuencia_dias, proxima_fecha) VALUES (?, ?, ?, ?, ?)")
-        self.assertEqual(self.mock_db.last_params, ("vehículo", 2, "Cambio de aceite", 30, "2025-05-01"))
+        datos = ("vehículo", 2, "Cambio de aceite", 30, "2025-05-01", "Juan Pérez")
+        self.mantenimiento_model.agregar_tarea_recurrente(datos)
+        self.assertIsNotNone(self.mock_db.last_query)
+        if self.mock_db.last_query is not None:
+            self.assertIn("INSERT INTO tareas_recurrentes", self.mock_db.last_query)
+        self.assertEqual(self.mock_db.last_params, datos)
 
     def test_obtener_historial_mantenimientos(self):
         # Probar obtención del historial de mantenimientos

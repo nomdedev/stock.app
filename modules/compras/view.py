@@ -66,6 +66,21 @@ class ComprasView(QWidget, TableResponsiveMixin):
         botones_layout.addStretch()
         self.main_layout.addLayout(botones_layout)
 
+        # Refuerzo de accesibilidad en botón principal
+        self.boton_nuevo.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.boton_nuevo.setStyleSheet(self.boton_nuevo.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        font = self.boton_nuevo.font()
+        if font.pointSize() < 12:
+            font.setPointSize(12)
+        self.boton_nuevo.setFont(font)
+        if not self.boton_nuevo.toolTip():
+            self.boton_nuevo.setToolTip("Nuevo pedido")
+        # Refuerzo de accesibilidad en tabla de comparación si existe
+        if hasattr(self, 'tabla_comparacion'):
+            self.tabla_comparacion.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            self.tabla_comparacion.setStyleSheet(self.tabla_comparacion.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
+
     def mostrar_comparacion_presupuestos(self, presupuestos):
         self.tabla_comparacion = QTableWidget()
         self.tabla_comparacion.setRowCount(len(presupuestos))
@@ -92,6 +107,19 @@ class ComprasView(QWidget, TableResponsiveMixin):
             header_comp.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_comparacion, self.comparacion_headers, self.columnas_visibles_comparacion, self.config_path_comparacion))
             self.tabla_comparacion.setHorizontalHeader(header_comp)
         self.tabla_comparacion.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_comparacion))
+
+        # Refuerzo visual y robustez en header de tabla de comparación (si existe)
+        if hasattr(self, 'tabla_comparacion'):
+            header_comp = self.tabla_comparacion.horizontalHeader() if hasattr(self.tabla_comparacion, 'horizontalHeader') else None
+            if header_comp is not None:
+                try:
+                    header_comp.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                except Exception as e:
+                    # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
+                    pass
+            else:
+                # EXCEPCIÓN VISUAL: No se puede aplicar refuerzo visual porque el header es None
+                pass
 
     def cargar_config_columnas(self, config_path, headers):
         if os.path.exists(config_path):

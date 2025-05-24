@@ -11,10 +11,13 @@ class SidebarButton(QPushButton):
         self.setIconSize(QSize(20, 20))
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.setFixedHeight(40)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)  # Accesibilidad: permite foco por tabulación
+        self.setToolTip(texto)  # Accesibilidad: tooltip claro por defecto
         self.setStyleSheet(self._get_style())
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.setCheckable(False)
+        # EXCEPCIÓN: Si se requiere otro color/fuente, justificar aquí y en docs/estandares_visuales.md
 
     def setSelected(self, selected: bool):
         self.selected = selected
@@ -24,28 +27,22 @@ class SidebarButton(QPushButton):
         return self.selected
 
     def _get_style(self):
+        base_style = (
+            f"QPushButton {{"
+            f"background-color: {COLOR_BOTON_FONDO};"
+            f"color: {COLOR_BOTON_TEXTO};"
+            f"font-size: 12px;"
+            f"border-radius: 8px;"
+            f"border: 1.5px solid {COLOR_BOTON_BORDE};"
+            f"padding: 0 12px;"
+            f"text-align: left;"
+            f"}}"
+            f"QPushButton:focus {{"
+            f"border: 2px solid #3B82F6; outline: none; box-shadow: 0 0 0 2px #BFE3FF;"
+            f"}}"
+            f"QPushButton:hover {{background-color: {COLOR_BOTON_FONDO_HOVER};}}"
+        )
         if self.selected:
-            return (
-                f"QPushButton {{"
-                f"background-color: {COLOR_BOTON_FONDO};"
-                f"color: {COLOR_BOTON_TEXTO};"
-                f"font-weight: bold;"
-                f"border-radius: 8px;"
-                f"border: 1.5px solid {COLOR_BOTON_BORDE};"
-                f"padding: 0 12px;"
-                f"text-align: left;"
-                f"}}"
-                f"QPushButton:hover {{background-color: {COLOR_BOTON_FONDO_HOVER};}}"
-            )
+            return base_style + f"QPushButton {{font-weight: bold;}}"
         else:
-            return (
-                f"QPushButton {{"
-                f"background-color: {COLOR_BOTON_FONDO};"
-                f"color: {COLOR_BOTON_TEXTO};"
-                f"border-radius: 8px;"
-                f"border: 1.5px solid {COLOR_BOTON_BORDE};"
-                f"padding: 0 12px;"
-                f"text-align: left;"
-                f"}}"
-                f"QPushButton:hover {{background-color: {COLOR_BOTON_FONDO_HOVER};}}"
-            )
+            return base_style

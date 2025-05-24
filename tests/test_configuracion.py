@@ -1,3 +1,9 @@
+# --- TESTS DE CONFIGURACIÓN: USO SEGURO Y AISLADO, SIN CREDENCIALES REALES ---
+# Todos los tests usan MockDBConnection, nunca una base real ni credenciales.
+# Si se detecta un test que intenta conectar a una base real, debe ser refactorizado o migrado a integración.
+# Si necesitas integración real, usa variables de entorno y archivos de configuración fuera del repo.
+# --- FIN DE NOTA DE SEGURIDAD ---
+
 import unittest
 from modules.configuracion.model import ConfiguracionModel
 from modules.configuracion.view import ConfiguracionView

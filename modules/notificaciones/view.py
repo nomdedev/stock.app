@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QHBoxLayout, QGraphicsDropShadowEffect
 from PyQt6.QtGui import QIcon, QColor
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, Qt
 import json
 from core.ui_components import estilizar_boton_icono
 
@@ -49,6 +49,45 @@ class NotificacionesView(QWidget):
         # Tabla de notificaciones (placeholder)
         self.tabla_notificaciones = QTableWidget()
         self.main_layout.addWidget(self.tabla_notificaciones)
+
+        # Refuerzo de accesibilidad en botones principales
+        for btn in [self.boton_agregar, self.boton_marcar_leido]:
+            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            font = btn.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            btn.setFont(font)
+            if not btn.toolTip():
+                btn.setToolTip("Botón de acción")
+            if not btn.accessibleName():
+                btn.setAccessibleName("Botón de acción de notificaciones")
+        # Refuerzo de accesibilidad en tabla principal
+        self.tabla_notificaciones.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.tabla_notificaciones.setStyleSheet(self.tabla_notificaciones.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        self.tabla_notificaciones.setToolTip("Tabla de notificaciones")
+        self.tabla_notificaciones.setAccessibleName("Tabla principal de notificaciones")
+        # Refuerzo visual y robustez en header de tabla principal
+        h_header = self.tabla_notificaciones.horizontalHeader() if hasattr(self.tabla_notificaciones, 'horizontalHeader') else None
+        if h_header is not None:
+            try:
+                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            except Exception as e:
+                # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
+                pass
+        else:
+            # EXCEPCIÓN VISUAL: No se puede aplicar refuerzo visual porque el header es None
+            pass
+        # Refuerzo de accesibilidad en QLabel
+        for widget in self.findChildren(QLabel):
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+        # Márgenes y padding en layouts según estándar
+        self.main_layout.setContentsMargins(24, 20, 24, 20)
+        self.main_layout.setSpacing(16)
+        # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
 
         # Establecer el layout solo una vez al final
         self.setLayout(self.main_layout)

@@ -1,3 +1,9 @@
+# --- TESTS DE USUARIOS (INTEGRACIÓN): USO SEGURO Y AISLADO, SIN CREDENCIALES REALES ---
+# Todos los tests usan MockDBConnection, nunca una base real ni credenciales.
+# Si se detecta un test que intenta conectar a una base real, debe ser refactorizado o migrado a integración real controlada.
+# Si necesitas integración real, usa variables de entorno y archivos de configuración fuera del repo.
+# --- FIN DE NOTA DE SEGURIDAD ---
+
 import unittest
 from unittest.mock import Mock
 from modules.usuarios.model import UsuariosModel

@@ -145,6 +145,22 @@ class ProduccionView(QWidget):
 
         self.setLayout(self.main_layout)
 
+        # Refuerzo de accesibilidad en botones principales
+        for boton in [self.boton_agregar, self.boton_ver_detalles, self.boton_finalizar_etapa]:
+            boton.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            boton.setStyleSheet(boton.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            font = boton.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            boton.setFont(font)
+            if not boton.toolTip():
+                boton.setToolTip("Botón de acción")
+        # Refuerzo de accesibilidad en tablas
+        for tabla in [self.tabla_aberturas, self.tabla_etapas]:
+            tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
+
     def agregar_grafico(self, datos):
         figura = Figure()
         canvas = FigureCanvas(figura)

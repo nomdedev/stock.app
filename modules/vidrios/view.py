@@ -51,9 +51,10 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.aplicar_columnas_visibles()
 
         # Menú contextual en el header (robusto)
-        header = self.tabla_vidrios.horizontalHeader()
+        header = self.tabla_vidrios.horizontalHeader() if hasattr(self.tabla_vidrios, 'horizontalHeader') else None
         if header is not None:
-            header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            if hasattr(header, 'setContextMenuPolicy'):
+                header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             if hasattr(header, 'customContextMenuRequested'):
                 header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
             if hasattr(header, 'sectionDoubleClicked'):
@@ -64,6 +65,10 @@ class VidriosView(QWidget, TableResponsiveMixin):
                 header.setSectionsClickable(True)
             if hasattr(header, 'sectionClicked'):
                 header.sectionClicked.connect(self.mostrar_menu_columnas_header)
+        else:
+            # EXCEPCIÓN VISUAL: Si el header es None, no se puede aplicar menú contextual ni acciones de header.
+            # Documentar en docs/estandares_visuales.md si ocurre en producción.
+            pass
 
         # Botones principales como iconos (con sombra real)
         botones_layout = QHBoxLayout()
@@ -116,6 +121,33 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.tabla_vidrios.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
 
         self.setLayout(self.main_layout)
+
+        # Refuerzo de accesibilidad en botones principales
+        for btn in [self.boton_agregar, self.boton_buscar, self.boton_exportar_excel]:
+            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            font = btn.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            btn.setFont(font)
+            if not btn.toolTip():
+                btn.setToolTip("Botón de acción")
+        # Refuerzo de accesibilidad en tabla principal
+        self.tabla_vidrios.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.tabla_vidrios.setStyleSheet(self.tabla_vidrios.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # Refuerzo de accesibilidad en todos los QLineEdit de la vista principal
+        for widget in self.findChildren(QLineEdit):
+            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            widget.setStyleSheet(widget.styleSheet() + "\nQLineEdit:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQLineEdit { font-size: 12px; }")
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+            if not widget.toolTip():
+                widget.setToolTip("Campo de texto")
+            if not widget.accessibleName():
+                widget.setAccessibleName("Campo de texto de vidrios")
+        # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
         colores = {

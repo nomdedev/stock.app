@@ -1537,3 +1537,740 @@
 2025-05-23 08:29:19,954 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-23 08:29:19,954 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-23 08:29:19,954 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-23 18:48:16,982 - ERROR - Error en registrar_evento: DB error
+2025-05-23 18:48:16,984 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-23 18:48:16,984 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-23 18:48:20,596 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:20,596 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:20,596 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:23,203 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:23,203 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:23,203 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:23,203 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:23,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:23,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:23,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:23,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:23,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:24,705 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:24,705 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:24,705 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:24,705 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:24,705 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:24,705 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:25,638 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:25,638 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:25,638 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:25,638 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:25,638 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:25,638 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:25,638 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,539 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,539 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,539 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,539 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,539 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,539 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,539 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,539 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,542 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,542 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,542 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,542 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,542 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,542 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,542 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,542 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:26,542 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:27,455 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:27,455 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:27,455 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:27,455 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:27,455 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:27,455 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:27,455 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:27,455 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:27,455 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:27,455 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:28,974 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:29,814 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:30,727 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:31,782 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:32,630 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 18:48:35,824 - ERROR - El campo de código está vacío.
+2025-05-23 19:18:33,373 - ERROR - Error en registrar_evento: DB error
+2025-05-23 19:18:33,374 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-23 19:18:33,374 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-23 19:18:34,288 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 19:18:34,288 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 19:18:34,288 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:27,892 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:27,892 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:27,892 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:27,892 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:28,643 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:28,643 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:28,643 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:28,643 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:28,643 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:29,535 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:29,535 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:29,535 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:29,535 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:29,535 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:29,535 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,192 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,192 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,192 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,192 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,192 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,192 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,192 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,801 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,801 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,801 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,801 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,801 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,801 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,801 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,801 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,808 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,808 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,808 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,808 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,808 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,808 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,808 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,808 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:30,808 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:31,377 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:31,377 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:31,377 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:31,377 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:31,377 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:31,377 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:31,377 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:31,377 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:31,377 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:31,377 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,098 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,098 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,098 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,098 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,098 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,098 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,098 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,098 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,098 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,098 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,098 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:32,966 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:33,601 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,068 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,680 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:34,996 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:35,923 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:42,680 - ERROR - Error en registrar_evento: DB error
+2025-05-23 21:53:42,682 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-23 21:53:42,682 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-23 21:53:43,602 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:43,602 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:43,602 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:46,529 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:46,529 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:46,529 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:46,529 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:47,280 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:47,280 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:47,280 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:47,280 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:47,280 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:48,543 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:48,543 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:48,543 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:48,543 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:48,543 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:48,543 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,230 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,230 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,230 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,230 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,230 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,230 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,230 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,914 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,914 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,914 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,914 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,914 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,914 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,914 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,914 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,919 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,919 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,919 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,919 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,919 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,919 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,919 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,919 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:49,919 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:50,724 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:50,724 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:50,724 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:50,724 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:50,724 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:50,724 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:50,724 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:50,724 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:50,724 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:50,724 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:51,476 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:51,476 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:51,476 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:51,476 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:51,476 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:51,476 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:51,476 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:51,476 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:51,476 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:51,476 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:51,476 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:52,900 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:56,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:57,606 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,255 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:58,868 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:53:59,707 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:04,294 - ERROR - Error en registrar_evento: DB error
+2025-05-23 21:54:04,295 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-23 21:54:04,295 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-23 21:54:04,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:04,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:04,997 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:29,807 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:29,807 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:29,807 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:29,807 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:32,219 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:32,219 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:32,219 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:32,219 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:32,219 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:32,984 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:32,984 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:32,984 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:32,984 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:32,984 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:32,984 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:33,772 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:33,772 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:33,772 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:33,772 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:33,772 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:33,772 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:33,772 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,534 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,534 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,534 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,534 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,534 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,534 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,534 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,534 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,540 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,540 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,540 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,540 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,540 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,540 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,540 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,540 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:34,540 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:35,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:35,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:35,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:35,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:35,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:35,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:35,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:35,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:35,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:35,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:36,565 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:36,565 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:36,565 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:36,565 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:36,565 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:36,565 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:36,565 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:36,565 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:36,565 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:36,565 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:36,565 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:37,487 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:38,676 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:39,544 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:40,743 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:42,651 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:43,818 - ERROR - El campo de código está vacío.
+2025-05-23 21:54:56,412 - ERROR - Error en registrar_evento: DB error
+2025-05-23 21:54:56,413 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-23 21:54:56,413 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-23 21:54:57,112 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:57,112 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:54:57,112 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:14,797 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:14,797 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:14,797 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:14,797 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:16,964 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:16,964 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:16,964 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:16,964 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:16,964 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:17,854 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:17,854 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:17,854 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:17,854 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:17,854 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:17,854 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:18,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:18,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:18,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:18,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:18,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:18,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:18,503 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,319 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,319 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,319 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,319 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,319 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,319 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,319 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,319 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,324 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,324 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,324 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,324 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,324 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,324 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,324 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,324 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,324 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,993 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,993 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,993 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,993 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,993 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,993 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,993 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,993 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,993 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:19,993 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:20,762 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:20,762 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:20,762 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:20,762 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:20,762 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:20,762 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:20,762 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:20,762 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:20,762 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:20,762 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:20,762 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:21,574 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:22,824 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser

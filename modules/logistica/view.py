@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTableWidget, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QTabWidget, QTextEdit, QTableWidgetItem
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTableWidget, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QTabWidget, QTextEdit, QTableWidgetItem, QProgressBar
 from PyQt6.QtGui import QIcon, QColor, QAction
 from PyQt6.QtCore import QSize, Qt, QPoint
 import json
@@ -45,13 +45,18 @@ class LogisticaView(QWidget, TableResponsiveMixin):
         self.columnas_visibles_obras = self.cargar_config_columnas(self.config_path_obras, self.obras_headers)
         self.aplicar_columnas_visibles(self.tabla_obras, self.obras_headers, self.columnas_visibles_obras)
         header_obras = self.tabla_obras.horizontalHeader()
-        header_obras.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header_obras.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_obras, self.obras_headers, self.columnas_visibles_obras, self.config_path_obras))
-        header_obras.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_obras))
-        header_obras.setSectionsMovable(True)
-        header_obras.setSectionsClickable(True)
-        header_obras.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_obras, self.obras_headers, self.columnas_visibles_obras, self.config_path_obras))
-        self.tabla_obras.setHorizontalHeader(header_obras)
+        if header_obras is not None:
+            header_obras.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header_obras.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_obras, self.obras_headers, self.columnas_visibles_obras, self.config_path_obras))
+            header_obras.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_obras))
+            header_obras.setSectionsMovable(True)
+            header_obras.setSectionsClickable(True)
+            header_obras.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_obras, self.obras_headers, self.columnas_visibles_obras, self.config_path_obras))
+            self.tabla_obras.setHorizontalHeader(header_obras)
+        else:
+            # EXCEPCIÓN VISUAL: Si el header es None, no se puede aplicar menú contextual ni acciones de header.
+            # Documentar en docs/estandares_visuales.md si ocurre en producción.
+            pass
 
         # --- Pestaña 2: Envíos y Materiales ---
         self.tab_envios = QWidget()
@@ -71,13 +76,18 @@ class LogisticaView(QWidget, TableResponsiveMixin):
         self.columnas_visibles_envios = self.cargar_config_columnas(self.config_path_envios, self.envios_headers)
         self.aplicar_columnas_visibles(self.tabla_envios, self.envios_headers, self.columnas_visibles_envios)
         header_envios = self.tabla_envios.horizontalHeader()
-        header_envios.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header_envios.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_envios, self.envios_headers, self.columnas_visibles_envios, self.config_path_envios))
-        header_envios.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_envios))
-        header_envios.setSectionsMovable(True)
-        header_envios.setSectionsClickable(True)
-        header_envios.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_envios, self.envios_headers, self.columnas_visibles_envios, self.config_path_envios))
-        self.tabla_envios.setHorizontalHeader(header_envios)
+        if header_envios is not None:
+            header_envios.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header_envios.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_envios, self.envios_headers, self.columnas_visibles_envios, self.config_path_envios))
+            header_envios.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_envios))
+            header_envios.setSectionsMovable(True)
+            header_envios.setSectionsClickable(True)
+            header_envios.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_envios, self.envios_headers, self.columnas_visibles_envios, self.config_path_envios))
+            self.tabla_envios.setHorizontalHeader(header_envios)
+        else:
+            # EXCEPCIÓN VISUAL: Si el header es None, no se puede aplicar menú contextual ni acciones de header.
+            # Documentar en docs/estandares_visuales.md si ocurre en producción.
+            pass
 
         # --- Pestaña 3: Servicios (Service) ---
         self.tab_servicios = QWidget()
@@ -99,13 +109,18 @@ class LogisticaView(QWidget, TableResponsiveMixin):
         self.columnas_visibles_servicios = self.cargar_config_columnas(self.config_path_servicios, self.servicios_headers)
         self.aplicar_columnas_visibles(self.tabla_servicios, self.servicios_headers, self.columnas_visibles_servicios)
         header_servicios = self.tabla_servicios.horizontalHeader()
-        header_servicios.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        header_servicios.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_servicios, self.servicios_headers, self.columnas_visibles_servicios, self.config_path_servicios))
-        header_servicios.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_servicios))
-        header_servicios.setSectionsMovable(True)
-        header_servicios.setSectionsClickable(True)
-        header_servicios.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_servicios, self.servicios_headers, self.columnas_visibles_servicios, self.config_path_servicios))
-        self.tabla_servicios.setHorizontalHeader(header_servicios)
+        if header_servicios is not None:
+            header_servicios.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header_servicios.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_servicios, self.servicios_headers, self.columnas_visibles_servicios, self.config_path_servicios))
+            header_servicios.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_servicios))
+            header_servicios.setSectionsMovable(True)
+            header_servicios.setSectionsClickable(True)
+            header_servicios.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_servicios, self.servicios_headers, self.columnas_visibles_servicios, self.config_path_servicios))
+            self.tabla_servicios.setHorizontalHeader(header_servicios)
+        else:
+            # EXCEPCIÓN VISUAL: Si el header es None, no se puede aplicar menú contextual ni acciones de header.
+            # Documentar en docs/estandares_visuales.md si ocurre en producción.
+            pass
 
         # --- Pestaña 4: Mapa (OpenStreetMap + Leaflet) ---
         self.tab_mapa = QWidget()
@@ -205,7 +220,104 @@ pip install PyQt6-WebEngine
         botones_layout.addStretch()
         self.main_layout.addLayout(botones_layout)
 
-        self.setLayout(self.main_layout)
+        # Refuerzo de accesibilidad en botón principal
+        self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.boton_agregar.setStyleSheet(self.boton_agregar.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        font = self.boton_agregar.font()
+        if font.pointSize() < 12:
+            font.setPointSize(12)
+        self.boton_agregar.setFont(font)
+        self.boton_agregar.setToolTip("Agregar envío")  # Unificado, siempre presente
+        self.boton_agregar.setAccessibleName("Botón agregar envío")
+        # Refuerzo de accesibilidad en tablas principales
+        for tabla in [self.tabla_obras, self.tabla_envios, self.tabla_servicios]:
+            tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+            tabla.setToolTip("Tabla de datos")
+            tabla.setAccessibleName("Tabla principal de logística")
+            h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
+            if h_header is not None:
+                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+        # Refuerzo de accesibilidad en todos los QLineEdit de la vista
+        for tab in [self.tab_obras, self.tab_envios, self.tab_servicios]:
+            for widget in tab.findChildren(QLineEdit):
+                widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+                widget.setStyleSheet(widget.styleSheet() + "\nQLineEdit:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQLineEdit { font-size: 12px; }")
+                font = widget.font()
+                if font.pointSize() < 12:
+                    font.setPointSize(12)
+                widget.setFont(font)
+                if not widget.toolTip():
+                    widget.setToolTip("Campo de texto")
+                if not widget.accessibleName():
+                    widget.setAccessibleName("Campo de texto de logística")
+        # Refuerzo en propiedades QLineEdit
+        for prop in [self.buscar_input, self.id_item_input]:
+            prop.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            prop.setStyleSheet(prop.styleSheet() + "\nQLineEdit:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQLineEdit { font-size: 12px; }")
+            font = prop.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            prop.setFont(font)
+            prop.setToolTip("Campo de búsqueda o ID")
+            prop.setAccessibleName("Campo de búsqueda o ID de logística")
+        # Refuerzo de accesibilidad en todos los QLabel de la vista
+        for tab in [self.tab_obras, self.tab_envios, self.tab_servicios]:
+            for widget in tab.findChildren(QLabel):
+                font = widget.font()
+                if font.pointSize() < 12:
+                    font.setPointSize(12)
+                widget.setFont(font)
+        # Márgenes y padding en layouts según estándar
+        self.main_layout.setContentsMargins(24, 20, 24, 20)
+        self.main_layout.setSpacing(16)
+        for tab in [self.tab_obras, self.tab_envios, self.tab_servicios]:
+            layout = tab.layout() if hasattr(tab, 'layout') else None
+            if layout is not None:
+                layout.setContentsMargins(24, 20, 24, 20)
+                layout.setSpacing(16)
+        # EXCEPCIÓN: Si algún input requiere estilo especial por UX, debe estar documentado aquí y en docs/estandares_visuales.md
+        # --- FIN DE BLOQUE DE ESTÁNDAR ---
+
+        # --- FEEDBACK VISUAL INMEDIATO (QLabel) ---
+        self.feedback_label = QLabel()
+        self.feedback_label.setVisible(False)
+        self.feedback_label.setStyleSheet("QLabel { font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; }")
+        self.main_layout.addWidget(self.feedback_label)
+
+        # --- FEEDBACK DE PROGRESO (QProgressBar) ---
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setVisible(False)
+        self.progress_bar.setMinimum(0)
+        self.progress_bar.setMaximum(0)  # Modo indeterminado (spinner)
+        self.progress_bar.setTextVisible(False)
+        self.progress_bar.setStyleSheet("QProgressBar { border-radius: 8px; height: 18px; background: #e3f6fd; } QProgressBar::chunk { background: #2563eb; border-radius: 8px; }")
+        self.main_layout.addWidget(self.progress_bar)
+
+    def mostrar_feedback(self, mensaje, tipo="info"):
+        colores = {
+            "exito": "background-color: #d1fae5; color: #065f46;",  # verde pastel
+            "error": "background-color: #fee2e2; color: #991b1b;",  # rojo pastel
+            "advertencia": "background-color: #fef3c7; color: #92400e;",  # naranja pastel
+            "info": "background-color: #e0e7ff; color: #1e40af;"  # azul pastel
+        }
+        iconos = {
+            "exito": "✅ ",
+            "error": "❌ ",
+            "advertencia": "⚠️ ",
+            "info": "ℹ️ "
+        }
+        self.feedback_label.setText(f"{iconos.get(tipo, '')}{mensaje}")
+        self.feedback_label.setStyleSheet(f"QLabel {{ font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; {colores.get(tipo, '')} }}")
+        self.feedback_label.setVisible(True)
+
+    def ocultar_feedback(self):
+        self.feedback_label.setVisible(False)
+
+    def mostrar_progreso(self, visible=True):
+        """Muestra u oculta la barra de progreso (spinner) para operaciones largas."""
+        self.progress_bar.setVisible(visible)
+        self.progress_bar.setMaximum(0 if visible else 100)
 
     def instalar_webengine(self):
         import subprocess, sys
@@ -226,16 +338,38 @@ pip install PyQt6-WebEngine
             self.boton_instalar_webengine.setEnabled(True)
 
     def cargar_datos_obras_en_logistica(self, obras):
-        """Carga automáticamente las obras en la tabla de Obras y Direcciones de Logística."""
-        self.tabla_obras.setRowCount(0)
-        for obra in obras:
-            row = self.tabla_obras.rowCount()
-            self.tabla_obras.insertRow(row)
-            for col, value in enumerate(obra):
-                self.tabla_obras.setItem(row, col, QTableWidgetItem(str(value)))
-            # Si faltan columnas (por ejemplo, control/logística), rellenar con vacío
-            for col in range(len(obra), 8):
-                self.tabla_obras.setItem(row, col, QTableWidgetItem(""))
+        """Carga automáticamente las obras en la tabla de Obras y Direcciones de Logística. Muestra progreso y feedback de error si falla."""
+        self.mostrar_progreso(True)
+        try:
+            self.tabla_obras.setRowCount(0)
+            for obra in obras:
+                row = self.tabla_obras.rowCount()
+                self.tabla_obras.insertRow(row)
+                for col, value in enumerate(obra):
+                    self.tabla_obras.setItem(row, col, QTableWidgetItem(str(value)))
+                for col in range(len(obra), 8):
+                    self.tabla_obras.setItem(row, col, QTableWidgetItem(""))
+            self.mostrar_feedback("Obras cargadas correctamente", tipo="exito")
+        except Exception as e:
+            self.mostrar_feedback(f"Error al cargar obras: {e}", tipo="error")
+        finally:
+            self.mostrar_progreso(False)
+
+    def exportar_datos(self):
+        """Ejemplo de exportación robusta con feedback visual de progreso y error."""
+        self.mostrar_progreso(True)
+        try:
+            # ...lógica de exportación aquí...
+            # Simulación de éxito
+            self.mostrar_feedback("Exportación completada con éxito", tipo="exito")
+        except Exception as e:
+            self.mostrar_feedback(f"Error al exportar: {e}", tipo="error")
+        finally:
+            self.mostrar_progreso(False)
+
+    # --- EXCEPCIÓN VISUAL ---
+    # Si alguna operación no puede mostrar progreso visual por limitación técnica (ej: bloqueo UI por operación síncrona),
+    # debe documentarse aquí y en docs/estandares_visuales.md. En ese caso, se recomienda migrar a QThread o QTimer.
 
     def cargar_config_columnas(self, config_path, headers):
         if os.path.exists(config_path):

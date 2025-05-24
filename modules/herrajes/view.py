@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QTableWidget, QTableWidgetItem, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QFormLayout
 from PyQt6.QtGui import QIcon, QColor, QAction
 from PyQt6.QtCore import QSize, Qt, QPoint
 import json
@@ -50,6 +50,18 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
             header.sectionDoubleClicked.connect(self.autoajustar_columna)
 
+        # Refuerzo visual y robustez en header de tabla principal
+        header = self.tabla_herrajes.horizontalHeader() if hasattr(self.tabla_herrajes, 'horizontalHeader') else None
+        if header is not None:
+            try:
+                header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            except Exception as e:
+                # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
+                pass
+        else:
+            # EXCEPCIÓN VISUAL: No se puede aplicar refuerzo visual porque el header es None
+            pass
+
         # Botón principal de acción (Agregar)
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
@@ -68,6 +80,32 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         estilizar_boton_icono(self.boton_agregar)
         botones_layout.addWidget(self.boton_agregar)
         self.main_layout.addLayout(botones_layout)
+
+        # Refuerzo de accesibilidad en botón principal
+        self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.boton_agregar.setStyleSheet(self.boton_agregar.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        font = self.boton_agregar.font()
+        if font.pointSize() < 12:
+            font.setPointSize(12)
+        self.boton_agregar.setFont(font)
+        if not self.boton_agregar.toolTip():
+            self.boton_agregar.setToolTip("Agregar nuevo herraje")
+        # Refuerzo de accesibilidad en tabla principal
+        self.tabla_herrajes.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.tabla_herrajes.setStyleSheet(self.tabla_herrajes.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # Refuerzo de accesibilidad en todos los QLineEdit de la vista principal
+        for widget in self.findChildren(QLineEdit):
+            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            widget.setStyleSheet(widget.styleSheet() + "\nQLineEdit:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQLineEdit { font-size: 12px; }")
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+            if not widget.toolTip():
+                widget.setToolTip("Campo de texto")
+            if not widget.accessibleName():
+                widget.setAccessibleName("Campo de texto de herrajes")
+        # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
         colores = {

@@ -1,13 +1,3 @@
-import unittest
-from unittest.mock import Mock
-import sys
-import os
-
-# Agregar el directorio raíz del proyecto al PYTHONPATH
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from modules.auditoria.model import AuditoriaModel
-
 # --- TESTS DE AUDITORÍA: USO SEGURO Y AISLADO, SIN CREDENCIALES REALES ---
 # Todos los tests usan MockDBConnection, nunca una base real ni credenciales.
 # Si se detecta un test que intenta conectar a una base real, debe ser refactorizado o migrado a integración.
@@ -19,6 +9,12 @@ from modules.auditoria.model import AuditoriaModel
 # db_pass = os.environ.get('DB_PASS')
 # ...
 # --- FIN DE NOTA DE SEGURIDAD ---
+
+import sys
+import os
+import unittest
+from unittest.mock import MagicMock
+from modules.auditoria.model import AuditoriaModel
 
 class MockDBConnection:
     def __init__(self):
@@ -162,6 +158,46 @@ class TestAuditoriaModel(unittest.TestCase):
         logs = self.auditoria_model.obtener_logs("usuarios")
         self.assertEqual(len(logs), 1)
         self.assertEqual(logs[0][2], "usuarios")
+
+    def test_registrar_evento_guarda_evento(self):
+        """Probar que registrar_evento guarda correctamente el evento en la base mockeada.
+        Se espera que los parámetros usuario, acción y descripción estén en last_params.
+        """
+        usuario_id = 1
+        modulo = 'usuarios'
+        tipo_evento = 'login'
+        detalle = 'Inicio de sesión exitoso'
+        ip_origen = '127.0.0.1'
+        self.mock_db.query_result = []
+        # Act
+        self.auditoria_model.registrar_evento(usuario_id, modulo, tipo_evento, detalle, ip_origen)
+        # Assert
+        self.assertIsNotNone(self.mock_db.last_query)
+        if self.mock_db.last_query:
+            self.assertIn('INSERT', self.mock_db.last_query.upper())
+        self.assertIsNotNone(self.mock_db.last_params)
+        if self.mock_db.last_params:
+            self.assertIn(usuario_id, self.mock_db.last_params)
+            self.assertIn(modulo, self.mock_db.last_params)
+            self.assertIn(tipo_evento, self.mock_db.last_params)
+            self.assertIn(detalle, self.mock_db.last_params)
+            self.assertIn(ip_origen, self.mock_db.last_params)
+
+    def test_obtener_eventos_retorna_lista(self):
+        """Probar que obtener_logs retorna la lista de eventos simulada en la base mockeada."""
+        eventos = [
+            (1, '2025-05-23 10:00:00', 'usuarios', 'login', 'Inicio de sesión exitoso', '127.0.0.1'),
+            (2, '2025-05-23 11:00:00', 'usuarios', 'logout', 'Cierre de sesión', '127.0.0.1')
+        ]
+        self.mock_db.set_query_result(eventos)
+        # Act
+        resultado = self.auditoria_model.obtener_logs('usuarios')
+        # Assert
+        self.assertEqual(resultado, [eventos[0]])
+
+    def test_no_conexion_real(self):
+        """Verifica que la base de datos usada es un mock y no una conexión real."""
+        self.assertIsInstance(self.auditoria_model.db, MockDBConnection)
 
 if __name__ == "__main__":
     unittest.main()

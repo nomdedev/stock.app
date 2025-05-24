@@ -50,7 +50,7 @@ class TestInventarioModel(unittest.TestCase):
         self.assertEqual(qr_code, "QR-123456.789")
 
     def test_exportar_inventario_excel(self):
-        # Simular exportación a Excel
+        """Probar exportación a Excel usando solo datos simulados y mock de DB."""
         self.mock_db.ejecutar_query.return_value = [
             (1, "123456.789", "Material A", "PVC", "unidad", 100, 10, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg"),
             (2, "987654.321", "Material B", "Aluminio", "kg", 50, 5, "Almacén 2", "Descripción B", "QR987", "imagen_b.jpg")
@@ -61,7 +61,7 @@ class TestInventarioModel(unittest.TestCase):
         self.assertEqual(resultado, "Inventario exportado a Excel.")
 
     def test_exportar_inventario_pdf(self):
-        # Simular exportación a PDF
+        """Probar exportación a PDF usando solo datos simulados y mock de DB."""
         self.mock_db.ejecutar_query.return_value = [
             (1, "123456.789", "Material A", "PVC", "unidad", 100, 10, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg"),
             (2, "987654.321", "Material B", "Aluminio", "kg", 50, 5, "Almacén 2", "Descripción B", "QR987", "imagen_b.jpg")
@@ -270,6 +270,7 @@ class TestInventarioModel(unittest.TestCase):
         assert "completar" in args[0].lower() or "obligatorio" in args[0].lower()
 
     def test_exportar_inventario_vacio(self):
+        """Probar exportación de inventario vacío, asegurando robustez y feedback adecuado."""
         self.mock_db.ejecutar_query.return_value = []
         resultado = self.inventario_model.exportar_inventario("excel")
         self.assertEqual(resultado, "Inventario exportado a Excel.")

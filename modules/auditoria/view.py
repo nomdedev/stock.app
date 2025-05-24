@@ -80,6 +80,44 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
             self.tabla_logs.setHorizontalHeader(header_logs)
         self.tabla_logs.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_logs))
 
+        # Refuerzo de accesibilidad en botones principales
+        self.boton_ver_logs.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.boton_ver_logs.setStyleSheet(self.boton_ver_logs.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        font = self.boton_ver_logs.font()
+        if font.pointSize() < 12:
+            font.setPointSize(12)
+        self.boton_ver_logs.setFont(font)
+        if not self.boton_ver_logs.toolTip():
+            self.boton_ver_logs.setToolTip("Ver logs de auditoría")
+        if not self.boton_ver_logs.accessibleName():
+            self.boton_ver_logs.setAccessibleName("Botón ver logs de auditoría")
+        # Refuerzo de accesibilidad en tabla principal
+        self.tabla_logs.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.tabla_logs.setStyleSheet(self.tabla_logs.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        self.tabla_logs.setToolTip("Tabla de logs de auditoría")
+        self.tabla_logs.setAccessibleName("Tabla principal de auditoría")
+        # Refuerzo visual y robustez en header de tabla principal
+        header = self.tabla_logs.horizontalHeader() if hasattr(self.tabla_logs, 'horizontalHeader') else None
+        if header is not None:
+            try:
+                header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            except Exception as e:
+                # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
+                pass
+        else:
+            # EXCEPCIÓN VISUAL: No se puede aplicar refuerzo visual porque el header es None
+            pass
+        # Refuerzo de accesibilidad en QLabel
+        for widget in self.findChildren(QLabel):
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+        # Márgenes y padding en layouts según estándar
+        self.main_layout.setContentsMargins(24, 20, 24, 20)
+        self.main_layout.setSpacing(16)
+        # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
+
         self.setLayout(self.main_layout)
 
     def cargar_config_columnas(self, config_path, headers):

@@ -1,3 +1,9 @@
+# --- TESTS DE OBRAS: USO SEGURO Y AISLADO, SIN CREDENCIALES REALES ---
+# Todos los tests usan MockDBConnection y mocks de controladores, nunca una base real ni credenciales.
+# Si se detecta un test que intenta conectar a una base real, debe ser refactorizado o migrado a integración.
+# Si necesitas integración real, usa variables de entorno y archivos de configuración fuera del repo.
+# --- FIN DE NOTA DE SEGURIDAD ---
+
 import unittest
 import pytest
 from unittest.mock import MagicMock, patch, ANY
@@ -235,6 +241,7 @@ class TestObrasIntegracion(unittest.TestCase):
         # Test pasa si no hay excepción
 
     def test_auditoria_todas_las_acciones(self):
+        """Verifica que todas las acciones relevantes de obras quedan registradas en la auditoría (mock)."""
         # Crear
         self.mock_auditoria.registrar_evento(self.usuario_dict["username"], "obras", "crear obra")
         # Editar

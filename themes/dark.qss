@@ -48,11 +48,11 @@ QTableWidget {
 }
 QHeaderView::section {
     background-color: #2E3742;
+    color: #3DE6B1;
+    font-size: 12px;
+    font-weight: bold;
     border: none;
     padding: 8px;
-    font-weight: bold;
-    color: #fff;
-    font-size: 12px;
     border-radius: 12px;
 }
 
@@ -71,6 +71,34 @@ QLineEdit, QComboBox, QSpinBox {
     padding: 8px 12px;
     color: #fff;
     font-size: 12px;
+}
+
+/* --- Refuerzo de accesibilidad y foco visible en selectores y headers --- */
+QComboBox:focus, QSpinBox:focus, QLineEdit:focus {
+    border: 2px solid #3B82F6; /* Azul pastel accesible */
+    outline: none;
+    box-shadow: 0 0 0 2px #3DE6B1;
+}
+QHeaderView::section:focus {
+    border: 2px solid #3B82F6;
+    outline: none;
+    box-shadow: 0 0 0 2px #3DE6B1;
+}
+QHeaderView::section {
+    background-color: #2E3742;
+    color: #3DE6B1;
+    font-size: 12px;
+    font-weight: bold;
+    border: none;
+    padding: 8px;
+    border-radius: 12px;
+}
+QToolTip {
+    font-size: 12px;
+    background-color: #1E293B;
+    color: white;
+    border-radius: 6px;
+    padding: 6px;
 }
 
 /* Botones inferiores neumórficos Inventario (solo botones, no tabla) */
@@ -127,3 +155,5 @@ QLabel#statusOnline {
     border-radius: 20px;
     font-weight: bold;
 }
+
+/* EXCEPCIÓN: Si algún header requiere override local, justificar en el código fuente. */

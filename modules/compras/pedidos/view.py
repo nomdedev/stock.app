@@ -93,6 +93,37 @@ class PedidosView(QWidget, TableResponsiveMixin):
             self.tabla_pedidos.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_pedidos))
         self.setLayout(main_layout)
 
+        # Refuerzo de accesibilidad en botones principales
+        for btn in [self.boton_crear, self.boton_ver_detalles, self.boton_cargar_presupuesto]:
+            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            font = btn.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            btn.setFont(font)
+            if not btn.toolTip():
+                btn.setToolTip("Botón de acción")
+            if not btn.accessibleName():
+                btn.setAccessibleName("Botón de acción de pedidos")
+        # Refuerzo de accesibilidad en tabla principal
+        self.tabla_pedidos.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.tabla_pedidos.setStyleSheet(self.tabla_pedidos.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        self.tabla_pedidos.setToolTip("Tabla de pedidos")
+        self.tabla_pedidos.setAccessibleName("Tabla principal de pedidos")
+        h_header = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
+        if h_header is not None:
+            h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+        # Refuerzo de accesibilidad en QLabel
+        for widget in self.findChildren(QLabel):
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+        # Márgenes y padding en layouts según estándar
+        main_layout.setContentsMargins(24, 20, 24, 20)
+        main_layout.setSpacing(16)
+        # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
+
     def resaltar_items_bajo_stock(self, items):
         for item in items:
             if item.stock is not None and item.stock < item.stock_minimo:
