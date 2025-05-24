@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import (QDialog, QGraphicsDropShadowEffect, QHeaderView, QL
                                QMenu, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget,
                                QHBoxLayout, QMessageBox)
 from PyQt6.QtGui import QIcon, QColor, QAction
-from PyQt6.QtCore import QSize, Qt, QPoint
+from PyQt6.QtCore import QSize, Qt, QPoint, pyqtSignal
 import json
 import os
 from functools import partial
@@ -12,6 +12,8 @@ from core.database import get_connection_string
 from core.logger import log_error
 
 class ObrasView(QWidget, TableResponsiveMixin):
+    # Señal para integración en tiempo real con otros módulos
+    obra_agregada = pyqtSignal(dict)  # dict con datos de la obra agregada
     def __init__(self, usuario_actual="default", db_connection=None):
         super().__init__()
         aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path="themes/light.qss")
@@ -289,3 +291,24 @@ class ObrasView(QWidget, TableResponsiveMixin):
             QMessageBox.warning(self, "Advertencia", mensaje)
         elif tipo == "exito":
             QMessageBox.information(self, "Éxito", mensaje)
+
+    def agregar_obra_y_emitir(self):
+        # Aquí iría la lógica real de agregar obra (formulario, validación, inserción en DB, etc.)
+        # Simulación de datos de obra agregada:
+        datos_obra = {
+            "id": 123,  # Reemplazar por ID real generado
+            "nombre": "Obra de ejemplo",
+            "cliente": "Cliente demo",
+            "estado": "Medición",
+            "fecha": "2025-05-24"
+        }
+        # Emitir señal para que Inventario y Vidrios actualicen sus vistas automáticamente
+        self.obra_agregada.emit(datos_obra)
+        # Feedback visual (puede ser reemplazado por el flujo real)
+        self.label_feedback.setText("Obra agregada y notificada a otros módulos.")
+        # ...aquí continuar con la lógica real de refresco de tabla, etc...
+
+# Nota: Los controladores de Inventario y Vidrios deben conectarse a la señal 'obra_agregada' para actualizar sus datos en tiempo real.
+# Ejemplo en el controlador:
+# self.obras_view.obra_agregada.connect(self.inventario_controller.actualizar_por_obra)
+# self.obras_view.obra_agregada.connect(self.vidrios_controller.actualizar_por_obra)

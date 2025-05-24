@@ -94,6 +94,13 @@ class InventarioController:
         self.auditoria_model = AuditoriaModel(db_connection)
         self.db_connection = db_connection
 
+        # Integración en tiempo real con ObrasView
+        # Se debe conectar la señal 'obra_agregada' de ObrasView a este controlador:
+        # Ejemplo (en main.py o donde se inicializan los controladores):
+        # obras_view.obra_agregada.connect(self.actualizar_por_obra)
+        #
+        # Implementar el método 'actualizar_por_obra' para refrescar datos según la obra agregada
+
         # Conexión de señales de la vista a métodos del controlador
         self.view.nuevo_item_signal.connect(self.agregar_item)
         self.view.ver_movimientos_signal.connect(self.ver_movimientos)
@@ -540,3 +547,12 @@ class InventarioController:
                 self._feedback("No se pudo entregar la reserva (verifique el estado o los datos).", tipo='error')
         except Exception as e:
             self._feedback(f"Error al entregar reserva: {e}", tipo='error')
+
+    def actualizar_por_obra(self, datos_obra):
+        """
+        Método para refrescar la vista de inventario cuando se agrega una nueva obra.
+        Se puede usar para actualizar la lista de materiales, pedidos pendientes, etc.
+        """
+        # Aquí va la lógica de actualización (ejemplo: refrescar tabla, mostrar feedback, etc.)
+        self.actualizar_inventario()
+        self._feedback(f"Inventario actualizado por nueva obra: {datos_obra.get('nombre','')} (ID: {datos_obra.get('id','')})", tipo='info')

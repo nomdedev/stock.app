@@ -1,3 +1,4 @@
+from PyQt6 import QtGui
 from PyQt6.QtWidgets import QTableWidgetItem
 from core.database import DataAccessLayer
 from modules.usuarios.model import UsuariosModel
@@ -110,10 +111,32 @@ class ComprasPedidosController:
 
         id_pedido = self.view.tabla_pedidos.item(fila_seleccionada, 0).text()
         detalles = self.model.obtener_detalle_pedido(id_pedido)
+        headers = [
+            "ID Detalle", "ID Ítem", "Cantidad solicitada", "Unidad", "Justificación", "Stock disponible", "Faltante"
+        ]
+        self.view.tabla_detalle_pedido.setColumnCount(len(headers))
+        self.view.tabla_detalle_pedido.setHorizontalHeaderLabels(headers)
         self.view.tabla_detalle_pedido.setRowCount(len(detalles))
         for row, detalle in enumerate(detalles):
+            id_item = detalle[1]
+            cantidad_solicitada = float(detalle[2])
+            stock_actual = 0
+            if self.inventario_model is not None:
+                try:
+                    item_inv = self.inventario_model.obtener_item_por_id(id_item)
+                    if item_inv and isinstance(item_inv, dict):
+                        stock_actual = float(item_inv.get('stock_actual', 0))
+                except Exception as e:
+                    stock_actual = 0
+            faltante = max(0, cantidad_solicitada - stock_actual)
             for col, value in enumerate(detalle):
                 self.view.tabla_detalle_pedido.setItem(row, col, QTableWidgetItem(str(value)))
+            item_stock = QTableWidgetItem(str(stock_actual))
+            self.view.tabla_detalle_pedido.setItem(row, 5, item_stock)
+            item_faltante = QTableWidgetItem(str(faltante))
+            if faltante > 0:
+                item_faltante.setForeground(QtGui.QColor("red"))
+            self.view.tabla_detalle_pedido.setItem(row, 6, item_faltante)
         self.view.tabla_detalle_pedido.resizeColumnsToContents()
         self._registrar_evento_auditoria('ver_detalles', f"pedido {id_pedido} detalles mostrados", 'éxito')
 

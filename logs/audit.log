@@ -2274,3 +2274,7 @@
 2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
 2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
 2025-05-23 21:56:23,832 - ERROR - InventarioView: No se pudo conectar a la base de datos de inventario para usuario testuser
+2025-05-24 10:08:02,664 - INFO - Aplicación iniciada
+2025-05-24 10:08:03,148 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 10:08:03,148 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 10:08:03,148 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
