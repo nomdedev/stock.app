@@ -793,3 +793,39 @@ Para garantizar que todas las tablas críticas del sistema tengan la estructura,
 > **Nota:** La cobertura de tests automáticos de UI (PyQt) está documentada en `docs/bloqueo_tests_ui.md`. Allí se explica el diagnóstico, las causas y los próximos pasos sugeridos para poder ejecutar tests de UI en el entorno actual. Revisar ese archivo antes de intentar ampliar o migrar la cobertura de tests visuales.
 
 ---
+
+## Trazabilidad y logs de acciones de usuario (auditoría en terminal)
+
+> **IMPORTANTE:**
+>
+> Todos los controladores principales de la app (Inventario, Obras, Pedidos, Compras, Logística, Usuarios, Auditoría, Configuración, Herrajes, Vidrios, etc.) generan logs explícitos en la terminal cada vez que se ejecuta una acción relevante (alta, baja, edición, consulta, etc.).
+>
+> **¿Qué significa esto?**
+>
+> - Cada vez que un usuario pulsa un botón o realiza una acción que modifica o consulta datos, se imprime en la terminal un log como:
+>
+>   ```
+>   [LOG ACCIÓN] Ejecutando acción 'agregar_material' en módulo 'inventario' por usuario: juan (id=5)
+>   [LOG ACCIÓN] Acción 'agregar_material' en módulo 'inventario' finalizada con éxito.
+>   ```
+>   o, si ocurre un error:
+>   ```
+>   [LOG ACCIÓN] Error en acción 'agregar_material' en módulo 'inventario': <detalle del error>
+>   ```
+>
+> - Esto permite saber exactamente qué se está ejecutando, en qué orden y con qué usuario, facilitando la depuración y la auditoría.
+> - Puedes analizar la secuencia de acciones y detectar si el flujo es correcto o si hay errores de lógica o permisos.
+>
+> **¿Dónde ver estos logs?**
+>
+> - Simplemente abre la terminal donde ejecutas la app. Todos los logs de acciones aparecerán ahí, junto con los logs de arranque y dependencias.
+>
+> - Si necesitas guardar estos logs para análisis posterior, puedes redirigir la salida de la terminal a un archivo:
+>
+>   ```powershell
+>   python main.py > logs/acciones.log 2>&1
+>   ```
+>
+> - Consulta también los estándares de logging en `docs/estandares_logging.md`.
+
+---

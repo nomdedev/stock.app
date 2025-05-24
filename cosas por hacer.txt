@@ -9,7 +9,7 @@
 - [ ] Visualizar el estado de cada ítem de pedido: entregado, pendiente, en espera de compra, etc.
 - [ ] Permitir edición y cancelación de pedidos antes de ser procesados, con registro de cambios en la auditoría.
 - [ ] Implementar confirmaciones visuales (diálogos modales) antes de eliminar o modificar pedidos.
-- [ ] Robustecer el manejo de recursos SVG faltantes: agregar placeholders en img/ o manejar la ausencia mostrando íconos alternativos (2025-05-24, prioridad media).
+- [x] Robustecer el manejo de recursos SVG faltantes: agregar placeholders en img/ o manejar la ausencia mostrando íconos alternativos (2025-05-24, prioridad media). Implementado placeholder.svg y fallback automático en main.py.
 - [ ] Mejorar el SplashScreen para que desaparezca solo cuando la interfaz principal esté completamente cargada y lista, evitando superposición visual (2025-05-24, prioridad alta).
 - [ ] Agregar indicadores visuales de progreso en procesos largos (carga masiva, actualización de stock).
 - [ ] Soporte para adjuntar archivos o imágenes a obras y pedidos (planos, fotos, comprobantes).
@@ -29,8 +29,8 @@
 - [ ] Registrar en la auditoría cada acción relevante (alta, edición, entrega, cancelación) con fecha, usuario y detalle.
 - [ ] Agregar tests automáticos para cubrir casos límite: obra sin stock, pedido parcial, error de conexión, permisos insuficientes, etc.
 - [ ] Revisar periódicamente la experiencia de usuario y el rendimiento en flujos con muchas obras o pedidos simultáneos.
-- [ ] Robustecer la gestión de dependencias opcionales: mostrar advertencia visual clara solo si faltan, pero permitir iniciar la app. Documentar dependencias opcionales y su impacto en el feedback visual (2025-05-24, prioridad media).
-- [ ] Documentar y mantener el flujo robusto de inicio: SplashScreen debe mostrarse primero, luego chequeo de dependencias, y solo si todo está correcto mostrar la interfaz principal. Si hay error crítico, cerrar splash y mostrar mensaje de error (2025-05-24, prioridad alta).
+- [x] Robustecer la gestión de dependencias opcionales: mostrar advertencia visual clara solo si faltan, pero permitir iniciar la app. Documentar dependencias opcionales y su impacto en el feedback visual (2025-05-24, prioridad media).
+- [x] Documentar y mantener el flujo robusto de inicio: SplashScreen debe mostrarse primero, luego chequeo de dependencias, y solo si todo está correcto mostrar la interfaz principal. Si hay error crítico, cerrar splash y mostrar mensaje de error (2025-05-24, prioridad alta).
 
 # Checklist de pruebas y tests automáticos pendientes:
 - [ ] Test: Al agregar una obra, se refleja automáticamente en la tabla de obras y en los módulos de Inventario y Vidrios (sin recargar la app).
@@ -62,5 +62,26 @@
 #     - Verificar que la señal 'obra_agregada' actualiza en tiempo real los módulos de Inventario y Vidrios.
 #     - Validar feedback visual y consistencia de datos en todos los módulos.
 #     - Documentar cualquier bug, excepción o mejora detectada durante la prueba.
+
+# --- MEJORAS DE DISPOSICIÓN DE BOTONES Y LAYOUTS POR MÓDULO (UX/UI, 2025-05-24) ---
+- [ ] InventarioView: Revisar barra de botones principal. Todos los botones deben estar alineados horizontalmente (QHBoxLayout), con espaciado uniforme (mínimo 16px), siempre a la derecha y con addStretch() a la izquierda. No debe haber botones flotando o desalineados. Verificar que no haya botones uno debajo del otro.
+- [ ] ObrasView: Unificar la barra de botones de acciones principales (nuevo, editar, eliminar, exportar) en un solo QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() para mantenerlos a la derecha.
+- [ ] VidriosView: Asegurar que los botones principales (agregar, buscar, exportar) estén en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda. No debe haber botones en vertical.
+- [ ] PedidosView (módulo independiente): Revisar que los botones de acción estén en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] ComprasPedidosView: Unificar todos los botones de acción en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] LogisticaView: En cada pestaña (Obras, Envíos, Servicios), los botones principales deben estar en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] HerrajesView y MaterialesView: Los botones principales deben estar en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] UsuariosView: Unificar los botones de acción (agregar, guardar permisos, etc.) en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] ConfiguracionView: Todos los botones de acción deben estar en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] ContabilidadView: Revisar todos los diálogos y vistas para que los botones de acción estén alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] MantenimientoView: Unificar los botones de acción en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] Sidebar: Verificar que los botones del sidebar cumplen el estándar visual y de espaciado (8px vertical entre botones, padding 10px horizontal).
+
+# Notas generales:
+# - Todos los botones principales deben ser solo ícono, sin texto visible, salvo justificación documentada.
+# - Usar siempre el helper estilizar_boton_icono para tamaño, color y sombra uniforme.
+# - El espaciado entre botones debe ser de 16px (o el definido en el estándar).
+# - Si algún módulo requiere una excepción (botón con texto, disposición vertical, etc.), debe documentarse en el código y en docs/estandares_visuales.md.
+# - Verificar que todos los layouts principales usen QVBoxLayout con setContentsMargins(24, 20, 24, 20) y setSpacing(16).
 
 # Mantener este checklist actualizado y marcar los tests implementados y validados.

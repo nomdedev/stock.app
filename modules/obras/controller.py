@@ -48,21 +48,18 @@ class PermisoAuditoria:
                     return None
                 # --- Ejecución y registro de auditoría ---
                 try:
+                    print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
                     resultado = func(controller, *args, **kwargs)
+                    print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
                     detalle = f"{accion} - éxito"
                     auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return resultado
                 except Exception as e:
+                    print(f"[LOG ACCIÓN] Error en acción '{accion}' en módulo '{self.modulo}': {e}")
                     detalle = f"{accion} - error: {e}"
                     auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     from core.logger import log_error
-                    log_error(f"Error en {accion} [{self.modulo}]: {e}")
-                    # Feedback visual de error
-                    mensaje = f"Error interno en la acción: {accion}. Detalle: {e}"
-                    if hasattr(controller, 'view') and hasattr(controller.view, 'mostrar_mensaje'):
-                        controller.view.mostrar_mensaje(mensaje, tipo='error')
-                    elif hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                        controller.view.label.setText(mensaje)
+                    log_error(f"Error en {accion}: {e}")
                     raise
             # --- Documentación inline del estándar ---
             # Todos los métodos públicos decorados deben:

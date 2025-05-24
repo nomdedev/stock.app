@@ -30,9 +30,33 @@ class ProduccionView(QWidget):
             pass
         aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
 
+        # HEADER VISUAL MODERNO: título y botones alineados
+        header_layout = QHBoxLayout()
         self.label_titulo = QLabel("Gestión de Producción")
-        self.main_layout.addWidget(self.label_titulo)
-        self.label = self.label_titulo  # Para compatibilidad con controladores
+        self.label_titulo.setStyleSheet("color: #2563eb; font-size: 18px; font-weight: bold; padding: 0 0 0 0;")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        header_layout.addStretch()
+        # Crear botones principales como atributos de la clase
+        self.boton_agregar = QPushButton()
+        self.boton_ver_detalles = QPushButton()
+        self.boton_finalizar_etapa = QPushButton()
+        botones = [
+            (self.boton_agregar, "add-etapa.svg", "Agregar producción"),
+            (self.boton_ver_detalles, "viewdetails.svg", "Ver detalles de la abertura seleccionada"),
+            (self.boton_finalizar_etapa, "finish-check.svg", "Finalizar etapa seleccionada")
+        ]
+        for boton, icono, tooltip in botones:
+            boton.setIcon(QIcon(f"img/{icono}"))
+            boton.setIconSize(QSize(24, 24))
+            boton.setToolTip(tooltip)
+            boton.setAccessibleName(tooltip)
+            boton.setText("")
+            boton.setFixedSize(48, 48)
+            boton.setStyleSheet("border-radius: 12px; background: #f1f5f9; color: #2563eb; min-width: 48px; min-height: 48px; margin-left: 16px;")
+            estilizar_boton_icono(boton)
+            header_layout.addWidget(boton, alignment=Qt.AlignmentFlag.AlignVCenter)
+        self.main_layout.insertLayout(0, header_layout)
+
         self.buscar_input = None
         self.id_item_input = None
 
@@ -55,8 +79,9 @@ class ProduccionView(QWidget):
         self.config_path_aberturas = f"config_produccion_aberturas_columns.json"
         self.columnas_visibles_aberturas = self.cargar_config_columnas(self.config_path_aberturas, self.aberturas_headers)
         self.aplicar_columnas_visibles(self.tabla_aberturas, self.aberturas_headers, self.columnas_visibles_aberturas)
-        if self.tabla_aberturas is not None and self.tabla_aberturas.horizontalHeader() is not None:
-            header_aberturas = self.tabla_aberturas.horizontalHeader()
+        # Robustecer: proteger acceso a header de tabla
+        header_aberturas = self.tabla_aberturas.horizontalHeader() if hasattr(self.tabla_aberturas, 'horizontalHeader') else None
+        if header_aberturas is not None:
             header_aberturas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             header_aberturas.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_aberturas, self.aberturas_headers, self.columnas_visibles_aberturas, self.config_path_aberturas))
             header_aberturas.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_aberturas))
@@ -75,8 +100,9 @@ class ProduccionView(QWidget):
         self.config_path_etapas = f"config_produccion_etapas_columns.json"
         self.columnas_visibles_etapas = self.cargar_config_columnas(self.config_path_etapas, self.etapas_headers)
         self.aplicar_columnas_visibles(self.tabla_etapas, self.etapas_headers, self.columnas_visibles_etapas)
-        if self.tabla_etapas is not None and self.tabla_etapas.horizontalHeader() is not None:
-            header_etapas = self.tabla_etapas.horizontalHeader()
+        # Robustecer: proteger acceso a header de tabla
+        header_etapas = self.tabla_etapas.horizontalHeader() if hasattr(self.tabla_etapas, 'horizontalHeader') else None
+        if header_etapas is not None:
             header_etapas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             header_etapas.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_etapas, self.etapas_headers, self.columnas_visibles_etapas, self.config_path_etapas))
             header_etapas.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_etapas))
@@ -85,65 +111,6 @@ class ProduccionView(QWidget):
             header_etapas.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_etapas, self.etapas_headers, self.columnas_visibles_etapas, self.config_path_etapas))
             self.tabla_etapas.setHorizontalHeader(header_etapas)
         self.tabla_etapas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_etapas))
-
-        # Botones principales
-        botones_layout = QHBoxLayout()
-        self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("img/add-etapa.svg"))
-        self.boton_agregar.setIconSize(QSize(20, 20))
-        self.boton_agregar.setToolTip("Agregar producción")
-        self.boton_agregar.setText("")
-        self.boton_agregar.setFixedSize(48, 48)
-        self.boton_agregar.setStyleSheet("")
-        sombra = QGraphicsDropShadowEffect()
-        sombra.setBlurRadius(15)
-        sombra.setXOffset(0)
-        sombra.setYOffset(4)
-        sombra.setColor(QColor(0, 0, 0, 50))
-        self.boton_agregar.setGraphicsEffect(sombra)
-        estilizar_boton_icono(self.boton_agregar)
-        botones_layout.addWidget(self.boton_agregar)
-
-        self.boton_ver_detalles = QPushButton()
-        self.boton_ver_detalles.setIcon(QIcon("img/viewdetails.svg"))
-        self.boton_ver_detalles.setIconSize(QSize(24, 24))
-        self.boton_ver_detalles.setToolTip("Ver detalles de la abertura seleccionada")
-        self.boton_ver_detalles.setText("")
-        self.boton_ver_detalles.setFixedSize(48, 48)
-        self.boton_ver_detalles.setStyleSheet("")
-        sombra_detalles = QGraphicsDropShadowEffect()
-        sombra_detalles.setBlurRadius(15)
-        sombra_detalles.setXOffset(0)
-        sombra_detalles.setYOffset(4)
-        sombra_detalles.setColor(QColor(0, 0, 0, 50))
-        self.boton_ver_detalles.setGraphicsEffect(sombra_detalles)
-        estilizar_boton_icono(self.boton_ver_detalles)
-        botones_layout.addWidget(self.boton_ver_detalles)
-
-        self.boton_finalizar_etapa = QPushButton()
-        self.boton_finalizar_etapa.setIcon(QIcon("img/finish-check.svg"))
-        self.boton_finalizar_etapa.setIconSize(QSize(24, 24))
-        self.boton_finalizar_etapa.setToolTip("Finalizar etapa seleccionada")
-        self.boton_finalizar_etapa.setText("")
-        self.boton_finalizar_etapa.setFixedSize(48, 48)
-        self.boton_finalizar_etapa.setStyleSheet("")
-        sombra_finalizar = QGraphicsDropShadowEffect()
-        sombra_finalizar.setBlurRadius(15)
-        sombra_finalizar.setXOffset(0)
-        sombra_finalizar.setYOffset(4)
-        sombra_finalizar.setColor(QColor(0, 0, 0, 50))
-        self.boton_finalizar_etapa.setGraphicsEffect(sombra_finalizar)
-        estilizar_boton_icono(self.boton_finalizar_etapa)
-        botones_layout.addWidget(self.boton_finalizar_etapa)
-
-        self.boton_agregar.clicked.connect(self.accion_agregar_produccion)
-        self.boton_ver_detalles.clicked.connect(self.accion_ver_detalles)
-        self.boton_finalizar_etapa.clicked.connect(self.accion_finalizar_etapa)
-
-        botones_layout.addStretch()
-        self.main_layout.addLayout(botones_layout)
-
-        self.setLayout(self.main_layout)
 
         # Refuerzo de accesibilidad en botones principales
         for boton in [self.boton_agregar, self.boton_ver_detalles, self.boton_finalizar_etapa]:
@@ -256,8 +223,9 @@ class ProduccionView(QWidget):
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-            img.save(tmp.name)
-            pixmap = QPixmap(tmp.name)
+            img.save(tmp)
+            tmp_path = tmp.name
+            pixmap = QPixmap(tmp_path)
         dialog = QDialog(self)
         dialog.setWindowTitle(f"Código QR para {codigo}")
         vbox = QVBoxLayout(dialog)

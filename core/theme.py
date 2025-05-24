@@ -75,9 +75,5 @@ def apply_shadow_to_button(button):
     button.setGraphicsEffect(shadow)
 
 def aplicar_sombra_css():
-    """Devuelve un estilo CSS para aplicar sombra a los botones."""
-    return """
-    QPushButton {
-        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    """
+    """Devuelve un estilo CSS para aplicar sombra a los botones. (NO USAR box-shadow en Qt, usar QGraphicsDropShadowEffect)"""
+    return """"""

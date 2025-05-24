@@ -25,6 +25,31 @@ class PedidosView(QWidget):
             pass
         aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
 
+        # HEADER VISUAL MODERNO: título y botones alineados
+        header_layout = QHBoxLayout()
+        self.label_titulo = QLabel("Gestión de Pedidos")
+        self.label_titulo.setStyleSheet("color: #2563eb; font-size: 18px; font-weight: bold; padding: 0 0 0 0;")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        header_layout.addStretch()
+        # Botón principal de acción (Agregar pedido)
+        self.boton_nuevo = QPushButton()
+        self.boton_nuevo.setIcon(QIcon("img/add-entrega.svg"))
+        self.boton_nuevo.setIconSize(QSize(20, 20))
+        self.boton_nuevo.setToolTip("Agregar pedido")
+        self.boton_nuevo.setAccessibleName("Agregar pedido")
+        self.boton_nuevo.setText("")
+        self.boton_nuevo.setFixedSize(48, 48)
+        self.boton_nuevo.setStyleSheet("border-radius: 12px; background: #2563eb; color: white; min-width: 48px; min-height: 48px;")
+        sombra = QGraphicsDropShadowEffect()
+        sombra.setBlurRadius(15)
+        sombra.setXOffset(0)
+        sombra.setYOffset(4)
+        sombra.setColor(QColor(0, 0, 0, 50))
+        self.boton_nuevo.setGraphicsEffect(sombra)
+        estilizar_boton_icono(self.boton_nuevo)
+        header_layout.addWidget(self.boton_nuevo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        self.main_layout.insertLayout(0, header_layout)
+
         # Tabla de pedidos
         self.tabla_pedidos = QTableWidget()
         self.tabla_pedidos.setColumnCount(5)
@@ -64,26 +89,6 @@ class PedidosView(QWidget):
         self.form_layout.addRow("Observaciones:", self.observaciones_input)
         self.main_layout.addLayout(self.form_layout)
 
-        # Botón principal de acción (Agregar pedido)
-        self.botones_layout = QHBoxLayout()
-        self.boton_nuevo = QPushButton()
-        self.boton_nuevo.setIcon(QIcon("img/add-entrega.svg"))
-        self.boton_nuevo.setIconSize(QSize(20, 20))
-        self.boton_nuevo.setToolTip("Agregar pedido")
-        self.boton_nuevo.setText("")
-        self.boton_nuevo.setFixedSize(48, 48)
-        self.boton_nuevo.setStyleSheet("")
-        sombra = QGraphicsDropShadowEffect()
-        sombra.setBlurRadius(15)
-        sombra.setXOffset(0)
-        sombra.setYOffset(4)
-        sombra.setColor(QColor(0, 0, 0, 50))
-        self.boton_nuevo.setGraphicsEffect(sombra)
-        estilizar_boton_icono(self.boton_nuevo)
-        self.botones_layout.addWidget(self.boton_nuevo)
-        self.botones_layout.addStretch()
-        self.main_layout.addLayout(self.botones_layout)
-
         # Ajustar espaciado y alineación para asegurar visibilidad
         self.botones_layout.setSpacing(10)
         self.botones_layout.setContentsMargins(0, 10, 0, 10)
@@ -109,10 +114,10 @@ class PedidosView(QWidget):
         self.tabla_pedidos.setToolTip("Tabla de pedidos")
         self.tabla_pedidos.setAccessibleName("Tabla principal de pedidos")
         # Refuerzo visual y robustez en header de tabla principal
-        h_header = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
-        if h_header is not None:
+        header = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
+        if header is not None:
             try:
-                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
             except Exception as e:
                 # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
                 pass

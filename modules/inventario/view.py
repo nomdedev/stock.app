@@ -76,28 +76,19 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.db_connection = db_connection
         self.usuario_actual = usuario_actual
 
-        # Título
-        self.label_titulo = QLabel("INVENTORY")
-        self.main_layout.addWidget(self.label_titulo)
+        # --- Encabezado: Título y barra de botones alineados y espaciados ---
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(24)  # Espaciado entre título y botones
 
-        # Validar conexión
-        if not self._conexion_valida():
-            error_label = QLabel("❌ Error: No se pudo conectar a la base de datos de inventario.\nVerifique la configuración o contacte al administrador.")
-            error_label.setStyleSheet("color: #ef4444; font-size: 13px; font-weight: bold; padding: 16px;")
-            error_label.setToolTip("Error de conexión a la base de datos. Consulte al administrador.")
-            self.main_layout.addWidget(error_label)
-            self._feedback_error(
-                "No se pudo conectar a la base de datos de inventario.",
-                f"InventarioView: No se pudo conectar a la base de datos de inventario para usuario {self.usuario_actual}"
-            )
-            self.setLayout(self.main_layout)
-            return
+        self.label_titulo = QLabel("INVENTARIO")
+        self.label_titulo.setStyleSheet("font-size: 22px; font-weight: bold; letter-spacing: 1px; color: #1e293b;")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
 
-        # --- Barra de botones principal (arriba a la derecha, unificada y estilizada) ---
+        # --- Barra de botones principal (alineada a la derecha, horizontal, uniforme) ---
         top_btns_layout = QHBoxLayout()
         top_btns_layout.setSpacing(16)  # Espaciado estándar entre botones
         top_btns_layout.setContentsMargins(0, 0, 0, 0)
-        top_btns_layout.addStretch()
         # Definir botones principales (todos con el mismo estilo y tamaño)
         iconos = [
             ("add-material.svg", "Agregar nuevo ítem", self.nuevo_item_signal),
@@ -114,7 +105,6 @@ class InventarioView(QWidget, TableResponsiveMixin):
             btn = QPushButton()
             btn.setIcon(QIcon(f"img/{icono}"))
             btn.setIconSize(QSize(24, 24))
-            # Refuerzo: tooltip descriptivo y accesible
             btn.setToolTip(tooltip)
             btn.setText("")
             btn.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -129,8 +119,25 @@ class InventarioView(QWidget, TableResponsiveMixin):
             elif icono == "lote.svg":
                 btn.clicked.connect(self._stub_reserva_lote_perfiles)
             self.barra_botones.append(btn)
-            top_btns_layout.addWidget(btn)
-        self.main_layout.addLayout(top_btns_layout)
+            top_btns_layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignVCenter)
+        # Espaciador para alinear los botones a la derecha
+        header_layout.addStretch()
+        header_layout.addLayout(top_btns_layout)
+        self.main_layout.addLayout(header_layout)
+        self.main_layout.addSpacing(8)  # Espacio visual entre header y tabla
+
+        # Validar conexión
+        if not self._conexion_valida():
+            error_label = QLabel("❌ Error: No se pudo conectar a la base de datos de inventario.\nVerifique la configuración o contacte al administrador.")
+            error_label.setStyleSheet("color: #ef4444; font-size: 13px; font-weight: bold; padding: 16px;")
+            error_label.setToolTip("Error de conexión a la base de datos. Consulte al administrador.")
+            self.main_layout.addWidget(error_label)
+            self._feedback_error(
+                "No se pudo conectar a la base de datos de inventario.",
+                f"InventarioView: No se pudo conectar a la base de datos de inventario para usuario {self.usuario_actual}"
+            )
+            self.setLayout(self.main_layout)
+            return
 
         # --- Tabla de inventario (mejorada visualmente) ---
         self.inventario_headers = self.obtener_headers_desde_db("inventario_perfiles")

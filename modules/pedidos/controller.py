@@ -28,11 +28,14 @@ class PermisoAuditoria:
                     auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return None
                 try:
+                    print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
                     resultado = func(controller, *args, **kwargs)
+                    print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
                     detalle = f"{accion} - éxito"
                     auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return resultado
                 except Exception as e:
+                    print(f"[LOG ACCIÓN] Error en acción '{accion}' en módulo '{self.modulo}': {e}")
                     detalle = f"{accion} - error: {e}"
                     auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     log_error(f"Error en {accion}: {e}")

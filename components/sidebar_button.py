@@ -31,7 +31,7 @@ class SidebarButton(QPushButton):
                 text-align: left;
             }}
             QPushButton:focus {{
-                border: 2px solid #3B82F6; outline: none; box-shadow: 0 0 0 2px #3DE6B1;
+                border: 2px solid #3B82F6; outline: none;
             }}
             QPushButton:hover {{
                 background-color: {COLOR_BOTON_FONDO_HOVER};

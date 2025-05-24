@@ -199,16 +199,22 @@ class UsuariosModel:
     def obtener_modulos_permitidos(self, usuario):
         """
         Devuelve la lista de módulos a los que el usuario tiene acceso (puede_ver=TRUE en permisos_modulos).
-        Admin y supervisor ven todos los módulos.
+        Admin y supervisor ven todos los módulos. Los usuarios normales nunca pueden ver Usuarios, Auditoría ni Configuración.
         """
+        modulos_restringidos = {"Usuarios", "Auditoría", "Configuración"}
         if usuario['rol'] in ('admin', 'supervisor'):
+            # Admin y supervisor ven todos los módulos registrados en la base
             query = "SELECT DISTINCT modulo FROM permisos_modulos"
             resultado = self.db.ejecutar_query(query)
-            return [r[0] for r in resultado] if resultado else []
+            modulos = [r[0] for r in resultado] if resultado else []
+            return modulos
         else:
+            # Usuarios normales: solo módulos permitidos explícitamente y nunca los restringidos
             query = "SELECT modulo FROM permisos_modulos WHERE id_usuario = ? AND puede_ver = 1"
             resultado = self.db.ejecutar_query(query, (usuario['id'],))
-            return [r[0] for r in resultado] if resultado else []
+            modulos = [r[0] for r in resultado] if resultado else []
+            # Filtrar módulos restringidos para usuarios normales
+            return [m for m in modulos if m not in modulos_restringidos]
 
     def obtener_permisos_modulo(self, usuario, modulo):
         """
@@ -393,3 +399,59 @@ class UsuariosModel:
                     return f"Error al exportar a PDF: {e}"
         except Exception as e:
             return f"Error al exportar los logs de usuarios: {e}"
+
+    def obtener_usuario_por_nombre(self, nombre_usuario):
+        query = "SELECT id, usuario, password_hash, rol FROM usuarios WHERE usuario = ?"
+        res = self.db.ejecutar_query(query, (nombre_usuario,))
+        if res and len(res) > 0:
+            row = res[0]
+            return {
+                'id': row[0],
+                'usuario': row[1],
+                'password_hash': row[2],
+                'rol': row[3] if len(row) > 3 else 'usuario'
+            }
+        return None
+
+    def crear_usuarios_iniciales(self):
+        import hashlib
+        usuarios = self.db.ejecutar_query("SELECT usuario, id FROM usuarios")
+        usernames = {u[0]: u[1] for u in usuarios} if usuarios else {}
+        # Crear admin si no existe
+        if 'admin' not in usernames:
+            self.db.ejecutar_query(
+                "INSERT INTO usuarios (nombre, apellido, email, usuario, password_hash, rol, estado) VALUES (?, ?, ?, ?, ?, ?, 'activo')",
+                ("Administrador", "Admin", "admin@demo.com", "admin", hashlib.sha256("admin".encode()).hexdigest(), "admin")
+            )
+            admin_id = self.db.ejecutar_query("SELECT id FROM usuarios WHERE usuario = ?", ("admin",))[0][0]
+        else:
+            admin_id = usernames['admin']
+        # Crear prueba si no existe
+        if 'prueba' not in usernames:
+            self.db.ejecutar_query(
+                "INSERT INTO usuarios (nombre, apellido, email, usuario, password_hash, rol, estado) VALUES (?, ?, ?, ?, ?, ?, 'activo')",
+                ("Prueba", "Test", "prueba@demo.com", "prueba", hashlib.sha256("1".encode()).hexdigest(), "usuario")
+            )
+            prueba_id = self.db.ejecutar_query("SELECT id FROM usuarios WHERE usuario = ?", ("prueba",))[0][0]
+        else:
+            prueba_id = usernames['prueba']
+        # Asignar permisos a admin (todos los módulos, todos los permisos)
+        modulos = self.obtener_todos_los_modulos()
+        if not modulos:
+            # Si no hay módulos en roles_permisos, intentar obtener de permisos_modulos
+            modulos = self.db.ejecutar_query("SELECT DISTINCT modulo FROM permisos_modulos")
+            modulos = [m[0] for m in modulos] if modulos else []
+        # Limpiar permisos previos
+        self.db.ejecutar_query("DELETE FROM permisos_modulos WHERE id_usuario = ?", (admin_id,))
+        self.db.ejecutar_query("DELETE FROM permisos_modulos WHERE id_usuario = ?", (prueba_id,))
+        for modulo in modulos:
+            # Admin: todos los permisos
+            self.db.ejecutar_query(
+                "INSERT INTO permisos_modulos (id_usuario, modulo, puede_ver, puede_modificar, puede_aprobar, creado_por) VALUES (?, ?, 1, 1, 1, ?) ",
+                (admin_id, modulo, admin_id)
+            )
+            # Prueba: solo ver (modificable luego por admin)
+            self.db.ejecutar_query(
+                "INSERT INTO permisos_modulos (id_usuario, modulo, puede_ver, puede_modificar, puede_aprobar, creado_por) VALUES (?, ?, 1, 0, 0, ?) ",
+                (prueba_id, modulo, admin_id)
+            )

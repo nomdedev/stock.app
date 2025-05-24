@@ -38,7 +38,7 @@ class SidebarButton(QPushButton):
             f"text-align: left;"
             f"}}"
             f"QPushButton:focus {{"
-            f"border: 2px solid #3B82F6; outline: none; box-shadow: 0 0 0 2px #BFE3FF;"
+            f"border: 2px solid #3B82F6; outline: none;"
             f"}}"
             f"QPushButton:hover {{background-color: {COLOR_BOTON_FONDO_HOVER};}}"
         )

@@ -40,12 +40,15 @@ class PermisoAuditoria:
                     auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return None
                 try:
+                    print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
                     resultado = func(controller, *args, **kwargs)
+                    print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
                     usuario_id = usuario.get('id') if usuario else None
                     detalle = f"{accion} - éxito"
                     auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return resultado
                 except Exception as e:
+                    print(f"[LOG ACCIÓN] Error en acción '{accion}' en módulo '{self.modulo}': {e}")
                     usuario_id = usuario.get('id') if usuario else None
                     detalle = f"{accion} - error: {e}"
                     auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
@@ -329,8 +332,10 @@ class UsuariosController(BaseController):
         self.view.combo_usuario.clear()
         for u in usuarios_normales:
             self.view.combo_usuario.addItem(f"{u[0]}", u[0])  # username como display y data
-        # Cargar módulos disponibles
+        # Cargar módulos disponibles, excluyendo los restringidos
+        modulos_restringidos = {"Usuarios", "Auditoría", "Configuración"}
         modulos = self.model.obtener_todos_los_modulos() if hasattr(self.model, 'obtener_todos_los_modulos') else []
+        modulos = [m for m in modulos if m not in modulos_restringidos]
         self.view.tabla_permisos_modulos.setRowCount(len(modulos))
         self.view.tabla_permisos_modulos.setColumnCount(2)
         self.view.tabla_permisos_modulos.setHorizontalHeaderLabels(["Módulo", "Permitido"])

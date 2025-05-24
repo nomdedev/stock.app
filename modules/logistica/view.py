@@ -18,8 +18,25 @@ class LogisticaView(QWidget, TableResponsiveMixin):
         super().__init__()
         self.usuario_actual = usuario_actual
         self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(20, 20, 20, 20)
-        self.main_layout.setSpacing(20)
+        self.main_layout.setContentsMargins(24, 20, 24, 20)
+        self.main_layout.setSpacing(16)
+
+        # --- HEADER VISUAL MODERNO ---
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(12)
+        icono_label = QLabel()
+        icono_label.setPixmap(QIcon("img/logistica.svg").pixmap(36, 36))
+        icono_label.setFixedSize(40, 40)
+        icono_label.setToolTip("Icono de Logística")
+        icono_label.setAccessibleName("Icono de Logística")
+        titulo_label = QLabel("Logística")
+        titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")
+        titulo_label.setAccessibleName("Título de módulo Logística")
+        header_layout.addWidget(icono_label)
+        header_layout.addWidget(titulo_label)
+        header_layout.addStretch()
+        self.main_layout.addLayout(header_layout)
 
         # Tabs principales
         self.tabs = QTabWidget()
@@ -202,6 +219,7 @@ pip install PyQt6-WebEngine
 
         # Botón principal de acción (Agregar)
         botones_layout = QHBoxLayout()
+        botones_layout.addStretch()
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("img/hoja-de-ruta.svg"))  # Icono específico de logística
         self.boton_agregar.setIconSize(QSize(24, 24))
@@ -216,8 +234,14 @@ pip install PyQt6-WebEngine
         sombra.setColor(QColor(0, 0, 0, 160))
         self.boton_agregar.setGraphicsEffect(sombra)
         estilizar_boton_icono(self.boton_agregar)
+        self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.boton_agregar.setStyleSheet(self.boton_agregar.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        font = self.boton_agregar.font()
+        if font.pointSize() < 12:
+            font.setPointSize(12)
+        self.boton_agregar.setFont(font)
+        self.boton_agregar.setAccessibleName("Botón agregar envío")
         botones_layout.addWidget(self.boton_agregar)
-        botones_layout.addStretch()
         self.main_layout.addLayout(botones_layout)
 
         # Refuerzo de accesibilidad en botón principal
@@ -283,6 +307,8 @@ pip install PyQt6-WebEngine
         self.feedback_label = QLabel()
         self.feedback_label.setVisible(False)
         self.feedback_label.setStyleSheet("QLabel { font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; }")
+        self.feedback_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.feedback_label.setAccessibleName("Feedback visual de Logística")
         self.main_layout.addWidget(self.feedback_label)
 
         # --- FEEDBACK DE PROGRESO (QProgressBar) ---
@@ -292,6 +318,7 @@ pip install PyQt6-WebEngine
         self.progress_bar.setMaximum(0)  # Modo indeterminado (spinner)
         self.progress_bar.setTextVisible(False)
         self.progress_bar.setStyleSheet("QProgressBar { border-radius: 8px; height: 18px; background: #e3f6fd; } QProgressBar::chunk { background: #2563eb; border-radius: 8px; }")
+        self.progress_bar.setAccessibleName("Barra de progreso de Logística")
         self.main_layout.addWidget(self.progress_bar)
 
     def mostrar_feedback(self, mensaje, tipo="info"):

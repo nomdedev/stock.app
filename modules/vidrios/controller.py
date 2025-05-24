@@ -14,6 +14,7 @@ class VidriosController:
         pass
 
     def actualizar_por_obra(self, datos_obra):
+        print(f"[LOG ACCIÓN] Ejecutando acción 'actualizar_por_obra' en módulo 'vidrios' por usuario: {getattr(self.usuario_actual, 'username', 'desconocido') if self.usuario_actual else 'desconocido'}")
         """
         Método para refrescar la vista de vidrios cuando se agrega una nueva obra.
         Se puede usar para actualizar la lista de vidrios, pedidos pendientes, etc.
@@ -21,8 +22,10 @@ class VidriosController:
         self.refrescar_vidrios()
         if hasattr(self.view, 'mostrar_mensaje'):
             self.view.mostrar_mensaje(f"Vidrios actualizados por nueva obra: {datos_obra.get('nombre','')} (ID: {datos_obra.get('id','')})", tipo='info')
+        print("[LOG ACCIÓN] Acción 'actualizar_por_obra' en módulo 'vidrios' finalizada con éxito.")
 
     def refrescar_vidrios(self):
+        print(f"[LOG ACCIÓN] Ejecutando acción 'refrescar_vidrios' en módulo 'vidrios' por usuario: {getattr(self.usuario_actual, 'username', 'desconocido') if self.usuario_actual else 'desconocido'}")
         """
         Refresca la tabla de vidrios desde la base de datos.
         """
@@ -34,7 +37,9 @@ class VidriosController:
                     for columna, header in enumerate(self.view.vidrios_headers):
                         valor = vidrio.get(header, "") if isinstance(vidrio, dict) else vidrio[columna]
                         self.view.tabla_vidrios.setItem(fila, columna, QTableWidgetItem(str(valor)))
+            print("[LOG ACCIÓN] Acción 'refrescar_vidrios' en módulo 'vidrios' finalizada con éxito.")
         except Exception as e:
+            print(f"[LOG ACCIÓN] Error en acción 'refrescar_vidrios' en módulo 'vidrios': {e}")
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje(f"Error al refrescar vidrios: {e}", tipo='error')
 

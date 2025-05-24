@@ -12,19 +12,97 @@ from core.table_responsive_mixin import TableResponsiveMixin
 from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 
 class UsuariosView(QWidget, TableResponsiveMixin):
+    """
+    Vista robusta para gestión de usuarios y permisos.
+    Cumple los estándares de layout, accesibilidad, feedback y permisos definidos en docs/estandares_visuales.md.
+    - Header visual con título y barra de botones alineados horizontalmente.
+    - Refuerzo de accesibilidad en botones y tabla.
+    - Feedback visual centralizado.
+    - Lógica robusta para mostrar/ocultar pestaña de permisos según rol.
+    - Documentación de edge cases y excepciones visuales.
+    """
     def __init__(self, usuario_actual="default", controller=None):
         super().__init__()
         self.usuario_actual = usuario_actual
         self.controller = controller  # Permite inyectar lógica de negocio/mock para testeo
         self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setContentsMargins(24, 20, 24, 20)
         self.main_layout.setSpacing(20)
+
+        # --- Header visual: título y barra de botones alineados ---
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(24)
+        self.label_titulo = QLabel("Gestión de Usuarios")
+        self.label_titulo.setStyleSheet("font-size: 22px; font-weight: bold; letter-spacing: 1px; color: #1e293b;")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        # Botón principal (Agregar usuario)
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/agregar-user.svg"))
+        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setToolTip("Agregar usuario")
+        self.boton_agregar.setText("")
+        self.boton_agregar.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.boton_agregar.setFixedSize(38, 38)
+        estilizar_boton_icono(self.boton_agregar)
+        header_layout.addStretch()
+        header_layout.addWidget(self.boton_agregar, alignment=Qt.AlignmentFlag.AlignVCenter)
+        self.main_layout.addLayout(header_layout)
+        self.main_layout.addSpacing(8)
 
         self._cargar_stylesheet()
         self._init_tabs()
         self._init_tab_usuarios()
         self._init_tab_permisos()
         self.setLayout(self.main_layout)
+
+        # --- Feedback visual centralizado ---
+        self.label_feedback = QLabel()
+        self.label_feedback.setStyleSheet("font-size: 13px; padding: 8px 0; color: #2563eb;")
+        self.label_feedback.setVisible(False)
+        self.main_layout.addWidget(self.label_feedback)
+
+        # Refuerzo de accesibilidad en botón principal
+        self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        font = self.boton_agregar.font()
+        if font.pointSize() < 12:
+            font.setPointSize(12)
+        self.boton_agregar.setFont(font)
+
+        # Refuerzo de accesibilidad en tabla principal
+        self.tabla_usuarios.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.tabla_usuarios.setStyleSheet(self.tabla_usuarios.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # Refuerzo de accesibilidad en todos los QLineEdit de la vista principal
+        for widget in self.findChildren(QComboBox):
+            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+            if not widget.toolTip():
+                widget.setToolTip("Selector de usuario")
+            if not widget.accessibleName():
+                widget.setAccessibleName("Selector de usuario para permisos")
+
+    def mostrar_feedback(self, mensaje, tipo="info"):
+        colores = {
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "advertencia": "#fbbf24",
+            "error": "#ef4444"
+        }
+        color = colores.get(tipo, "#2563eb")
+        self.label_feedback.setStyleSheet(f"font-size: 13px; padding: 8px 0; color: {color};")
+        self.label_feedback.setText(mensaje)
+        self.label_feedback.setVisible(True)
+
+    def mostrar_tab_permisos(self, visible):
+        # Solo mostrar la pestaña de permisos si el usuario es admin
+        idx = self.tabs.indexOf(self.tab_permisos)
+        if visible and idx == -1:
+            self.tabs.addTab(self.tab_permisos, "Permisos de módulos")
+        elif not visible and idx != -1:
+            self.tabs.removeTab(idx)
 
     def _cargar_stylesheet(self):
         # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
@@ -71,20 +149,18 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         # Menú contextual en el header
         header = self.tabla_usuarios.horizontalHeader() if hasattr(self.tabla_usuarios, 'horizontalHeader') else None
         if header is not None:
-            if hasattr(header, 'setContextMenuPolicy'):
-                header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             if hasattr(header, 'customContextMenuRequested'):
                 header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
+            # Eliminar/congelar conexión a autoajustar_columna hasta que se implemente correctamente
+            # if hasattr(self, 'autoajustar_columna') and hasattr(header, 'sectionDoubleClicked'):
+            #     header.sectionDoubleClicked.connect(self.autoajustar_columna)
             if hasattr(header, 'setSectionsMovable'):
                 header.setSectionsMovable(True)
             if hasattr(header, 'setSectionsClickable'):
                 header.setSectionsClickable(True)
             if hasattr(header, 'sectionClicked'):
                 header.sectionClicked.connect(self.mostrar_menu_columnas_header)
-        else:
-            # EXCEPCIÓN VISUAL: Si el header es None, no se puede aplicar menú contextual ni acciones de header.
-            # Documentar en docs/estandares_visuales.md si ocurre en producción.
-            pass
         # Señal para mostrar QR al seleccionar un ítem
         if hasattr(self.tabla_usuarios, 'itemSelectionChanged'):
             self.tabla_usuarios.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
@@ -98,18 +174,9 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.tabla_permisos_modulos = QTableWidget()
         self.make_table_responsive(self.tabla_permisos_modulos)
         tab_permisos_layout.addWidget(self.tabla_permisos_modulos)
-        self.boton_guardar_permisos = QPushButton()
-        self.boton_guardar_permisos.setIcon(QIcon("img/guardar-permisos.svg"))
-        self.boton_guardar_permisos.setToolTip("Guardar permisos")
+        self.boton_guardar_permisos = QPushButton("Guardar permisos")
         estilizar_boton_icono(self.boton_guardar_permisos)
         tab_permisos_layout.addWidget(self.boton_guardar_permisos)
-
-    def mostrar_tab_permisos(self, visible):
-        idx = self.tabs.indexOf(self.tab_permisos)
-        if visible and idx == -1:
-            self.tabs.addTab(self.tab_permisos, "Permisos de módulos")
-        elif not visible and idx != -1:
-            self.tabs.removeTab(idx)
 
     def obtener_headers_desde_db(self, tabla):
         # Obtención dinámica de headers desde la base de datos (si hay controller y método disponible)
@@ -157,15 +224,15 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             accion.setChecked(self.columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
-        header = self.tabla_usuarios.horizontalHeader()
-        if header is not None:
-            menu.exec(header.mapToGlobal(pos))
+        viewport = self.tabla_usuarios.viewport() if hasattr(self.tabla_usuarios, 'viewport') else None
+        if viewport is not None and hasattr(viewport, 'mapToGlobal'):
+            menu.exec(viewport.mapToGlobal(pos))
         else:
             menu.exec(pos)
 
     def mostrar_menu_columnas_header(self, idx):
-        header = self.tabla_usuarios.horizontalHeader()
-        if header is not None:
+        header = self.tabla_usuarios.horizontalHeader() if hasattr(self.tabla_usuarios, 'horizontalHeader') else None
+        if header is not None and hasattr(header, 'sectionPosition') and hasattr(header, 'mapToGlobal') and hasattr(header, 'sectionViewportPosition'):
             pos = header.sectionPosition(idx)
             global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
             self.mostrar_menu_columnas(global_pos)
@@ -198,14 +265,8 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 qr_label.setPixmap(pixmap)
                 vbox.addWidget(qr_label)
                 btns = QHBoxLayout()
-                btn_guardar = QPushButton()
-                btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
-                btn_guardar.setToolTip("Guardar QR como imagen")
-                estilizar_boton_icono(btn_guardar)
-                btn_pdf = QPushButton()
-                btn_pdf.setIcon(QIcon("img/pdf.svg"))
-                btn_pdf.setToolTip("Exportar QR a PDF")
-                estilizar_boton_icono(btn_pdf)
+                btn_guardar = QPushButton("Guardar QR como imagen")
+                btn_pdf = QPushButton("Exportar QR a PDF")
                 btns.addWidget(btn_guardar)
                 btns.addWidget(btn_pdf)
                 vbox.addLayout(btns)
@@ -225,67 +286,3 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 btn_guardar.clicked.connect(guardar)
                 btn_pdf.clicked.connect(exportar_pdf)
                 dialog.exec()
-        # Refuerzo de accesibilidad en botones principales
-        for btn in [self.boton_agregar, self.boton_guardar_permisos]:
-            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
-            font = btn.font()
-            if font.pointSize() < 12:
-                font.setPointSize(12)
-            btn.setFont(font)
-            if not btn.toolTip():
-                btn.setToolTip("Botón de acción")
-            if not btn.accessibleName():
-                btn.setAccessibleName("Botón de acción de usuarios")
-        # Refuerzo de accesibilidad en tablas principales
-        for tabla in [self.tabla_usuarios, self.tabla_permisos_modulos]:
-            tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
-            tabla.setToolTip("Tabla de datos")
-            tabla.setAccessibleName("Tabla principal de usuarios")
-            # Refuerzo visual de headers (fondo celeste pastel, texto azul pastel, bordes redondeados)
-            h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
-            if h_header is not None:
-                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
-        # Refuerzo de accesibilidad en QComboBox
-        for widget in self.findChildren(QComboBox):
-            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            font = widget.font()
-            if font.pointSize() < 12:
-                font.setPointSize(12)
-            widget.setFont(font)
-            if not widget.toolTip():
-                widget.setToolTip("Seleccionar opción")
-            if not widget.accessibleName():
-                widget.setAccessibleName("Selector de usuario")
-        # Refuerzo de accesibilidad en QLabel
-        for widget in self.findChildren(QLabel):
-            font = widget.font()
-            if font.pointSize() < 12:
-                font.setPointSize(12)
-            widget.setFont(font)
-        # Márgenes y padding en layouts según estándar
-        self.main_layout.setContentsMargins(24, 20, 24, 20)
-        self.main_layout.setSpacing(16)
-        for tab in [self.tab_usuarios, self.tab_permisos]:
-            layout = tab.layout() if hasattr(tab, 'layout') else None
-            if layout is not None:
-                layout.setContentsMargins(24, 20, 24, 20)
-                layout.setSpacing(16)
-        # Documentar excepción visual si aplica
-        # EXCEPCIÓN: Este módulo no usa QLineEdit en la vista principal, por lo que no aplica refuerzo en inputs.
-
-    def showEvent(self, event):
-        super().showEvent(event)
-        try:
-            self._reforzar_accesibilidad()
-        except AttributeError:
-            pass
-
-class Usuarios(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.main_layout = QVBoxLayout()
-        self.label_titulo = QLabel("Vista de Usuarios")
-        self.main_layout.addWidget(self.label_titulo)
-        self.setLayout(self.main_layout)

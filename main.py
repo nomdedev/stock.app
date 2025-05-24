@@ -56,11 +56,8 @@ import platform
 
 # --- INSTALACIÓN AUTOMÁTICA DE DEPENDENCIAS CRÍTICAS (WHEELS) PARA TODA LA APP ---
 def instalar_dependencias_criticas():
-    """
-    Instala automáticamente pandas y pyodbc usando wheels precompilados si la instalación normal falla.
-    Esto evita errores de compilación en Windows y asegura que la app pueda iniciar en cualquier entorno.
-    """
     import urllib.request
+    print("[LOG 1.1] === INICIO DE CHEQUEO DE DEPENDENCIAS CRÍTICAS ===")
     py_version = f"{sys.version_info.major}{sys.version_info.minor}"  # Ej: 311 para Python 3.11
     arch = platform.architecture()[0]
     py_tag = f"cp{py_version}"
@@ -74,38 +71,69 @@ def instalar_dependencias_criticas():
         url = url_base + wheel_file
         local_path = os.path.join(os.getcwd(), wheel_file)
         try:
-            print(f"Descargando e instalando wheel para {paquete}...")
+            print(f"[LOG 1.1.1] Descargando e instalando wheel para {paquete} desde {url}...")
             urllib.request.urlretrieve(url, local_path)
             subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", local_path])
             os.remove(local_path)
-            print(f"✅ {paquete} instalado desde wheel.")
+            print(f"[LOG 1.1.2] ✅ {paquete} instalado desde wheel.")
             return True
         except Exception as e:
-            print(f"❌ Error instalando {paquete} desde wheel: {e}")
+            print(f"[LOG 1.1.3] ❌ Error instalando {paquete} desde wheel: {e}")
             return False
     def instalar_dependencia(paquete, version):
         try:
-            if version:
-                subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", f"{paquete}=={version}", "--prefer-binary"])
-            else:
-                subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", paquete, "--prefer-binary"])
-            print(f"✅ {paquete} instalado normalmente.")
+            print(f"[LOG 1.2.1] Instalando {paquete}=={version} con pip...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", f"{paquete}=={version}", "--prefer-binary"])
+            print(f"[LOG 1.2.2] ✅ {paquete} instalado normalmente.")
             return True
-        except Exception:
+        except Exception as e:
+            print(f"[LOG 1.2.3] ❌ Error instalando {paquete} normalmente: {e}")
             if paquete in wheels:
                 return instalar_wheel(paquete, wheels[paquete])
             return False
+    def instalar_dependencia_si_falta(paquete, version):
+        print(f"[LOG 1.3.1] Chequeando {paquete} >= {version if version else ''}...")
+        try:
+            if version:
+                pkg_resources.require(f"{paquete}>={version}")
+            else:
+                __import__(paquete)
+            print(f"[LOG 1.3.2] ✅ {paquete} ya está instalado y cumple versión.")
+            return True
+        except Exception:
+            print(f"[LOG 1.3.3] ❌ {paquete} no está instalado o la versión es incorrecta. Intentando instalar...")
+            return instalar_dependencia(paquete, version)
     requeridos = [("pandas", "2.2.2"), ("pyodbc", "5.0.1")]
     for paquete, version in requeridos:
-        instalar_dependencia(paquete, version)
-    # Instalar el resto de requirements.txt
+        instalar_dependencia_si_falta(paquete, version)
+    # Instalar el resto de requirements.txt, excluyendo pandas y pyodbc
     try:
-        print("Instalando el resto de dependencias desde requirements.txt...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "--prefer-binary", "-r", "requirements.txt"])
-        print("✅ Todas las dependencias instaladas correctamente.")
+        print("[LOG 1.4.1] Instalando el resto de dependencias desde requirements.txt (sin pandas ni pyodbc)...")
+        req_path = os.path.join(os.getcwd(), "requirements.txt")
+        req_tmp_path = os.path.join(os.getcwd(), "requirements_tmp.txt")
+        with open(req_path, "r", encoding="utf-8") as fin, open(req_tmp_path, "w", encoding="utf-8") as fout:
+            for line in fin:
+                if not (line.strip().startswith("pandas") or line.strip().startswith("pyodbc")):
+                    fout.write(line)
+        # Leer requirements_tmp.txt y chequear cada paquete antes de instalar
+        with open(req_tmp_path, "r", encoding="utf-8") as f:
+            for line in f:
+                pkg = line.strip().split("==")[0] if "==" in line else line.strip()
+                if not pkg or pkg.startswith("#"): continue
+                try:
+                    print(f"[LOG 1.4.2] Chequeando {pkg}...")
+                    pkg_resources.require(line.strip())
+                    print(f"[LOG 1.4.3] ✅ {pkg} ya está instalado.")
+                except Exception:
+                    print(f"[LOG 1.4.4] ❌ {pkg} no está instalado o la versión es incorrecta. Instalando...")
+                    subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", line.strip()])
+        os.remove(req_tmp_path)
+        print("[LOG 1.4.5] ✅ Todas las dependencias instaladas correctamente.")
     except Exception as e:
-        print(f"❌ Error instalando requirements.txt: {e}")
+        print(f"[LOG 1.4.6] ❌ Error instalando requirements.txt: {e}")
         print("Por favor, revisa los logs y ejecuta manualmente si es necesario.")
+    print("[LOG 1.5] === FIN DE CHEQUEO DE DEPENDENCIAS CRÍTICAS ===")
+        
 
 # Ejecutar instalación automática antes de cualquier importación pesada o arranque de la app
 def _verificar_e_instalar_dependencias():
@@ -207,36 +235,45 @@ def verificar_dependencias():
     Verifica si las dependencias críticas y secundarias están instaladas.
     Si falta una CRÍTICA (PyQt6, pandas, pyodbc), muestra un error y cierra.
     Si faltan secundarias, muestra advertencia visual pero permite iniciar la app.
+    Ahora acepta versiones IGUALES O SUPERIORES a las requeridas.
     """
+    import pkg_resources
     from PyQt6.QtWidgets import QApplication
     requeridos_criticos = [
         ("PyQt6", "6.9.0"), ("pandas", "2.2.2"), ("pyodbc", "5.0.1")
     ]
     requeridos_secundarios = [
-        ("reportlab", "4.4.1"), ("qrcode", "7.4.2"), ("matplotlib", "3.8.4"),
+        ("reportlab", "4.4.0"), ("qrcode", "7.4.2"), ("matplotlib", "3.8.4"),
         ("pytest", "8.2.0"), ("pillow", "10.3.0"), ("python-dateutil", "2.9.0"),
         ("pytz", "2024.1"), ("tzdata", "2024.1"), ("openpyxl", "3.1.2"),
         ("colorama", "0.4.6"), ("ttkthemes", "3.2.2"), ("fpdf", None)
     ]
     faltantes_criticos = []
     faltantes_secundarios = []
+    print("[LOG 2.1] Chequeando dependencias críticas...", flush=True)
     for paquete, version in requeridos_criticos:
         try:
             if version:
                 pkg_resources.require(f"{paquete}>={version}")
             else:
                 __import__(paquete)
+            print(f"[LOG 2.1.1] ✅ {paquete} presente y versión >= {version if version else ''}.", flush=True)
         except Exception:
+            print(f"[LOG 2.1.2] ❌ {paquete} faltante o versión menor a la requerida.", flush=True)
             faltantes_criticos.append(f"{paquete}{' >= ' + version if version else ''}")
+    print("[LOG 2.2] Chequeando dependencias secundarias...", flush=True)
     for paquete, version in requeridos_secundarios:
         try:
             if version:
                 pkg_resources.require(f"{paquete}>={version}")
             else:
                 __import__(paquete)
+            print(f"[LOG 2.2.1] ✅ {paquete} presente.", flush=True)
         except Exception:
+            print(f"[LOG 2.2.2] ❌ {paquete} faltante.", flush=True)
             faltantes_secundarios.append(f"{paquete}{' >= ' + version if version else ''}")
     if faltantes_criticos:
+        print("[LOG 2.3] Dependencias críticas faltantes. Mostrando mensaje y abortando.", flush=True)
         mostrar_mensaje_dependencias(
             "Faltan dependencias críticas",
             "No se puede iniciar la aplicación. Instala las siguientes dependencias críticas:",
@@ -245,6 +282,7 @@ def verificar_dependencias():
         )
         sys.exit(1)
     elif faltantes_secundarios:
+        print("[LOG 2.4] Dependencias secundarias faltantes. Mostrando advertencia.", flush=True)
         mostrar_mensaje_dependencias(
             "Dependencias opcionales faltantes",
             "La aplicación se iniciará, pero faltan dependencias secundarias. Algunas funciones pueden estar limitadas (exportar PDF, QR, gráficos, etc.):",
@@ -252,9 +290,7 @@ def verificar_dependencias():
             tipo="warning"
         )
     else:
-        print("✅ Todas las dependencias críticas y secundarias están instaladas correctamente.")
-
-verificar_dependencias()
+        print("[LOG 2.5] ✅ Todas las dependencias críticas y secundarias están instaladas correctamente.", flush=True)
 
 import os
 # Refuerzo para evitar errores de OpenGL/Skia/Chromium en Windows
@@ -416,7 +452,16 @@ class MainWindow(QMainWindow):
         self.configuracion_model = ConfiguracionModel(db_connection=self.db_connection_configuracion)
         self.herrajes_model = HerrajesModel(self.db_connection_inventario)
         self.usuarios_model = UsuariosModel(db_connection=self.db_connection_usuarios)
-        self._crear_usuarios_iniciales()
+        # Crear usuarios admin y prueba si no existen
+        self.usuarios_model.crear_usuarios_iniciales()
+
+        # Mostrar pantalla de login tras el SplashScreen
+        from modules.usuarios.login_view import LoginView
+        from modules.usuarios.login_controller import LoginController
+        self.login_view = LoginView()
+        self.login_controller = LoginController(self.login_view, self.usuarios_model)
+        self.login_view.show()
+        self.login_view.boton_login.clicked.connect(self._on_login_success)
 
         # Crear instancias de vistas y controladores
         self.inventario_view = InventarioView(db_connection=self.db_connection_inventario, usuario_actual="admin")
@@ -468,8 +513,7 @@ class MainWindow(QMainWindow):
             )
         except Exception as e:
             print(f"Error al inicializar el módulo Auditoría: {e}")
-            # Mostrar un mensaje de advertencia en la interfaz
-            self._status_bar.showMessage("El módulo Auditoría está deshabilitado temporalmente.")
+            self.mostrar_mensaje("El módulo Auditoría está deshabilitado temporalmente.", tipo="advertencia")
 
         try:
             # Inicializar el módulo Configuración
@@ -479,7 +523,7 @@ class MainWindow(QMainWindow):
             )
         except Exception as e:
             print(f"Error al inicializar el módulo Configuración: {e}")
-            self._status_bar.showMessage("El módulo Configuración está deshabilitado temporalmente.")
+            self.mostrar_mensaje("El módulo Configuración está deshabilitado temporalmente.", tipo="advertencia")
 
         # Inicializar el módulo Mantenimiento
         self.mantenimiento_view = MantenimientoView()
@@ -491,6 +535,7 @@ class MainWindow(QMainWindow):
             )
         except Exception as e:
             print(f"Error al inicializar el módulo Mantenimiento: {e}")
+            self.mostrar_mensaje("El módulo Mantenimiento está deshabilitado temporalmente.", tipo="advertencia")
 
         # Inicializar el módulo Contabilidad
         self.contabilidad_view = ContabilidadView()
@@ -502,6 +547,7 @@ class MainWindow(QMainWindow):
             )
         except Exception as e:
             print(f"Error al inicializar el módulo Contabilidad: {e}")
+            self.mostrar_mensaje("El módulo Contabilidad está deshabilitada temporalmente.", tipo="advertencia")
 
         # Inicializar el módulo Herrajes
         self.herrajes_view = HerrajesView()
@@ -509,23 +555,18 @@ class MainWindow(QMainWindow):
             self.herrajes_model, self.herrajes_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
         )
 
+        # Inicializar el módulo Vidrios de forma robusta
         try:
+            from modules.vidrios.view import VidriosView
             from modules.vidrios.controller import VidriosController
+            self.vidrios_view = VidriosView()
             self.vidrios_controller = VidriosController(
                 model=self.vidrios_view, view=self.vidrios_view, db_connection=self.db_connection_inventario
             )
-        except Exception:
-            pass
-
-        try:
-            from modules.notificaciones.view import NotificacionesView
-            from modules.notificaciones.controller import NotificacionesController
-            self.notificaciones_view = NotificacionesView()
-            self.notificaciones_controller = NotificacionesController(
-                model=self.notificaciones_view, view=self.notificaciones_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
-            )
+            self.module_stack.addWidget(self.vidrios_view)  # index 5
         except Exception as e:
-            print(f"Error al inicializar el módulo Notificaciones: {e}")
+            print(f"Error al inicializar el módulo Vidrios: {e}")
+            self.mostrar_mensaje("El módulo Vidrios está deshabilitado temporalmente.", tipo="advertencia")
 
         # Layout principal
         main_layout = QHBoxLayout()
@@ -542,12 +583,6 @@ class MainWindow(QMainWindow):
         self.module_stack.addWidget(self.herrajes_view)         # index 2
         self.module_stack.addWidget(self.compras_pedidos_view)  # index 3
         self.module_stack.addWidget(self.logistica_view)        # index 4
-        try:
-            from modules.vidrios.view import VidriosView
-            self.vidrios_view = VidriosView()
-            self.module_stack.addWidget(self.vidrios_view)      # index 5
-        except Exception:
-            pass
         self.module_stack.addWidget(self.mantenimiento_view)    # index 6
         self.module_stack.addWidget(self.produccion_view)       # index 7
         self.module_stack.addWidget(self.contabilidad_view)     # index 8
@@ -572,7 +607,14 @@ class MainWindow(QMainWindow):
             ("Usuarios", os.path.join(svg_dir, 'users.svg')),
             ("Configuración", os.path.join(svg_dir, 'configuracion.svg'))
         ]
-        self.sidebar = Sidebar("utils", sidebar_sections, mostrar_nombres=True)
+        # Robustecer: si algún SVG no existe, usar placeholder
+        sidebar_sections_robustos = []
+        for nombre, icono in sidebar_sections:
+            if not os.path.exists(icono):
+                print(f"[WARN] Icono no encontrado: {icono}, usando placeholder.svg")
+                icono = os.path.join(os.path.dirname(__file__), 'img', 'placeholder.svg')
+            sidebar_sections_robustos.append((nombre, icono))
+        self.sidebar = Sidebar("utils", sidebar_sections_robustos, mostrar_nombres=True)
         self.sidebar.pageChanged.connect(self.module_stack.setCurrentIndex)
         self.sidebar.pageChanged.connect(self.on_modulo_cambiado)
         main_layout.addWidget(self.sidebar)
@@ -630,7 +672,10 @@ class MainWindow(QMainWindow):
         self.sidebar.set_sections(secciones_filtradas)
         # Actualizar module_stack para solo mostrar los permitidos
         # (Opcional: podrías ocultar widgets no permitidos o bloquear acceso)
-        self.module_stack.setCurrentIndex(indices_permitidos[0] if indices_permitidos else 0)
+        if indices_permitidos:
+            self.module_stack.setCurrentIndex(indices_permitidos[0])
+        else:
+            self.module_stack.setCurrentIndex(0)
 
     def login_success(self, usuario):
         # Usar el usuario real autenticado (no hardcodear admin)
@@ -653,6 +698,20 @@ class MainWindow(QMainWindow):
         # Mostrar el usuario actual de forma visualmente destacado en la barra de estado
         self.actualizar_usuario_label(usuario)
         self.mostrar_mensaje(f"Usuario actual: {usuario['username']} ({usuario['rol']})", tipo="info", duracion=4000)
+
+    def _on_login_success(self):
+        user = self.login_controller.usuario_autenticado
+        if not user:
+            return
+        self.usuario_actual = user
+        self.login_view.close()
+        # Ahora pasar self.usuario_actual a todos los controladores principales
+        # Ejemplo:
+        # self.inventario_controller.usuario_actual = self.usuario_actual
+        # self.vidrios_controller.usuario_actual = self.usuario_actual
+        # ...
+        # Mostrar ventana principal
+        self.show()
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -694,13 +753,12 @@ def chequear_conexion_bd():
 
 def chequear_conexion_bd_gui():
     from PyQt6.QtWidgets import QApplication, QMessageBox
-    # Usar SIEMPRE los parámetros centralizados de core.config
     from core.config import DB_SERVER, DB_SERVER_ALTERNATE, DB_USERNAME, DB_PASSWORD, DB_DEFAULT_DATABASE, DB_TIMEOUT
     DB_DRIVER = 'ODBC Driver 17 for SQL Server'
-    # Intentar primero con la IP, luego con el nombre de instancia alternativo
     servidores = [DB_SERVER, DB_SERVER_ALTERNATE]
     for DB_SERVER_ACTUAL in servidores:
         try:
+            print(f"[LOG 3.1] Intentando conexión a BD: {DB_SERVER_ACTUAL} ...")
             connection_string = (
                 f"DRIVER={{{DB_DRIVER}}};"
                 f"SERVER={DB_SERVER_ACTUAL};"
@@ -711,11 +769,11 @@ def chequear_conexion_bd_gui():
             )
             import pyodbc
             with pyodbc.connect(connection_string, timeout=DB_TIMEOUT) as conn:
-                print(f"✅ Conexión exitosa a la base de datos: {DB_SERVER_ACTUAL}")
+                print(f"[LOG 3.2] ✅ Conexión exitosa a la base de datos: {DB_SERVER_ACTUAL}")
                 return
         except Exception as e:
-            print(f"❌ Error de conexión a la base de datos ({DB_SERVER_ACTUAL}): {e}")
-    # Si falla todo, mostrar error GUI
+            print(f"[LOG 3.3] ❌ Error de conexión a la base de datos ({DB_SERVER_ACTUAL}): {e}")
+    print("[LOG 3.4] ❌ No se pudo conectar a ninguna base de datos. Mostrando error GUI.")
     app = QApplication.instance() or QApplication(sys.argv)
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Icon.Critical)
@@ -749,6 +807,34 @@ def chequear_conexion_bd_gui():
     msg.exec()
     sys.exit(1)
 
+# --- DIAGNÓSTICO ROBUSTO DE ENTORNO Y DEPENDENCIAS ---
+def diagnostico_entorno_dependencias():
+    import sys, os, traceback
+    import datetime
+    log_path = os.path.join(os.getcwd(), 'logs', 'diagnostico_dependencias.txt')
+    os.makedirs(os.path.dirname(log_path), exist_ok=True)
+    def log(msg):
+        print(msg, flush=True)
+        with open(log_path, 'a', encoding='utf-8') as f:
+            f.write(f"{datetime.datetime.now().isoformat()} | {msg}\n")
+    log("[DIAG 0] === INICIO DIAGNÓSTICO DE ENTORNO Y DEPENDENCIAS ===")
+    log(f"[DIAG 1] sys.executable: {sys.executable}")
+    log(f"[DIAG 2] sys.version: {sys.version}")
+    log(f"[DIAG 3] sys.path: {sys.path}")
+    try:
+        import pandas
+        log(f"[DIAG 4] pandas importado correctamente. Versión: {pandas.__version__}")
+    except Exception as e:
+        log(f"[DIAG 4] ❌ Error importando pandas: {e}\n{traceback.format_exc()}")
+    try:
+        import reportlab
+        log(f"[DIAG 5] reportlab importado correctamente. Versión: {reportlab.__version__}")
+    except Exception as e:
+        log(f"[DIAG 5] ❌ Error importando reportlab: {e}\n{traceback.format_exc()}")
+    log("[DIAG 6] === FIN DIAGNÓSTICO ===")
+
+diagnostico_entorno_dependencias()
+
 # --- BASE DE MEJORES PRÁCTICAS DE DISEÑO PARA TODA LA APP ---
 # 1. Todos los diálogos y mensajes deben tener padding simétrico, bordes redondeados y fondo claro.
 # 2. El texto debe estar centrado y usar fuente moderna, tamaño 11-13px, peso 500-600.
@@ -770,37 +856,43 @@ def chequear_conexion_bd_gui():
 chequear_conexion_bd_gui()
 
 if __name__ == "__main__":
+    print("[LOG 4.1] Iniciando QApplication...")
     app = QApplication(sys.argv)
-    # SplashScreen primero
+    print("[LOG 4.2] Mostrando SplashScreen...")
     splash = SplashScreen(message="Cargando módulos y base de datos...", duration=2200)
     splash.show()
     splash.fade_in.start()
-    
-    # Aplicar el stylesheet neumórfico global
+    print("[LOG 4.3] Aplicando stylesheet neumórfico global...")
     with open("mps/ui/assets/stylesheet.qss", "r", encoding="utf-8") as f:
         app.setStyleSheet(f.read())
-
-    # Chequear dependencias críticas y opcionales
+    print("[LOG 4.4] Chequeando dependencias críticas y opcionales...")
     error_dependencias = False
     try:
+        print("[LOG 4.4.1] Ejecutando verificar_dependencias()...")
         verificar_dependencias()
+        print("[LOG 4.4.2] Dependencias verificadas.")
     except SystemExit:
         error_dependencias = True
+        print("[LOG 4.4.3] SystemExit lanzado por dependencias críticas.")
     except Exception as e:
         error_dependencias = True
-        print(f"Error inesperado en dependencias: {e}")
+        print(f"[LOG 4.4.4] Error inesperado en dependencias: {e}")
 
     def continuar_inicio():
         if error_dependencias:
+            print("[LOG 4.5] Error de dependencias. Cerrando SplashScreen y abortando inicio de interfaz principal.")
             splash.fade_out.finished.connect(splash.close)
             splash.fade_out.start()
-            # No mostrar ventana principal si hay error crítico
+            QTimer.singleShot(1000, app.quit)  # Forzar cierre de app tras splash
             return
+        print("[LOG 4.6] Inicializando MainWindow...")
         main_window = MainWindow()
+        print("[LOG 4.7] Mostrando MainWindow...")
         main_window.show()
-        splash.fade_out.finished.connect(splash.close)
-        splash.fade_out.start()
+        print("[LOG 4.8] MainWindow visible. Cerrando SplashScreen cuando esté listo...")
+        splash.close_when_ready(main_window)
 
-    # Espera activa: cuando la app está lista, cerrar splash y mostrar ventana principal
+    print("[LOG 4.9] Espera activa: cerrando splash y mostrando interfaz cuando corresponda...")
     QTimer.singleShot(600, continuar_inicio)
+    print("[LOG 4.10] QApplication loop iniciado.")
     sys.exit(app.exec())

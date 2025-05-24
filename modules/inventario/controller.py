@@ -48,21 +48,20 @@ class PermisoAuditoria:
                         auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return None
                 try:
+                    print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
                     resultado = func(controller, *args, **kwargs)
+                    print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
                     if auditoria_model:
                         detalle = f"{accion} - éxito"
                         auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return resultado
                 except Exception as e:
-                    log_error(f"Error en acción '{accion}' del módulo '{self.modulo}': {e}")
+                    print(f"[LOG ACCIÓN] Error en acción '{accion}' en módulo '{self.modulo}': {e}")
                     if auditoria_model:
-                        detalle = f"{accion} - error: {str(e)}"
+                        detalle = f"{accion} - error: {e}"
                         auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
-                    if hasattr(controller, 'view') and hasattr(controller.view, 'mostrar_mensaje'):
-                        controller.view.mostrar_mensaje(f"Error inesperado: {e}", tipo='error')
-                    elif hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                        controller.view.label.setText(f"Error inesperado: {e}")
-                    return None
+                    log_error(f"Error en {accion}: {e}")
+                    raise
             return wrapper
         return decorador
 
@@ -120,10 +119,15 @@ class InventarioController:
         self.cargar_productos()
 
     def _registrar_evento_auditoria(self, tipo_evento, detalle, exito=True):
-        usuario_id = self.usuario_actual['id'] if self.usuario_actual and 'id' in self.usuario_actual else None
+        usuario_id = self.usuario_actual['id'] if self.usuario_actual and 'id' in self.usuario_actual else -1
         ip = self.usuario_actual.get('ip', '') if self.usuario_actual else ''
         estado = "éxito" if exito else "error"
         detalle_final = f"{detalle} - {estado}"
+        if usuario_id == -1:
+            detalle_final = f"{detalle_final} [usuario no autenticado]"
+            log_error(f"[AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='{tipo_evento}', detalle='{detalle_final}'")
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje("Advertencia: acción registrada sin usuario autenticado.", tipo='advertencia')
         try:
             self.auditoria_model.registrar_evento(usuario_id, "inventario", tipo_evento, detalle_final, ip)
         except Exception as e:

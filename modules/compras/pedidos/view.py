@@ -38,25 +38,32 @@ class PedidosView(QWidget, TableResponsiveMixin):
         except Exception as e:
             print(f"No se pudo cargar el archivo de estilos de Pedidos según el tema: {e}")
 
-        # Botones principales como iconos
-        botones_layout = QHBoxLayout()
+        # HEADER VISUAL MODERNO: título y botones alineados
+        header_layout = QHBoxLayout()
+        self.label_titulo = QLabel("Pedidos de Compras")
+        self.label_titulo.setStyleSheet("color: #2563eb; font-size: 18px; font-weight: bold; padding: 0 0 0 0;")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        header_layout.addStretch()
+        # Crear botones principales como atributos de la clase
         self.boton_crear = QPushButton()
         self.boton_ver_detalles = QPushButton()
         self.boton_cargar_presupuesto = QPushButton()
         botones = [
             (self.boton_crear, "add-entrega.svg", "Crear nuevo pedido"),
             (self.boton_ver_detalles, "search_icon.svg", "Ver detalles del pedido"),
-            (self.boton_cargar_presupuesto, "excel_icon.svg", "Cargar presupuesto"),
+            (self.boton_cargar_presupuesto, "excel_icon.svg", "Cargar presupuesto")
         ]
         for boton, icono, tooltip in botones:
             boton.setIcon(QtGui.QIcon(f"img/{icono}"))
             boton.setIconSize(QSize(24, 24))
             boton.setToolTip(tooltip)
+            boton.setAccessibleName(tooltip)
             boton.setText("")
             boton.setFixedSize(48, 48)
-            boton.setStyleSheet("")
-            botones_layout.addWidget(boton)
-        main_layout.addLayout(botones_layout)
+            boton.setStyleSheet("border-radius: 12px; background: #f1f5f9; color: #2563eb; min-width: 48px; min-height: 48px; margin-left: 16px;")
+            estilizar_boton_icono(boton)
+            header_layout.addWidget(boton, alignment=Qt.AlignmentFlag.AlignVCenter)
+        main_layout.insertLayout(0, header_layout)
 
         # Tabla principal de pedidos (si existe)
         self.tabla_pedidos = QTableWidget()

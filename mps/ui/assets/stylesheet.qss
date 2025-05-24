@@ -1,12 +1,12 @@
-/* --- Estilos modernos para la app (sin box-shadow) --- */
+/* --- Estilos modernos para la app --- */
 QPushButton {
     background-color: #1E1E2F;
     border: 2px solid #6DFDC3;
     color: #EDEDED;
     padding: 10px 20px;
     font-size: 14px;
-    font-weight: 500;
-    border-radius: 12px;
+    font-weight: 500;    border-radius: 12px;
+    /* box-shadow: 0 2px 8px rgba(0,0,0,0.08);  Eliminado: no soportado por QSS */
 }
 QPushButton:hover {
     background-color: #2A2A3D;

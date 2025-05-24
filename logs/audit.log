@@ -2286,3 +2286,25 @@
 2025-05-24 10:58:11,333 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-24 10:58:11,333 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-24 10:58:11,333 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 11:04:28,641 - INFO - Aplicación iniciada
+2025-05-24 11:04:28,777 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 11:04:28,777 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 11:04:28,777 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 12:18:15,123 - INFO - Aplicación iniciada
+2025-05-24 12:18:15,274 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 12:18:15,274 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 12:18:15,274 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 13:32:18,043 - INFO - Aplicación iniciada
+2025-05-24 13:32:18,136 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'password' no es válido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 13:32:18,136 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'password' no es válido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 14:19:00,894 - INFO - Aplicación iniciada
+2025-05-24 14:19:00,974 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'password' no es válido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-05-24 14:19:00,974 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'password' no es válido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")

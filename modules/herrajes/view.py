@@ -13,13 +13,32 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         super().__init__()
         aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path="themes/light.qss")
         self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(24, 20, 24, 20)
+        self.main_layout.setSpacing(16)
 
-        # Feedback visual centralizado
+        # --- HEADER VISUAL MODERNO ---
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(12)
+        icono_label = QLabel()
+        icono_label.setPixmap(QIcon("img/herrajes.svg").pixmap(36, 36))
+        icono_label.setFixedSize(40, 40)
+        icono_label.setToolTip("Icono de Herrajes")
+        icono_label.setAccessibleName("Icono de Herrajes")
+        titulo_label = QLabel("Herrajes")
+        titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")
+        titulo_label.setAccessibleName("Título de módulo Herrajes")
+        header_layout.addWidget(icono_label)
+        header_layout.addWidget(titulo_label)
+        header_layout.addStretch()
+        self.main_layout.addLayout(header_layout)
+
+        # Feedback visual centralizado y accesible
         self.label_feedback = QLabel()
+        self.label_feedback.setStyleSheet("font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500;")
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Feedback visual de Herrajes")
         self.main_layout.addWidget(self.label_feedback)
-
-        self.label_titulo = QLabel("Gestión de Herrajes")
-        self.main_layout.addWidget(self.label_titulo)
 
         self.form_layout = QFormLayout()
         self.nombre_input = QLineEdit()
@@ -64,13 +83,13 @@ class HerrajesView(QWidget, TableResponsiveMixin):
 
         # Botón principal de acción (Agregar)
         botones_layout = QHBoxLayout()
+        botones_layout.addStretch()
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar nuevo herraje")
         self.boton_agregar.setText("")
         self.boton_agregar.setFixedSize(48, 48)
-        # No sobrescribir el QSS global
         sombra = QGraphicsDropShadowEffect()
         sombra.setBlurRadius(15)
         sombra.setXOffset(0)
@@ -78,18 +97,16 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         sombra.setColor(QColor(0, 0, 0, 50))
         self.boton_agregar.setGraphicsEffect(sombra)
         estilizar_boton_icono(self.boton_agregar)
-        botones_layout.addWidget(self.boton_agregar)
-        self.main_layout.addLayout(botones_layout)
-
-        # Refuerzo de accesibilidad en botón principal
         self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.boton_agregar.setStyleSheet(self.boton_agregar.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
         font = self.boton_agregar.font()
         if font.pointSize() < 12:
             font.setPointSize(12)
         self.boton_agregar.setFont(font)
-        if not self.boton_agregar.toolTip():
-            self.boton_agregar.setToolTip("Agregar nuevo herraje")
+        self.boton_agregar.setAccessibleName("Botón agregar herraje")
+        botones_layout.addWidget(self.boton_agregar)
+        self.main_layout.addLayout(botones_layout)
+
         # Refuerzo de accesibilidad en tabla principal
         self.tabla_herrajes.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.tabla_herrajes.setStyleSheet(self.tabla_herrajes.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
@@ -115,8 +132,9 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             "error": "#ef4444"
         }
         color = colores.get(tipo, "#2563eb")
-        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px;")
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px;")
         self.label_feedback.setText(mensaje)
+        self.label_feedback.setVisible(True)
         if tipo == "error":
             log_error(mensaje)
             QMessageBox.critical(self, "Error", mensaje)

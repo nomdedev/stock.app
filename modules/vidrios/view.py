@@ -32,9 +32,32 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.main_layout.setSpacing(20)
         self.setWindowTitle("Gestión de Vidrios")
 
-        # Encabezado
+        # HEADER VISUAL MODERNO: título y botones alineados
+        header_layout = QHBoxLayout()
         self.label_titulo = QLabel("Gestión de Vidrios")
-        self.main_layout.addWidget(self.label_titulo)
+        self.label_titulo.setStyleSheet("color: #2563eb; font-size: 18px; font-weight: bold; padding: 0 0 0 0;")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        header_layout.addStretch()
+        # Crear botones principales como atributos de la clase antes de usarlos
+        self.boton_agregar = QPushButton()
+        self.boton_buscar = QPushButton()
+        self.boton_exportar_excel = QPushButton()
+        botones = [
+            (self.boton_agregar, "add-material.svg", "Agregar vidrio"),
+            (self.boton_buscar, "search_icon.svg", "Buscar vidrio"),
+            (self.boton_exportar_excel, "excel_icon.svg", "Exportar vidrios a Excel")
+        ]
+        for btn, icono, tooltip in botones:
+            btn.setIcon(QIcon(f"img/{icono}"))
+            btn.setIconSize(QSize(24, 24))
+            btn.setToolTip(tooltip)
+            btn.setAccessibleName(tooltip)
+            btn.setText("")
+            btn.setFixedSize(48, 48)
+            btn.setStyleSheet("border-radius: 12px; background: #f1f5f9; color: #2563eb; min-width: 48px; min-height: 48px; margin-left: 16px;")
+            estilizar_boton_icono(btn)
+            header_layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignVCenter)
+        self.main_layout.insertLayout(0, header_layout)
 
         # Formulario de entrada
         self.form_layout = self.create_form_layout()
@@ -70,50 +93,6 @@ class VidriosView(QWidget, TableResponsiveMixin):
             # Documentar en docs/estandares_visuales.md si ocurre en producción.
             pass
 
-        # Botones principales como iconos (con sombra real)
-        botones_layout = QHBoxLayout()
-        self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
-        self.boton_agregar.setIconSize(QSize(20, 20))
-        self.boton_agregar.setToolTip("Agregar vidrio")
-        self.boton_agregar.setText("")
-        self.boton_agregar.setFixedSize(48, 48)
-        sombra = QGraphicsDropShadowEffect()
-        sombra.setBlurRadius(12)
-        sombra.setColor(QColor(37,99,235,40))
-        sombra.setOffset(0, 2)
-        self.boton_agregar.setGraphicsEffect(sombra)
-        self.boton_buscar = QPushButton()
-        self.boton_buscar.setIcon(QIcon("img/search_icon.svg"))
-        self.boton_buscar.setIconSize(QSize(20, 20))
-        self.boton_buscar.setToolTip("Buscar vidrio")
-        self.boton_buscar.setText("")
-        self.boton_buscar.setFixedSize(48, 48)
-        sombra2 = QGraphicsDropShadowEffect()
-        sombra2.setBlurRadius(12)
-        sombra2.setColor(QColor(37,99,235,40))
-        sombra2.setOffset(0, 2)
-        self.boton_buscar.setGraphicsEffect(sombra2)
-        self.boton_exportar_excel = QPushButton()
-        self.boton_exportar_excel.setIcon(QIcon("img/excel_icon.svg"))
-        self.boton_exportar_excel.setIconSize(QSize(24, 24))
-        self.boton_exportar_excel.setToolTip("Exportar vidrios a Excel")
-        self.boton_exportar_excel.setText("")
-        self.boton_exportar_excel.setFixedSize(48, 48)
-        sombra3 = QGraphicsDropShadowEffect()
-        sombra3.setBlurRadius(12)
-        sombra3.setColor(QColor(37,99,235,40))
-        sombra3.setOffset(0, 2)
-        self.boton_exportar_excel.setGraphicsEffect(sombra3)
-        estilizar_boton_icono(self.boton_agregar)
-        estilizar_boton_icono(self.boton_buscar)
-        estilizar_boton_icono(self.boton_exportar_excel)
-        botones_layout.addWidget(self.boton_agregar)
-        botones_layout.addWidget(self.boton_buscar)
-        botones_layout.addWidget(self.boton_exportar_excel)
-        botones_layout.addStretch()
-        self.main_layout.addLayout(botones_layout)
-
         # Feedback visual
         self.label_feedback = QLabel()
         self.main_layout.addWidget(self.label_feedback)
@@ -125,7 +104,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
         # Refuerzo de accesibilidad en botones principales
         for btn in [self.boton_agregar, self.boton_buscar, self.boton_exportar_excel]:
             btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            base_style = btn.styleSheet() or ""
+            btn.setStyleSheet(base_style + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
             font = btn.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
@@ -134,11 +114,13 @@ class VidriosView(QWidget, TableResponsiveMixin):
                 btn.setToolTip("Botón de acción")
         # Refuerzo de accesibilidad en tabla principal
         self.tabla_vidrios.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.tabla_vidrios.setStyleSheet(self.tabla_vidrios.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        base_table_style = self.tabla_vidrios.styleSheet() or ""
+        self.tabla_vidrios.setStyleSheet(base_table_style + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
         # Refuerzo de accesibilidad en todos los QLineEdit de la vista principal
         for widget in self.findChildren(QLineEdit):
             widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            widget.setStyleSheet(widget.styleSheet() + "\nQLineEdit:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQLineEdit { font-size: 12px; }")
+            base_line_style = widget.styleSheet() or ""
+            widget.setStyleSheet(base_line_style + "\nQLineEdit:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQLineEdit { font-size: 12px; }")
             font = widget.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)

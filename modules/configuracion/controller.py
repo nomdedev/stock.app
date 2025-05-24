@@ -22,9 +22,16 @@ class PermisoAuditoria:
                     if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
                         controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
                     return None
-                resultado = func(controller, *args, **kwargs)
-                auditoria_model.registrar_evento(usuario, self.modulo, accion)
-                return resultado
+                try:
+                    print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {getattr(usuario, 'username', 'desconocido') if usuario else 'desconocido'}")
+                    resultado = func(controller, *args, **kwargs)
+                    print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
+                    auditoria_model.registrar_evento(usuario, self.modulo, accion)
+                    return resultado
+                except Exception as e:
+                    print(f"[LOG ACCIÓN] Error en acción '{accion}' en módulo '{self.modulo}': {e}")
+                    auditoria_model.registrar_evento(usuario, self.modulo, accion)
+                    raise
             return wrapper
         return decorador
 
