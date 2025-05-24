@@ -110,12 +110,10 @@ QLineEdit, QComboBox, QSpinBox {
 QComboBox:focus, QSpinBox:focus, QLineEdit:focus {
     border: 2px solid #3B82F6; /* Azul pastel accesible */
     outline: none;
-    box-shadow: 0 0 0 2px #BFE3FF;
 }
 QHeaderView::section:focus {
     border: 2px solid #3B82F6;
     outline: none;
-    box-shadow: 0 0 0 2px #BFE3FF;
 }
 QHeaderView::section {
     background-color: #E4ECF7;

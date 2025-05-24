@@ -771,14 +771,36 @@ chequear_conexion_bd_gui()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    # SplashScreen primero
+    splash = SplashScreen(message="Cargando módulos y base de datos...", duration=2200)
+    splash.show()
+    splash.fade_in.start()
+    
     # Aplicar el stylesheet neumórfico global
     with open("mps/ui/assets/stylesheet.qss", "r", encoding="utf-8") as f:
         app.setStyleSheet(f.read())
-    
-    def start_main_window():
+
+    # Chequear dependencias críticas y opcionales
+    error_dependencias = False
+    try:
+        verificar_dependencias()
+    except SystemExit:
+        error_dependencias = True
+    except Exception as e:
+        error_dependencias = True
+        print(f"Error inesperado en dependencias: {e}")
+
+    def continuar_inicio():
+        if error_dependencias:
+            splash.fade_out.finished.connect(splash.close)
+            splash.fade_out.start()
+            # No mostrar ventana principal si hay error crítico
+            return
         main_window = MainWindow()
         main_window.show()
-    
-    splash = SplashScreen(message="Cargando módulos y base de datos...", duration=2200)
-    splash.show_and_finish(start_main_window)
+        splash.fade_out.finished.connect(splash.close)
+        splash.fade_out.start()
+
+    # Espera activa: cuando la app está lista, cerrar splash y mostrar ventana principal
+    QTimer.singleShot(600, continuar_inicio)
     sys.exit(app.exec())

@@ -83,12 +83,10 @@ class SplashScreen(QSplashScreen):
         # Ignorar cualquier clic del usuario en el splash
         pass
 
-    def show_and_finish(self, main_window_callback):
+    def show_and_finish(self):
         self.show()
         self.fade_in.start()
-        # Esperar a que la ventana principal esté realmente visible antes de cerrar el splash
         def cerrar_splash():
-            main_window_callback()
             self.fade_out.finished.connect(self.close)
             self.fade_out.start()
         QTimer.singleShot(self.duration, cerrar_splash)

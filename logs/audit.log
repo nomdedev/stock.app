@@ -2278,3 +2278,11 @@
 2025-05-24 10:08:03,148 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-24 10:08:03,148 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-24 10:08:03,148 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 10:44:52,759 - INFO - Aplicación iniciada
+2025-05-24 10:44:52,913 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 10:44:52,913 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 10:44:52,913 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 10:58:11,145 - INFO - Aplicación iniciada
+2025-05-24 10:58:11,333 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 10:58:11,333 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-24 10:58:11,333 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
