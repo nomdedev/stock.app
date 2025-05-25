@@ -19,10 +19,12 @@ class LoginController:
         try:
             user = self.usuarios_model.obtener_usuario_por_nombre(usuario)
             if not user:
+                self._registrar_login_fallido(usuario)
                 self.view.mostrar_error("Usuario o contraseña incorrectos.")
                 return
             password_hash = hashlib.sha256(password.encode()).hexdigest()
             if user['password_hash'] != password_hash:
+                self._registrar_login_fallido(usuario)
                 self.view.mostrar_error("Usuario o contraseña incorrectos.")
                 return
             self.usuario_autenticado = user
@@ -30,3 +32,11 @@ class LoginController:
         except Exception as e:
             log_error(f"Error en login: {e}")
             self.view.mostrar_error("Error interno de autenticación.")
+
+    def _registrar_login_fallido(self, usuario):
+        # Registrar intento fallido en logs de auditoría, sin exponer datos sensibles
+        try:
+            ip = getattr(self.view, 'ip', 'desconocida')
+            self.usuarios_model.registrar_login_fallido(ip, usuario)
+        except Exception as e:
+            log_error(f"Error registrando login fallido: {e}")

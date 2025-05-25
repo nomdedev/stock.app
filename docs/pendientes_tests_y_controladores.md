@@ -12,8 +12,8 @@
 
 ### 1. USUARIOS
 
-- [ ] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
-- [ ] Validar que la función `crear_usuarios_iniciales` siempre asigne permisos completos a admin y permisos mínimos a prueba.
+- [x] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
+- [x] Validar que la función `crear_usuarios_iniciales` siempre asigne permisos completos a admin y permisos mínimos a prueba. (Flujo documentado en docstring de model.py y validable con scripts/validar_permisos_iniciales.py)
 - [ ] Mejorar feedback visual y accesibilidad en login_view.
 - [ ] Validar integración de permisos en el sidebar y main_window.
 - [ ] Tests: robustecer tests de login, permisos y feedback visual.

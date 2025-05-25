@@ -130,6 +130,8 @@ class MainWindow(QMainWindow):
     def set_usuario_actual(self, usuario, permisos_modulos):
         """
         Llamar tras login. Recibe el usuario y la lista de módulos permitidos (nombres).
+        Filtra vistas y sidebar según permisos, cumpliendo el estándar de seguridad y UX.
+        Solo los módulos permitidos serán visibles y accesibles.
         """
         self._usuario_permisos = permisos_modulos
         # Filtrar vistas y sidebar según permisos
@@ -140,15 +142,18 @@ class MainWindow(QMainWindow):
             widget = self.stack.widget(i)
             if widget is not None:
                 widget.setVisible(i in indices_permitidos)
-        # Actualizar sidebar
-        # self.sidebar.set_visible_modules(indices_permitidos)  # Eliminar: Sidebar no tiene este método
+        # --- Sidebar: solo botones de módulos permitidos ---
+        if hasattr(self, 'sidebar') and hasattr(self.sidebar, 'set_visible_modules'):
+            self.sidebar.set_visible_modules(indices_permitidos)
         # Seleccionar el primer módulo permitido
         if indices_permitidos:
             self.stack.setCurrentIndex(indices_permitidos[0])
-            # self.sidebar.set_active(0)  # Eliminar: Sidebar no tiene este método
         else:
             self.stack.setCurrentIndex(0)
-            # self.sidebar.set_active(0)  # Eliminar: Sidebar no tiene este método
+        # Documentación:
+        # - Cumple docs/estandares_visuales.md y docs/estandares_seguridad.md.
+        # - Si el sidebar no implementa set_visible_modules, no se actualiza visualmente.
+        # - Para extender: implementar estos métodos en Sidebar para ocultar botones según permisos.
 
     def _on_sidebar_page_changed(self, idx):
         # idx es el índice relativo a los módulos permitidos

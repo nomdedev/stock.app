@@ -94,12 +94,18 @@ def instalar_dependencias_criticas():
     def instalar_dependencia_si_falta(paquete, version):
         print(f"[LOG 1.3.1] Chequeando {paquete} >= {version if version else ''}...")
         try:
-            if version:
-                pkg_resources.require(f"{paquete}>={version}")
+            if version is not None:
+                installed_version = pkg_resources.get_distribution(paquete).version
+                if installed_version >= version:
+                    print(f"[LOG 1.3.2] ✅ {paquete} ya está instalado y cumple versión.")
+                    return True
+                else:
+                    print(f"[LOG 1.3.3] ❌ {paquete} instalado pero versión {installed_version} < {version}. Intentando instalar...")
+                    return instalar_dependencia(paquete, version)
             else:
                 __import__(paquete)
-            print(f"[LOG 1.3.2] ✅ {paquete} ya está instalado y cumple versión.")
-            return True
+                print(f"[LOG 1.3.2] ✅ {paquete} ya está instalado.")
+                return True
         except Exception:
             print(f"[LOG 1.3.3] ❌ {paquete} no está instalado o la versión es incorrecta. Intentando instalar...")
             return instalar_dependencia(paquete, version)
@@ -122,8 +128,18 @@ def instalar_dependencias_criticas():
                 if not pkg or pkg.startswith("#"): continue
                 try:
                     print(f"[LOG 1.4.2] Chequeando {pkg}...")
-                    pkg_resources.require(line.strip())
-                    print(f"[LOG 1.4.3] ✅ {pkg} ya está instalado.")
+                    if "==" in line:
+                        req_pkg, req_ver = line.strip().split("==")
+                        installed_version = pkg_resources.get_distribution(req_pkg).version
+                        if installed_version >= req_ver:
+                            print(f"[LOG 1.4.3] ✅ {pkg} ya está instalado.")
+                            continue
+                        else:
+                            print(f"[LOG 1.4.4] ❌ {pkg} instalado pero versión {installed_version} < {req_ver}. Instalando...")
+                    else:
+                        __import__(pkg)
+                        print(f"[LOG 1.4.3] ✅ {pkg} ya está instalado.")
+                        continue
                 except Exception:
                     print(f"[LOG 1.4.4] ❌ {pkg} no está instalado o la versión es incorrecta. Instalando...")
                     subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", line.strip()])
@@ -254,10 +270,14 @@ def verificar_dependencias():
     for paquete, version in requeridos_criticos:
         try:
             if version:
-                pkg_resources.require(f"{paquete}>={version}")
+                installed_version = pkg_resources.get_distribution(paquete).version
+                if installed_version >= version:
+                    print(f"[LOG 2.1.1] ✅ {paquete} presente y versión >= {version if version else ''}.", flush=True)
+                else:
+                    raise Exception(f"Versión instalada {installed_version} < {version}")
             else:
                 __import__(paquete)
-            print(f"[LOG 2.1.1] ✅ {paquete} presente y versión >= {version if version else ''}.", flush=True)
+                print(f"[LOG 2.1.1] ✅ {paquete} presente.", flush=True)
         except Exception:
             print(f"[LOG 2.1.2] ❌ {paquete} faltante o versión menor a la requerida.", flush=True)
             faltantes_criticos.append(f"{paquete}{' >= ' + version if version else ''}")
@@ -265,10 +285,14 @@ def verificar_dependencias():
     for paquete, version in requeridos_secundarios:
         try:
             if version:
-                pkg_resources.require(f"{paquete}>={version}")
+                installed_version = pkg_resources.get_distribution(paquete).version
+                if installed_version >= version:
+                    print(f"[LOG 2.2.1] ✅ {paquete} presente.", flush=True)
+                else:
+                    raise Exception(f"Versión instalada {installed_version} < {version}")
             else:
                 __import__(paquete)
-            print(f"[LOG 2.2.1] ✅ {paquete} presente.", flush=True)
+                print(f"[LOG 2.2.1] ✅ {paquete} presente.", flush=True)
         except Exception:
             print(f"[LOG 2.2.2] ❌ {paquete} faltante.", flush=True)
             faltantes_secundarios.append(f"{paquete}{' >= ' + version if version else ''}")
@@ -385,7 +409,7 @@ class MainWindow(QMainWindow):
         self.usuario_label.setStyleSheet("background: #e0e7ef; color: #1e293b; font-size: 13px; font-weight: bold; border-radius: 8px; padding: 4px 12px; margin-right: 8px;")
         self.usuario_label.setText("")
         self._status_bar.addPermanentWidget(self.usuario_label, 1)
-        self.initUI(usuario, modulos_permitidos)
+        self.initUI(usuario or {}, modulos_permitidos or [])
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
         colores = {
@@ -396,16 +420,19 @@ class MainWindow(QMainWindow):
         }
         color = colores.get(tipo, "#2563eb")
         self._status_bar.setStyleSheet(f"background: #f1f5f9; color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 4px 12px;")
-        self._status_bar.showMessage(mensaje, duracion)
+        self._status_bar.showMessage(mensaje or "", duracion)
         if tipo == "error":
-            QMessageBox.critical(self, "Error", mensaje)
+            QMessageBox.critical(self, "Error", mensaje or "Ocurrió un error desconocido.")
         elif tipo == "advertencia":
-            QMessageBox.warning(self, "Advertencia", mensaje)
+            QMessageBox.warning(self, "Advertencia", mensaje or "Advertencia desconocida.")
         elif tipo == "exito":
-            QMessageBox.information(self, "Éxito", mensaje)
+            QMessageBox.information(self, "Éxito", mensaje or "Operación exitosa.")
 
     def actualizar_usuario_label(self, usuario):
-        rol = usuario.get('rol', '').lower()
+        if not usuario:
+            self.usuario_label.setText("")
+            return
+        rol = usuario.get('rol', '').lower() if isinstance(usuario, dict) else ''
         colores = {
             'admin': '#2563eb',
             'supervisor': '#fbbf24',
@@ -415,7 +442,9 @@ class MainWindow(QMainWindow):
         self.usuario_label.setStyleSheet(
             f"background: #e0e7ef; color: {color}; font-size: 13px; font-weight: bold; border-radius: 8px; padding: 4px 12px; margin-right: 8px; border: 1.5px solid {color};"
         )
-        self.usuario_label.setText(f"Usuario: {usuario['usuario']} ({usuario['rol']})")
+        nombre = usuario['usuario'] if isinstance(usuario, dict) and 'usuario' in usuario else str(usuario)
+        rol_str = usuario['rol'] if isinstance(usuario, dict) and 'rol' in usuario else ''
+        self.usuario_label.setText(f"Usuario: {nombre} ({rol_str})")
 
     def initUI(self, usuario=None, modulos_permitidos=None):
         # Crear conexiones persistentes a las bases de datos (una sola instancia por base)

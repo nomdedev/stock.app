@@ -180,3 +180,19 @@ class Sidebar(QWidget):
     def set_sections(self, sections):
         self._sections = sections
         self._create_buttons()
+
+    def set_visible_modules(self, indices_permitidos):
+        """
+        Oculta o muestra los botones del sidebar según los índices permitidos.
+        Si un índice no está permitido, el botón se oculta.
+        """
+        for i, btn in enumerate(self._buttons):
+            btn.setVisible(i in indices_permitidos)
+        # Si el botón activo queda oculto, seleccionar el primero visible
+        visibles = [i for i in indices_permitidos if i < len(self._buttons)]
+        if visibles:
+            self.current_index = visibles[0]
+            self._create_buttons()
+        else:
+            self.current_index = None
+            self._create_buttons()

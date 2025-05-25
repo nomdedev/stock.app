@@ -109,18 +109,34 @@ class ConfiguracionController:
             print(f"[{tipo.upper()}] {mensaje}")
 
     def _get_widget(self, nombre):
-        return getattr(self.view, nombre, None)
+        if not isinstance(nombre, str):
+            raise TypeError(f"El nombre del widget debe ser str, no {type(nombre)}")
+        w = getattr(self.view, nombre, None)
+        if w is None:
+            self.mostrar_mensaje(f"No se encontró el widget '{nombre}' en la vista.", tipo="advertencia")
+        return w
 
     def _get_text(self, nombre):
         w = self._get_widget(nombre)
-        return w.text() if w and hasattr(w, 'text') else ''
+        if w and hasattr(w, 'text'):
+            valor = w.text()
+            if not isinstance(valor, str):
+                raise TypeError(f"El valor de '{nombre}' debe ser str, no {type(valor)}")
+            return valor
+        return ''
 
     def _get_checked(self, nombre):
         w = self._get_widget(nombre)
-        return w.isChecked() if w and hasattr(w, 'isChecked') else False
+        if w and hasattr(w, 'isChecked'):
+            checked = w.isChecked()
+            if not isinstance(checked, bool):
+                raise TypeError(f"El valor de isChecked en '{nombre}' debe ser bool, no {type(checked)}")
+            return checked
+        return False
 
     @permiso_auditoria_configuracion('ver')
     def cargar_configuracion(self):
+        """Carga la configuración y refuerza validación de widgets y tipos. Documenta edge cases visuales."""
         try:
             configuracion = self.model.obtener_configuracion()
             for clave, valor, descripcion in configuracion:
@@ -145,13 +161,17 @@ class ConfiguracionController:
                 if w_tam: w_tam.setCurrentText(tamaño_fuente)
         except Exception as e:
             self.mostrar_mensaje(f"Error al cargar configuración: {e}", tipo="error")
+            # EXCEPCIÓN VISUAL: Si falta un widget crítico, se documenta y se muestra advertencia.
 
     @permiso_auditoria_configuracion('editar')
     def guardar_cambios(self):
+        """Guarda cambios de configuración validando tipos y argumentos. Documenta edge cases visuales."""
         try:
             nombre = self._get_text('nombre_app_input')
-            if nombre:
-                self.model.actualizar_configuracion("nombre_app", nombre)
+            if not nombre:
+                self.mostrar_mensaje("El nombre de la app no puede estar vacío.", tipo="error")
+                return
+            self.model.actualizar_configuracion("nombre_app", nombre)
             zona = self._get_widget('zona_horaria_input')
             if zona and hasattr(zona, 'currentText'):
                 self.model.actualizar_configuracion("zona_horaria", zona.currentText())
@@ -168,6 +188,7 @@ class ConfiguracionController:
             self.mostrar_mensaje("Cambios guardados exitosamente.", tipo="exito")
         except Exception as e:
             self.mostrar_mensaje(f"Error al guardar cambios: {e}", tipo="error")
+            # EXCEPCIÓN VISUAL: Si ocurre error de tipo o argumento, se muestra feedback y se documenta.
 
     @permiso_auditoria_configuracion('editar')
     def probar_conexion_bd(self, retornar_resultado=False):

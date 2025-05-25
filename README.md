@@ -1,3 +1,63 @@
+# --- BASES DE DATOS Y TABLAS DEL SISTEMA ---
+
+## Bases de datos utilizadas
+
+El sistema utiliza las siguientes bases de datos, cada una con un propósito específico. Todas deben estar correctamente creadas y documentadas antes de ejecutar la aplicación o los tests.
+
+| Base de datos      | Propósito principal                                 |
+|--------------------|-----------------------------------------------------|
+| inventario         | Gestión de stock, materiales, obras, pedidos, etc.  |
+| users              | Gestión de usuarios, roles, permisos y logs         |
+| auditoria          | Registro de acciones, auditoría y trazabilidad      |
+
+> Nota: En algunos entornos, la base de datos `obras` puede estar separada, pero por defecto está incluida en `inventario`.
+
+## Tablas principales por base de datos
+
+### inventario
+
+- inventario_items
+- movimientos_stock
+- reservas_stock
+- obras
+- cronograma_obras
+- materiales_por_obra
+- pedidos_compra
+- detalle_pedido
+- presupuestos
+- aberturas
+- etapas_fabricacion
+- entregas_obras
+- checklist_entrega
+- errores_sistema
+
+### users
+
+- usuarios
+- roles_permisos
+- logs_usuarios
+- permisos_modulos *(ver docs/errores_frecuentes_login.md para su SQL y uso)*
+
+### auditoria
+
+- auditorias_sistema
+
+## Notas y buenas prácticas
+
+- Todos los nombres de tablas y bases de datos deben coincidir exactamente con los definidos en el script SQL y en los modelos.
+- Si se agrega una nueva tabla o base, debe documentarse aquí y en el archivo SQL correspondiente.
+- La tabla `permisos_modulos` es obligatoria para la gestión granular de permisos y debe existir en la base `users`.
+- El script `MPS_SQL_COMPLETO_SIN_PREFIJOS.sql` crea todas las tablas principales y debe ejecutarse en cada base según corresponda.
+- Cualquier excepción, tabla auxiliar o flujo especial debe documentarse en los archivos de docs/ y en el código.
+
+## Referencias cruzadas
+
+- Ver `docs/errores_frecuentes_login.md` para detalles de tablas auxiliares de permisos.
+- Ver `docs/flujo_obras_material_vidrios.md` para la interconexión de tablas entre obras, inventario y pedidos.
+- Consultar el diagrama de flujo en `img/diagrama-de-flujo-detallado.png` para visualizar la relación entre tablas.
+
+---
+
 # Documentación y estándares del proyecto
 
 Este proyecto utiliza una estructura de documentación modular. Todos los estándares y guías obligatorias están en la carpeta `docs/`.
@@ -21,10 +81,13 @@ Lee y respeta cada estándar antes de modificar o agregar código. Cualquier exc
 Puedes instalar todas las dependencias automáticamente usando los scripts incluidos en la carpeta `scripts`:
 
 - **Windows:**
+
   ```powershell
   .\scripts\install.bat
   ```
+
 - **Linux/Mac:**
+
   ```bash
   bash ./scripts/install.sh
   ```
@@ -32,6 +95,7 @@ Puedes instalar todas las dependencias automáticamente usando los scripts inclu
 Esto instalará todas las librerías necesarias usando el archivo `requirements.txt` y el flag `--user` para evitar problemas de permisos.
 
 Si prefieres hacerlo manualmente:
+
 ```powershell
 pip install --user -r requirements.txt
 ```
@@ -75,15 +139,20 @@ pip install --user -r requirements.txt
 
 - Verifica que tienes conexión a internet.
 - Intenta ejecutar manualmente:
+
   ```powershell
   python scripts/auto_install_wheels.py
   ```
-- Si el error persiste, descarga los wheels manualmente desde https://www.lfd.uci.edu/~gohlke/pythonlibs/ y ejecuta:
+
+- Si el error persiste, descarga los wheels manualmente desde <https://www.lfd.uci.edu/~gohlke/pythonlibs/> y ejecuta:
+
   ```powershell
   pip install --user C:\ruta\a\pandas‑2.2.2‑cp311‑cp311‑win_amd64.whl
   pip install --user C:\ruta\a\pyodbc‑5.0.1‑cp311‑cp311‑win_amd64.whl
   ```
+
 - Luego vuelve a ejecutar:
+
   ```powershell
   pip install --user --prefer-binary -r requirements.txt
   ```
@@ -106,13 +175,13 @@ pip install --user -r requirements.txt
   1. Asegúrate de estar usando una versión de Python soportada (recomendado: 3.10, 3.11 o 3.12 de 64 bits).
   2. Usa el archivo `requirements.txt` incluido, que ya sugiere versiones compatibles.
   3. Si falla la instalación de algún paquete (por ejemplo, `pyodbc` o `pandas`), prueba la versión alternativa sugerida en el comentario del archivo `requirements.txt`.
-  4. Si el error persiste, instala manualmente el paquete wheel desde https://www.lfd.uci.edu/~gohlke/pythonlibs/ (descarga el archivo `.whl` correspondiente a tu versión de Python y Windows y ejecuta: `pip install <archivo.whl>`).
+  4. Si el error persiste, instala manualmente el paquete wheel desde <https://www.lfd.uci.edu/~gohlke/pythonlibs/> (descarga el archivo `.whl` correspondiente a tu versión de Python y Windows y ejecuta: `pip install <archivo.whl>`).
   5. Solo como último recurso, instala las [Build Tools de Visual Studio](https://visualstudio.microsoft.com/visual-cpp-build-tools/) (no es necesario en la mayoría de los casos si usas las versiones recomendadas).
 
 - Si usas un entorno virtual (recomendado), activa el entorno antes de instalar dependencias.
 - Si distribuyes la app a usuarios finales, considera usar un empaquetador como PyInstaller para evitar que tengan que instalar Python y dependencias manualmente.
 
-### Ejemplo de instalación manual de un wheel descargado:
+### Ejemplo de instalación manual de un wheel descargado
 
 ```powershell
 pip install C:\ruta\a\pyodbc‑5.0.1‑cp311‑cp311‑win_amd64.whl
@@ -153,7 +222,6 @@ La aplicación verifica e instala/actualiza automáticamente todas las dependenc
 Última actualización: 19 de mayo de 2025
 
 # GUÍA VISUAL Y ESTÁNDARES DE ESTILO (PALETA PASTEL AZUL-CREMA, CONTRASTE Y SOMBRAS)
-
 
 > **Tabla de contenido**
 >
@@ -326,10 +394,10 @@ estilizar_boton_icono(btn_aceptar)
 ## PRINCIPIOS Y PARÁMETROS DE DISEÑO UI/UX PARA TODA LA APP
 
 > ⚠️ **IMPORTANTE:**
-> 
+>
 > **Estos parámetros estéticos y de diseño son OBLIGATORIOS y NO pueden ser modificados ni ignorados bajo ninguna circunstancia.**
 > Si se requiere una excepción, debe estar justificada y documentada aquí y en el código correspondiente.
-> 
+>
 > **Este bloque debe ser respetado SIEMPRE en toda la app.**
 
 1. Padding y márgenes:
@@ -388,6 +456,7 @@ Estos principios son OBLIGATORIOS para todo el desarrollo de la app. Si se requi
 > **Este estándar debe aplicarse a todas las pestañas de configuración y cualquier sección nueva que se agregue en el futuro.**
 
 ### Paleta de colores y estilo
+
 - Fondo general: `#fff9f3` (crema pastel muy claro)
 - Azul pastel principal: `#2563eb` (texto, íconos, botones principales)
 - Celeste pastel: `#e3f6fd` (fondos de botones, headers, pestañas activas)
@@ -398,6 +467,7 @@ Estos principios son OBLIGATORIOS para todo el desarrollo de la app. Si se requi
 - Sombra sutil: `box-shadow: 0 2px 8px rgba(37,99,235,0.08)`
 
 ### QTabWidget y QTabBar
+
 - Bordes redondeados: 12px en el panel y 8px en las pestañas.
 - Pestañas con fondo celeste pastel y texto azul pastel.
 - Pestaña activa: fondo crema, borde azul pastel.
@@ -405,6 +475,7 @@ Estos principios son OBLIGATORIOS para todo el desarrollo de la app. Si se requi
 - Espaciado entre pestañas: 8px.
 
 #### QSS recomendado para QTabWidget
+
 ```css
 QTabWidget::pane {
     border-radius: 12px;
@@ -429,6 +500,7 @@ QTabBar::tab:selected {
 ```
 
 ### Layout interno de cada pestaña
+
 - Usar siempre QVBoxLayout con `setContentsMargins(24, 20, 24, 20)` y `setSpacing(16)`.
 - Título principal: QLabel, fuente 18px, bold, color azul pastel, alineado al centro.
 - Labels secundarios: fuente 13px, color #1e293b, alineados al centro.
@@ -438,6 +510,7 @@ QTabBar::tab:selected {
 - Siempre usar `addStretch()` al final para mantener el contenido arriba y el espacio visual limpio.
 
 #### Ejemplo de layout de una pestaña
+
 ```python
 layout = QVBoxLayout(tab_widget)
 layout.setContentsMargins(24, 20, 24, 20)
@@ -451,6 +524,7 @@ layout.addStretch()
 ```
 
 ### Feedback visual dentro de pestañas
+
 - Usar QLabel para mensajes de feedback inmediato.
 - Colores y emojis según tipo:
   - Éxito: verde pastel, "✅"
@@ -458,6 +532,7 @@ layout.addStretch()
   - Advertencia: naranja pastel, "⚠️"
   - Info: azul pastel, "ℹ️"
 - Ejemplo de uso:
+
 ```python
 label_feedback = QLabel()
 label_feedback.setStyleSheet("font-size: 13px; padding: 8px 0;")
@@ -465,10 +540,12 @@ label_feedback.setText("<span style='color:#22c55e;'>✅ Acción realizada con �
 ```
 
 ### Tooltips y ayuda contextual
+
 - Todos los botones y campos deben tener `setToolTip()` con una descripción clara de su función.
 - Si la pestaña es compleja, agregar un ícono de ayuda ("img/info.svg") que muestre un QDialog con instrucciones.
 
 ### Excepciones visuales
+
 - Si una pestaña requiere un diseño diferente, debe justificarse en el código y documentarse aquí.
 - Ejemplo: "La pestaña X utiliza un layout especial por requerimiento de UX para ..."
 
@@ -590,6 +667,7 @@ El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de qu
 ## Configuración y Seguridad de la Conexión a la Base de Datos
 
 ### Seguridad y buenas prácticas
+
 - **Nunca expongas usuario, contraseña ni IP en el código fuente de los módulos.**
 - Todos los datos sensibles de conexión se encuentran en `core/config.py` y solo deben modificarse allí.
 - El string de conexión se construye siempre usando la función `get_connection_string(driver, database)` de `core/database.py`.
@@ -597,6 +675,7 @@ El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de qu
 - El archivo `core/config.py` **no debe subirse al repositorio**. Usa `config.example.py` para compartir ejemplos.
 
 ### Conexión multi-PC y configuración visual
+
 - El sistema permite conectarse desde varias computadoras a la PC/servidor donde están las bases de datos.
 - Desde el módulo de Configuración, pestaña "Base de Datos", puedes:
   - Ver y editar la IP/servidor, usuario, contraseña y base de datos.
@@ -608,6 +687,7 @@ El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de qu
     - Qué hacer si falla la conexión (verificar firewall, usuario, contraseña, permisos de SQL Server, etc.).
 
 ### Ejemplo de flujo para el usuario
+
 1. Ir a Configuración > Base de Datos.
 2. Cambiar la IP/servidor si es necesario (por ejemplo, la IP de la PC donde está SQL Server).
 3. Ingresar usuario y contraseña de SQL Server.
@@ -616,6 +696,7 @@ El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de qu
 6. Si la conexión es exitosa, guardar los cambios. La configuración quedará guardada y se usará en los próximos inicios.
 
 ### Notas técnicas
+
 - El sistema utiliza una única conexión persistente por base de datos, inyectada en los modelos.
 - Si la conexión falla, la app muestra un aviso y permite navegación básica en modo offline.
 - Todas las acciones relevantes quedan registradas en auditoría.
@@ -808,7 +889,9 @@ Para garantizar que todas las tablas críticas del sistema tengan la estructura,
 >   [LOG ACCIÓN] Ejecutando acción 'agregar_material' en módulo 'inventario' por usuario: juan (id=5)
 >   [LOG ACCIÓN] Acción 'agregar_material' en módulo 'inventario' finalizada con éxito.
 >   ```
+>
 >   o, si ocurre un error:
+>
 >   ```
 >   [LOG ACCIÓN] Error en acción 'agregar_material' en módulo 'inventario': <detalle del error>
 >   ```
