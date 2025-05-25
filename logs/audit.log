@@ -2549,3 +2549,25 @@
 2025-05-24 19:56:10,584 - ERROR - Error al ejecutar la consulta en la base de datos.
 
 ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'permisos_modulos' no es válido. (208) (SQLExecDirectW)")
+2025-05-25 11:16:38,318 - INFO - Aplicación iniciada
+2025-05-25 11:16:38,378 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'roles_permisos' no es válido. (208) (SQLExecDirectW)")
+2025-05-25 11:16:38,378 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'roles_permisos' no es válido. (208) (SQLExecDirectW)")
+2025-05-25 11:16:42,061 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-25 11:16:42,061 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-25 11:16:42,061 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-25 11:16:42,061 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-25 13:20:46,656 - INFO - Aplicación iniciada
+2025-05-25 13:20:46,794 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'roles_permisos' no es válido. (208) (SQLExecDirectW)")
+2025-05-25 13:20:46,794 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'roles_permisos' no es válido. (208) (SQLExecDirectW)")
+2025-05-25 13:20:54,022 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-25 13:20:54,022 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-25 13:20:54,022 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-25 13:20:54,022 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver

@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
 """
 MÓDULO: USUARIOS
 Flujo funcional y checklist documentado para trazabilidad y referencia de desarrolladores.
@@ -441,6 +445,11 @@ class UsuariosModel:
             # Si no hay módulos en roles_permisos, intentar obtener de permisos_modulos
             modulos = self.db.ejecutar_query("SELECT DISTINCT modulo FROM permisos_modulos")
             modulos = [m[0] for m in modulos] if modulos else []
+        # Si sigue vacío, definir módulos críticos por defecto
+        if not modulos:
+            modulos = [
+                'Inventario', 'Obras', 'Logística', 'Usuarios', 'Configuración'
+            ]
         # Limpiar permisos previos
         self.db.ejecutar_query("DELETE FROM permisos_modulos WHERE id_usuario = ?", (admin_id,))
         self.db.ejecutar_query("DELETE FROM permisos_modulos WHERE id_usuario = ?", (prueba_id,))

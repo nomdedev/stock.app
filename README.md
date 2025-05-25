@@ -829,3 +829,31 @@ Para garantizar que todas las tablas críticas del sistema tengan la estructura,
 > - Consulta también los estándares de logging en `docs/estandares_logging.md`.
 
 ---
+
+## Sombra visual (depth/shadow) en widgets y botones
+
+**Qt NO soporta la propiedad `box-shadow` en QSS.**
+
+- Para lograr el efecto de sombra visual (depth) en widgets, tarjetas, botones, diálogos, etc., se debe usar SIEMPRE `QGraphicsDropShadowEffect` desde Python.
+- No usar ni dejar referencias a `box-shadow` en QSS, ya que genera warnings y no tiene efecto.
+- Ejemplo recomendado para aplicar sombra a un widget o botón:
+
+```python
+from PyQt6.QtWidgets import QGraphicsDropShadowEffect
+from PyQt6.QtGui import QColor
+
+sombra = QGraphicsDropShadowEffect(widget)
+sombra.setBlurRadius(16)  # Ajustar según necesidad visual
+sombra.setColor(QColor(37, 99, 235, 60))  # Color pastel azul, alpha bajo
+sombra.setOffset(0, 4)  # Desplazamiento vertical
+widget.setGraphicsEffect(sombra)
+```
+
+- Para tarjetas, usar un blur mayor (ej: 24-32), para botones uno menor (ej: 8-16).
+- Documentar en el código cualquier excepción justificada.
+- Si se requiere sombra en varios widgets, crear un helper reutilizable.
+
+**Regla:**
+> Siempre usar QGraphicsDropShadowEffect para sombras visuales en la app. Nunca usar box-shadow en QSS.
+
+---

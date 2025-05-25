@@ -1,5 +1,5 @@
 -- Base de datos: usuarios
-CREATE DATABASE IF NOT EXISTS usuarios;
+CREATE DATABASE IF NOT EXISTS users;
 \c usuarios;
 
 CREATE TABLE usuarios (

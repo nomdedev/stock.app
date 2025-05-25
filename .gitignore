@@ -2,3 +2,21 @@
 icons/
 
 core/config.py
+.env
+.env.*
+logs/
+*.log
+*.sqlite3
+*.db
+*.pyc
+__pycache__/
+tests/test_login.py
+tests/test_usuarios*.py
+resultado_*.txt
+# No subir dumps ni archivos de datos reales
+*.dump
+*.bak
+*.sql
+# No subir archivos de tests automáticos de login ni credenciales
+# No subir archivos de configuración real
+config/*.json

@@ -149,6 +149,10 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.main_layout.setSpacing(16)
         # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
 
+        # Conexión de botones principales a slots robustos
+        self.boton_agregar.clicked.connect(self._slot_agregar_obra)
+        self.boton_verificar_obra.clicked.connect(self._slot_verificar_obra)
+
     def obtener_headers_desde_db(self, tabla):
         # Intenta obtener headers dinámicamente desde la base de datos
         if self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"]):
@@ -310,6 +314,17 @@ class ObrasView(QWidget, TableResponsiveMixin):
         # Feedback visual (puede ser reemplazado por el flujo real)
         self.label_feedback.setText("Obra agregada y notificada a otros módulos.")
         # ...aquí continuar con la lógica real de refresco de tabla, etc...
+
+    def _slot_agregar_obra(self):
+        # Feedback visual y mensaje informativo
+        QMessageBox.information(self, "Agregar Obra", "Acción de agregar obra ejecutada correctamente.")
+        self.mostrar_mensaje("Obra agregada (simulado).", tipo="exito")
+        # Aquí se puede emitir la señal obra_agregada si se desea simular integración
+        # self.obra_agregada.emit({"id": 0, "nombre": "Obra demo"})
+
+    def _slot_verificar_obra(self):
+        QMessageBox.information(self, "Verificar Obra", "Acción de verificación de obra ejecutada correctamente.")
+        self.mostrar_mensaje("Verificación de obra ejecutada (simulado).", tipo="info")
 
 # Nota: Los controladores de Inventario y Vidrios deben conectarse a la señal 'obra_agregada' para actualizar sus datos en tiempo real.
 # Ejemplo en el controlador:

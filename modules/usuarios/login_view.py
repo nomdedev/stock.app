@@ -60,7 +60,7 @@ class LoginView(QWidget):
                 padding: 14px;
                 margin-top: 18px;
                 margin-bottom: 8px;
-                box-shadow: 0 2px 8px #2563eb22;
+                /* box-shadow eliminado: Qt no soporta esta propiedad en QSS. Usar QGraphicsDropShadowEffect en Python para sombras. */
             }
             QPushButton:hover {
                 background: #1d4ed8;
@@ -92,20 +92,18 @@ class LoginView(QWidget):
         card_layout.setContentsMargins(32, 32, 32, 32)
         card_layout.setSpacing(16)
 
-        # Icono superior
+        # Icono superior (imagen de inicio de sesión, ahora más grande)
         self.icono = QLabel()
         self.icono.setObjectName("icono")
-        pixmap = QPixmap("img/pdf_icon.svg")
+        pixmap = QPixmap("img/MPS_inicio_sesion.png")
         if pixmap.isNull():
             pixmap = QPixmap("img/placeholder.svg")
-        self.icono.setPixmap(pixmap.scaled(64, 64, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        # Mostrar la imagen mucho más grande (por ejemplo, 180x180)
+        self.icono.setPixmap(pixmap.scaled(180, 180, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         self.icono.setAlignment(Qt.AlignmentFlag.AlignCenter)
         card_layout.addWidget(self.icono)
 
-        self.titulo = QLabel("StockApp")
-        self.titulo.setObjectName("titulo")
-        self.titulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        card_layout.addWidget(self.titulo)
+        # Eliminar el título "StockApp" (no agregar el QLabel de título)
 
         self.subtitulo = QLabel("Iniciar sesión")
         self.subtitulo.setObjectName("subtitulo")
@@ -145,6 +143,12 @@ class LoginView(QWidget):
         card_layout.addWidget(self.password_input)
 
         self.boton_login = QPushButton("Ingresar")
+        # Aplicar sombra visual al botón usando QGraphicsDropShadowEffect (reemplazo de box-shadow)
+        sombra_boton = QGraphicsDropShadowEffect(self)
+        sombra_boton.setBlurRadius(16)
+        sombra_boton.setColor(QColor(37, 99, 235, 60))
+        sombra_boton.setOffset(0, 4)
+        self.boton_login.setGraphicsEffect(sombra_boton)
         card_layout.addWidget(self.boton_login)
 
         self.label_error = QLabel("")

@@ -21,16 +21,16 @@
 #    - Color de fondo: #2563eb para acción principal, #f1f5f9 para secundarios.
 #    - Color de texto: blanco en botones primarios, #1e293b en secundarios.
 #    - Espaciado entre botones: 16px.
-# 5. Colores y fondo:
-#    - Fondo general: #f1f5f9.
-#    - Los diálogos de error usan #ef4444 para el texto y fondo claro.
-#    - Los mensajes de éxito usan #22c55e, advertencia #fbbf24, info #2563eb.
-# 6. Íconos:
-#    - Siempre SVG o PNG de alta resolución.
-#    - Alineados con el texto y con padding de al menos 8px respecto al texto.
-# 7. Tablas y formularios:
-#    - Espaciado entre filas: mínimo 8px.
-#    - Padding en celdas: 12px.
+#    - Sombra visual: NO usar box-shadow en QSS (no es soportado por Qt y genera warnings). Para sombras en botones, tarjetas y widgets usar SIEMPRE QGraphicsDropShadowEffect desde Python. Ejemplo estándar:
+#        from PyQt6.QtWidgets import QGraphicsDropShadowEffect
+#        from PyQt6.QtGui import QColor
+#        sombra = QGraphicsDropShadowEffect()
+#        sombra.setBlurRadius(15)
+#        sombra.setXOffset(0)
+#        sombra.setYOffset(4)
+#        sombra.setColor(QColor(0, 0, 0, 160))
+#        widget.setGraphicsEffect(sombra)
+#    - Documentar cualquier excepción visual en docs/estandares_visuales.md
 #    - Bordes redondeados en headers y celdas: 8px.
 #    - No saturar de información, usar scroll y paginación si es necesario.
 # 8. Feedback visual:
