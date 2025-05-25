@@ -34,16 +34,22 @@ class LoginView(QWidget):
                 margin-bottom: 18px;
             }
             QLineEdit {
+                background: #fff;
+                color: #1e293b;
                 border: 2px solid #d1d5db;
                 border-radius: 14px;
                 padding: 12px;
                 font-size: 1.1rem;
-                background: #fff;
                 margin-bottom: 8px;
             }
             QLineEdit:focus {
                 border: 2px solid #2563eb;
-                background: #f0f6ff;
+                background: #f3f4f6;
+                color: #1e293b;
+            }
+            QLineEdit::placeholder {
+                color: #bdbdbd;
+                font-style: italic;
             }
             QPushButton {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #2563eb, stop:1 #60a5fa);
@@ -111,11 +117,31 @@ class LoginView(QWidget):
 
         self.usuario_input = QLineEdit()
         self.usuario_input.setPlaceholderText("Usuario")
+        self.usuario_input.setStyleSheet("""
+            QLineEdit {
+                background: #fff;
+                color: #1e293b;
+                border-radius: 14px;
+                border: 1.5px solid #e3e3e3;
+                padding: 12px;
+                font-size: 1.1rem;
+            }
+            QLineEdit:focus {
+                border: 2px solid #2563eb;
+                background: #f3f4f6;
+                color: #1e293b;
+            }
+            QLineEdit::placeholder {
+                color: #bdbdbd;
+                font-style: italic;
+            }
+        """)
         card_layout.addWidget(self.usuario_input)
 
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("Contraseña")
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
+        self.password_input.setStyleSheet(self.usuario_input.styleSheet())
         card_layout.addWidget(self.password_input)
 
         self.boton_login = QPushButton("Ingresar")

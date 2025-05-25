@@ -214,7 +214,7 @@ QPushButton {
     font-weight: bold;
     min-width: 80px;
     min-height: 28px;
-    box-shadow: 0 2px 8px rgba(37,99,235,0.08); /* sombra sutil */
+    /* box-shadow eliminado por incompatibilidad QSS */
 }
 QPushButton:hover {
     background-color: #f3eaff;

@@ -22,7 +22,7 @@ class LoginController:
                 self.view.mostrar_error("Usuario o contraseña incorrectos.")
                 return
             password_hash = hashlib.sha256(password.encode()).hexdigest()
-            if user['password'] != password_hash:
+            if user['password_hash'] != password_hash:
                 self.view.mostrar_error("Usuario o contraseña incorrectos.")
                 return
             self.usuario_autenticado = user

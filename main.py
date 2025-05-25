@@ -415,7 +415,7 @@ class MainWindow(QMainWindow):
         self.usuario_label.setStyleSheet(
             f"background: #e0e7ef; color: {color}; font-size: 13px; font-weight: bold; border-radius: 8px; padding: 4px 12px; margin-right: 8px; border: 1.5px solid {color};"
         )
-        self.usuario_label.setText(f"Usuario: {usuario['username']} ({usuario['rol']})")
+        self.usuario_label.setText(f"Usuario: {usuario['usuario']} ({usuario['rol']})")
 
     def initUI(self, usuario=None, modulos_permitidos=None):
         # Crear conexiones persistentes a las bases de datos (una sola instancia por base)
@@ -442,7 +442,7 @@ class MainWindow(QMainWindow):
         self.usuarios_model.crear_usuarios_iniciales()
 
         # Crear vistas y controladores principales
-        usuario_str = usuario['username'] if isinstance(usuario, dict) and 'username' in usuario else str(usuario)
+        usuario_str = usuario['usuario'] if isinstance(usuario, dict) and 'usuario' in usuario else str(usuario)
         self.inventario_view = InventarioView(db_connection=self.db_connection_inventario, usuario_actual=usuario_str)
         self.inventario_controller = InventarioController(
             model=self.inventario_model, view=self.inventario_view, db_connection=self.db_connection_inventario
@@ -748,28 +748,31 @@ if __name__ == "__main__":
             splash.fade_out.start()
             QTimer.singleShot(1000, app.quit)
             return
-        print("[LOG 4.6] Mostrando LoginView...")
-        db_connection_usuarios = DatabaseConnection()
-        db_connection_usuarios.conectar_a_base("users")
-        usuarios_model = UsuariosModel(db_connection=db_connection_usuarios)
-        login_view = LoginView()
-        login_controller = LoginController(login_view, usuarios_model)
-        login_view.show()
-
-        def on_login_success():
-            user = login_controller.usuario_autenticado
-            if not user:
-                login_view.mostrar_error("Usuario o contraseña incorrectos.")
-                return
-            login_view.close()
-            modulos_permitidos = usuarios_model.obtener_modulos_permitidos(user)
-            main_window = MainWindow(user, modulos_permitidos)
-            main_window.actualizar_usuario_label(user)
-            main_window.mostrar_mensaje(f"Usuario actual: {user['username']} ({user['rol']})", tipo="info", duracion=4000)
-            main_window.show()
-            splash.close_when_ready(main_window)
-
-        login_view.boton_login.clicked.connect(on_login_success)
+        print("[LOG 4.6] Esperando cierre real de SplashScreen para mostrar LoginView...")
+        def mostrar_login():
+            db_connection_usuarios = DatabaseConnection()
+            db_connection_usuarios.conectar_a_base("users")
+            usuarios_model = UsuariosModel(db_connection=db_connection_usuarios)
+            login_view = LoginView()
+            login_controller = LoginController(login_view, usuarios_model)
+            def on_login_success():
+                user = login_controller.usuario_autenticado
+                if not user:
+                    login_view.mostrar_error("Usuario o contraseña incorrectos.")
+                    return
+                login_view.close()
+                modulos_permitidos = usuarios_model.obtener_modulos_permitidos(user)
+                main_window = MainWindow(user, modulos_permitidos)
+                main_window.actualizar_usuario_label(user)
+                main_window.mostrar_mensaje(f"Usuario actual: {user['usuario']} ({user['rol']})", tipo="info", duracion=4000)
+                main_window.show()
+            login_view.boton_login.clicked.connect(on_login_success)
+            login_view.show()
+        def cerrar_splash_y_mostrar_login():
+            splash.close()
+            QTimer.singleShot(0, mostrar_login)
+        splash.fade_out.finished.connect(cerrar_splash_y_mostrar_login)
+        QTimer.singleShot(splash.duration, splash.fade_out.start)
 
     print("[LOG 4.9] Espera activa: cerrando splash y mostrando login cuando corresponda...")
     QTimer.singleShot(600, continuar_inicio)
