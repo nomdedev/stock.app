@@ -7,6 +7,7 @@
 import unittest
 from modules.configuracion.model import ConfiguracionModel
 from modules.configuracion.view import ConfiguracionView
+from PyQt6.QtWidgets import QApplication
 
 class MockDBConnection:
     def __init__(self):
@@ -65,6 +66,11 @@ class TestConfiguracionModel(unittest.TestCase):
         self.assertEqual(self.mock_db.last_params, ("True",))
 
 class TestConfiguracionView(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # Inicializa QApplication solo una vez para todos los tests de la vista
+        cls._app = QApplication.instance() or QApplication([])
+
     def test_boton_activar_offline_existe(self):
         view = ConfiguracionView()
         self.assertTrue(hasattr(view, "boton_activar_offline"), "El botón 'boton_activar_offline' no está definido.")

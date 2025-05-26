@@ -43,31 +43,44 @@ permiso_auditoria_configuracion = PermisoAuditoria('configuracion')
 class ConfiguracionController:
     """
     Controlador robusto para el módulo de Configuración.
-    - Valida argumentos y dependencias.
-    - Gestiona permisos y feedback visual.
-    - Refuerza la robustez en señales y métodos.
+    - Valida argumentos y dependencias en todos los métodos públicos.
+    - Gestiona permisos y feedback visual inmediato y accesible.
+    - Refuerza la robustez en la conexión de señales y manejo de edge cases.
+    - Documenta cualquier excepción visual o lógica relevante.
+    - Sigue el estándar de feedback visual y accesibilidad definido en docs/estandares_feedback.md y docs/estandares_visuales.md.
     """
     def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None):
+        """
+        Inicializa el controlador de configuración.
+        Valida dependencias críticas y conecta señales de forma robusta.
+        """
+        if model is None or view is None or db_connection is None or usuarios_model is None:
+            raise ValueError("Faltan dependencias críticas en ConfiguracionController")
         self.model = model
         self.view = view
         self.usuario_actual = usuario_actual
         self.usuarios_model = usuarios_model
         self.db_connection = db_connection
         self.auditoria_model = AuditoriaModel(db_connection)
-        self._conectar_senales()
+        self.setup_view_signals()
 
-    def _conectar_senales(self):
-        botones = [
-            ("save_button", self.guardar_cambios),
-            ("switch_tema", self.toggle_tema, "stateChanged"),
-            ("boton_activar_offline", self.activar_modo_offline),
-            ("boton_desactivar_offline", self.desactivar_modo_offline),
-            ("boton_guardar_conexion", self.guardar_configuracion_conexion),
-            ("boton_cambiar_notificaciones", self.cambiar_estado_notificaciones),
-            ("boton_seleccionar_csv", self.seleccionar_archivo_csv),
-            ("boton_importar_csv", self.importar_csv_inventario)
+    def setup_view_signals(self):
+        """
+        Conecta las señales de la vista a los métodos del controlador de forma robusta.
+        Valida la existencia y tipo de cada widget antes de conectar.
+        Si falta algún widget o señal, muestra feedback visual inmediato y documenta el edge case.
+        """
+        botones_acciones = [
+            ('save_button', self.guardar_cambios),
+            ('switch_tema', self.toggle_tema, 'stateChanged'),
+            ('boton_activar_offline', self.activar_modo_offline),
+            ('boton_desactivar_offline', self.desactivar_modo_offline),
+            ('boton_guardar_conexion', self.guardar_configuracion_conexion),
+            ('boton_cambiar_notificaciones', self.cambiar_estado_notificaciones),
+            ('boton_seleccionar_csv', self.seleccionar_archivo_csv),
+            ('boton_importar_csv', self.importar_csv_inventario)
         ]
-        for nombre, funcion, *signal in botones:
+        for nombre, funcion, *signal in botones_acciones:
             if hasattr(self.view, nombre):
                 boton = getattr(self.view, nombre)
                 try:
@@ -75,6 +88,8 @@ class ConfiguracionController:
                         getattr(boton, signal[0]).connect(funcion)
                     elif hasattr(boton, 'clicked'):
                         boton.clicked.connect(funcion)
+                    else:
+                        self.mostrar_mensaje(f"El widget '{nombre}' no tiene señal 'clicked' ni '{signal[0] if signal else ''}'", tipo="advertencia")
                 except Exception as e:
                     self.mostrar_mensaje(f"Error al conectar señal de '{nombre}': {e}", tipo="error")
             else:
@@ -87,6 +102,9 @@ class ConfiguracionController:
                 self.mostrar_mensaje(f"Error al cargar permisos de módulos: {e}", tipo="error", destino="permisos_result_label")
 
     def mostrar_mensaje(self, mensaje, tipo="info", destino="label"):
+        """
+        Muestra feedback visual accesible y documenta el tipo de mensaje.
+        """
         colores = {
             "exito": "#22c55e",
             "error": "#ef4444",
@@ -136,10 +154,17 @@ class ConfiguracionController:
 
     @permiso_auditoria_configuracion('ver')
     def cargar_configuracion(self):
-        """Carga la configuración y refuerza validación de widgets y tipos. Documenta edge cases visuales."""
+        """
+        Carga la configuración y refuerza validación de widgets y tipos. Documenta edge cases visuales.
+        """
         try:
             configuracion = self.model.obtener_configuracion()
+            if not isinstance(configuracion, list):
+                raise TypeError("El resultado de obtener_configuracion debe ser una lista")
             for clave, valor, descripcion in configuracion:
+                if not isinstance(clave, str):
+                    self.mostrar_mensaje(f"Clave de configuración inválida: {clave}", tipo="error")
+                    continue
                 w = self._get_widget(f"{clave}_input")
                 if w:
                     if hasattr(w, 'setText'):
@@ -150,31 +175,40 @@ class ConfiguracionController:
                         w.setChecked(str(valor) == "True")
             apariencia = self.model.obtener_apariencia_usuario(1)
             if apariencia:
-                modo_color, idioma, notificaciones, tamaño_fuente = apariencia[0]
-                w_color = self._get_widget('modo_color_input')
-                if w_color: w_color.setCurrentText(modo_color)
-                w_idioma = self._get_widget('idioma_input')
-                if w_idioma: w_idioma.setCurrentText(idioma)
-                w_notif = self._get_widget('notificaciones_checkbox')
-                if w_notif: w_notif.setChecked(bool(notificaciones))
-                w_tam = self._get_widget('tamaño_fuente_input')
-                if w_tam: w_tam.setCurrentText(tamaño_fuente)
+                if not isinstance(apariencia[0], (list, tuple)) or len(apariencia[0]) != 4:
+                    self.mostrar_mensaje("Formato de apariencia de usuario inválido.", tipo="error")
+                else:
+                    modo_color, idioma, notificaciones, tamaño_fuente = apariencia[0]
+                    w_color = self._get_widget('modo_color_input')
+                    if w_color: w_color.setCurrentText(modo_color)
+                    w_idioma = self._get_widget('idioma_input')
+                    if w_idioma: w_idioma.setCurrentText(idioma)
+                    w_notif = self._get_widget('notificaciones_checkbox')
+                    if w_notif: w_notif.setChecked(bool(notificaciones))
+                    w_tam = self._get_widget('tamaño_fuente_input')
+                    if w_tam: w_tam.setCurrentText(tamaño_fuente)
         except Exception as e:
             self.mostrar_mensaje(f"Error al cargar configuración: {e}", tipo="error")
             # EXCEPCIÓN VISUAL: Si falta un widget crítico, se documenta y se muestra advertencia.
 
     @permiso_auditoria_configuracion('editar')
     def guardar_cambios(self):
-        """Guarda cambios de configuración validando tipos y argumentos. Documenta edge cases visuales."""
+        """
+        Guarda cambios de configuración validando tipos y argumentos. Documenta edge cases visuales.
+        """
         try:
             nombre = self._get_text('nombre_app_input')
-            if not nombre:
-                self.mostrar_mensaje("El nombre de la app no puede estar vacío.", tipo="error")
+            if not nombre or not isinstance(nombre, str):
+                self.mostrar_mensaje("El nombre de la app no puede estar vacío y debe ser texto.", tipo="error")
                 return
             self.model.actualizar_configuracion("nombre_app", nombre)
             zona = self._get_widget('zona_horaria_input')
             if zona and hasattr(zona, 'currentText'):
-                self.model.actualizar_configuracion("zona_horaria", zona.currentText())
+                zona_val = zona.currentText()
+                if not isinstance(zona_val, str):
+                    self.mostrar_mensaje("Zona horaria inválida.", tipo="error")
+                else:
+                    self.model.actualizar_configuracion("zona_horaria", zona_val)
             modo_mant = self._get_widget('modo_mantenimiento_checkbox')
             if modo_mant and hasattr(modo_mant, 'isChecked'):
                 self.model.actualizar_configuracion("modo_mantenimiento", str(modo_mant.isChecked()))
@@ -184,6 +218,9 @@ class ConfiguracionController:
                 self._get_checked('notificaciones_checkbox'),
                 self._get_text('tamaño_fuente_input')
             )
+            if not all(isinstance(x, (str, bool)) for x in datos_apariencia):
+                self.mostrar_mensaje("Datos de apariencia inválidos.", tipo="error")
+                return
             self.model.actualizar_apariencia_usuario(1, datos_apariencia)
             self.mostrar_mensaje("Cambios guardados exitosamente.", tipo="exito")
         except Exception as e:
@@ -192,6 +229,9 @@ class ConfiguracionController:
 
     @permiso_auditoria_configuracion('editar')
     def probar_conexion_bd(self, retornar_resultado=False):
+        """
+        Prueba la conexión a la base de datos validando argumentos y tipos. Feedback visual inmediato.
+        """
         try:
             servidor = self._get_text('server_input')
             usuario = self._get_text('username_input')
@@ -199,12 +239,13 @@ class ConfiguracionController:
             base = self._get_text('default_db_input')
             puerto = self._get_text('port_input')
             timeout = self._get_text('timeout_input')
-            if not all([servidor, usuario, password, base]):
+            if not all(isinstance(x, str) and x.strip() for x in [servidor, usuario, password, base]):
                 raise ValueError("Faltan campos obligatorios para la conexión.")
-            timeout = int(timeout) if timeout.isdigit() else 5
+            timeout = int(timeout) if timeout and timeout.isdigit() else 5
             conn_str = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={servidor};DATABASE={base};UID={usuario};PWD={password};TrustServerCertificate=yes;"
             if puerto:
                 conn_str += f"PORT={puerto};"
+            import pyodbc
             conn = pyodbc.connect(conn_str, timeout=timeout)
             conn.close()
             if retornar_resultado:
@@ -217,8 +258,10 @@ class ConfiguracionController:
 
     @permiso_auditoria_configuracion('editar')
     def guardar_configuracion_conexion(self):
+        """
+        Guarda la configuración de conexión validando argumentos y feedback visual inmediato.
+        """
         try:
-            # ESTÁNDAR: Siempre usar _get_text para obtener valores de widgets, nunca .text() directo
             campos_obligatorios = [
                 ('server_input', "Servidor"),
                 ('username_input', "Usuario"),
@@ -227,8 +270,8 @@ class ConfiguracionController:
             ]
             for campo_nombre, nombre in campos_obligatorios:
                 valor = self._get_text(campo_nombre)
-                if not valor.strip():
-                    self.mostrar_mensaje(f"El campo '{nombre}' es obligatorio.", tipo="error", destino="resultado_conexion_label")
+                if not valor or not isinstance(valor, str) or not valor.strip():
+                    self.mostrar_mensaje(f"El campo '{nombre}' es obligatorio y debe ser texto.", tipo="error", destino="resultado_conexion_label")
                     return
             datos = {
                 "servidor": self._get_text('server_input'),
@@ -251,6 +294,9 @@ class ConfiguracionController:
 
     @permiso_auditoria_configuracion('editar')
     def activar_modo_offline(self):
+        """
+        Activa el modo offline validando feedback visual y errores.
+        """
         try:
             self.model.activar_modo_offline()
             self.mostrar_mensaje("Modo offline activado.", tipo="info")
@@ -259,6 +305,9 @@ class ConfiguracionController:
 
     @permiso_auditoria_configuracion('editar')
     def desactivar_modo_offline(self):
+        """
+        Desactiva el modo offline validando feedback visual y errores.
+        """
         try:
             self.model.desactivar_modo_offline()
             self.mostrar_mensaje("Modo offline desactivado.", tipo="info")
@@ -267,8 +316,14 @@ class ConfiguracionController:
 
     @permiso_auditoria_configuracion('editar')
     def cambiar_estado_notificaciones(self):
+        """
+        Cambia el estado de notificaciones validando feedback visual y errores.
+        """
         try:
             estado_actual = self.model.obtener_estado_notificaciones()
+            if not isinstance(estado_actual, bool):
+                self.mostrar_mensaje("Estado de notificaciones inválido.", tipo="error")
+                return
             nuevo_estado = not estado_actual
             self.model.actualizar_estado_notificaciones(nuevo_estado)
             self.mostrar_mensaje(f"Notificaciones {'activadas' if nuevo_estado else 'desactivadas'}.", tipo="info")
@@ -277,6 +332,9 @@ class ConfiguracionController:
 
     @permiso_auditoria_configuracion('editar')
     def toggle_tema(self, estado):
+        """
+        Cambia el tema validando tipo de argumento y feedback visual.
+        """
         try:
             if not isinstance(estado, int):
                 raise ValueError("El estado del tema debe ser un entero.")
@@ -288,6 +346,9 @@ class ConfiguracionController:
             self.mostrar_mensaje(f"Error al cambiar tema: {e}", tipo="error")
 
     def seleccionar_archivo_csv(self):
+        """
+        Selecciona un archivo CSV validando feedback visual y errores.
+        """
         try:
             archivo, _ = QFileDialog.getOpenFileName(self.view, "Seleccionar archivo CSV", "", "Archivos CSV (*.csv)")
             if archivo and hasattr(self.view, 'csv_file_input') and self.view.csv_file_input:
@@ -301,11 +362,12 @@ class ConfiguracionController:
 
     @permiso_auditoria_configuracion('editar')
     def importar_csv_inventario(self):
-        # Validación de usuario y permisos
+        """
+        Importa un CSV de inventario validando argumentos, permisos y feedback visual.
+        """
         if not self.usuario_actual or not getattr(self.usuario_actual, 'rol', None) == 'admin':
             self.mostrar_mensaje("Solo el usuario admin puede importar el inventario.", tipo="error")
             return
-        # Validación de campo de archivo
         if not hasattr(self.view, 'csv_file_input') or not self.view.csv_file_input:
             self.mostrar_mensaje("No se encontró el campo para seleccionar el archivo CSV.", tipo="error")
             return
@@ -319,7 +381,6 @@ class ConfiguracionController:
         if not ruta_csv.lower().endswith('.csv'):
             self.mostrar_mensaje("El archivo seleccionado no es un CSV.", tipo="error")
             return
-        # Callback robusto para preview y confirmación
         def confirmar(df, resultado):
             if hasattr(self.view, 'mostrar_preview'):
                 try:
@@ -343,7 +404,6 @@ class ConfiguracionController:
         except Exception as e:
             self.mostrar_mensaje(f"Error al procesar el archivo: {e}", tipo="error")
             return
-        # Feedback visual y manejo de advertencias/errores
         if resultado.get("exito"):
             if hasattr(self.view, 'mostrar_exito'):
                 try:

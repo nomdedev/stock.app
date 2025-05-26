@@ -19,7 +19,7 @@ PRIORIDAD CRÍTICA (debe resolverse antes de producción)
     - Cumple docs/estandares_visuales.md y docs/estandares_seguridad.md.
 - [x] Validar y documentar que la función crear_usuarios_iniciales asigne permisos correctos (admin: todos, prueba: mínimos) y que el flujo esté documentado en el código y checklist. (Ver docstring en modules/usuarios/model.py y scripts/validar_permisos_iniciales.py)
 - [x] Script de validación de permisos iniciales (scripts/validar_permisos_iniciales.py) documentado y funcional: permite auditar permisos de admin/prueba en cualquier entorno multi-PC/IP, usando configuración centralizada y sin exponer credenciales. Referencia obligatoria para QA y administración.
-- [ ] Robustecer tests de login, permisos y feedback visual.
+- [x] Robustecer tests de login, permisos y feedback visual. (Ver tests/test_login_feedback.py: cubre login, permisos, feedback visual, accesibilidad y edge cases)
 
 ## 2. CONFIGURACIÓN
 - [ ] Refactorizar inicialización y conexión de señales en el controller.
