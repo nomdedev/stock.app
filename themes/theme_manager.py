@@ -14,8 +14,10 @@ def aplicar_tema(nombre_tema):
         qss = file.read()
 
     app = QApplication.instance()
-    if app:
+    if app is not None and isinstance(app, QApplication):
         app.setStyleSheet(qss)
+    else:
+        raise RuntimeError("No hay una instancia válida de QApplication para aplicar el tema.")
 
 # Función para guardar la preferencia del tema
 def guardar_preferencia_tema(nombre_tema):

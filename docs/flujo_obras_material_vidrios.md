@@ -1,7 +1,9 @@
 # Flujo de carga y gestión de obras, pedidos de material y vidrios
 
 ## Objetivo
+
 Describir paso a paso el proceso completo para garantizar que:
+
 - Al cargar una obra (por ejemplo, en estado "Medición"), la obra se visualiza correctamente en la tabla de obras.
 - Se permite solicitar material desde inventario para esa obra.
 - Al cargar el pedido de material, se compara automáticamente contra el stock disponible y se calcula cuánto pedir de cada ítem.
@@ -10,6 +12,7 @@ Describir paso a paso el proceso completo para garantizar que:
 ---
 
 ## 1. Carga de una nueva obra
+
 1. El usuario accede al módulo Obras y utiliza el botón "Agregar Obra".
 2. Completa los campos requeridos (nombre, cliente, estado, fecha, etc.).
 3. El estado inicial puede ser "Medición".
@@ -17,11 +20,13 @@ Describir paso a paso el proceso completo para garantizar que:
 5. Se registra la acción en la auditoría.
 
 ## 2. Visualización y gestión de la obra
+
 1. La obra cargada debe ser visible en la tabla principal de obras.
 2. El usuario puede seleccionar la obra y ver sus detalles.
 3. Si la obra está en estado "Medición" o similar, debe estar habilitada la opción de "Solicitar Material".
 
 ## 3. Solicitud de material desde inventario
+
 1. El usuario, desde la obra seleccionada, accede a la opción "Solicitar Material".
 2. Se abre un formulario/listado donde puede seleccionar los materiales requeridos para la obra.
 3. Al confirmar el pedido:
@@ -32,6 +37,7 @@ Describir paso a paso el proceso completo para garantizar que:
 5. Se registra la acción en la auditoría.
 
 ## 4. Reflejo de la obra en la gestión de vidrios
+
 1. Al cargar una obra, automáticamente debe aparecer en la tabla de vidrios (módulo Vidrios).
 2. El usuario puede asignar los vidrios requeridos para esa obra desde el módulo Vidrios.
 3. Se permite generar el pedido de vidrios, que queda asociado a la obra y visible en el historial.
@@ -41,6 +47,7 @@ Describir paso a paso el proceso completo para garantizar que:
 ---
 
 ## 5. Consideraciones generales
+
 - El flujo debe ser consistente y auditable en cada paso.
 - El feedback visual debe ser inmediato y claro (éxito, error, advertencia).
 - Toda excepción o caso especial debe documentarse en este archivo y en el código.
@@ -50,12 +57,14 @@ Describir paso a paso el proceso completo para garantizar que:
 ---
 
 ## 6. Pendientes y mejoras
+
 - Validar integración entre módulos (Obras, Inventario, Vidrios).
 - Mejorar la experiencia de usuario en la selección y confirmación de materiales/vidrios.
 - Documentar cualquier excepción visual o de lógica detectada.
 - Revisar y actualizar este flujo ante cambios futuros en la app.
 
 ## 7. Ejemplos de mejoras y validaciones adicionales
+
 - Validar que la obra recién cargada se refleje de inmediato en la tabla de obras y en la de vidrios, sin necesidad de recargar la app o cambiar de módulo.
 - Verificar que el pedido de material compare correctamente contra el stock real y que, si falta material, el sistema genere automáticamente el pedido de compra solo por la diferencia faltante.
 - Comprobar que la asociación entre la obra y los pedidos de material/vidrios quede registrada y sea visible en el historial de la obra y en la auditoría.
@@ -72,27 +81,29 @@ Describir paso a paso el proceso completo para garantizar que:
 ---
 
 ## 8. Mejoras propuestas para la experiencia de usuario y trazabilidad
+
 - Al cargar la obra o el pedido de material, en la tabla de selección de materiales el usuario debe ver:
-    - Cantidad solicitada de cada ítem.
-    - Stock actual disponible de ese ítem.
-    - Cantidad faltante (lo que se debe pedir/comprar).
+  - Cantidad solicitada de cada ítem.
+  - Stock actual disponible de ese ítem.
+  - Cantidad faltante (lo que se debe pedir/comprar).
 - Al finalizar y guardar el pedido de material:
-    - El usuario debe poder ver fácilmente un resumen de lo solicitado, con fecha y usuario responsable, en la interfaz (por ejemplo, en un historial o panel lateral).
-    - Permitir filtrar y buscar pedidos por obra, fecha, usuario o estado.
-    - Mostrar visualmente el estado de cada ítem: entregado, pendiente, en espera de compra, etc.
+  - El usuario debe poder ver fácilmente un resumen de lo solicitado, con fecha y usuario responsable, en la interfaz (por ejemplo, en un historial o panel lateral).
+  - Permitir filtrar y buscar pedidos por obra, fecha, usuario o estado.
+  - Mostrar visualmente el estado de cada ítem: entregado, pendiente, en espera de compra, etc.
 - Sugerencias adicionales:
-    - Agregar opción de exportar el historial de pedidos a Excel/PDF.
-    - Permitir comentarios u observaciones en cada pedido para trazabilidad.
-    - Notificar al usuario (visual o por email) cuando el material esté disponible o el pedido haya sido procesado.
-    - Incluir validaciones visuales (colores, íconos) para advertir si el stock es insuficiente antes de guardar el pedido.
-    - Mejorar la navegación entre obras y pedidos, permitiendo ir de un pedido a la obra asociada y viceversa con un solo clic.
-    - Registrar en la auditoría cada acción relevante (alta, edición, entrega, cancelación) con fecha, usuario y detalle.
+  - Agregar opción de exportar el historial de pedidos a Excel/PDF.
+  - Permitir comentarios u observaciones en cada pedido para trazabilidad.
+  - Notificar al usuario (visual o por email) cuando el material esté disponible o el pedido haya sido procesado.
+  - Incluir validaciones visuales (colores, íconos) para advertir si el stock es insuficiente antes de guardar el pedido.
+  - Mejorar la navegación entre obras y pedidos, permitiendo ir de un pedido a la obra asociada y viceversa con un solo clic.
+  - Registrar en la auditoría cada acción relevante (alta, edición, entrega, cancelación) con fecha, usuario y detalle.
 
 > Suma aquí cualquier idea o mejora que surja para optimizar la experiencia y la trazabilidad del proceso.
 
 ---
 
 ## 9. Ideas adicionales para robustez, UX y escalabilidad
+
 - Permitir edición y cancelación de pedidos de material/vidrios antes de ser procesados, con registro de cambios en la auditoría.
 - Implementar confirmaciones visuales (diálogos modales) antes de acciones críticas como eliminar o modificar pedidos.
 - Agregar indicadores visuales de progreso en procesos largos (por ejemplo, carga masiva de materiales o actualización de stock).

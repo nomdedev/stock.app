@@ -1,6 +1,4 @@
-from PyQt6.QtWidgets import (QDialog, QGraphicsDropShadowEffect, QHeaderView, QLabel, QLineEdit,
-                               QMenu, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget,
-                               QHBoxLayout, QMessageBox)
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QDialog, QLineEdit
 from PyQt6.QtGui import QIcon, QColor, QAction
 from PyQt6.QtCore import QSize, Qt, QPoint, pyqtSignal
 import json
@@ -8,35 +6,29 @@ import os
 from functools import partial
 from core.table_responsive_mixin import TableResponsiveMixin
 from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
-from core.database import get_connection_string
-from core.logger import log_error
 
 class ObrasView(QWidget, TableResponsiveMixin):
-    # Señal para integración en tiempo real con otros módulos
-    obra_agregada = pyqtSignal(dict)  # dict con datos de la obra agregada
+    obra_agregada = pyqtSignal(dict)
     def __init__(self, usuario_actual="default", db_connection=None):
         super().__init__()
-        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path="themes/light.qss")
         self.usuario_actual = usuario_actual
         self.db_connection = db_connection
         self.main_layout = QVBoxLayout(self)
         self.setLayout(self.main_layout)
 
-        # HEADER VISUAL MODERNO: título y botones alineados
-        header_layout = QHBoxLayout()
+        # Título
         self.label = QLabel("Gestión de Obras")
-        self.label.setStyleSheet("color: #2563eb; font-size: 18px; font-weight: bold; padding: 0 0 0 0;")
-        header_layout.addWidget(self.label, alignment=Qt.AlignmentFlag.AlignVCenter)
-        header_layout.addStretch()
+        self.main_layout.addWidget(self.label)
+
         # Botón principal de acción (Agregar obra)
+        botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar nueva obra")
-        self.boton_agregar.setAccessibleName("Agregar nueva obra")
         self.boton_agregar.setText("")
         self.boton_agregar.setFixedSize(48, 48)
-        self.boton_agregar.setStyleSheet("border-radius: 12px; background: #2563eb; color: white; min-width: 48px; min-height: 48px;")
+        self.boton_agregar.setStyleSheet("")
         sombra = QGraphicsDropShadowEffect()
         sombra.setBlurRadius(15)
         sombra.setXOffset(0)
@@ -44,17 +36,17 @@ class ObrasView(QWidget, TableResponsiveMixin):
         sombra.setColor(QColor(0, 0, 0, 50))
         self.boton_agregar.setGraphicsEffect(sombra)
         estilizar_boton_icono(self.boton_agregar)
-        header_layout.addWidget(self.boton_agregar, alignment=Qt.AlignmentFlag.AlignVCenter)
+        botones_layout.addWidget(self.boton_agregar)
+        botones_layout.addStretch()
+        self.main_layout.addLayout(botones_layout)
+
         # Botón para verificar obra en SQL
-        self.boton_verificar_obra = QPushButton()
-        self.boton_verificar_obra.setIcon(QIcon("img/verificar.svg"))
-        self.boton_verificar_obra.setToolTip("Verificar obra en SQL")
-        self.boton_verificar_obra.setAccessibleName("Verificar obra en SQL")
-        self.boton_verificar_obra.setFixedSize(48, 48)
-        self.boton_verificar_obra.setStyleSheet("border-radius: 12px; background: #f1f5f9; color: #2563eb; min-width: 48px; min-height: 48px; margin-left: 16px;")
+        self.boton_verificar_obra = QPushButton("Verificar obra en SQL")
+        self.boton_verificar_obra.setIcon(QIcon("img/search_icon.svg"))
+        self.boton_verificar_obra.setIconSize(QSize(20, 20))
+        self.boton_verificar_obra.setToolTip("Verificar existencia de obra en la base de datos SQL")
         estilizar_boton_icono(self.boton_verificar_obra)
-        header_layout.addWidget(self.boton_verificar_obra, alignment=Qt.AlignmentFlag.AlignVCenter)
-        self.main_layout.addLayout(header_layout)
+        self.main_layout.addWidget(self.boton_verificar_obra)
 
         # Obtener headers dinámicamente (fallback si no hay conexión)
         self.obras_headers = self.obtener_headers_desde_db("obras")
@@ -75,22 +67,12 @@ class ObrasView(QWidget, TableResponsiveMixin):
             vh.setVisible(False)
         hh = self.tabla_obras.horizontalHeader()
         if hh is not None:
-            if hasattr(hh, 'setHighlightSections'):
-                hh.setHighlightSections(False)
-            if hasattr(hh, 'setSectionResizeMode'):
-                hh.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
-            if hasattr(hh, 'sectionDoubleClicked'):
-                hh.sectionDoubleClicked.connect(self.autoajustar_columna)
-            if hasattr(hh, 'setContextMenuPolicy'):
-                hh.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            if hasattr(hh, 'customContextMenuRequested'):
-                hh.customContextMenuRequested.connect(self.mostrar_menu_header)
-            if hasattr(hh, 'sectionClicked'):
-                hh.sectionClicked.connect(self.mostrar_menu_columnas_header)
-        else:
-            # EXCEPCIÓN VISUAL: Si el header es None, no se puede aplicar menú contextual ni acciones de header.
-            # Documentar en docs/estandares_visuales.md si ocurre en producción.
-            pass
+            hh.setHighlightSections(False)
+            hh.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+            hh.sectionDoubleClicked.connect(self.autoajustar_columna)
+            hh.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            hh.customContextMenuRequested.connect(self.mostrar_menu_header)
+            hh.sectionClicked.connect(self.mostrar_menu_columnas_header)
         self.main_layout.addWidget(self.tabla_obras)
 
         # Configuración de columnas visibles por usuario
@@ -104,7 +86,13 @@ class ObrasView(QWidget, TableResponsiveMixin):
 
         # Feedback visual centralizado
         self.label_feedback = QLabel()
+        self.label_feedback.setObjectName("label_feedback")
+        self.label_feedback.setStyleSheet("color: #2563eb; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Mensaje de feedback de obras")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
         self.main_layout.addWidget(self.label_feedback)
+        self._feedback_timer = None
 
         # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
         qss_tema = None
@@ -118,47 +106,19 @@ class ObrasView(QWidget, TableResponsiveMixin):
             pass
         aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
 
-        # Refuerzo de accesibilidad en botones principales
-        for btn in [self.boton_agregar, self.boton_verificar_obra]:
-            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
-            font = btn.font()
-            if font.pointSize() < 12:
-                font.setPointSize(12)
-            btn.setFont(font)
-            if not btn.toolTip():
-                btn.setToolTip("Botón de acción")
-            if not btn.accessibleName():
-                btn.setAccessibleName("Botón de acción de obras")
-        # Refuerzo de accesibilidad en tabla principal
-        self.tabla_obras.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.tabla_obras.setStyleSheet(self.tabla_obras.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
-        self.tabla_obras.setToolTip("Tabla de obras")
-        self.tabla_obras.setAccessibleName("Tabla principal de obras")
-        h_header = self.tabla_obras.horizontalHeader() if hasattr(self.tabla_obras, 'horizontalHeader') else None
-        if h_header is not None:
-            h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
-        # Refuerzo de accesibilidad en QLabel
-        for widget in self.findChildren(QLabel):
-            font = widget.font()
-            if font.pointSize() < 12:
-                font.setPointSize(12)
-            widget.setFont(font)
-        # Márgenes y padding en layouts según estándar
-        self.main_layout.setContentsMargins(24, 20, 24, 20)
-        self.main_layout.setSpacing(16)
-        # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
-
-        # Conexión de botones principales a slots robustos
-        self.boton_agregar.clicked.connect(self._slot_agregar_obra)
-        self.boton_verificar_obra.clicked.connect(self._slot_verificar_obra)
-
     def obtener_headers_desde_db(self, tabla):
         # Intenta obtener headers dinámicamente desde la base de datos
         if self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"]):
             import pyodbc
-            connection_string = get_connection_string(self.db_connection.driver, self.db_connection.database)
             query = f"SELECT TOP 0 * FROM {tabla}"
+            connection_string = (
+                f"DRIVER={{{self.db_connection.driver}}};"
+                f"SERVER=localhost\\SQLEXPRESS;"
+                f"DATABASE={self.db_connection.database};"
+                f"UID={self.db_connection.username};"
+                f"PWD={self.db_connection.password};"
+                f"TrustServerCertificate=yes;"
+            )
             try:
                 with pyodbc.connect(connection_string, timeout=10) as conn:
                     cursor = conn.cursor()
@@ -184,23 +144,19 @@ class ObrasView(QWidget, TableResponsiveMixin):
             self.tabla_obras.setColumnHidden(idx, not visible)
 
     def mostrar_menu_columnas(self, pos):
-        try:
-            menu = QMenu(self)
-            for idx, header in enumerate(self.obras_headers):
-                accion = QAction(header, self)
-                accion.setCheckable(True)
-                accion.setChecked(self.columnas_visibles.get(header, True))
-                accion.toggled.connect(partial(self.toggle_columna, idx, header))
-                menu.addAction(accion)
-            hh = self.tabla_obras.horizontalHeader()
-            if hh is not None:
-                menu.exec(hh.mapToGlobal(pos))
-            else:
-                log_error("No se puede mostrar el menú de columnas: header no disponible")
-                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
-        except Exception as e:
-            log_error(f"Error al mostrar menú de columnas: {e}")
-            self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
+        """Muestra el menú contextual para mostrar/ocultar columnas."""
+        menu = QMenu(self)
+        for idx, header in enumerate(self.obras_headers):
+            accion = QAction(header, self)
+            accion.setCheckable(True)
+            accion.setChecked(self.columnas_visibles.get(header, True))
+            accion.toggled.connect(partial(self.toggle_columna, idx, header))
+            menu.addAction(accion)
+        hh = self.tabla_obras.horizontalHeader()
+        if hh is not None:
+            menu.exec(hh.mapToGlobal(pos))
+        else:
+            self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
 
     def toggle_columna(self, idx, header, checked):
         self.columnas_visibles[header] = checked
@@ -209,57 +165,41 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.mostrar_mensaje(f"Columna '{header}' {'mostrada' if checked else 'ocultada'}", "info")
 
     def mostrar_menu_header(self, pos):
-        try:
-            menu = QMenu(self)
-            accion_autoajustar = QAction("Autoajustar todas las columnas", self)
-            accion_autoajustar.triggered.connect(self.autoajustar_todas_columnas)
-            menu.addAction(accion_autoajustar)
-            hh = self.tabla_obras.horizontalHeader()
-            if hh is not None:
-                menu.exec(hh.mapToGlobal(pos))
-            else:
-                log_error("No se puede mostrar el menú de header: header no disponible")
-                self.mostrar_mensaje("No se puede mostrar el menú de header: header no disponible", "error")
-        except Exception as e:
-            log_error(f"Error al mostrar menú de header: {e}")
-            self.mostrar_mensaje(f"Error al mostrar menú de header: {e}", "error")
+        """Muestra el menú contextual del header para autoajustar columnas."""
+        menu = QMenu(self)
+        accion_autoajustar = QAction("Autoajustar todas las columnas", self)
+        accion_autoajustar.triggered.connect(self.autoajustar_todas_columnas)
+        menu.addAction(accion_autoajustar)
+        hh = self.tabla_obras.horizontalHeader()
+        if hh is not None:
+            menu.exec(hh.mapToGlobal(pos))
+        else:
+            self.mostrar_mensaje("No se puede mostrar el menú de header: header no disponible", "error")
 
     def autoajustar_columna(self, idx):
-        try:
-            if 0 <= idx < self.tabla_obras.columnCount():
-                self.tabla_obras.resizeColumnToContents(idx)
-            else:
-                log_error(f"Índice de columna inválido: {idx}")
-                self.mostrar_mensaje(f"Índice de columna inválido: {idx}", "error")
-        except Exception as e:
-            log_error(f"Error al autoajustar columna: {e}")
-            self.mostrar_mensaje(f"Error al autoajustar columna: {e}", "error")
+        """Ajusta automáticamente el ancho de una columna específica."""
+        if 0 <= idx < self.tabla_obras.columnCount():
+            self.tabla_obras.resizeColumnToContents(idx)
+        else:
+            self.mostrar_mensaje(f"Índice de columna inválido: {idx}", "error")
 
     def autoajustar_todas_columnas(self):
-        try:
-            for idx in range(self.tabla_obras.columnCount()):
-                self.tabla_obras.resizeColumnToContents(idx)
-        except Exception as e:
-            log_error(f"Error al autoajustar todas las columnas: {e}")
-            self.mostrar_mensaje(f"Error al autoajustar todas las columnas: {e}", "error")
+        """Ajusta automáticamente el ancho de todas las columnas."""
+        for idx in range(self.tabla_obras.columnCount()):
+            self.tabla_obras.resizeColumnToContents(idx)
 
     def mostrar_menu_columnas_header(self, idx):
-        try:
-            hh = self.tabla_obras.horizontalHeader()
-            if hh is not None:
-                try:
-                    pos = hh.sectionPosition(idx)
-                    global_pos = hh.mapToGlobal(QPoint(hh.sectionViewportPosition(idx), 0))
-                    self.mostrar_menu_columnas(global_pos)
-                except Exception as e:
-                    log_error(f"Error al mostrar menú de columnas desde header: {e}")
-                    self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
-            else:
-                log_error("No se puede mostrar el menú de columnas: header no disponible")
-                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
-        except Exception as e:
-            log_error(f"Error general en mostrar_menu_columnas_header: {e}")
-            self.mostrar_mensaje(f"Error general en mostrar_menu_columnas_header: {e}", "error")
+        """Muestra el menú contextual de columnas desde el header al hacer click."""
+        hh = self.tabla_obras.horizontalHeader()
+        if hh is not None:
+            try:
+                pos = hh.sectionPosition(idx)
+                global_pos = hh.mapToGlobal(QPoint(hh.sectionViewportPosition(idx), 0))
+                self.mostrar_menu_columnas(global_pos)
+            except Exception as e:
+                self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
+        else:
+            self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
 
     def cargar_headers(self, headers):
         """Permite al controlador actualizar los headers dinámicamente."""
@@ -270,15 +210,12 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.aplicar_columnas_visibles()
 
     def cargar_tabla_obras(self, obras):
-        try:
-            self.tabla_obras.setRowCount(len(obras))
-            for fila, obra in enumerate(obras):
-                for columna, header in enumerate(self.obras_headers):
-                    valor = obra.get(header, "")
-                    self.tabla_obras.setItem(fila, columna, QTableWidgetItem(str(valor)))
-        except Exception as e:
-            log_error(f"Error al cargar la tabla de obras: {e}")
-            self.mostrar_mensaje(f"Error al cargar la tabla de obras: {e}", "error")
+        # obras: lista de dicts con claves = headers
+        self.tabla_obras.setRowCount(len(obras))
+        for fila, obra in enumerate(obras):
+            for columna, header in enumerate(self.obras_headers):
+                valor = obra.get(header, "")
+                self.tabla_obras.setItem(fila, columna, QTableWidgetItem(str(valor)))
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
         """Muestra feedback visual y errores críticos con QMessageBox y color adecuado."""
@@ -292,41 +229,47 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px;")
         self.label_feedback.setText(mensaje)
         if tipo == "error":
-            log_error(mensaje)
             QMessageBox.critical(self, "Error", mensaje)
         elif tipo == "advertencia":
             QMessageBox.warning(self, "Advertencia", mensaje)
         elif tipo == "exito":
             QMessageBox.information(self, "Éxito", mensaje)
 
-    def agregar_obra_y_emitir(self):
-        # Aquí iría la lógica real de agregar obra (formulario, validación, inserción en DB, etc.)
-        # Simulación de datos de obra agregada:
-        datos_obra = {
-            "id": 123,  # Reemplazar por ID real generado
-            "nombre": "Obra de ejemplo",
-            "cliente": "Cliente demo",
-            "estado": "Medición",
-            "fecha": "2025-05-24"
+    def mostrar_feedback(self, mensaje, tipo="info"):
+        if not hasattr(self, "label_feedback") or self.label_feedback is None:
+            return
+        colores = {
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "advertencia": "#fbbf24",
+            "error": "#ef4444"
         }
-        # Emitir señal para que Inventario y Vidrios actualicen sus vistas automáticamente
-        self.obra_agregada.emit(datos_obra)
-        # Feedback visual (puede ser reemplazado por el flujo real)
-        self.label_feedback.setText("Obra agregada y notificada a otros módulos.")
-        # ...aquí continuar con la lógica real de refresco de tabla, etc...
+        color = colores.get(tipo, "#2563eb")
+        iconos = {
+            "info": "ℹ️ ",
+            "exito": "✅ ",
+            "advertencia": "⚠️ ",
+            "error": "❌ "
+        }
+        icono = iconos.get(tipo, "ℹ️ ")
+        self.label_feedback.clear()
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        self.label_feedback.setText(f"{icono}{mensaje}")
+        self.label_feedback.setVisible(True)
+        self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
+        self.label_feedback.setAccessibleName(f"Feedback {tipo}")
+        # Ocultar automáticamente después de 4 segundos
+        from PyQt6.QtCore import QTimer
+        if hasattr(self, '_feedback_timer') and self._feedback_timer:
+            self._feedback_timer.stop()
+        self._feedback_timer = QTimer(self)
+        self._feedback_timer.setSingleShot(True)
+        self._feedback_timer.timeout.connect(self.ocultar_feedback)
+        self._feedback_timer.start(4000)
 
-    def _slot_agregar_obra(self):
-        # Feedback visual y mensaje informativo
-        QMessageBox.information(self, "Agregar Obra", "Acción de agregar obra ejecutada correctamente.")
-        self.mostrar_mensaje("Obra agregada (simulado).", tipo="exito")
-        # Aquí se puede emitir la señal obra_agregada si se desea simular integración
-        # self.obra_agregada.emit({"id": 0, "nombre": "Obra demo"})
-
-    def _slot_verificar_obra(self):
-        QMessageBox.information(self, "Verificar Obra", "Acción de verificación de obra ejecutada correctamente.")
-        self.mostrar_mensaje("Verificación de obra ejecutada (simulado).", tipo="info")
-
-# Nota: Los controladores de Inventario y Vidrios deben conectarse a la señal 'obra_agregada' para actualizar sus datos en tiempo real.
-# Ejemplo en el controlador:
-# self.obras_view.obra_agregada.connect(self.inventario_controller.actualizar_por_obra)
-# self.obras_view.obra_agregada.connect(self.vidrios_controller.actualizar_por_obra)
+    def ocultar_feedback(self):
+        if hasattr(self, "label_feedback") and self.label_feedback:
+            self.label_feedback.setVisible(False)
+            self.label_feedback.clear()
+        if hasattr(self, '_feedback_timer') and self._feedback_timer:
+            self._feedback_timer.stop()

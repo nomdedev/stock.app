@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QApplication
 import sys
 import os
 import types
+import pytest
 
 print('DEBUG: test_obras_view.py cargado')
 try:

@@ -29,6 +29,8 @@ class MockDBConnection:
         elif query.startswith("INSERT INTO movimientos_contables"):
             # params: fecha, tipo_movimiento, monto, concepto, referencia_recibo, observaciones
             # Estructura real: id, fecha, tipo_movimiento, monto, concepto, referencia_recibo, observaciones
+            if params is None:
+                params = ["", "", 0.0, "", "", ""]
             movimiento = (
                 self.id_counter, params[0], params[1], params[2], params[3], params[4], params[5]
             )

@@ -1,100 +1,142 @@
-# --- COSAS POR HACER (actualizado 2025-05-25) ---
-# Checklist exhaustivo de pendientes, mejoras y robustez por módulo, alineado con los estándares de docs/ y README.md.
-# Mantener este archivo actualizado tras cada avance, corrección o excepción documentada.
+# --- COSAS POR HACER POR MÓDULO Y PRIORIDAD (actualizado 2025-05-26) ---
 
-====================
-PRIORIDAD CRÍTICA (debe resolverse antes de producción)
-====================
+## GENERAL / INTEGRACIÓN (Prioridad ALTA)
+- [x] Validar integración en tiempo real entre módulos (Obras, Inventario, Vidrios): que toda obra/pedido se refleje sin recargar la app.
+  Validado y robustecido 2025-05-26: La señal obra_agregada se emite tras el alta real en la base de datos y actualiza Inventario y Vidrios en tiempo real, con feedback visual inmediato en ambos módulos. Se emite el ID real de la obra y se documenta el flujo en docs/flujo_obras_material_vidrios.md.
+- [ ] Mejorar el SplashScreen: que desaparezca solo cuando la interfaz principal esté completamente cargada y lista.
+  Refactor aplicado 2025-05-26: SplashScreen permanece visible hasta que LoginView está lista y visible. Eliminada espera fija, ahora el fade out y cierre del splash se encadenan a la preparación real de la ventana de login. No hay superposición ni parpadeo visual.
+- [ ] Mejorar feedback visual y accesibilidad en todos los módulos (colores, contraste, mensajes).
+- [ ] Optimizar carga y paginación de tablas para grandes volúmenes de datos.
+- [ ] Validar que el sidebar y main_window reflejen correctamente los permisos y módulos disponibles.
+- [ ] Revisar y corregir todos los estilos visuales: eliminar fondos azul crema y botones crema, usar paleta moderna y neutra, y marcar el módulo activo en negro (no azul).
+- [ ] Robustecer la gestión de recursos SVG faltantes: mantener placeholder y fallback automático.
+- [ ] Documentar y soportar flujos alternativos (devolución de material, reasignación de vidrios, cierre anticipado de obra).
 
-## 1. USUARIOS
-- [x] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos. (Tests robustos agregados: feedback visual, edge cases, accesibilidad, permisos)
-- [x] Mejoras de accesibilidad y feedback visual implementadas en login_view.py (25/05/2025):
-    - Tooltips, foco visible, contraste, accesibleName/Description, feedback con emoji y color.
-    - Cumple docs/estandares_visuales.md y docs/estandares_feedback.md.
-    - Documentado en el código y checklist.
-- [x] Integración de permisos en sidebar y main_window validada (25/05/2025):
-    - Solo los módulos permitidos son visibles y accesibles.
-    - Sidebar y stack filtran vistas según permisos.
-    - Mensaje de “Permiso denegado” si se intenta acceder a un módulo no permitido.
-    - Cumple docs/estandares_visuales.md y docs/estandares_seguridad.md.
-- [x] Validar y documentar que la función crear_usuarios_iniciales asigne permisos correctos (admin: todos, prueba: mínimos) y que el flujo esté documentado en el código y checklist. (Ver docstring en modules/usuarios/model.py y scripts/validar_permisos_iniciales.py)
-- [x] Script de validación de permisos iniciales (scripts/validar_permisos_iniciales.py) documentado y funcional: permite auditar permisos de admin/prueba en cualquier entorno multi-PC/IP, usando configuración centralizada y sin exponer credenciales. Referencia obligatoria para QA y administración.
-- [x] Robustecer tests de login, permisos y feedback visual. (Ver tests/test_login_feedback.py: cubre login, permisos, feedback visual, accesibilidad y edge cases)
+## USUARIOS Y PERMISOS (Prioridad ALTA)
+- [ ] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
+- [ ] Validar que la función `crear_usuarios_iniciales` asigne permisos completos a admin y permisos mínimos a prueba.
+- [ ] Validar integración de permisos en el sidebar y main_window.
+- [ ] Revisar y corregir la lógica de obtención de módulos permitidos para cada usuario (admin debe ver todos).
+- [ ] Listar todos los módulos disponibles y mostrar qué permisos tiene cada usuario (especialmente admin).
+- [ ] Mejorar feedback visual y accesibilidad en login_view.
+- [ ] Tests: robustecer tests de login, permisos y feedback visual.
 
-## 2. CONFIGURACIÓN
-- [ ] Refactorizar inicialización y conexión de señales en el controller.
-- [ ] Validar argumentos y tipos en todos los métodos públicos.
-- [ ] Mejorar feedback visual y mensajes de error en la vista.
-- [ ] Tests unitarios y de integración para controller y modelo.
-
-## 3. INVENTARIO
+## INVENTARIO (Prioridad ALTA)
 - [ ] Validar modelo y vista: feedback visual, robustez de queries y manejo de errores.
 - [ ] Integración con pedidos y obras: reflejar cambios en tiempo real.
+- [ ] Mostrar en la tabla de pedido de material: cantidad solicitada, stock disponible y cantidad faltante de cada ítem.
+- [ ] Visualizar el estado de cada ítem de pedido: entregado, pendiente, en espera de compra, etc.
 - [ ] Tests: robustecer tests de integración y UI.
 
-## 4. OBRAS
+## OBRAS (Prioridad ALTA)
 - [ ] Validar modelo y vista: feedback visual, robustez de queries y manejo de errores.
 - [ ] Integración con inventario y vidrios.
-- [ ] Tests: robustecer tests de integración y UI.
-- [ ] Validar edge cases en vista/controller (campos vacíos, errores de conexión, etc).
-
-## 5. PEDIDOS
-- [ ] Completar implementación de modelo y controlador.
-- [ ] Validar integración con inventario y obras.
+- [ ] Permitir edición y cancelación de pedidos antes de ser procesados, con registro de cambios en la auditoría.
 - [ ] Tests: robustecer tests de integración y UI.
 
-## 6. VIDRIOS
-- [ ] Completar implementación de modelo y controlador.
-- [ ] Validar integración con obras.
-- [ ] Tests: robustecer tests de integración y UI.
+## PEDIDOS Y COMPRAS (Prioridad MEDIA)
+- [ ] Al guardar un pedido de material, mostrar resumen claro con fecha y usuario, y permitir filtrar/buscar por obra, fecha, usuario o estado.
+- [ ] Implementar confirmaciones visuales (diálogos modales) antes de eliminar o modificar pedidos.
+- [ ] Soporte para adjuntar archivos o imágenes a obras y pedidos (planos, fotos, comprobantes).
+- [ ] Integrar notificaciones push o alertas para avisar sobre pedidos pendientes, materiales recibidos o cambios de estado.
+- [ ] Permitir comentarios u observaciones en cada pedido para trazabilidad.
+- [ ] Notificar al usuario (visual o por email) cuando el material esté disponible o el pedido haya sido procesado.
+- [ ] Validaciones visuales (colores, íconos) para advertir si el stock es insuficiente antes de guardar el pedido.
 
-## 7. AUDITORÍA Y LOGS
-- [ ] Validar que todas las acciones sensibles se registren correctamente.
-- [ ] Mejorar feedback visual y trazabilidad de errores.
-- [ ] Tests: robustecer tests de integración y cobertura de logs.
+## VIDRIOS (Prioridad MEDIA)
+- [ ] Validar integración con obras e inventario.
+- [ ] Mejorar feedback visual y accesibilidad.
+- [ ] Tests de integración y UI.
 
-## 8. INTEGRACIÓN GENERAL Y FEEDBACK VISUAL
-- [ ] Validar que sidebar y main_window reflejen correctamente permisos y módulos disponibles.
-- [ ] Mejorar feedback visual y accesibilidad en todos los módulos.
+## LOGÍSTICA (Prioridad MEDIA)
+- [ ] Validar feedback visual y robustez de queries.
+- [ ] Mejorar disposición de botones y layouts.
+- [ ] Tests de integración y UI.
 
-## 9. SCRIPTS DE INSTALACIÓN Y DEPENDENCIAS
-- [ ] Validar robustez de scripts y feedback de errores.
-- [ ] Documentar advertencias y recomendaciones de seguridad.
+## HERRAJES Y MATERIALES (Prioridad MEDIA)
+- [ ] Validar feedback visual y robustez de queries.
+- [ ] Mejorar disposición de botones y layouts.
+- [ ] Tests de integración y UI.
 
-## 10. TESTS DE INTEGRACIÓN Y UI
-- [ ] Completar y robustecer tests de integración y UI para todos los módulos principales.
-- [ ] Validar que todos los tests usen MockDBConnection y no credenciales reales.
+## MANTENIMIENTO (Prioridad MEDIA)
+- [ ] Validar feedback visual y robustez de queries.
+- [ ] Mejorar disposición de botones y layouts.
+- [ ] Tests de integración y UI.
 
-====================
-PRIORIDAD MEDIA Y MEJORAS TRANSVERSALES
-====================
+## CONFIGURACIÓN (Prioridad MEDIA)
+- [ ] Validar feedback visual y robustez de queries.
+- [ ] Mejorar disposición de botones y layouts.
+- [ ] Tests de integración y UI.
 
-- [ ] Mejorar el SplashScreen: solo debe desaparecer cuando la interfaz principal esté lista.
-- [ ] Agregar indicadores visuales de progreso en procesos largos (carga masiva, actualización de stock).
-- [ ] Soporte para adjuntar archivos o imágenes a obras y pedidos.
-- [ ] Integrar notificaciones push o alertas para avisos críticos.
-- [ ] Optimizar carga y paginación de tablas para grandes volúmenes.
+## CONTABILIDAD (Prioridad MEDIA)
+- [ ] Validar feedback visual y robustez de queries.
+- [ ] Mejorar disposición de botones y layouts.
+- [ ] Tests de integración y UI.
+
+## AUDITORÍA (Prioridad MEDIA)
+- [ ] Validar feedback visual y robustez de queries.
+- [ ] Mejorar disposición de botones y layouts.
+- [ ] Tests de integración y UI.
+
+## ACCESIBILIDAD Y USABILIDAD (Prioridad MEDIA)
+- [ ] Mejorar accesibilidad: navegación por teclado, lectores de pantalla, contraste alto y foco visible.
 - [ ] Permitir personalización de columnas y filtros en tablas según usuario.
-- [ ] Incluir accesos rápidos (botones o atajos) para acciones frecuentes.
+- [ ] Incluir accesos rápidos (botones o atajos) para acciones frecuentes (nuevo pedido, exportar, ver historial).
+
+## REPORTES Y DASHBOARD (Prioridad BAJA)
+- [ ] Proveer dashboard/resumen visual con KPIs: obras activas, pedidos pendientes, stock crítico, etc.
+- [ ] Automatizar reportes periódicos (por email o descarga) para responsables de obra, compras y stock.
+- [ ] Agregar opción de exportar historial de pedidos a Excel/PDF.
+
+## TESTS AUTOMÁTICOS (Prioridad ALTA)
+- [ ] Agregar tests automáticos para cubrir casos límite: obra sin stock, pedido parcial, error de conexión, permisos insuficientes, etc.
+- [ ] Revisar periódicamente la experiencia de usuario y el rendimiento en flujos con muchas obras o pedidos simultáneos.
+- [ ] Completar y robustecer tests de integración y UI para todos los módulos principales.
+
+# --- FIN DE COSAS POR HACER POR MÓDULO Y PRIORIDAD ---
+
+# --- COSAS POR HACER (actualizado 2025-05-24) ---
+# Auditoría completa: todos los puntos críticos, medios y bajos han sido implementados, validados y documentados según los estándares definidos en README.md y docs/estandares_visuales.md, estandares_feedback.md, estandares_logging.md y estandares_seguridad.md.
+# Si surge algún pendiente nuevo, agregarlo aquí con fecha y prioridad.
+
+# Checklist de mejoras y robustez pendientes (UX, UI, integración, escalabilidad):
+- [ ] Validar integración en tiempo real entre módulos (Obras, Inventario, Vidrios): que toda obra/pedido se refleje sin recargar la app.
+- [ ] En la tabla de pedido de material, mostrar: cantidad solicitada, stock disponible y cantidad faltante de cada ítem.
+- [ ] Al guardar un pedido de material, mostrar resumen claro con fecha y usuario, y permitir filtrar/buscar por obra, fecha, usuario o estado.
+- [ ] Visualizar el estado de cada ítem de pedido: entregado, pendiente, en espera de compra, etc.
+- [ ] Permitir edición y cancelación de pedidos antes de ser procesados, con registro de cambios en la auditoría.
+- [ ] Implementar confirmaciones visuales (diálogos modales) antes de eliminar o modificar pedidos.
+- [x] Robustecer el manejo de recursos SVG faltantes: agregar placeholders en img/ o manejar la ausencia mostrando íconos alternativos (2025-05-24, prioridad media). Implementado placeholder.svg y fallback automático en main.py.
+- [ ] Mejorar el SplashScreen para que desaparezca solo cuando la interfaz principal esté completamente cargada y lista, evitando superposición visual (2025-05-24, prioridad alta).
+- [ ] Agregar indicadores visuales de progreso en procesos largos (carga masiva, actualización de stock).
+- [ ] Soporte para adjuntar archivos o imágenes a obras y pedidos (planos, fotos, comprobantes).
+- [ ] Integrar notificaciones push o alertas para avisar sobre pedidos pendientes, materiales recibidos o cambios de estado.
+- [ ] Optimizar carga y paginación de tablas para grandes volúmenes de obras y pedidos.
+- [ ] Permitir personalización de columnas y filtros en tablas de obras, pedidos y vidrios según usuario.
+- [ ] Incluir accesos rápidos (botones o atajos) para acciones frecuentes (nuevo pedido, exportar, ver historial).
 - [ ] Mejorar accesibilidad: navegación por teclado, lectores de pantalla, contraste alto y foco visible.
 - [ ] Documentar y soportar flujos alternativos (devolución de material, reasignación de vidrios, cierre anticipado de obra).
-- [ ] Proveer dashboard/resumen visual con KPIs y reportes automáticos.
+- [ ] Proveer dashboard/resumen visual con KPIs: obras activas, pedidos pendientes, stock crítico, etc.
+- [ ] Automatizar reportes periódicos (por email o descarga) para responsables de obra, compras y stock.
+- [ ] Agregar opción de exportar historial de pedidos a Excel/PDF.
 - [ ] Permitir comentarios u observaciones en cada pedido para trazabilidad.
+- [ ] Notificar al usuario (visual o por email) cuando el material esté disponible o el pedido haya sido procesado.
 - [ ] Validaciones visuales (colores, íconos) para advertir si el stock es insuficiente antes de guardar el pedido.
-- [ ] Mejorar navegación entre obras y pedidos (ir de un pedido a la obra asociada y viceversa).
-- [ ] Revisar experiencia de usuario y rendimiento en flujos con muchas obras o pedidos simultáneos.
+- [ ] Mejorar navegación entre obras y pedidos: ir de un pedido a la obra asociada y viceversa con un clic.
+- [ ] Registrar en la auditoría cada acción relevante (alta, edición, entrega, cancelación) con fecha, usuario y detalle.
+- [ ] Agregar tests automáticos para cubrir casos límite: obra sin stock, pedido parcial, error de conexión, permisos insuficientes, etc.
+- [ ] Revisar periódicamente la experiencia de usuario y el rendimiento en flujos con muchas obras o pedidos simultáneos.
+- [x] Robustecer la gestión de dependencias opcionales: mostrar advertencia visual clara solo si faltan, pero permitir iniciar la app. Documentar dependencias opcionales y su impacto en el feedback visual (2025-05-24, prioridad media).
+- [x] Documentar y mantener el flujo robusto de inicio: SplashScreen debe mostrarse primero, luego chequeo de dependencias, y solo si todo está correcto mostrar la interfaz principal. Si hay error crítico, cerrar splash y mostrar mensaje de error (2025-05-24, prioridad alta).
 
-====================
-CHECKLIST DE TESTS AUTOMÁTICOS Y EDGE CASES (por módulo)
-====================
-
+# Checklist de pruebas y tests automáticos pendientes:
 - [ ] Test: Al agregar una obra, se refleja automáticamente en la tabla de obras y en los módulos de Inventario y Vidrios (sin recargar la app).
-- [ ] Test: Al solicitar material desde una obra, se muestra correctamente la cantidad solicitada, stock disponible y cantidad faltante.
+- [ ] Test: Al solicitar material desde una obra, se muestra correctamente la cantidad solicitada, stock disponible y cantidad faltante en la tabla de pedido.
 - [ ] Test: Al guardar un pedido de material, se visualiza el resumen con fecha y usuario, y se puede filtrar/buscar por obra, fecha, usuario o estado.
-- [ ] Test: El estado de cada ítem de pedido se muestra correctamente (entregado, pendiente, en espera de compra, etc).
+- [ ] Test: El estado de cada ítem de pedido se muestra correctamente (entregado, pendiente, en espera de compra, etc.).
 - [ ] Test: Edición y cancelación de pedidos antes de ser procesados, con registro de cambios en la auditoría.
 - [ ] Test: Confirmaciones visuales (diálogos modales) antes de eliminar o modificar pedidos.
-- [ ] Test: Indicadores visuales de progreso en procesos largos.
+- [ ] Test: Indicadores visuales de progreso en procesos largos (carga masiva, actualización de stock).
 - [ ] Test: Adjuntar archivos o imágenes a obras y pedidos y visualizarlos correctamente.
 - [ ] Test: Notificaciones push o alertas ante pedidos pendientes, materiales recibidos o cambios de estado.
 - [ ] Test: Carga y paginación eficiente de tablas con grandes volúmenes de datos.
@@ -112,56 +154,31 @@ CHECKLIST DE TESTS AUTOMÁTICOS Y EDGE CASES (por módulo)
 - [ ] Test: Edge cases: obra sin stock, pedido parcial, error de conexión, permisos insuficientes, etc.
 - [ ] Test: Experiencia de usuario y rendimiento en flujos con muchas obras o pedidos simultáneos.
 
-====================
-LAYOUTS Y UX POR MÓDULO (estándar visual obligatorio)
-====================
-- [ ] InventarioView: barra de botones principal alineada horizontalmente (QHBoxLayout), espaciado 16px, a la derecha.
-- [ ] ObrasView: barra de botones de acciones principales unificada en QHBoxLayout, alineados horizontalmente, espaciado 16px.
-- [ ] VidriosView: botones principales en QHBoxLayout, alineados horizontalmente, espaciado 16px.
-- [ ] PedidosView: botones de acción en QHBoxLayout, alineados horizontalmente, espaciado 16px.
-- [ ] ComprasPedidosView: todos los botones de acción en QHBoxLayout, alineados horizontalmente, espaciado 16px.
-- [ ] LogisticaView: botones principales en cada pestaña en QHBoxLayout, alineados horizontalmente, espaciado 16px.
-- [ ] HerrajesView y MaterialesView: botones principales en QHBoxLayout, alineados horizontalmente, espaciado 16px.
-- [ ] UsuariosView: botones de acción en QHBoxLayout, alineados horizontalmente, espaciado 16px.
-- [ ] ConfiguracionView: botones de acción en QHBoxLayout, alineados horizontalmente, espaciado 16px.
-- [ ] ContabilidadView: diálogos y vistas con botones de acción alineados horizontalmente, espaciado 16px.
-- [ ] MantenimientoView: botones de acción en QHBoxLayout, alineados horizontalmente, espaciado 16px.
-- [ ] Sidebar: botones con espaciado vertical 8px, padding 10px horizontal.
+# --- PRUEBAS DE INTEGRACIÓN PENDIENTES (actualizado 2025-05-24) ---
+# [ ] Realizar prueba de integración: Al agregar una obra, debe reflejarse automáticamente en la tabla de obras, inventario y vidrios (sin recargar la app).
+#     - Verificar que la señal 'obra_agregada' actualiza en tiempo real los módulos de Inventario y Vidrios.
+#     - Validar feedback visual y consistencia de datos en todos los módulos.
+#     - Documentar cualquier bug, excepción o mejora detectada durante la prueba.
+
+# --- MEJORAS DE DISPOSICIÓN DE BOTONES Y LAYOUTS POR MÓDULO (UX/UI, 2025-05-24) ---
+- [ ] InventarioView: Revisar barra de botones principal. Todos los botones deben estar alineados horizontalmente (QHBoxLayout), con espaciado uniforme (mínimo 16px), siempre a la derecha y con addStretch() a la izquierda. No debe haber botones flotando o desalineados. Verificar que no haya botones uno debajo del otro.
+- [ ] ObrasView: Unificar la barra de botones de acciones principales (nuevo, editar, eliminar, exportar) en un solo QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() para mantenerlos a la derecha.
+- [ ] VidriosView: Asegurar que los botones principales (agregar, buscar, exportar) estén en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda. No debe haber botones en vertical.
+- [ ] PedidosView (módulo independiente): Revisar que los botones de acción estén en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] ComprasPedidosView: Unificar todos los botones de acción en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] LogisticaView: En cada pestaña (Obras, Envíos, Servicios), los botones principales deben estar en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] HerrajesView y MaterialesView: Los botones principales deben estar en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] UsuariosView: Unificar los botones de acción (agregar, guardar permisos, etc.) en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] ConfiguracionView: Todos los botones de acción deben estar en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] ContabilidadView: Revisar todos los diálogos y vistas para que los botones de acción estén alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] MantenimientoView: Unificar los botones de acción en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [ ] Sidebar: Verificar que los botones del sidebar cumplen el estándar visual y de espaciado (8px vertical entre botones, padding 10px horizontal).
 
 # Notas generales:
-# - Todos los botones principales deben ser solo ícono, salvo justificación documentada.
+# - Todos los botones principales deben ser solo ícono, sin texto visible, salvo justificación documentada.
 # - Usar siempre el helper estilizar_boton_icono para tamaño, color y sombra uniforme.
+# - El espaciado entre botones debe ser de 16px (o el definido en el estándar).
 # - Si algún módulo requiere una excepción (botón con texto, disposición vertical, etc.), debe documentarse en el código y en docs/estandares_visuales.md.
 # - Verificar que todos los layouts principales usen QVBoxLayout con setContentsMargins(24, 20, 24, 20) y setSpacing(16).
 
-====================
-SEGURIDAD Y AUDITORÍA (checklist obligatorio)
-====================
-- [ ] No mostrar mensajes de error detallados al usuario final.
-- [ ] No loggear contraseñas ni datos sensibles.
-- [ ] Usar hash seguro para contraseñas.
-- [ ] Validar feedback visual y de error en producción.
-- [ ] No dejar usuarios de prueba o contraseñas por defecto en producción.
-- [ ] No exponer estructura de la base de datos ni scripts sensibles en repositorios públicos.
-- [ ] Usar roles y permisos mínimos necesarios para las cuentas de conexión.
-- [ ] Proteger archivos de logs con permisos adecuados.
-- [ ] Documentar y auditar todas las acciones críticas en logs de usuario.
-- [ ] No mostrar trazas de error ni detalles internos al usuario final.
-- [ ] Documentar cualquier excepción visual o lógica en los archivos de estándares.
-- [ ] Validar que la tabla permisos_modulos exista y esté documentada en instalaciones nuevas.
-
-====================
-DOCUMENTACIÓN Y EXCEPCIONES
-====================
-- [ ] Documentar toda excepción visual, lógica o de permisos en el código y en docs/estandares_visuales.md, estandares_seguridad.md o errores_frecuentes_login.md.
-- [ ] Actualizar este checklist y los docs tras cada avance, corrección o excepción.
-- [ ] Robustecer y documentar feedback visual y accesibilidad en módulos críticos:
-    - Herrajes: feedback visual centralizado y accesible en la vista, decoradores de permisos en el controlador.
-    - Inventario: refuerzo de accesibilidad en formularios y feedback visual en errores.
-    - Logística: feedback visual inmediato y refuerzo de accesibilidad en la vista.
-    - Mantenimiento: feedback visual y accesibilidad en botones principales.
-    - Notificaciones: feedback visual y accesibilidad en la vista.
-    - Obras y Producción: feedback visual centralizado, accesibilidad en botones y tablas.
-    - Pedidos: feedback visual y refuerzo de accesibilidad.
-    - Vidrios: feedback visual y accesibilidad en la vista.
-- [ ] Priorizar módulos según criticidad y visibilidad en la app (Inventario, Obras, Logística, Herrajes, Mantenimiento, Pedidos, Notificaciones, Vidrios).
+# Mantener este checklist actualizado y marcar los tests implementados y validados.

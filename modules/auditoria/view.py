@@ -18,6 +18,16 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(20)
 
+        # --- FEEDBACK VISUAL GLOBAL (accesible, visible siempre arriba de la tabla) ---
+        self.label_feedback = QLabel()
+        self.label_feedback.setStyleSheet("font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; background: #f1f5f9;")
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Feedback visual de Auditoría")
+        self.main_layout.addWidget(self.label_feedback)
+        # --- FIN FEEDBACK VISUAL GLOBAL ---
+
+        self._feedback_timer = None  # Temporizador para feedback visual
+
         # Cargar el stylesheet visual moderno para Auditoría según el tema activo
         try:
             with open("themes/config.json", "r", encoding="utf-8") as f:
@@ -222,6 +232,45 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
         btn_guardar.clicked.connect(guardar)
         btn_pdf.clicked.connect(exportar_pdf)
         dialog.exec()
+
+    def mostrar_feedback(self, mensaje, tipo="info", duracion=4000):
+        """
+        Muestra feedback visual accesible y autolimpia tras un tiempo. Unifica con mostrar_mensaje.
+        """
+        colores = {
+            "info": "background: #e3f6fd; color: #2563eb;",
+            "exito": "background: #d1f7e7; color: #15803d;",
+            "advertencia": "background: #fef9c3; color: #b45309;",
+            "error": "background: #fee2e2; color: #b91c1c;"
+        }
+        iconos = {
+            "info": "ℹ️ ",
+            "exito": "✅ ",
+            "advertencia": "⚠️ ",
+            "error": "❌ "
+        }
+        self.label_feedback.setStyleSheet(f"font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; {colores.get(tipo, '')}")
+        self.label_feedback.setText(f"{iconos.get(tipo, 'ℹ️ ')}{mensaje}")
+        self.label_feedback.setVisible(True)
+        self.label_feedback.setAccessibleDescription(mensaje)
+        if self._feedback_timer:
+            self._feedback_timer.stop()
+        from PyQt6.QtCore import QTimer
+        self._feedback_timer = QTimer(self)
+        self._feedback_timer.setSingleShot(True)
+        self._feedback_timer.timeout.connect(self.ocultar_feedback)
+        self._feedback_timer.start(duracion)
+
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+        """
+        Alias para mostrar_feedback, para compatibilidad con otros módulos.
+        """
+        self.mostrar_feedback(mensaje, tipo, duracion)
+
+    def ocultar_feedback(self):
+        self.label_feedback.clear()
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleDescription("")
 
 class Auditoria(QWidget):
     def __init__(self):

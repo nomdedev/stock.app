@@ -232,3 +232,30 @@ class ConfiguracionView(QMainWindow):
     def conectar_eventos_importacion(self, controller):
         self.boton_seleccionar_csv.clicked.connect(self.seleccionar_archivo_csv)
         self.boton_importar_csv.clicked.connect(controller.importar_csv_inventario)
+
+    def mostrar_feedback(self, mensaje, tipo="info"):
+        colores = {
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "advertencia": "#fbbf24",
+            "error": "#ef4444"
+        }
+        color = colores.get(tipo, "#2563eb")
+        iconos = {
+            "info": "ℹ️ ",
+            "exito": "✅ ",
+            "advertencia": "⚠️ ",
+            "error": "❌ "
+        }
+        icono = iconos.get(tipo, "ℹ️ ")
+        if not hasattr(self, 'label_feedback'):
+            self.label_feedback = QLabel()
+            self.main_layout.addWidget(self.label_feedback)
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        self.label_feedback.setText(f"{icono}{mensaje}")
+        self.label_feedback.setVisible(True)
+        self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
+
+    def ocultar_feedback(self):
+        if hasattr(self, 'label_feedback'):
+            self.label_feedback.setVisible(False)

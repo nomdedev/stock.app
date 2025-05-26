@@ -139,14 +139,14 @@ class LogisticaModel:
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", size=12)
-        pdf.cell(200, 10, txt=f"Acta de Entrega - ID {entrega[0]}", ln=True, align="C")
-        pdf.cell(200, 10, txt=f"Obra: {entrega[1]}", ln=True)
-        pdf.cell(200, 10, txt=f"Fecha Programada: {entrega[2]}", ln=True)
-        pdf.cell(200, 10, txt=f"Fecha Realizada: {entrega[3]}", ln=True)
-        pdf.cell(200, 10, txt=f"Estado: {entrega[4]}", ln=True)
-        pdf.cell(200, 10, txt=f"Vehículo Asignado: {entrega[5]}", ln=True)
-        pdf.cell(200, 10, txt=f"Chofer Asignado: {entrega[6]}", ln=True)
-        pdf.cell(200, 10, txt=f"Observaciones: {entrega[7]}", ln=True)
+        pdf.cell(200, 10, f"Acta de Entrega - ID {entrega[0]}", ln=True, align="C")
+        pdf.cell(200, 10, f"Obra: {entrega[1]}", ln=True)
+        pdf.cell(200, 10, f"Fecha Programada: {entrega[2]}", ln=True)
+        pdf.cell(200, 10, f"Fecha Realizada: {entrega[3]}", ln=True)
+        pdf.cell(200, 10, f"Estado: {entrega[4]}", ln=True)
+        pdf.cell(200, 10, f"Vehículo Asignado: {entrega[5]}", ln=True)
+        pdf.cell(200, 10, f"Chofer Asignado: {entrega[6]}", ln=True)
+        pdf.cell(200, 10, f"Observaciones: {entrega[7]}", ln=True)
 
         # Exportar checklist asociado
         query_checklist = """
@@ -155,9 +155,9 @@ class LogisticaModel:
         WHERE id_entrega = ?
         """
         checklist = self.db.ejecutar_query(query_checklist, (id_entrega,))
-        pdf.cell(200, 10, txt="Checklist:", ln=True)
+        pdf.cell(200, 10, "Checklist:", ln=True)
         for item in checklist:
-            pdf.cell(200, 10, txt=f"- {item[0]}: {item[1]} ({item[2]})", ln=True)
+            pdf.cell(200, 10, f"- {item[0]}: {item[1]} ({item[2]})", ln=True)
 
         pdf.output(f"acta_entrega_{id_entrega}.pdf")
         return f"Acta de entrega exportada como acta_entrega_{id_entrega}.pdf."

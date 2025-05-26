@@ -418,17 +418,6 @@ class UsuariosModel:
         return None
 
     def crear_usuarios_iniciales(self):
-        """
-        Crea los usuarios iniciales 'admin' y 'prueba' si no existen y asigna sus permisos base en la tabla permisos_modulos.
-        - 'admin': recibe permisos completos (ver, modificar, aprobar) en todos los módulos detectados.
-        - 'prueba': recibe solo permiso de ver en todos los módulos (sin modificar ni aprobar).
-        - El campo creado_por queda como el id de admin para ambos.
-        - Elimina permisos previos de ambos usuarios antes de asignar los nuevos.
-        - Usa módulos detectados en roles_permisos o permisos_modulos, o una lista crítica por defecto si no existen.
-        - Contraseñas iniciales: 'admin' (admin), 'prueba' (1), ambas con hash SHA-256.
-        - Cumple el estándar de seguridad y trazabilidad documentado en docs/estandares_seguridad.md y el checklist.
-        - Este flujo es validable con scripts/validar_permisos_iniciales.py y está documentado en docs/pendientes_tests_y_controladores.md.
-        """
         import hashlib
         usuarios = self.db.ejecutar_query("SELECT usuario, id FROM usuarios")
         usernames = {u[0]: u[1] for u in usuarios} if usuarios else {}
@@ -475,4 +464,3 @@ class UsuariosModel:
                 "INSERT INTO permisos_modulos (id_usuario, modulo, puede_ver, puede_modificar, puede_aprobar, creado_por) VALUES (?, ?, 1, 0, 0, ?) ",
                 (prueba_id, modulo, admin_id)
             )
-        # --- FIN FLUJO INICIAL USUARIOS Y PERMISOS ---

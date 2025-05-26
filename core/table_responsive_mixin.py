@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QTableWidget, QSizePolicy, QMenu
+from PyQt6.QtWidgets import QTableWidget, QSizePolicy, QMenu, QHeaderView
 from PyQt6.QtGui import QAction
 from PyQt6.QtCore import Qt, QPoint
 import os, json
@@ -10,8 +10,11 @@ class TableResponsiveMixin:
         ocupe todo el espacio disponible al maximizar o poner en fullscreen.
         """
         table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        table.horizontalHeader().setSectionResizeMode(table.horizontalHeader().ResizeMode.Stretch)
-        table.verticalHeader().setSectionResizeMode(table.verticalHeader().ResizeMode.Stretch)
+        horizontal_header = table.horizontalHeader()
+        if table.columnCount() > 0 and horizontal_header is not None:
+            horizontal_header.setSectionResizeMode(QHeaderView.Stretch)
+        if table.rowCount() > 0 and table.verticalHeader() is not None:
+            table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         # Opcional: permite que la tabla crezca con el layout
         table.setMinimumHeight(200)
         table.setMinimumWidth(400)

@@ -85,17 +85,37 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
 
         self.setLayout(self.main_layout)
+        self._feedback_timer = None  # Temporizador para feedback visual
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+        """
+        Muestra feedback visual accesible y autolimpia tras un tiempo. Unifica con mostrar_feedback.
+        """
         colores = {
             "info": "#2563eb",
             "exito": "#22c55e",
             "advertencia": "#fbbf24",
             "error": "#ef4444"
         }
+        iconos = {
+            "info": "ℹ️ ",
+            "exito": "✅ ",
+            "advertencia": "⚠️ ",
+            "error": "❌ "
+        }
         color = colores.get(tipo, "#2563eb")
-        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px;")
-        self.label_feedback.setText(mensaje)
+        icono = iconos.get(tipo, "ℹ️ ")
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        self.label_feedback.setText(f"{icono}{mensaje}")
+        self.label_feedback.setVisible(True)
+        self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
+        if self._feedback_timer:
+            self._feedback_timer.stop()
+        from PyQt6.QtCore import QTimer
+        self._feedback_timer = QTimer(self)
+        self._feedback_timer.setSingleShot(True)
+        self._feedback_timer.timeout.connect(self.ocultar_feedback)
+        self._feedback_timer.start(duracion)
         if tipo == "error":
             log_error(mensaje)
             QMessageBox.critical(self, "Error", mensaje)
@@ -103,6 +123,17 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
             QMessageBox.warning(self, "Advertencia", mensaje)
         elif tipo == "exito":
             QMessageBox.information(self, "Éxito", mensaje)
+
+    def mostrar_feedback(self, mensaje, tipo="info", duracion=4000):
+        """
+        Alias para mostrar_mensaje, para compatibilidad con otros módulos.
+        """
+        self.mostrar_mensaje(mensaje, tipo, duracion)
+
+    def ocultar_feedback(self):
+        self.label_feedback.clear()
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleDescription("")
 
     def cargar_config_columnas(self, config_path, headers):
         if os.path.exists(config_path):

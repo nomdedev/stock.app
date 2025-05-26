@@ -557,6 +557,7 @@ class InventarioController:
         Método para refrescar la vista de inventario cuando se agrega una nueva obra.
         Se puede usar para actualizar la lista de materiales, pedidos pendientes, etc.
         """
-        # Aquí va la lógica de actualización (ejemplo: refrescar tabla, mostrar feedback, etc.)
         self.actualizar_inventario()
         self._feedback(f"Inventario actualizado por nueva obra: {datos_obra.get('nombre','')} (ID: {datos_obra.get('id','')})", tipo='info')
+        if hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(f"Inventario actualizado automáticamente por la obra '{datos_obra.get('nombre','')}'.", tipo='info')

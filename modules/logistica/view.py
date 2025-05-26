@@ -304,12 +304,15 @@ pip install PyQt6-WebEngine
         # --- FIN DE BLOQUE DE ESTÁNDAR ---
 
         # --- FEEDBACK VISUAL INMEDIATO (QLabel) ---
+        # Estándar: único label de feedback visual, accesible, con estilos modernos y oculto por defecto.
+        # Usar siempre self.feedback_label para feedback visual inmediato.
         self.feedback_label = QLabel()
         self.feedback_label.setVisible(False)
-        self.feedback_label.setStyleSheet("QLabel { font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; }")
+        self.feedback_label.setStyleSheet("QLabel { font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; background: #f1f5f9; }")
         self.feedback_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.feedback_label.setAccessibleName("Feedback visual de Logística")
         self.main_layout.addWidget(self.feedback_label)
+        self._feedback_timer = None  # Temporizador para ocultar feedback automáticamente
 
         # --- FEEDBACK DE PROGRESO (QProgressBar) ---
         self.progress_bar = QProgressBar()
@@ -321,25 +324,54 @@ pip install PyQt6-WebEngine
         self.progress_bar.setAccessibleName("Barra de progreso de Logística")
         self.main_layout.addWidget(self.progress_bar)
 
-    def mostrar_feedback(self, mensaje, tipo="info"):
+    def mostrar_feedback(self, mensaje, tipo="info", auto_ocultar=True, segundos=4):
+        """
+        Muestra un mensaje de feedback visual accesible y moderno en el label de feedback.
+        - tipo: 'info', 'exito', 'advertencia', 'error'.
+        - auto_ocultar: si True, oculta automáticamente tras 'segundos'.
+        """
         colores = {
-            "exito": "background-color: #d1fae5; color: #065f46;",  # verde pastel
-            "error": "background-color: #fee2e2; color: #991b1b;",  # rojo pastel
-            "advertencia": "background-color: #fef3c7; color: #92400e;",  # naranja pastel
-            "info": "background-color: #e0e7ff; color: #1e40af;"  # azul pastel
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "advertencia": "#fbbf24",
+            "error": "#ef4444"
         }
+        color = colores.get(tipo, "#2563eb")
         iconos = {
+            "info": "ℹ️ ",
             "exito": "✅ ",
-            "error": "❌ ",
             "advertencia": "⚠️ ",
-            "info": "ℹ️ "
+            "error": "❌ "
         }
-        self.feedback_label.setText(f"{iconos.get(tipo, '')}{mensaje}")
-        self.feedback_label.setStyleSheet(f"QLabel {{ font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; {colores.get(tipo, '')} }}")
+        icono = iconos.get(tipo, "ℹ️ ")
+        # Limpiar mensaje anterior y estilos
+        self.feedback_label.clear()
+        self.feedback_label.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        self.feedback_label.setText(f"{icono}{mensaje}")
         self.feedback_label.setVisible(True)
+        self.feedback_label.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
+        # Ocultado automático con temporizador
+        if self._feedback_timer:
+            self._feedback_timer.stop()
+            self._feedback_timer.deleteLater()
+            self._feedback_timer = None
+        if auto_ocultar:
+            from PyQt6.QtCore import QTimer
+            self._feedback_timer = QTimer(self)
+            self._feedback_timer.setSingleShot(True)
+            self._feedback_timer.timeout.connect(self.ocultar_feedback)
+            self._feedback_timer.start(segundos * 1000)
 
     def ocultar_feedback(self):
+        """
+        Oculta y limpia el label de feedback visual.
+        """
+        self.feedback_label.clear()
         self.feedback_label.setVisible(False)
+        if self._feedback_timer:
+            self._feedback_timer.stop()
+            self._feedback_timer.deleteLater()
+            self._feedback_timer = None
 
     def mostrar_progreso(self, visible=True):
         """Muestra u oculta la barra de progreso (spinner) para operaciones largas."""

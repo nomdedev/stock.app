@@ -94,18 +94,12 @@ def instalar_dependencias_criticas():
     def instalar_dependencia_si_falta(paquete, version):
         print(f"[LOG 1.3.1] Chequeando {paquete} >= {version if version else ''}...")
         try:
-            if version is not None:
-                installed_version = pkg_resources.get_distribution(paquete).version
-                if installed_version >= version:
-                    print(f"[LOG 1.3.2] ✅ {paquete} ya está instalado y cumple versión.")
-                    return True
-                else:
-                    print(f"[LOG 1.3.3] ❌ {paquete} instalado pero versión {installed_version} < {version}. Intentando instalar...")
-                    return instalar_dependencia(paquete, version)
+            if version:
+                pkg_resources.require(f"{paquete}>={version}")
             else:
                 __import__(paquete)
-                print(f"[LOG 1.3.2] ✅ {paquete} ya está instalado.")
-                return True
+            print(f"[LOG 1.3.2] ✅ {paquete} ya está instalado y cumple versión.")
+            return True
         except Exception:
             print(f"[LOG 1.3.3] ❌ {paquete} no está instalado o la versión es incorrecta. Intentando instalar...")
             return instalar_dependencia(paquete, version)
@@ -128,18 +122,8 @@ def instalar_dependencias_criticas():
                 if not pkg or pkg.startswith("#"): continue
                 try:
                     print(f"[LOG 1.4.2] Chequeando {pkg}...")
-                    if "==" in line:
-                        req_pkg, req_ver = line.strip().split("==")
-                        installed_version = pkg_resources.get_distribution(req_pkg).version
-                        if installed_version >= req_ver:
-                            print(f"[LOG 1.4.3] ✅ {pkg} ya está instalado.")
-                            continue
-                        else:
-                            print(f"[LOG 1.4.4] ❌ {pkg} instalado pero versión {installed_version} < {req_ver}. Instalando...")
-                    else:
-                        __import__(pkg)
-                        print(f"[LOG 1.4.3] ✅ {pkg} ya está instalado.")
-                        continue
+                    pkg_resources.require(line.strip())
+                    print(f"[LOG 1.4.3] ✅ {pkg} ya está instalado.")
                 except Exception:
                     print(f"[LOG 1.4.4] ❌ {pkg} no está instalado o la versión es incorrecta. Instalando...")
                     subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", line.strip()])
@@ -270,14 +254,10 @@ def verificar_dependencias():
     for paquete, version in requeridos_criticos:
         try:
             if version:
-                installed_version = pkg_resources.get_distribution(paquete).version
-                if installed_version >= version:
-                    print(f"[LOG 2.1.1] ✅ {paquete} presente y versión >= {version if version else ''}.", flush=True)
-                else:
-                    raise Exception(f"Versión instalada {installed_version} < {version}")
+                pkg_resources.require(f"{paquete}>={version}")
             else:
                 __import__(paquete)
-                print(f"[LOG 2.1.1] ✅ {paquete} presente.", flush=True)
+            print(f"[LOG 2.1.1] ✅ {paquete} presente y versión >= {version if version else ''}.", flush=True)
         except Exception:
             print(f"[LOG 2.1.2] ❌ {paquete} faltante o versión menor a la requerida.", flush=True)
             faltantes_criticos.append(f"{paquete}{' >= ' + version if version else ''}")
@@ -285,14 +265,10 @@ def verificar_dependencias():
     for paquete, version in requeridos_secundarios:
         try:
             if version:
-                installed_version = pkg_resources.get_distribution(paquete).version
-                if installed_version >= version:
-                    print(f"[LOG 2.2.1] ✅ {paquete} presente.", flush=True)
-                else:
-                    raise Exception(f"Versión instalada {installed_version} < {version}")
+                pkg_resources.require(f"{paquete}>={version}")
             else:
                 __import__(paquete)
-                print(f"[LOG 2.2.1] ✅ {paquete} presente.", flush=True)
+            print(f"[LOG 2.2.1] ✅ {paquete} presente.", flush=True)
         except Exception:
             print(f"[LOG 2.2.2] ❌ {paquete} faltante.", flush=True)
             faltantes_secundarios.append(f"{paquete}{' >= ' + version if version else ''}")
@@ -409,7 +385,7 @@ class MainWindow(QMainWindow):
         self.usuario_label.setStyleSheet("background: #e0e7ef; color: #1e293b; font-size: 13px; font-weight: bold; border-radius: 8px; padding: 4px 12px; margin-right: 8px;")
         self.usuario_label.setText("")
         self._status_bar.addPermanentWidget(self.usuario_label, 1)
-        self.initUI(usuario or {}, modulos_permitidos or [])
+        self.initUI(usuario, modulos_permitidos)
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
         colores = {
@@ -420,19 +396,16 @@ class MainWindow(QMainWindow):
         }
         color = colores.get(tipo, "#2563eb")
         self._status_bar.setStyleSheet(f"background: #f1f5f9; color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 4px 12px;")
-        self._status_bar.showMessage(mensaje or "", duracion)
+        self._status_bar.showMessage(mensaje, duracion)
         if tipo == "error":
-            QMessageBox.critical(self, "Error", mensaje or "Ocurrió un error desconocido.")
+            QMessageBox.critical(self, "Error", mensaje)
         elif tipo == "advertencia":
-            QMessageBox.warning(self, "Advertencia", mensaje or "Advertencia desconocida.")
+            QMessageBox.warning(self, "Advertencia", mensaje)
         elif tipo == "exito":
-            QMessageBox.information(self, "Éxito", mensaje or "Operación exitosa.")
+            QMessageBox.information(self, "Éxito", mensaje)
 
     def actualizar_usuario_label(self, usuario):
-        if not usuario:
-            self.usuario_label.setText("")
-            return
-        rol = usuario.get('rol', '').lower() if isinstance(usuario, dict) else ''
+        rol = usuario.get('rol', '').lower()
         colores = {
             'admin': '#2563eb',
             'supervisor': '#fbbf24',
@@ -442,9 +415,7 @@ class MainWindow(QMainWindow):
         self.usuario_label.setStyleSheet(
             f"background: #e0e7ef; color: {color}; font-size: 13px; font-weight: bold; border-radius: 8px; padding: 4px 12px; margin-right: 8px; border: 1.5px solid {color};"
         )
-        nombre = usuario['usuario'] if isinstance(usuario, dict) and 'usuario' in usuario else str(usuario)
-        rol_str = usuario['rol'] if isinstance(usuario, dict) and 'rol' in usuario else ''
-        self.usuario_label.setText(f"Usuario: {nombre} ({rol_str})")
+        self.usuario_label.setText(f"Usuario: {usuario['usuario']} ({usuario['rol']})")
 
     def initUI(self, usuario=None, modulos_permitidos=None):
         # Crear conexiones persistentes a las bases de datos (una sola instancia por base)
@@ -600,6 +571,14 @@ class MainWindow(QMainWindow):
         self.auditoria_controller.usuario_actual = usuario
         self.configuracion_controller.usuario_actual = usuario
         self.herrajes_controller.usuario_actual = usuario
+
+        # INTEGRACIÓN EN TIEMPO REAL ENTRE MÓDULOS (Obras, Inventario, Vidrios)
+        # Conectar la señal obra_agregada de ObrasView a los controladores de Inventario y Vidrios        # INTEGRACIÓN EN TIEMPO REAL ENTRE MÓDULOS (Obras, Inventario, Vidrios)
+        if hasattr(self.obras_view, 'obra_agregada'):
+            if hasattr(self.inventario_controller, 'actualizar_por_obra'):
+                self.obras_view.obra_agregada.connect(self.inventario_controller.actualizar_por_obra)
+            if hasattr(self.vidrios_controller, 'actualizar_por_obra'):
+                self.obras_view.obra_agregada.connect(self.vidrios_controller.actualizar_por_obra)
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -777,33 +756,32 @@ if __name__ == "__main__":
             splash.fade_out.start()
             QTimer.singleShot(1000, app.quit)
             return
-        print("[LOG 4.6] Esperando cierre real de SplashScreen para mostrar LoginView...")
-        def mostrar_login():
-            db_connection_usuarios = DatabaseConnection()
-            db_connection_usuarios.conectar_a_base("users")
-            usuarios_model = UsuariosModel(db_connection=db_connection_usuarios)
-            login_view = LoginView()
-            login_controller = LoginController(login_view, usuarios_model)
-            def on_login_success():
-                user = login_controller.usuario_autenticado
-                if not user:
-                    login_view.mostrar_error("Usuario o contraseña incorrectos.")
-                    return
-                login_view.close()
-                modulos_permitidos = usuarios_model.obtener_modulos_permitidos(user)
-                main_window = MainWindow(user, modulos_permitidos)
-                main_window.actualizar_usuario_label(user)
-                main_window.mostrar_mensaje(f"Usuario actual: {user['usuario']} ({user['rol']})", tipo="info", duracion=4000)
-                main_window.show()
-            login_view.boton_login.clicked.connect(on_login_success)
-            login_view.show()
+        print("[LOG 4.6] Preparando LoginView y controladores...")
+        db_connection_usuarios = DatabaseConnection()
+        db_connection_usuarios.conectar_a_base("users")
+        usuarios_model = UsuariosModel(db_connection=db_connection_usuarios)
+        login_view = LoginView()
+        login_controller = LoginController(login_view, usuarios_model)
+        def on_login_success():
+            user = login_controller.usuario_autenticado
+            if not user:
+                login_view.mostrar_error("Usuario o contraseña incorrectos.")
+                return
+            login_view.close()
+            modulos_permitidos = usuarios_model.obtener_modulos_permitidos(user)
+            main_window = MainWindow(user, modulos_permitidos)
+            main_window.actualizar_usuario_label(user)
+            main_window.mostrar_mensaje(f"Usuario actual: {user['usuario']} ({user['rol']})", tipo="info", duracion=4000)
+            main_window.show()
+        login_view.boton_login.clicked.connect(on_login_success)
+        # Encadenar el fade out del splash al mostrar login
         def cerrar_splash_y_mostrar_login():
             splash.close()
-            QTimer.singleShot(0, mostrar_login)
+            QTimer.singleShot(0, login_view.show)
         splash.fade_out.finished.connect(cerrar_splash_y_mostrar_login)
-        QTimer.singleShot(splash.duration, splash.fade_out.start)
+        splash.fade_out.start()
 
-    print("[LOG 4.9] Espera activa: cerrando splash y mostrando login cuando corresponda...")
-    QTimer.singleShot(600, continuar_inicio)
+    print("[LOG 4.9] Iniciando flujo robusto: SplashScreen permanece hasta que LoginView está lista...")
+    continuar_inicio()
     print("[LOG 4.10] QApplication loop iniciado.")
     sys.exit(app.exec())

@@ -32,9 +32,6 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.label_titulo.setProperty("class", "contabilidad-titulo")
         self.main_layout.addWidget(self.label_titulo)
 
-        self.label_feedback = QLabel()
-        self.main_layout.addWidget(self.label_feedback)
-
         # QTabWidget para las tres pestañas
         self.tabs = QTabWidget()
         self.tabs.setObjectName("contabilidad-tabs")
@@ -167,6 +164,14 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
 
         self.setLayout(self.main_layout)
 
+        # --- FEEDBACK VISUAL GLOBAL (accesible, visible siempre arriba del QTabWidget) ---
+        self.label_feedback = QLabel()
+        self.label_feedback.setStyleSheet("font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; background: #f1f5f9;")
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Feedback visual de Contabilidad")
+        self.main_layout.addWidget(self.label_feedback)
+        # --- FIN FEEDBACK VISUAL GLOBAL ---
+
         # --- Sincronización dinámica de headers ---
         self.sync_headers()
 
@@ -298,16 +303,32 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         # Documentar excepción visual si aplica
         # EXCEPCIÓN: Este módulo no usa QLineEdit en la vista principal fuera de filtros, por lo que no aplica refuerzo en inputs de edición.
 
-    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+    def mostrar_feedback(self, mensaje, tipo="info", duracion=4000):
+        """
+        Muestra feedback visual accesible y autolimpia tras un tiempo. Unifica con mostrar_mensaje.
+        """
         colores = {
-            "info": "#2563eb",
-            "exito": "#22c55e",
-            "advertencia": "#fbbf24",
-            "error": "#ef4444"
+            "info": "background: #e3f6fd; color: #2563eb;",
+            "exito": "background: #d1f7e7; color: #15803d;",
+            "advertencia": "background: #fef9c3; color: #b45309;",
+            "error": "background: #fee2e2; color: #b91c1c;"
         }
-        color = colores.get(tipo, "#2563eb")
-        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px;")
-        self.label_feedback.setText(mensaje)
+        iconos = {
+            "info": "ℹ️ ",
+            "exito": "✅ ",
+            "advertencia": "⚠️ ",
+            "error": "❌ "
+        }
+        self.label_feedback.setStyleSheet(f"font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; {colores.get(tipo, '')}")
+        self.label_feedback.setText(f"{iconos.get(tipo, 'ℹ️ ')}{mensaje}")
+        self.label_feedback.setVisible(True)
+        self.label_feedback.setAccessibleDescription(mensaje)
+        if self._feedback_timer:
+            self._feedback_timer.stop()
+        self._feedback_timer = QTimer(self)
+        self._feedback_timer.setSingleShot(True)
+        self._feedback_timer.timeout.connect(self.ocultar_feedback)
+        self._feedback_timer.start(duracion)
         if tipo == "error":
             log_error(mensaje)
             QMessageBox.critical(self, "Error", mensaje)
@@ -315,6 +336,17 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             QMessageBox.warning(self, "Advertencia", mensaje)
         elif tipo == "exito":
             QMessageBox.information(self, "Éxito", mensaje)
+
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+        """
+        Alias para mostrar_feedback, para compatibilidad con otros módulos.
+        """
+        self.mostrar_feedback(mensaje, tipo, duracion)
+
+    def ocultar_feedback(self):
+        self.label_feedback.clear()
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleDescription("")
 
     def sync_headers(self):
         # Sincroniza los headers de las tablas con la base de datos

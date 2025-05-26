@@ -2572,3 +2572,10 @@
 2025-05-25 13:20:54,022 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-25 13:20:54,022 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-25 21:43:23,268 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-26 20:04:55,776 - INFO - Aplicación iniciada
+2025-05-26 20:04:55,850 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'roles_permisos' no es válido. (208) (SQLExecDirectW)")
+2025-05-26 20:04:55,850 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'roles_permisos' no es válido. (208) (SQLExecDirectW)")

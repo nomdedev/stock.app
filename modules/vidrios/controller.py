@@ -21,7 +21,7 @@ class VidriosController:
         """
         self.refrescar_vidrios()
         if hasattr(self.view, 'mostrar_mensaje'):
-            self.view.mostrar_mensaje(f"Vidrios actualizados por nueva obra: {datos_obra.get('nombre','')} (ID: {datos_obra.get('id','')})", tipo='info')
+            self.view.mostrar_mensaje(f"Vidrios actualizados automáticamente por la obra '{datos_obra.get('nombre','')}'.", tipo='info')
         print("[LOG ACCIÓN] Acción 'actualizar_por_obra' en módulo 'vidrios' finalizada con éxito.")
 
     def refrescar_vidrios(self):

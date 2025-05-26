@@ -37,8 +37,9 @@ class TestLogin(unittest.TestCase):
         self.login_controller.login()
         user = self.login_controller.usuario_autenticado
         self.assertIsNotNone(user, f"No se autenticó admin. Mensaje: {self.login_view.label_error.text()}")
-        self.assertEqual(user["usuario"], "admin")
-        self.assertEqual(user["rol"], "admin")
+        if user is not None:
+            self.assertEqual(user["usuario"], "admin")
+            self.assertEqual(user["rol"], "admin")
 
     def test_login_prueba(self):
         self.login_view.usuario_input.setText("prueba")
@@ -46,8 +47,9 @@ class TestLogin(unittest.TestCase):
         self.login_controller.login()
         user = self.login_controller.usuario_autenticado
         self.assertIsNotNone(user, f"No se autenticó prueba. Mensaje: {self.login_view.label_error.text()}")
-        self.assertEqual(user["usuario"], "prueba")
-        self.assertEqual(user["rol"], "usuario")
+        if user is not None:
+            self.assertEqual(user["usuario"], "prueba")
+            self.assertEqual(user["rol"], "usuario")
 
     def test_login_incorrecto(self):
         self.login_view.usuario_input.setText("admin")

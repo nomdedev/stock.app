@@ -143,8 +143,8 @@ class MainWindow(QMainWindow):
             if widget is not None:
                 widget.setVisible(i in indices_permitidos)
         # --- Sidebar: solo botones de módulos permitidos ---
-        if hasattr(self, 'sidebar') and hasattr(self.sidebar, 'set_visible_modules'):
-            self.sidebar.set_visible_modules(indices_permitidos)
+        # if hasattr(self, 'sidebar') and hasattr(self.sidebar, 'set_visible_modules'):
+        #     self.sidebar.set_visible_modules(indices_permitidos)
         # Seleccionar el primer módulo permitido
         if indices_permitidos:
             self.stack.setCurrentIndex(indices_permitidos[0])

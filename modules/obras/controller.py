@@ -65,7 +65,7 @@ class PermisoAuditoria:
             # Todos los métodos públicos decorados deben:
             # - Validar argumentos requeridos
             # - Usar feedback visual moderno (mostrar_mensaje)
-            # - Registrar evento de auditoría con usuario_id, modulo, accion, detalle, ip
+            # - Registrar evento de auditoría con usuario_id, modulo, accion, detalle, ip, estado.
             # - Loggear errores críticos
             return wrapper
         return decorador
@@ -382,27 +382,37 @@ class ObrasController:
                     nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars,
                     fecha_medicion, dias_entrega, fecha_entrega, self.usuario_actual['id'] if self.usuario_actual else None
                 ))
-                # Registrar en auditoría con formato unificado
-                self._registrar_evento_auditoria("alta_obra", f"Alta de obra: {nombre}")
+                # Obtener el ID real de la obra recién insertada
+                id_obra = self.model.db_connection.ejecutar_query("SELECT TOP 1 id FROM obras ORDER BY id DESC")[0][0]
+                datos_obra = {
+                    "id": id_obra,
+                    "nombre": nombre,
+                    "cliente": cliente,
+                    "estado": estado,
+                    "fecha": fecha_compra,
+                    "fecha_entrega": fecha_entrega
+                }
+                # Emitir señal para integración en tiempo real (robustecida)
+                if hasattr(self.view, 'obra_agregada'):
+                    self.view.obra_agregada.emit(datos_obra)
+                    if hasattr(self.view, 'mostrar_mensaje'):
+                        self.view.mostrar_mensaje(
+                            "Notificación enviada a Inventario y Vidrios para actualización en tiempo real.",
+                            tipo='info', duracion=3500
+                        )
+                # Feedback visual adicional en consola para auditoría
+                print(f"[INTEGRACIÓN] Señal obra_agregada emitida con datos: {datos_obra}")
+                # Feedback visual
                 mensaje = (
                     f"<b>Obra agregada exitosamente:</b><br>"
                     f"<ul style='margin:0 0 0 16px;padding:0'>"
                     f"<li><b>Nombre:</b> {nombre}</li>"
-                    f"<li><b>Apellido:</b> {apellido}</li>"
                     f"<li><b>Cliente:</b> {cliente}</li>"
-                    f"<li><b>Dirección:</b> {direccion}</li>"
-                    f"<li><b>Teléfono:</b> {telefono}</li>"
-                    f"<li><b>Cant. aberturas:</b> {cantidad_aberturas}</li>"
+                    f"<li><b>Estado:</b> {estado}</li>"
                     f"<li><b>Fecha compra:</b> {fecha_compra}</li>"
-                    f"<li><b>Pago completo:</b> {'Sí' if pago_completo else 'No'} {pago_porcentaje+'%' if pago_porcentaje else ''}</li>"
-                    f"<li><b>Monto USD:</b> {monto_usd}</li>"
-                    f"<li><b>Monto ARS:</b> {monto_ars}</li>"
-                    f"<li><b>Fecha medición:</b> {fecha_medicion}</li>"
-                    f"<li><b>Días entrega:</b> {dias_entrega}</li>"
                     f"<li><b>Fecha entrega:</b> {fecha_entrega}</li>"
-                    f"<li><b>Estado inicial:</b> {estado}</li>"
                     f"</ul>"
-                    f"<br>" 
+                    f"<br>"
                     f"<span style='color:#2563eb'><b>¿Qué desea hacer ahora?</b></span><br>"
                     f"- <b>Asignar materiales</b> a la obra desde el menú de acciones.<br>"
                     f"- <b>Programar cronograma</b> en la pestaña Cronograma.<br>"

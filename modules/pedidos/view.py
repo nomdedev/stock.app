@@ -83,10 +83,13 @@ class PedidosView(QWidget):
 
         # Feedback visual
         self.label_feedback = QLabel()
-        self.label_feedback.setStyleSheet("font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500;")
+        self.label_feedback.setObjectName("label_feedback")
+        self.label_feedback.setStyleSheet("color: #2563eb; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setVisible(False)
-        self.label_feedback.setAccessibleName("Feedback visual de Pedidos")
+        self.label_feedback.setAccessibleName("Mensaje de feedback de pedidos")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
         self.main_layout.addWidget(self.label_feedback)
+        self._feedback_timer = None
 
         # Formulario para nuevo pedido
         self.form_layout = QFormLayout()
@@ -125,6 +128,8 @@ class PedidosView(QWidget):
         self.boton_nuevo.clicked.connect(self.crear_pedido)
 
     def mostrar_feedback(self, mensaje, tipo="info"):
+        if not hasattr(self, "label_feedback") or self.label_feedback is None:
+            return
         colores = {
             "info": "#2563eb",
             "exito": "#22c55e",
@@ -132,12 +137,34 @@ class PedidosView(QWidget):
             "error": "#ef4444"
         }
         color = colores.get(tipo, "#2563eb")
-        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px;")
-        self.label_feedback.setText(mensaje)
+        iconos = {
+            "info": "ℹ️ ",
+            "exito": "✅ ",
+            "advertencia": "⚠️ ",
+            "error": "❌ "
+        }
+        icono = iconos.get(tipo, "ℹ️ ")
+        self.label_feedback.clear()
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        self.label_feedback.setText(f"{icono}{mensaje}")
         self.label_feedback.setVisible(True)
+        self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
+        self.label_feedback.setAccessibleName(f"Feedback {tipo}")
+        # Ocultar automáticamente después de 4 segundos
+        from PyQt6.QtCore import QTimer
+        if hasattr(self, '_feedback_timer') and self._feedback_timer:
+            self._feedback_timer.stop()
+        self._feedback_timer = QTimer(self)
+        self._feedback_timer.setSingleShot(True)
+        self._feedback_timer.timeout.connect(self.ocultar_feedback)
+        self._feedback_timer.start(4000)
 
     def ocultar_feedback(self):
-        self.label_feedback.setVisible(False)
+        if hasattr(self, "label_feedback") and self.label_feedback:
+            self.label_feedback.setVisible(False)
+            self.label_feedback.clear()
+        if hasattr(self, '_feedback_timer') and self._feedback_timer:
+            self._feedback_timer.stop()
 
     def cargar_config_columnas(self):
         if os.path.exists(self.config_path):

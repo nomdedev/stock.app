@@ -70,21 +70,6 @@ class LoginView(QWidget):
                 font-size: 1rem;
                 margin-top: 8px;
             }
-            QLineEdit:focus, QPushButton:focus {
-                border: 2px solid #2563eb;
-                outline: 2px solid #2563eb;
-                background: #f3f4f6;
-            }
-            QLineEdit, QPushButton {
-                font-size: 13px;
-            }
-            QToolTip {
-                font-size: 12px;
-                background-color: #1E293B;
-                color: white;
-                border-radius: 6px;
-                padding: 6px;
-            }
         """)
         # Fondo general
         main_layout = QVBoxLayout(self)
@@ -130,9 +115,6 @@ class LoginView(QWidget):
 
         self.usuario_input = QLineEdit()
         self.usuario_input.setPlaceholderText("Usuario")
-        self.usuario_input.setToolTip("Ingrese su nombre de usuario. Campo obligatorio.")
-        self.usuario_input.setAccessibleName("Campo de usuario")
-        self.usuario_input.setAccessibleDescription("Campo para ingresar el nombre de usuario")
         self.usuario_input.setStyleSheet("""
             QLineEdit {
                 background: #fff;
@@ -157,17 +139,10 @@ class LoginView(QWidget):
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("Contraseña")
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
-        self.password_input.setToolTip("Ingrese su contraseña. Campo obligatorio.")
-        self.password_input.setAccessibleName("Campo de contraseña")
-        self.password_input.setAccessibleDescription("Campo para ingresar la contraseña")
         self.password_input.setStyleSheet(self.usuario_input.styleSheet())
         card_layout.addWidget(self.password_input)
 
         self.boton_login = QPushButton("Ingresar")
-        self.boton_login.setToolTip("Presione para iniciar sesión")
-        self.boton_login.setAccessibleName("Botón de ingresar")
-        self.boton_login.setAccessibleDescription("Botón para enviar usuario y contraseña e iniciar sesión")
-        self.boton_login.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         # Aplicar sombra visual al botón usando QGraphicsDropShadowEffect (reemplazo de box-shadow)
         sombra_boton = QGraphicsDropShadowEffect(self)
         sombra_boton.setBlurRadius(16)
@@ -179,9 +154,6 @@ class LoginView(QWidget):
         self.label_error = QLabel("")
         self.label_error.setObjectName("error")
         self.label_error.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label_error.setStyleSheet("font-size: 13px; color: #ef4444; background: #ffe5e5; border-radius: 8px; padding: 8px 16px;")
-        self.label_error.setAccessibleName("Mensaje de error de login")
-        self.label_error.setAccessibleDescription("Mensaje visual de error al iniciar sesión")
         card_layout.addWidget(self.label_error)
 
         main_layout.addStretch()
@@ -189,18 +161,7 @@ class LoginView(QWidget):
         main_layout.addStretch()
 
     def mostrar_error(self, mensaje):
-        self.label_error.setText(f"❌ {mensaje}")
+        self.label_error.setText(mensaje)
 
     def limpiar_error(self):
         self.label_error.setText("")
-
-        # Refuerzo de accesibilidad y feedback visual implementado el 25/05/2025:
-        # - Tooltips descriptivos en campos y botón de login.
-        # - Foco visible (borde y outline azul pastel).
-        # - Contraste y tamaño de fuente >=13px en campos y feedback.
-        # - Uso de setAccessibleName y setAccessibleDescription para lectores de pantalla.
-        # - Feedback de error con emoji y color estándar.
-        # - Cumple docs/estandares_visuales.md y docs/estandares_feedback.md.
-        # Si se requiere excepción visual, documentar aquí y en docs/estandares_visuales.md.
-        # ---
-        # Última revisión: 25/05/2025
