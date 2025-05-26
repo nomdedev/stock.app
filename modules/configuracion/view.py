@@ -43,6 +43,14 @@ class ConfiguracionView(QMainWindow):
         label_general = QLabel("Configuración general del sistema (próximamente)")
         label_general.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout_general.addWidget(label_general)
+        # Botón activar offline (para test y funcionalidad real)
+        self.boton_activar_offline = QPushButton()
+        self.boton_activar_offline.setText("Activar modo offline")
+        self.boton_activar_offline.setIcon(QIcon("img/offline_icon.svg"))
+        self.boton_activar_offline.setToolTip("Activa el modo offline de la app")
+        self.boton_activar_offline.setAccessibleName("Botón activar modo offline")
+        self.boton_activar_offline.setStyleSheet("border-radius: 8px; background: #f1f5f9; font-size: 14px; padding: 8px 24px;")
+        layout_general.addWidget(self.boton_activar_offline)
         self.tabs.addTab(self.tab_general, "General")
 
         # --- Pestaña Conexión ---
