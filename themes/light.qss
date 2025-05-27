@@ -74,7 +74,7 @@ QTableWidget {
     border-radius: 12px;
 }
 QTableWidget:focus {
-    outline: 2px solidrgb(133, 163, 226);
+    outline: 2px solid rgb(133, 163, 226);
     border: 2px solid #2563eb;
 }
 QHeaderView::section {

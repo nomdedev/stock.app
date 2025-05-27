@@ -382,7 +382,7 @@ class MainWindow(QMainWindow):
         self.modulos_permitidos = modulos_permitidos
         self.usuario_label = QLabel()
         self.usuario_label.setObjectName("usuarioActualLabel")
-        self.usuario_label.setStyleSheet("background: #e0e7ef; color: #1e293b; font-size: 13px; font-weight: bold; border-radius: 8px; padding: 4px 12px; margin-right: 8px;")
+        self.usuario_label.setStyleSheet("")
         self.usuario_label.setText("")
         self._status_bar.addPermanentWidget(self.usuario_label, 1)
         self.initUI(usuario, modulos_permitidos)
@@ -680,30 +680,7 @@ def chequear_conexion_bd_gui():
     msg.setWindowTitle("Error de conexión a la base de datos")
     msg.setText("❌ No se pudo conectar a la base de datos.")
     msg.setInformativeText(f"Verifica usuario, contraseña, servidor (puede ser IP o nombre) y que SQL Server acepte autenticación SQL.\n\nIntentado con: {DB_SERVER} y {DB_SERVER_ALTERNATE}")
-    # Estilo minimalista, letra pequeña, padding simétrico, centrado, bordes redondeados, fondo claro
-    msg.setStyleSheet("""
-        QMessageBox {
-            background: #f1f5f9;
-            color: #ef4444;
-            font-size: 10px;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
-            font-weight: 500;
-            border-radius: 12px;
-            padding: 20px 24px 20px 24px;
-        }
-        QLabel {
-            qproperty-alignment: 'AlignCenter';
-            font-size: 10px;
-        }
-        QPushButton {
-            min-width: 80px;
-            min-height: 28px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
-            padding: 4px 16px;
-        }
-    """)
+    msg.setStyleSheet("")
     msg.exec()
     sys.exit(1)
 
@@ -763,7 +740,10 @@ if __name__ == "__main__":
     splash.show()
     splash.fade_in.start()
     print("[LOG 4.3] Aplicando stylesheet neumórfico global...")
-    with open("mps/ui/assets/stylesheet.qss", "r", encoding="utf-8") as f:
+    # with open("mps/ui/assets/stylesheet.qss", "r", encoding="utf-8") as f:
+    #     app.setStyleSheet(f.read())
+    # En vez de cargar un QSS vacío, cargar el tema light.qss por defecto para evitar advertencias y asegurar compatibilidad:
+    with open("themes/light.qss", "r", encoding="utf-8") as f:
         app.setStyleSheet(f.read())
     print("[LOG 4.4] Chequeando dependencias críticas y opcionales...")
     error_dependencias = False
