@@ -18,6 +18,8 @@ class ObrasView(QWidget, TableResponsiveMixin):
 
         # Título
         self.label = QLabel("Gestión de Obras")
+        self.label.setAccessibleName("Título de módulo Obras")
+        self.label.setAccessibleDescription("Encabezado principal de la vista de obras")
         self.main_layout.addWidget(self.label)
 
         # Botón principal de acción (Agregar obra)
@@ -26,6 +28,8 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar nueva obra")
+        self.boton_agregar.setAccessibleName("Botón agregar obra")
+        self.boton_agregar.setAccessibleDescription("Botón principal para agregar una nueva obra")
         self.boton_agregar.setText("")
         self.boton_agregar.setFixedSize(48, 48)
         self.boton_agregar.setStyleSheet("")
@@ -36,6 +40,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
         sombra.setColor(QColor(0, 0, 0, 50))
         self.boton_agregar.setGraphicsEffect(sombra)
         estilizar_boton_icono(self.boton_agregar)
+        self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         botones_layout.addWidget(self.boton_agregar)
         botones_layout.addStretch()
         self.main_layout.addLayout(botones_layout)
@@ -45,7 +50,10 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.boton_verificar_obra.setIcon(QIcon("img/search_icon.svg"))
         self.boton_verificar_obra.setIconSize(QSize(20, 20))
         self.boton_verificar_obra.setToolTip("Verificar existencia de obra en la base de datos SQL")
+        self.boton_verificar_obra.setAccessibleName("Botón verificar obra en SQL")
+        self.boton_verificar_obra.setAccessibleDescription("Botón para verificar si la obra existe en la base de datos SQL")
         estilizar_boton_icono(self.boton_verificar_obra)
+        self.boton_verificar_obra.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.main_layout.addWidget(self.boton_verificar_obra)
 
         # Obtener headers dinámicamente (fallback si no hay conexión)
@@ -61,6 +69,10 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.tabla_obras.setAlternatingRowColors(True)
         self.tabla_obras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabla_obras.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.tabla_obras.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.tabla_obras.setToolTip("Tabla principal de obras")
+        self.tabla_obras.setAccessibleName("Tabla de obras")
+        self.tabla_obras.setAccessibleDescription("Tabla que muestra todas las obras registradas")
         # Robustecer: Chequear existencia de headers antes de operar
         vh = self.tabla_obras.verticalHeader()
         if vh is not None:
@@ -73,6 +85,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
             hh.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             hh.customContextMenuRequested.connect(self.mostrar_menu_header)
             hh.sectionClicked.connect(self.mostrar_menu_columnas_header)
+            hh.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
         self.main_layout.addWidget(self.tabla_obras)
 
         # Configuración de columnas visibles por usuario
@@ -93,6 +106,24 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None
+
+        # Refuerzo de accesibilidad en todos los QLabel y QPushButton
+        for widget in self.findChildren((QLabel, QPushButton)):
+            font = widget.font()
+            if font.pointSize() < 12:
+                font.setPointSize(12)
+            widget.setFont(font)
+            if isinstance(widget, QPushButton):
+                widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+                if not widget.toolTip():
+                    widget.setToolTip("Botón de acción en Obras")
+                if not widget.accessibleName():
+                    widget.setAccessibleName("Botón de acción de Obras")
+                if not widget.accessibleDescription():
+                    widget.setAccessibleDescription("Botón de acción accesible en la vista de Obras")
+            if isinstance(widget, QLabel):
+                if not widget.accessibleDescription():
+                    widget.setAccessibleDescription("Label informativo o de feedback en Obras")
 
         # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
         qss_tema = None
@@ -209,16 +240,12 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.columnas_visibles = self.cargar_config_columnas()
         self.aplicar_columnas_visibles()
 
-    def cargar_tabla_obras(self, obras):
-        # obras: lista de dicts con claves = headers
-        self.tabla_obras.setRowCount(len(obras))
-        for fila, obra in enumerate(obras):
-            for columna, header in enumerate(self.obras_headers):
-                valor = obra.get(header, "")
-                self.tabla_obras.setItem(fila, columna, QTableWidgetItem(str(valor)))
-
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
-        """Muestra feedback visual y errores críticos con QMessageBox y color adecuado."""
+        """
+        Muestra feedback visual crítico (QMessageBox) y en label_feedback.
+        Usar para errores, advertencias o confirmaciones importantes.
+        Para feedback informativo/accesible, usar mostrar_feedback.
+        """
         colores = {
             "info": "#2563eb",
             "exito": "#22c55e",
@@ -226,16 +253,31 @@ class ObrasView(QWidget, TableResponsiveMixin):
             "error": "#ef4444"
         }
         color = colores.get(tipo, "#2563eb")
-        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px;")
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setText(mensaje)
+        self.label_feedback.setVisible(True)
+        self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
+        self.label_feedback.setAccessibleName(f"Feedback {tipo}")
         if tipo == "error":
             QMessageBox.critical(self, "Error", mensaje)
         elif tipo == "advertencia":
             QMessageBox.warning(self, "Advertencia", mensaje)
         elif tipo == "exito":
             QMessageBox.information(self, "Éxito", mensaje)
+        # Ocultar automáticamente después de 4 segundos
+        from PyQt6.QtCore import QTimer
+        if hasattr(self, '_feedback_timer') and self._feedback_timer:
+            self._feedback_timer.stop()
+        self._feedback_timer = QTimer(self)
+        self._feedback_timer.setSingleShot(True)
+        self._feedback_timer.timeout.connect(self.ocultar_feedback)
+        self._feedback_timer.start(duracion)
 
     def mostrar_feedback(self, mensaje, tipo="info"):
+        """
+        Muestra feedback informativo/accesible en la parte superior de la vista.
+        Usar para mensajes no críticos, confirmaciones o información general.
+        """
         if not hasattr(self, "label_feedback") or self.label_feedback is None:
             return
         colores = {
@@ -258,7 +300,6 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
         self.label_feedback.setAccessibleName(f"Feedback {tipo}")
-        # Ocultar automáticamente después de 4 segundos
         from PyQt6.QtCore import QTimer
         if hasattr(self, '_feedback_timer') and self._feedback_timer:
             self._feedback_timer.stop()
@@ -266,6 +307,16 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self._feedback_timer.setSingleShot(True)
         self._feedback_timer.timeout.connect(self.ocultar_feedback)
         self._feedback_timer.start(4000)
+
+    def cargar_tabla_obras(self, obras):
+        # obras: lista de dicts con claves = headers
+        self.tabla_obras.setRowCount(len(obras))
+        for fila, obra in enumerate(obras):
+            for columna, header in enumerate(self.obras_headers):
+                valor = obra.get(header, "")
+                item = QTableWidgetItem(str(valor))
+                item.setToolTip(f"{header}: {valor}")
+                self.tabla_obras.setItem(fila, columna, item)
 
     def ocultar_feedback(self):
         if hasattr(self, "label_feedback") and self.label_feedback:

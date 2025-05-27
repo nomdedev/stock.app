@@ -236,6 +236,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
             for columna, header in enumerate(self.inventario_headers):
                 valor = item.get(header, "")
                 qitem = QTableWidgetItem(str(valor))
+                qitem.setToolTip(f"{header}: {valor}")
                 self.tabla_inventario.setItem(fila, columna, qitem)
 
     def exportar_tabla_a_excel(self):

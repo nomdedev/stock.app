@@ -146,3 +146,16 @@ Si un test no cumple con estos puntos, debe ser refactorizado o ampliado.
 Documentar en el código y en este archivo cualquier excepción visual o lógica detectada durante los tests.
 
 > FIN DE PARÁMETROS OBLIGATORIOS PARA TESTS ROBUSTOS
+
+## Estándar de logo en LoginView
+
+- El logo de la pantalla de inicio de sesión debe ser grande y visible (mínimo 320x320 px).
+- Usar QLabel y QPixmap con escalado suave.
+- Justificación: mejora la accesibilidad, refuerza la identidad visual y cumple con los requisitos de contraste y foco visual.
+- Ejemplo de implementación:
+
+```python
+self.icono = QLabel()
+pixmap = QPixmap("img/MPS_inicio_sesion.png")
+self.icono.setPixmap(pixmap.scaled(320, 320, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+```

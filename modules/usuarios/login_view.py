@@ -3,6 +3,10 @@ from PyQt6.QtGui import QIcon, QFont, QColor, QPixmap
 from PyQt6.QtCore import Qt
 
 class LoginView(QWidget):
+    """
+    Vista de inicio de sesión.
+    El logo principal debe ser grande y visible (mínimo 320x320 px) para cumplir con los estándares visuales y de accesibilidad.
+    """
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Iniciar sesión")
@@ -92,14 +96,14 @@ class LoginView(QWidget):
         card_layout.setContentsMargins(32, 32, 32, 32)
         card_layout.setSpacing(16)
 
-        # Icono superior (imagen de inicio de sesión, ahora más grande)
+        # Icono superior (logo de inicio de sesión, ahora mucho más grande)
         self.icono = QLabel()
         self.icono.setObjectName("icono")
         pixmap = QPixmap("img/MPS_inicio_sesion.png")
         if pixmap.isNull():
             pixmap = QPixmap("img/placeholder.svg")
-        # Mostrar la imagen mucho más grande (por ejemplo, 180x180)
-        self.icono.setPixmap(pixmap.scaled(180, 180, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        # Mostrar la imagen mucho más grande (por ejemplo, 320x320)
+        self.icono.setPixmap(pixmap.scaled(320, 320, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         self.icono.setAlignment(Qt.AlignmentFlag.AlignCenter)
         card_layout.addWidget(self.icono)
 

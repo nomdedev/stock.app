@@ -44,20 +44,6 @@ CREATE TABLE usuarios (
 );
 
 -- =====================
--- TABLA roles_permisos (USERS)
--- =====================
-IF OBJECT_ID('roles_permisos', 'U') IS NOT NULL DROP TABLE roles_permisos;
-CREATE TABLE roles_permisos (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    rol VARCHAR(50),
-    modulo VARCHAR(50),
-    permiso_ver BIT DEFAULT 1,
-    permiso_editar BIT DEFAULT 0,
-    permiso_aprobar BIT DEFAULT 0,
-    permiso_eliminar BIT DEFAULT 0
-);
-
--- =====================
 -- TABLA logs_usuarios (USERS)
 -- =====================
 IF OBJECT_ID('logs_usuarios', 'U') IS NOT NULL DROP TABLE logs_usuarios;

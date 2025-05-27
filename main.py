@@ -537,6 +537,7 @@ class MainWindow(QMainWindow):
         ]
         sidebar_sections_robustos = []
         for nombre, icono in sidebar_sections:
+            # Robustez: si el icono no existe, usar placeholder
             if not os.path.exists(icono):
                 icono = os.path.join(os.path.dirname(__file__), 'img', 'placeholder.svg')
             sidebar_sections_robustos.append((nombre, icono))
@@ -546,19 +547,52 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self.module_stack)
         self._ajustar_sidebar()
 
-        # Filtrar y mostrar módulos permitidos para el usuario
+        # --- FILTRADO ROBUSTO Y DOCUMENTADO DE MÓDULOS EN SIDEBAR Y STACK PRINCIPAL ---
+        # 1. Obtener módulos permitidos para el usuario actual (según permisos_modulos)
+        # ATENCIÓN: obtener_modulos_permitidos debe estar implementado y accesible en UsuariosModel
         modulos_permitidos = self.usuarios_model.obtener_modulos_permitidos(usuario)
+        usuario_log = usuario.get('usuario', usuario) if isinstance(usuario, dict) else str(usuario)
+        self.logger.info(f"[PERMISOS] Módulos permitidos para {usuario_log}: {modulos_permitidos}")
+        # 2. Filtrar secciones del sidebar y widgets del stack según permisos
         secciones_filtradas = []
         indices_permitidos = []
+        nombre_a_widget = {
+            "Obras": self.obras_view,
+            "Inventario": self.inventario_view,
+            "Herrajes": self.herrajes_view,
+            "Compras / Pedidos": self.compras_pedidos_view,
+            "Logística": self.logistica_view,
+            "Vidrios": self.vidrios_view,
+            "Mantenimiento": self.mantenimiento_view,
+            "Producción": self.produccion_view,
+            "Contabilidad": self.contabilidad_view,
+            "Auditoría": self.auditoria_view,
+            "Usuarios": self.usuarios_view,
+            "Configuración": self.configuracion_view
+        }
+        # 3. Filtrar secciones y sincronizar con el stack
         for i, (nombre, icono) in enumerate(self.sidebar.sections):
             if nombre in modulos_permitidos:
                 secciones_filtradas.append((nombre, icono))
                 indices_permitidos.append(i)
+        # 4. Si no hay módulos permitidos, mostrar mensaje y fallback seguro
+        if not secciones_filtradas:
+            self.logger.warning(f"[PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.")
+            secciones_filtradas = [("Configuración", os.path.join(os.path.dirname(__file__), 'utils', 'configuracion.svg'))]
+            indices_permitidos = [list(nombre_a_widget.keys()).index("Configuración")]
         self.sidebar.set_sections(secciones_filtradas)
+        # 5. Sincronizar el stack: solo mostrar widgets de módulos permitidos
+        # (Opcional: ocultar widgets no permitidos, si se requiere mayor seguridad visual)
+        # 6. Seleccionar el primer módulo permitido como vista inicial
         if indices_permitidos:
             self.module_stack.setCurrentIndex(indices_permitidos[0])
         else:
             self.module_stack.setCurrentIndex(0)
+        # 7. Accesibilidad: enfocar el sidebar tras el filtrado
+        self.sidebar.setFocus()
+        # 8. Documentación y log para diagnóstico
+        self.logger.info(f"[PERMISOS] Sidebar filtrado: {[n for n, _ in secciones_filtradas]}")
+        # --- FIN FILTRADO ROBUSTO DE MÓDULOS ---
 
         # Pasar usuario_actual a los controladores
         self.inventario_controller.usuario_actual = usuario

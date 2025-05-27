@@ -11,10 +11,13 @@ class TableResponsiveMixin:
         """
         table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         horizontal_header = table.horizontalHeader()
+        # ATENCIÓN: En PyQt6, QHeaderView.Stretch ya no existe. Se debe usar QHeaderView.ResizeMode.Stretch
+        # Esto evita errores de AttributeError: type object 'QHeaderView' has no attribute 'Stretch'
         if table.columnCount() > 0 and horizontal_header is not None:
-            horizontal_header.setSectionResizeMode(QHeaderView.Stretch)
-        if table.rowCount() > 0 and table.verticalHeader() is not None:
-            table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+            horizontal_header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        vertical_header = table.verticalHeader()
+        if table.rowCount() > 0 and vertical_header is not None:
+            vertical_header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         # Opcional: permite que la tabla crezca con el layout
         table.setMinimumHeight(200)
         table.setMinimumWidth(400)
@@ -38,7 +41,8 @@ class TableResponsiveMixin:
             header = table.horizontalHeader()
             menu = QMenu(table)
             for i in range(table.columnCount()):
-                col_name = table.horizontalHeaderItem(i).text() if table.horizontalHeaderItem(i) else f"Columna {i+1}"
+                header_item = table.horizontalHeaderItem(i)
+                col_name = header_item.text() if header_item is not None else f"Columna {i+1}"
                 action = QAction(col_name, menu)
                 action.setCheckable(True)
                 action.setChecked(not table.isColumnHidden(i))
@@ -47,13 +51,25 @@ class TableResponsiveMixin:
                     save_column_config()
                 action.toggled.connect(toggle_col)
                 menu.addAction(action)
-            menu.exec(header.mapToGlobal(pos))
-        table.horizontalHeader().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        table.horizontalHeader().customContextMenuRequested.connect(show_column_menu)
-        # También permitir click izquierdo
-        def left_click_header(event):
-            if event.button() == Qt.MouseButton.LeftButton:
-                pos = event.pos()
-                show_column_menu(pos)
-        table.horizontalHeader().mousePressEvent = left_click_header
+            if header is not None:
+                menu.exec(header.mapToGlobal(pos))
+            else:
+                menu.exec(pos)
+        horizontal_header = table.horizontalHeader()
+        if horizontal_header is not None:
+            horizontal_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            horizontal_header.customContextMenuRequested.connect(show_column_menu)
+            # También permitir click izquierdo usando event filter
+            from PyQt6.QtCore import QObject, QEvent
+
+            class HeaderEventFilter(QObject):
+                def eventFilter(self, obj, event):
+                    if event.type() == QEvent.Type.MouseButtonPress and event.button() == Qt.MouseButton.LeftButton:
+                        pos = event.pos()
+                        show_column_menu(pos)
+                        return True
+                    return False
+
+            header_event_filter = HeaderEventFilter(table)
+            horizontal_header.installEventFilter(header_event_filter)
         load_column_config()

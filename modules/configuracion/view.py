@@ -6,16 +6,17 @@ import pandas as pd
 class ConfiguracionView(QMainWindow):
     def __init__(self):
         super().__init__()
+        # Inicialización de layout y feedback global accesible
+        self.main_widget = QWidget()
+        self.main_layout = QVBoxLayout(self.main_widget)
+        # label_feedback inicializado una sola vez y siempre visible (oculto por defecto)
+        self.label_feedback = QLabel()
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback global")
+        self.main_layout.addWidget(self.label_feedback)
         self.setup_ui()
 
     def setup_ui(self):
-        self.setWindowTitle("Configuración del sistema")
-        self.setMinimumSize(800, 600)
-        main_widget = QWidget()
-        main_layout = QVBoxLayout(main_widget)
-        main_layout.setContentsMargins(24, 20, 24, 20)
-        main_layout.setSpacing(16)
-
         # --- HEADER VISUAL MODERNO ---
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 0, 0)
@@ -31,7 +32,7 @@ class ConfiguracionView(QMainWindow):
         header_layout.addWidget(icono_label)
         header_layout.addWidget(titulo_label)
         header_layout.addStretch()
-        main_layout.addLayout(header_layout)
+        self.main_layout.addLayout(header_layout)
 
         # QTabWidget principal
         self.tabs = QTabWidget()
@@ -110,9 +111,9 @@ class ConfiguracionView(QMainWindow):
         self.tab_importar.setLayout(layout_importar)
         self.tabs.addTab(self.tab_importar, "Importar Inventario")
 
-        main_layout.addWidget(self.tabs)
-        main_widget.setLayout(main_layout)
-        self.setCentralWidget(main_widget)
+        self.main_layout.addWidget(self.tabs)
+        self.main_widget.setLayout(self.main_layout)
+        self.setCentralWidget(self.main_widget)
 
         # Refuerzo de accesibilidad en botones principales
         for btn in [self.boton_seleccionar_csv, self.boton_importar_csv]:
@@ -142,12 +143,15 @@ class ConfiguracionView(QMainWindow):
         else:
             # EXCEPCIÓN VISUAL: No se puede aplicar refuerzo visual porque el header es None
             pass
-        # Refuerzo de accesibilidad en QLabel
+        # Refuerzo de accesibilidad en QLabel (incluye label_feedback y mensaje_label)
         for widget in self.findChildren(QLabel):
             font = widget.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
             widget.setFont(font)
+            # Refuerzo de accesibilidad descriptiva
+            if not widget.accessibleDescription():
+                widget.setAccessibleDescription("Label informativo o de feedback")
         # Márgenes y padding en layouts según estándar
         main_widget = self.centralWidget()
         layout = main_widget.layout() if main_widget is not None and hasattr(main_widget, 'layout') else None
@@ -157,6 +161,12 @@ class ConfiguracionView(QMainWindow):
         # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
 
     def mostrar_mensaje(self, mensaje, tipo="info", destino="mensaje_label"):
+        """
+        Muestra un mensaje de feedback en un label específico (por defecto mensaje_label).
+        Usar para feedback contextual en la pestaña actual (por ejemplo, importar inventario).
+        Para feedback global o persistente, usar mostrar_feedback.
+        Oculta el feedback anterior en el label destino antes de mostrar uno nuevo.
+        """
         colores = {
             "exito": "#22c55e",
             "error": "#ef4444",
@@ -173,7 +183,9 @@ class ConfiguracionView(QMainWindow):
         icono = iconos.get(tipo, "ℹ️")
         label = getattr(self, destino, None)
         if label:
+            label.setText("")  # Oculta feedback anterior
             label.setText(f"<span style='color:{color};'>{icono} {mensaje}</span>")
+            label.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
 
     def mostrar_advertencias(self, advertencias):
         if advertencias:
@@ -234,6 +246,12 @@ class ConfiguracionView(QMainWindow):
         self.boton_importar_csv.clicked.connect(controller.importar_csv_inventario)
 
     def mostrar_feedback(self, mensaje, tipo="info"):
+        """
+        Muestra un mensaje de feedback global y accesible en la parte superior de la vista.
+        Oculta automáticamente el feedback anterior antes de mostrar uno nuevo.
+        Usar para mensajes importantes o persistentes que afectan a todo el módulo.
+        """
+        self.ocultar_feedback()
         colores = {
             "info": "#2563eb",
             "exito": "#22c55e",
@@ -248,9 +266,6 @@ class ConfiguracionView(QMainWindow):
             "error": "❌ "
         }
         icono = iconos.get(tipo, "ℹ️ ")
-        if not hasattr(self, 'label_feedback'):
-            self.label_feedback = QLabel()
-            self.main_layout.addWidget(self.label_feedback)
         self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setText(f"{icono}{mensaje}")
         self.label_feedback.setVisible(True)
@@ -259,3 +274,11 @@ class ConfiguracionView(QMainWindow):
     def ocultar_feedback(self):
         if hasattr(self, 'label_feedback'):
             self.label_feedback.setVisible(False)
+            self.label_feedback.setText("")
+
+    def documentar_excepciones_visuales(self, h_header):
+        """
+        Documenta excepciones visuales en el header de la tabla preview.
+        Si el header no soporta setStyleSheet, se debe documentar aquí y en docs/estandares_visuales.md
+        """
+        pass  # Implementar lógica de documentación si es necesario

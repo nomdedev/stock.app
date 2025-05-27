@@ -244,38 +244,42 @@ class UsuariosController(BaseController):
         self._registrar_evento_auditoria('cambiar_estado', estado="éxito")
 
     def _mostrar_roles_permisos(self):
-        # Carga la tabla de roles y permisos con checkboxes
+        # Carga la tabla de roles y permisos con checkboxes usando permisos_modulos
         roles = self.model.obtener_roles()
-        self.view.tabla_roles_permisos.setRowCount(len(roles))
-        for row, rol in enumerate(roles):
+        self.view.tabla_roles_permisos.setRowCount(0)
+        row = 0
+        for rol in roles:
             permisos = self.model.obtener_permisos_por_rol(rol[0])
             for permiso in permisos:
                 modulo = permiso[1]
-                datos_perm = permiso[2:6]  # ver, editar, aprobar, eliminar
-                # Colocar rol y módulo
+                datos_perm = permiso[2:5]  # ver, modificar, aprobar
+                self.view.tabla_roles_permisos.insertRow(row)
                 self.view.tabla_roles_permisos.setItem(row, 0, QTableWidgetItem(rol[0]))
                 self.view.tabla_roles_permisos.setItem(row, 1, QTableWidgetItem(modulo))
-                # Insertar checkboxes para cada permiso
                 for i, estado in enumerate(datos_perm, start=2):
                     chk = QCheckBox()
                     chk.setChecked(bool(estado))
                     self.view.tabla_roles_permisos.setCellWidget(row, i, chk)
+                row += 1
 
     @permiso_auditoria_usuarios('guardar_permisos')
     def guardar_permisos(self):
-        # Recoger permisos desde la tabla y actualizar
+        # Recoger permisos desde la tabla y actualizar en permisos_modulos
         filas = self.view.tabla_roles_permisos.rowCount()
-        permisos_a_actualizar = {}
+        permisos_por_rol = {}
         for row in range(filas):
             rol = self.view.tabla_roles_permisos.item(row, 0).text()
             modulo = self.view.tabla_roles_permisos.item(row, 1).text()
             estados = []
-            for col in range(2, 6):
+            for col in range(2, 5):
                 chk = self.view.tabla_roles_permisos.cellWidget(row, col)
                 estados.append(1 if chk.isChecked() else 0)
-            permisos_a_actualizar[modulo] = estados
-            # Llamar al modelo por cada módulo
-            self.model.actualizacion_permisos(rol, {modulo: permisos_a_actualizar[modulo]})
+            if rol not in permisos_por_rol:
+                permisos_por_rol[rol] = {}
+            permisos_por_rol[rol][modulo] = {'ver': estados[0], 'modificar': estados[1], 'aprobar': estados[2]}
+        # Actualizar permisos para cada rol
+        for rol, permisos in permisos_por_rol.items():
+            self.model.actualizar_permisos(rol, permisos)
         self.view.label.setText("Permisos guardados exitosamente.")
 
     @permiso_auditoria_usuarios('exportar_logs')

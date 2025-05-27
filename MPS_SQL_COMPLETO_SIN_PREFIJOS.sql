@@ -19,17 +19,18 @@ CREATE TABLE usuarios (
 );
 
 -- =====================
--- TABLA roles_permisos
+-- TABLA permisos_modulos
 -- =====================
-IF OBJECT_ID('roles_permisos', 'U') IS NOT NULL DROP TABLE roles_permisos;
-CREATE TABLE roles_permisos (
+IF OBJECT_ID('permisos_modulos', 'U') IS NOT NULL DROP TABLE permisos_modulos;
+CREATE TABLE permisos_modulos (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    rol NVARCHAR(50),
-    modulo NVARCHAR(50),
-    permiso_ver BIT DEFAULT 1,
-    permiso_editar BIT DEFAULT 0,
-    permiso_aprobar BIT DEFAULT 0,
-    permiso_eliminar BIT DEFAULT 0
+    id_usuario INT,
+    modulo VARCHAR(50) NOT NULL,
+    puede_ver BIT DEFAULT 1,
+    puede_modificar BIT DEFAULT 0,
+    puede_aprobar BIT DEFAULT 0,
+    fecha_creacion DATETIME DEFAULT GETDATE(),
+    creado_por INT
 );
 
 -- =====================

@@ -107,44 +107,68 @@ class UsuariosModel:
         self.db.ejecutar_query(query, (nuevo_estado, usuario_id))
 
     def obtener_roles(self):
-        query = "SELECT DISTINCT rol FROM roles_permisos"
+        # Ahora los roles se obtienen de la tabla usuarios (columna rol)
+        query = "SELECT DISTINCT rol FROM usuarios"
         resultado = self.db.ejecutar_query(query)
         return resultado if resultado else []
 
     def obtener_permisos_por_rol(self, rol):
-        query = "SELECT * FROM roles_permisos WHERE rol = ?"
+        # Obtiene todos los módulos y permisos asociados a usuarios con ese rol
+        query = """
+        SELECT modulo, MAX(puede_ver), MAX(puede_modificar), MAX(puede_aprobar)
+        FROM permisos_modulos pm
+        JOIN usuarios u ON pm.id_usuario = u.id
+        WHERE u.rol = ?
+        GROUP BY modulo
+        """
         resultado = self.db.ejecutar_query(query, (rol,))
-        return resultado if resultado else []
+        # Devuelve lista de tuplas: (modulo, puede_ver, puede_modificar, puede_aprobar)
+        return [(rol, *r) for r in resultado] if resultado else []
 
     def actualizar_permisos(self, rol, permisos):
-        query = """
-        UPDATE roles_permisos
-        SET permiso_ver = ?, permiso_editar = ?, permiso_aprobar = ?, permiso_eliminar = ?
-        WHERE rol = ? AND modulo = ?
-        """
-        for modulo, permiso in permisos.items():
-            self.db.ejecutar_query(query, (*permiso, rol, modulo))
+        # Actualiza los permisos de todos los usuarios con ese rol
+        usuarios = self.db.ejecutar_query("SELECT id FROM usuarios WHERE rol = ?", (rol,))
+        for usuario in usuarios:
+            id_usuario = usuario[0]
+            self.actualizar_permisos_modulos_usuario(id_usuario, permisos, id_usuario)
 
-    def registrar_log_usuario(self, datos):
-        query = """
-        INSERT INTO logs_usuarios (usuario_id, accion, modulo, detalle, ip_origen)
-        VALUES (?, ?, ?, ?, ?)
-        """
-        self.db.ejecutar_query(query, datos)
+    def clonar_permisos(self, rol_origen, rol_destino):
+        # Clona los permisos de todos los usuarios con rol_origen a todos los de rol_destino
+        usuarios_origen = self.db.ejecutar_query("SELECT id FROM usuarios WHERE rol = ?", (rol_origen,))
+        usuarios_destino = self.db.ejecutar_query("SELECT id FROM usuarios WHERE rol = ?", (rol_destino,))
+        if not usuarios_origen or not usuarios_destino:
+            return f"No se encontraron usuarios para los roles indicados."
+        # Tomar permisos del primer usuario origen como referencia
+        id_origen = usuarios_origen[0][0]
+        permisos = self.db.ejecutar_query(
+            "SELECT modulo, puede_ver, puede_modificar, puede_aprobar FROM permisos_modulos WHERE id_usuario = ?",
+            (id_origen,)
+        )
+        if not permisos:
+            return f"No se encontraron permisos para el rol '{rol_origen}'."
+        for usuario in usuarios_destino:
+            id_destino = usuario[0]
+            self.db.ejecutar_query("DELETE FROM permisos_modulos WHERE id_usuario = ?", (id_destino,))
+            for permiso in permisos:
+                self.db.ejecutar_query(
+                    "INSERT INTO permisos_modulos (id_usuario, modulo, puede_ver, puede_modificar, puede_aprobar, creado_por) VALUES (?, ?, ?, ?, ?, ?)",
+                    (id_destino, permiso[0], permiso[1], permiso[2], permiso[3], id_origen)
+                )
+        return f"Permisos del rol '{rol_origen}' clonados al rol '{rol_destino}'."
 
     def obtener_permisos_por_usuario(self, usuario_id, modulo):
+        # Devuelve los permisos del usuario para el módulo desde permisos_modulos
         query = """
-        SELECT permiso_ver, permiso_editar, permiso_aprobar, permiso_eliminar
-        FROM roles_permisos
-        WHERE rol = (SELECT rol FROM usuarios WHERE id = ?) AND modulo = ?
+        SELECT puede_ver, puede_modificar, puede_aprobar
+        FROM permisos_modulos
+        WHERE id_usuario = ? AND modulo = ?
         """
         resultado = self.db.ejecutar_query(query, (usuario_id, modulo))
         if resultado:
             return {
-                "ver": resultado[0][0],
-                "editar": resultado[0][1],
-                "aprobar": resultado[0][2],
-                "eliminar": resultado[0][3]
+                "ver": bool(resultado[0][0]),
+                "modificar": bool(resultado[0][1]),
+                "aprobar": bool(resultado[0][2])
             }
         return {}
 
@@ -158,95 +182,11 @@ class UsuariosModel:
         self.db.ejecutar_query(query, (id_usuario,))
         return f"Cuenta del usuario {id_usuario} reactivada."
 
-    def clonar_permisos(self, rol_origen, rol_destino):
-        query_obtener_permisos = """
-        SELECT modulo, permiso_ver, permiso_editar, permiso_aprobar, permiso_eliminar
-        FROM roles_permisos
-        WHERE rol = ?
-        """
-        permisos = self.db.ejecutar_query(query_obtener_permisos, (rol_origen,))
-        if not permisos:
-            return f"No se encontraron permisos para el rol '{rol_origen}'."
-
-        query_insertar_permisos = """
-        INSERT INTO roles_permisos (rol, modulo, permiso_ver, permiso_editar, permiso_aprobar, permiso_eliminar)
-        VALUES (?, ?, ?, ?, ?, ?)
-        """
-        for permiso in permisos:
-            self.db.ejecutar_query(query_insertar_permisos, (rol_destino, *permiso))
-
-        return f"Permisos del rol '{rol_origen}' clonados al rol '{rol_destino}'."
-
-    def obtener_usuarios_activos(self):
-        query = "SELECT * FROM usuarios WHERE estado = 'activo'"
+    def obtener_todos_los_modulos(self):
+        # Lista todos los módulos registrados en permisos_modulos
+        query = "SELECT DISTINCT modulo FROM permisos_modulos"
         resultado = self.db.ejecutar_query(query)
-        return resultado if resultado else []
-
-    def obtener_estadisticas_usuarios(self):
-        query = """
-        SELECT estado, COUNT(*) as total
-        FROM usuarios
-        GROUP BY estado
-        """
-        resultado = self.db.ejecutar_query(query)
-        return resultado if resultado else []
-
-    def eliminar_usuarios_por_estado(self, estado):
-        query = "DELETE FROM usuarios WHERE estado = ?"
-        self.db.ejecutar_query(query, (estado,))
-
-    def verificar_usuario_existente(self, email, usuario):
-        query = "SELECT COUNT(*) FROM usuarios WHERE email = ? OR usuario = ?"
-        resultado = self.db.ejecutar_query(query, (email, usuario))
-        return resultado and resultado[0][0] > 0
-
-    def obtener_modulos_permitidos(self, usuario):
-        """
-        Devuelve la lista de módulos a los que el usuario tiene acceso (puede_ver=TRUE en permisos_modulos).
-        Admin y supervisor ven todos los módulos. Los usuarios normales nunca pueden ver Usuarios, Auditoría ni Configuración.
-        """
-        modulos_restringidos = {"Usuarios", "Auditoría", "Configuración"}
-        if usuario['rol'] in ('admin', 'supervisor'):
-            # Admin y supervisor ven todos los módulos registrados en la base
-            query = "SELECT DISTINCT modulo FROM permisos_modulos"
-            resultado = self.db.ejecutar_query(query)
-            modulos = [r[0] for r in resultado] if resultado else []
-            return modulos
-        else:
-            # Usuarios normales: solo módulos permitidos explícitamente y nunca los restringidos
-            query = "SELECT modulo FROM permisos_modulos WHERE id_usuario = ? AND puede_ver = 1"
-            resultado = self.db.ejecutar_query(query, (usuario['id'],))
-            modulos = [r[0] for r in resultado] if resultado else []
-            # Filtrar módulos restringidos para usuarios normales
-            return [m for m in modulos if m not in modulos_restringidos]
-
-    def obtener_permisos_modulo(self, usuario, modulo):
-        """
-        Devuelve un dict con los permisos del usuario para el módulo indicado.
-        """
-        if usuario['rol'] in ('admin', 'supervisor'):
-            # Acceso total
-            return {'ver': True, 'modificar': True, 'aprobar': True}
-        query = """
-        SELECT puede_ver, puede_modificar, puede_aprobar
-        FROM permisos_modulos
-        WHERE id_usuario = ? AND modulo = ?
-        """
-        resultado = self.db.ejecutar_query(query, (usuario['id'], modulo))
-        if resultado:
-            return {
-                'ver': bool(resultado[0][0]),
-                'modificar': bool(resultado[0][1]),
-                'aprobar': bool(resultado[0][2])
-            }
-        return {'ver': False, 'modificar': False, 'aprobar': False}
-
-    def tiene_permiso(self, usuario, modulo, accion):
-        """
-        Verifica si el usuario tiene permiso para la acción ('ver', 'modificar', 'aprobar') en el módulo.
-        """
-        permisos = self.obtener_permisos_modulo(usuario, modulo)
-        return permisos.get(accion, False)
+        return [r[0] for r in resultado] if resultado else []
 
     def actualizar_permisos_modulos_usuario(self, id_usuario, permisos_dict, creado_por):
         """
@@ -264,17 +204,6 @@ class UsuariosModel:
                 """,
                 (id_usuario, modulo, int(permisos.get('ver', False)), int(permisos.get('modificar', False)), int(permisos.get('aprobar', False)), creado_por)
             )
-
-    def obtener_todos_los_modulos(self):
-        query = "SELECT DISTINCT modulo FROM roles_permisos"
-        resultado = self.db.ejecutar_query(query)
-        return [r[0] for r in resultado] if resultado else []
-
-    def actualizar_permisos_usuario(self, username, modulos):
-        # Borra los permisos actuales y asigna los nuevos
-        self.db.ejecutar_query("DELETE FROM permisos_usuario WHERE username = ?", (username,))
-        for modulo in modulos:
-            self.db.ejecutar_query("INSERT INTO permisos_usuario (username, modulo) VALUES (?, ?)", (username, modulo))
 
     def obtener_headers_usuarios(self):
         """
@@ -464,3 +393,51 @@ class UsuariosModel:
                 "INSERT INTO permisos_modulos (id_usuario, modulo, puede_ver, puede_modificar, puede_aprobar, creado_por) VALUES (?, ?, 1, 0, 0, ?) ",
                 (prueba_id, modulo, admin_id)
             )
+    
+    def obtener_modulos_permitidos(self, usuario):
+        """
+        Devuelve la lista de módulos permitidos para el usuario según la tabla permisos_modulos.
+        - Si el usuario es admin o supervisor, devuelve todos los módulos disponibles.
+        - Si es usuario normal, solo los módulos con permiso de 'ver'.
+        - Si no hay permisos, devuelve lista vacía.
+        Args:
+            usuario (dict): Debe contener al menos 'id' y 'rol'.
+        Returns:
+            list[str]: Nombres de módulos permitidos.
+        """
+        import logging
+        logger = logging.getLogger("UsuariosModel")
+        if not usuario or 'rol' not in usuario or 'id' not in usuario:
+            logger.warning("[PERMISOS] Usuario inválido o sin rol/id: %s", usuario)
+            return []
+        rol = usuario['rol'].lower()
+        if rol in ("admin", "supervisor"):
+            # Admin y supervisor ven todos los módulos
+            modulos = self.obtener_todos_los_modulos()
+            logger.info(f"[PERMISOS] Usuario {usuario.get('usuario', usuario)} (rol={rol}) tiene acceso a todos los módulos: {modulos}")
+            return modulos
+        # Usuario normal: solo módulos con puede_ver=1
+        query = "SELECT modulo FROM permisos_modulos WHERE id_usuario = ? AND puede_ver = 1"
+        resultado = self.db.ejecutar_query(query, (usuario['id'],))
+        modulos = [r[0] for r in resultado] if resultado else []
+        logger.info(f"[PERMISOS] Usuario {usuario.get('usuario', usuario)} (rol={rol}) tiene acceso a módulos: {modulos}")
+        return modulos
+
+    def obtener_usuarios_activos(self):
+        """
+        Devuelve una lista de usuarios cuyo estado es 'activo'.
+        Uso: Para listados, filtros y validaciones de usuarios activos en la app y tests automáticos.
+        Retorna:
+            list[tuple]: Cada tupla representa un usuario activo (todas las columnas de la tabla usuarios).
+        Robustez:
+            - Si no hay usuarios activos, retorna lista vacía.
+            - Controla errores de conexión devolviendo lista vacía y logueando el error.
+        """
+        try:
+            query = "SELECT * FROM usuarios WHERE estado = 'activo'"
+            resultado = self.db.ejecutar_query(query)
+            return resultado if resultado else []
+        except Exception as e:
+            import logging
+            logging.getLogger("UsuariosModel").error(f"Error al obtener usuarios activos: {e}")
+            return []
