@@ -334,7 +334,8 @@ class UsuariosModel:
             return f"Error al exportar los logs de usuarios: {e}"
 
     def obtener_usuario_por_nombre(self, nombre_usuario):
-        query = "SELECT id, usuario, password_hash, rol FROM usuarios WHERE usuario = ?"
+        # Devuelve todos los campos relevantes del usuario
+        query = "SELECT id, usuario, password_hash, rol, nombre, apellido, email, estado FROM usuarios WHERE usuario = ?"
         res = self.db.ejecutar_query(query, (nombre_usuario,))
         if res and len(res) > 0:
             row = res[0]
@@ -342,7 +343,11 @@ class UsuariosModel:
                 'id': row[0],
                 'usuario': row[1],
                 'password_hash': row[2],
-                'rol': row[3] if len(row) > 3 else 'usuario'
+                'rol': row[3] if len(row) > 3 else 'usuario',
+                'nombre': row[4] if len(row) > 4 else '',
+                'apellido': row[5] if len(row) > 5 else '',
+                'email': row[6] if len(row) > 6 else '',
+                'estado': row[7] if len(row) > 7 else 'activo'
             }
         return None
 
@@ -393,6 +398,30 @@ class UsuariosModel:
                 "INSERT INTO permisos_modulos (id_usuario, modulo, puede_ver, puede_modificar, puede_aprobar, creado_por) VALUES (?, ?, 1, 0, 0, ?) ",
                 (prueba_id, modulo, admin_id)
             )
+        # --- Refuerzo: asegurar que admin tiene permisos en TODOS los módulos críticos ---
+        modulos_criticos = [
+            'Inventario', 'Obras', 'Logística', 'Usuarios', 'Configuración',
+            'Herrajes', 'Compras / Pedidos', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría'
+        ]
+        for modulo in modulos_criticos:
+            existe = self.db.ejecutar_query(
+                "SELECT 1 FROM permisos_modulos WHERE id_usuario = ? AND modulo = ?", (admin_id, modulo)
+            )
+            if not existe:
+                self.db.ejecutar_query(
+                    "INSERT INTO permisos_modulos (id_usuario, modulo, puede_ver, puede_modificar, puede_aprobar, creado_por) VALUES (?, ?, 1, 1, 1, ?)",
+                    (admin_id, modulo, admin_id)
+                )
+        # --- Refuerzo: asegurar que usuario prueba tiene permisos de VER en TODOS los módulos críticos ---
+        for modulo in modulos_criticos:
+            existe = self.db.ejecutar_query(
+                "SELECT 1 FROM permisos_modulos WHERE id_usuario = ? AND modulo = ?", (prueba_id, modulo)
+            )
+            if not existe:
+                self.db.ejecutar_query(
+                    "INSERT INTO permisos_modulos (id_usuario, modulo, puede_ver, puede_modificar, puede_aprobar, creado_por) VALUES (?, ?, 1, 0, 0, ?)",
+                    (prueba_id, modulo, admin_id)
+                )
     
     def obtener_modulos_permitidos(self, usuario):
         """

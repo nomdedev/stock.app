@@ -2708,3 +2708,29 @@
 2025-05-27 08:40:37,352 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
 2025-05-27 08:40:37,354 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
 2025-05-27 08:40:37,354 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-27 16:05:46,688 - INFO - Aplicación iniciada
+2025-05-27 16:05:46,997 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 16:05:46,997 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 16:05:48,812 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-27 16:05:48,812 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-27 16:05:48,816 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-27 16:05:48,816 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-27 16:26:06,318 - INFO - Aplicación iniciada
+2025-05-27 16:26:06,485 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 16:26:06,485 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 16:26:07,145 - INFO - [PERMISOS] Módulos permitidos para prueba: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-27 16:26:07,145 - INFO - [PERMISOS] Módulos permitidos para prueba: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-27 16:26:07,149 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-27 16:26:07,149 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-27 16:31:54,034 - INFO - Aplicación iniciada
+2025-05-27 16:31:54,285 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 16:31:54,285 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 16:31:55,003 - INFO - [PERMISOS] Módulos permitidos para admin: ['Auditoría', 'Compras / Pedidos', 'Configuración', 'Contabilidad', 'Herrajes', 'Inventario', 'Logística', 'Mantenimiento', 'Obras', 'Producción', 'Usuarios', 'Vidrios']
+2025-05-27 16:31:55,003 - INFO - [PERMISOS] Módulos permitidos para admin: ['Auditoría', 'Compras / Pedidos', 'Configuración', 'Contabilidad', 'Herrajes', 'Inventario', 'Logística', 'Mantenimiento', 'Obras', 'Producción', 'Usuarios', 'Vidrios']
+2025-05-27 16:31:55,010 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 16:31:55,010 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 16:52:34,280 - INFO - Aplicación iniciada
+2025-05-27 16:52:34,575 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 16:52:34,575 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 16:52:35,274 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 16:52:35,274 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']

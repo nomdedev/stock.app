@@ -173,3 +173,32 @@ self.icono.setPixmap(pixmap.scaled(320, 320, Qt.AspectRatioMode.KeepAspectRatio,
 - Si aparecen advertencias como `Could not parse stylesheet of object ...`, revisar primero los helpers y QSS embebidos.
 
 ---
+
+## Estándares de permisos y feedback visual
+
+### Permisos y roles
+
+- El usuario admin (id_rol=1) debe tener acceso total a todos los módulos y a la gestión de roles/permisos.
+- Solo el admin puede modificar roles y permisos. Ningún otro usuario puede editar los permisos del admin ni modificar el rol admin.
+- Si un usuario no tiene acceso a ningún módulo, la UI debe mostrar un mensaje visual claro y solo permitir acceso a Configuración.
+- La lógica de visibilidad de módulos y pestañas debe ser robusta y segura: nunca mostrar ni permitir acceso a módulos/pestañas no permitidos.
+- El backend debe validar siempre los permisos, incluso si la UI los oculta.
+
+### Feedback visual y estilos
+
+- Usar siempre el QSS global de `themes/light.qss`. Está prohibido aplicar estilos embebidos con `setStyleSheet` en widgets individuales, salvo excepciones documentadas.
+- Los mensajes de error, advertencia y éxito deben ser claros, accesibles y visibles en la UI (status bar o feedback global).
+- Si ocurre un error de permisos, mostrar un mensaje visual inmediato y registrar el evento en auditoría.
+- No debe haber advertencias QSS ni bloqueos visuales tras login. Si ocurre, documentar la causa y solución.
+
+### Ejemplo de mensaje visual si no hay módulos permitidos
+
+> "No tienes acceso a ningún módulo. Contacta al administrador para revisar tus permisos."
+
+---
+
+### Recomendaciones para desarrolladores
+
+- Antes de modificar la gestión de permisos, revisa y ejecuta el script `scripts/bootstrap_roles_permisos.sql` en la base de datos `users` para asegurar que el admin tiene permisos totales.
+- Documenta cualquier excepción visual o de permisos en este archivo y en el código afectado.
+- Consulta siempre los estándares de seguridad y feedback visual en `docs/estandares_seguridad.md` y `docs/estandares_feedback.md`.

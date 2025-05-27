@@ -880,3 +880,25 @@ widget.setGraphicsEffect(sombra)
 > Siempre usar QGraphicsDropShadowEffect para sombras visuales en la app. Nunca usar box-shadow en QSS.
 
 ---
+
+## Permisos, roles y feedback visual
+
+- El usuario admin (id_rol=1) tiene acceso total a todos los módulos y puede modificar roles/permisos.
+- Solo el admin puede modificar roles y permisos. Ningún otro usuario puede editar al admin ni modificar el rol admin.
+- Si un usuario no tiene acceso a ningún módulo, la UI muestra un mensaje visual claro y solo permite acceso a Configuración.
+- La lógica de visibilidad de módulos y pestañas es robusta y segura: nunca se muestran ni permiten accesos no autorizados.
+- El backend valida siempre los permisos, incluso si la UI los oculta.
+- Usar siempre el QSS global de `themes/light.qss`. Prohibido aplicar estilos embebidos salvo excepción documentada.
+- Los mensajes de error, advertencia y éxito deben ser claros, accesibles y visibles en la UI.
+- Si ocurre un error de permisos, se muestra mensaje visual inmediato y se registra en auditoría.
+- No debe haber advertencias QSS ni bloqueos visuales tras login. Si ocurre, documentar la causa y solución.
+
+### Ejemplo de mensaje visual si no hay módulos permitidos
+
+> "No tienes acceso a ningún módulo. Contacta al administrador para revisar tus permisos."
+
+### Recomendaciones para desarrolladores
+
+- Antes de modificar la gestión de permisos, ejecuta el script `scripts/bootstrap_roles_permisos.sql` en la base de datos `users` para asegurar que el admin tiene permisos totales.
+- Documenta cualquier excepción visual o de permisos en este archivo y en el código afectado.
+- Consulta siempre los estándares de seguridad y feedback visual en `docs/estandares_seguridad.md` y `docs/estandares_feedback.md`.

@@ -282,3 +282,13 @@ class ConfiguracionView(QMainWindow):
         Si el header no soporta setStyleSheet, se debe documentar aquí y en docs/estandares_visuales.md
         """
         pass  # Implementar lógica de documentación si es necesario
+
+    def ocultar_pestana_permisos(self, es_admin):
+        """
+        Oculta la pestaña de permisos si el usuario no es admin.
+        Se debe llamar a este método después de inicializar la UI y antes de mostrar la ventana.
+        """
+        if not es_admin:
+            idx = self.tabs.indexOf(self.tab_permisos)
+            if idx != -1:
+                self.tabs.removeTab(idx)

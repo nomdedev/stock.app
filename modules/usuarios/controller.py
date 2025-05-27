@@ -216,10 +216,15 @@ class UsuariosController(BaseController):
 
     @permiso_auditoria_usuarios('editar')
     def editar_usuario(self, usuario):
+        # usuario es una tupla o dict, obtener id y datos
+        id_usuario = usuario[0] if isinstance(usuario, (list, tuple)) else usuario.get('id')
+        # Prevenir edición del admin por otros usuarios
+        if id_usuario == 1 and (not self.usuario_actual or self.usuario_actual.get('id_rol', None) != 1):
+            raise PermissionError("Solo el admin puede editar al usuario admin.")
         dialog = QDialog()
         dialog.setWindowTitle("Editar Usuario")
         layout = QVBoxLayout(dialog)
-        layout.addWidget(QLabel(f"Editar usuario: {usuario[0]}"))
+        layout.addWidget(QLabel(f"Editar usuario: {id_usuario}"))
         dialog.exec()
 
     @permiso_auditoria_usuarios('eliminar')
@@ -322,12 +327,12 @@ class UsuariosController(BaseController):
         self.view.label.setText(mensaje)
 
     def mostrar_tab_permisos_si_admin(self):
-        # Solo el admin puede ver la pestaña de permisos
-        if hasattr(self, 'usuario_actual') and self.usuario_actual and self.usuario_actual.get('rol') == 'admin':
-            self.view.mostrar_tab_permisos(True)
-            self.cargar_gestion_permisos_modulos()
-        else:
-            self.view.mostrar_tab_permisos(False)
+        # Solo mostrar la pestaña de permisos si el usuario es admin
+        if hasattr(self.view, 'tabs') and hasattr(self.view, 'tab_permisos'):
+            if not self.usuario_actual or self.usuario_actual.get('id_rol', None) != 1:
+                idx = self.view.tabs.indexOf(self.view.tab_permisos)
+                if idx != -1:
+                    self.view.tabs.removeTab(idx)
 
     def cargar_gestion_permisos_modulos(self):
         # Llenar combo con usuarios normales

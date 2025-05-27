@@ -550,9 +550,16 @@ class MainWindow(QMainWindow):
         # --- FILTRADO ROBUSTO Y DOCUMENTADO DE MÓDULOS EN SIDEBAR Y STACK PRINCIPAL ---
         # 1. Obtener módulos permitidos para el usuario actual (según permisos_modulos)
         # ATENCIÓN: obtener_modulos_permitidos debe estar implementado y accesible en UsuariosModel
-        modulos_permitidos = self.usuarios_model.obtener_modulos_permitidos(usuario)
-        usuario_log = usuario.get('usuario', usuario) if isinstance(usuario, dict) else str(usuario)
-        self.logger.info(f"[PERMISOS] Módulos permitidos para {usuario_log}: {modulos_permitidos}")
+        try:
+            modulos_permitidos = self.usuarios_model.obtener_modulos_permitidos(usuario)
+            if not modulos_permitidos:
+                self.logger.error(f"[PERMISOS] No se encontraron módulos permitidos para el usuario: {usuario}")
+        except Exception as e:
+            import traceback
+            self.logger.error(f"[ERROR] Excepción al inicializar la UI: {e}\n{traceback.format_exc()}")
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.critical(self, "Error crítico", f"Error al cargar la interfaz: {e}")
+            self.close()
         # 2. Filtrar secciones del sidebar y widgets del stack según permisos
         secciones_filtradas = []
         indices_permitidos = []
@@ -580,6 +587,11 @@ class MainWindow(QMainWindow):
             self.logger.warning(f"[PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.")
             secciones_filtradas = [("Configuración", os.path.join(os.path.dirname(__file__), 'utils', 'configuracion.svg'))]
             indices_permitidos = [list(nombre_a_widget.keys()).index("Configuración")]
+            # Mostrar mensaje visual claro en la UI
+            self.mostrar_mensaje(
+                "No tienes acceso a ningún módulo. Contacta al administrador para revisar tus permisos.",
+                tipo="advertencia", duracion=8000
+            )
         self.sidebar.set_sections(secciones_filtradas)
         # 5. Sincronizar el stack: solo mostrar widgets de módulos permitidos
         # (Opcional: ocultar widgets no permitidos, si se requiere mayor seguridad visual)

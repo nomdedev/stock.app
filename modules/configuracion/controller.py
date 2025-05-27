@@ -373,6 +373,10 @@ class ConfiguracionController:
 
     def guardar_permisos_modulos(self):
         try:
+            # Solo el admin puede modificar permisos
+            if not self.usuario_actual or self.usuario_actual.id_rol != 1:
+                self.view.mostrar_mensaje("Solo el admin puede modificar permisos.", tipo="error")
+                return
             permisos_dict_por_usuario = {}
             if hasattr(self.view, 'tabla_permisos') and self.view.tabla_permisos:
                 for row in range(self.view.tabla_permisos.rowCount()):
