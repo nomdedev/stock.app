@@ -34,7 +34,6 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Usuarios")
-        self.label_titulo.setStyleSheet("font-size: 22px; font-weight: bold; letter-spacing: 1px; color: #1e293b;")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar usuario)
         self.boton_agregar = QPushButton()
@@ -59,7 +58,6 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         # --- Feedback visual centralizado ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
-        self.label_feedback.setStyleSheet("color: #2563eb; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de usuarios")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
@@ -75,7 +73,6 @@ class UsuariosView(QWidget, TableResponsiveMixin):
 
         # Refuerzo de accesibilidad en tabla principal
         self.tabla_usuarios.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.tabla_usuarios.setStyleSheet(self.tabla_usuarios.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
         # Refuerzo de accesibilidad en todos los QLineEdit de la vista principal
         for widget in self.findChildren(QComboBox):
             widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -106,7 +103,6 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         }
         icono = iconos.get(tipo, "ℹ️ ")
         self.label_feedback.clear()
-        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setText(f"{icono}{mensaje}")
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")

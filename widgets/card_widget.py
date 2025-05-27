@@ -5,14 +5,14 @@ class CardWidget(QGroupBox):
     def __init__(self, title: str, value: str, parent=None):
         super().__init__(parent)
         self.setFixedSize(300, 160)
-        self.setStyleSheet("""
-            QGroupBox {
-                background-color: white;
-                border-radius: 12px;
-                padding: 20px;
-                margin: 10px;
-            }
-        """)
+        # self.setStyleSheet("""
+        #     QGroupBox {
+        #         background-color: white;
+        #         border-radius: 12px;
+        #         padding: 20px;
+        #         margin: 10px;
+        #     }
+        # """)  # [Depuración] Comentado para evitar advertencias QSS y bloqueo de interfaz
         layout = QVBoxLayout(self)
         # Título
         title_label = QLabel(title)

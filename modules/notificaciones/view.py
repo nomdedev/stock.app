@@ -21,7 +21,8 @@ class NotificacionesView(QWidget):
             tema = config.get("tema", "claro")
             archivo_qss = f"themes/{tema}.qss"
             with open(archivo_qss, "r", encoding="utf-8") as f:
-                self.setStyleSheet(f.read())
+                # self.setStyleSheet(f.read())
+                pass
         except Exception as e:
             print(f"No se pudo cargar el archivo de estilos: {e}")
 
@@ -53,7 +54,7 @@ class NotificacionesView(QWidget):
         # Refuerzo de accesibilidad en botones principales
         for btn in [self.boton_agregar, self.boton_marcar_leido]:
             btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            # btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
             font = btn.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
@@ -64,14 +65,15 @@ class NotificacionesView(QWidget):
                 btn.setAccessibleName("Botón de acción de notificaciones")
         # Refuerzo de accesibilidad en tabla principal
         self.tabla_notificaciones.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.tabla_notificaciones.setStyleSheet(self.tabla_notificaciones.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # self.tabla_notificaciones.setStyleSheet(self.tabla_notificaciones.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
         self.tabla_notificaciones.setToolTip("Tabla de notificaciones")
         self.tabla_notificaciones.setAccessibleName("Tabla principal de notificaciones")
         # Refuerzo visual y robustez en header de tabla principal
         h_header = self.tabla_notificaciones.horizontalHeader() if hasattr(self.tabla_notificaciones, 'horizontalHeader') else None
         if h_header is not None:
             try:
-                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                pass
             except Exception as e:
                 # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
                 pass

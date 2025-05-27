@@ -13,7 +13,7 @@ class SidebarButton(QPushButton):
         self.setFixedHeight(40)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)  # Accesibilidad: permite foco por tabulación
         self.setToolTip(texto)  # Accesibilidad: tooltip claro por defecto
-        self.setStyleSheet(self._get_style())
+        # self.setStyleSheet(self._get_style())
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.setCheckable(False)
@@ -21,7 +21,7 @@ class SidebarButton(QPushButton):
 
     def setSelected(self, selected: bool):
         self.selected = selected
-        self.setStyleSheet(self._get_style())
+        # self.setStyleSheet(self._get_style())  # [Depuración] Comentado para evitar advertencias QSS y bloqueo de interfaz
 
     def isSelected(self):
         return self.selected
@@ -42,7 +42,4 @@ class SidebarButton(QPushButton):
             f"}}"
             f"QPushButton:hover {{background-color: {COLOR_BOTON_FONDO_HOVER};}}"
         )
-        if self.selected:
-            return base_style + f"QPushButton {{font-weight: bold;}}"
-        else:
-            return base_style
+        return base_style

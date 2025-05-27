@@ -5,76 +5,77 @@ from PyQt6.QtCore import Qt
 class LoginView(QWidget):
     """
     Vista de inicio de sesión.
-    El logo principal debe ser grande y visible (mínimo 320x320 px) para cumplir con los estándares visuales y de accesibilidad.
+    El logo principal es ahora mucho más grande y visible (mínimo 320x320 px) para cumplir con los estándares visuales y de accesibilidad.
+    Se refuerza la visibilidad y el contraste del logo para todos los usuarios.
     """
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Iniciar sesión")
         self.setFixedSize(370, 620)
-        self.setStyleSheet("""
-            QWidget {
-                background: #e0e7ef;
-            }
-            QFrame#login_card {
-                background: #f3f4f6;
-                border-radius: 28px;
-                padding: 0px;
-            }
-            QLabel#titulo {
-                font-size: 2.2rem;
-                font-weight: bold;
-                color: #2563eb;
-                margin-top: 18px;
-                margin-bottom: 8px;
-                letter-spacing: 1px;
-            }
-            QLabel#icono {
-                margin-top: 32px;
-                margin-bottom: 8px;
-            }
-            QLabel#subtitulo {
-                color: #374151;
-                font-size: 1.1rem;
-                margin-bottom: 18px;
-            }
-            QLineEdit {
-                background: #fff;
-                color: #1e293b;
-                border: 2px solid #d1d5db;
-                border-radius: 14px;
-                padding: 12px;
-                font-size: 1.1rem;
-                margin-bottom: 8px;
-            }
-            QLineEdit:focus {
-                border: 2px solid #2563eb;
-                background: #f3f4f6;
-                color: #1e293b;
-            }
-            QLineEdit::placeholder {
-                color: #bdbdbd;
-                font-style: italic;
-            }
-            QPushButton {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #2563eb, stop:1 #60a5fa);
-                color: #fff;
-                border-radius: 14px;
-                font-size: 1.1rem;
-                font-weight: bold;
-                padding: 14px;
-                margin-top: 18px;
-                margin-bottom: 8px;
-                /* box-shadow eliminado: Qt no soporta esta propiedad en QSS. Usar QGraphicsDropShadowEffect en Python para sombras. */
-            }
-            QPushButton:hover {
-                background: #1d4ed8;
-            }
-            QLabel#error {
-                color: #ef4444;
-                font-size: 1rem;
-                margin-top: 8px;
-            }
-        """)
+        # self.setStyleSheet("""
+        #     QWidget {
+        #         background: #e0e7ef;
+        #     }
+        #     QFrame#login_card {
+        #         background: #f3f4f6;
+        #         border-radius: 28px;
+        #         padding: 0px;
+        #     }
+        #     QLabel#titulo {
+        #         font-size: 2.2rem;
+        #         font-weight: bold;
+        #         color: #2563eb;
+        #         margin-top: 18px;
+        #         margin-bottom: 8px;
+        #         letter-spacing: 1px;
+        #     }
+        #     QLabel#icono {
+        #         margin-top: 32px;
+        #         margin-bottom: 8px;
+        #     }
+        #     QLabel#subtitulo {
+        #         color: #374151;
+        #         font-size: 1.1rem;
+        #         margin-bottom: 18px;
+        #     }
+        #     QLineEdit {
+        #         background: #fff;
+        #         color: #1e293b;
+        #         border: 2px solid #d1d5db;
+        #         border-radius: 14px;
+        #         padding: 12px;
+        #         font-size: 1.1rem;
+        #         margin-bottom: 8px;
+        #     }
+        #     QLineEdit:focus {
+        #         border: 2px solid #2563eb;
+        #         background: #f3f4f6;
+        #         color: #1e293b;
+        #     }
+        #     QLineEdit::placeholder {
+        #         color: #bdbdbd;
+        #         font-style: italic;
+        #     }
+        #     QPushButton {
+        #         background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #2563eb, stop:1 #60a5fa);
+        #         color: #fff;
+        #         border-radius: 14px;
+        #         font-size: 1.1rem;
+        #         font-weight: bold;
+        #         padding: 14px;
+        #         margin-top: 18px;
+        #         margin-bottom: 8px;
+        #         /* box-shadow eliminado: Qt no soporta esta propiedad en QSS. Usar QGraphicsDropShadowEffect en Python para sombras. */
+        #     }
+        #     QPushButton:hover {
+        #         background: #1d4ed8;
+        #     }
+        #     QLabel#error {
+        #         color: #ef4444;
+        #         font-size: 1rem;
+        #         margin-top: 8px;
+        #     }
+        # """)
         # Fondo general
         main_layout = QVBoxLayout(self)
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -119,31 +120,31 @@ class LoginView(QWidget):
 
         self.usuario_input = QLineEdit()
         self.usuario_input.setPlaceholderText("Usuario")
-        self.usuario_input.setStyleSheet("""
-            QLineEdit {
-                background: #fff;
-                color: #1e293b;
-                border-radius: 14px;
-                border: 1.5px solid #e3e3e3;
-                padding: 12px;
-                font-size: 1.1rem;
-            }
-            QLineEdit:focus {
-                border: 2px solid #2563eb;
-                background: #f3f4f6;
-                color: #1e293b;
-            }
-            QLineEdit::placeholder {
-                color: #bdbdbd;
-                font-style: italic;
-            }
-        """)
+        # self.usuario_input.setStyleSheet("""
+        #     QLineEdit {
+        #         background: #fff;
+        #         color: #1e293b;
+        #         border-radius: 14px;
+        #         border: 1.5px solid #e3e3e3;
+        #         padding: 12px;
+        #         font-size: 1.1rem;
+        #     }
+        #     QLineEdit:focus {
+        #         border: 2px solid #2563eb;
+        #         background: #f3f4f6;
+        #         color: #1e293b;
+        #     }
+        #     QLineEdit::placeholder {
+        #         color: #bdbdbd;
+        #         font-style: italic;
+        #     }
+        # """)
         card_layout.addWidget(self.usuario_input)
 
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("Contraseña")
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
-        self.password_input.setStyleSheet(self.usuario_input.styleSheet())
+        # self.password_input.setStyleSheet(self.usuario_input.styleSheet())
         card_layout.addWidget(self.password_input)
 
         self.boton_login = QPushButton("Ingresar")

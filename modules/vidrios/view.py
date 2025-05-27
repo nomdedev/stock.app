@@ -121,7 +121,6 @@ class VidriosView(QWidget, TableResponsiveMixin):
         # --- Feedback visual y accesibilidad ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
-        self.label_feedback.setStyleSheet("color: #2563eb; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de vidrios")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
@@ -299,7 +298,6 @@ class VidriosView(QWidget, TableResponsiveMixin):
         }
         icono = iconos.get(tipo, "ℹ️ ")
         self.label_feedback.clear()
-        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setText(f"{icono}{mensaje}")
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")

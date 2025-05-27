@@ -25,27 +25,27 @@ class Sidebar(QWidget):
         self._layout = layout
 
         # Fondo blanco para el modo claro
-        self.setStyleSheet("""
-            QWidget {
-                background-color: white;
-            }
-            QPushButton#botonMenu {
-                background-color: white;
-                color: #1f2937;
-                border-radius: 8px;
-                padding: 8px 16px;
-                font-size: 14px;
-                font-weight: 500;
-                text-align: center;
-            }
-            QPushButton#botonMenu:hover {
-                background-color: #f3f4f6;
-            }
-            QPushButton#botonMenuActivo {
-                background-color: #2563eb;
-                color: white;
-            }
-        """)
+        # self.setStyleSheet("""
+        #     QWidget {
+        #         background-color: white;
+        #     }
+        #     QPushButton#botonMenu {
+        #         background-color: white;
+        #         color: #1f2937;
+        #         border-radius: 8px;
+        #         padding: 8px 16px;
+        #         font-size: 14px;
+        #         font-weight: 500;
+        #         text-align: center;
+        #     }
+        #     QPushButton#botonMenu:hover {
+        #         background-color: #f3f4f6;
+        #     }
+        #     QPushButton#botonMenuActivo {
+        #         background-color: #2563eb;
+        #         color: white;
+        #     }
+        # """)  # [Depuración] Comentado para evitar advertencias QSS y bloqueo de interfaz
 
         # Estado Online/Offline
         self.estado_label = QLabel("Online")
@@ -70,7 +70,7 @@ class Sidebar(QWidget):
                 font-weight: bold;
                 border-radius: 8px;
             }
-        """)
+        """)  # [Opcional: Mantener si no genera advertencias]
         self._layout.addWidget(self.estado_label)
 
         self._create_buttons()
@@ -104,7 +104,7 @@ class Sidebar(QWidget):
                 button.setIconSize(QSize(20, 20))
             if self._mostrar_nombres:
                 button.setText(section_name)
-                button.setStyleSheet("text-align: left; padding-left: 12px;")
+                # button.setStyleSheet("text-align: left; padding-left: 12px;")  # [Depuración] Comentado para evitar advertencias QSS y bloqueo de interfaz
             button.clicked.connect(lambda _, idx=index: self.pageChanged.emit(idx))
             self._layout.addWidget(button)
             self._buttons.append(button)

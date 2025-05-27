@@ -426,18 +426,10 @@ class UsuariosModel:
     def obtener_usuarios_activos(self):
         """
         Devuelve una lista de usuarios cuyo estado es 'activo'.
-        Uso: Para listados, filtros y validaciones de usuarios activos en la app y tests automáticos.
-        Retorna:
-            list[tuple]: Cada tupla representa un usuario activo (todas las columnas de la tabla usuarios).
-        Robustez:
-            - Si no hay usuarios activos, retorna lista vacía.
-            - Controla errores de conexión devolviendo lista vacía y logueando el error.
+        Cumple el estándar de robustez: si no hay resultados, retorna lista vacía.
+        Returns:
+            list[tuple]: Tuplas con los datos de usuarios activos.
         """
-        try:
-            query = "SELECT * FROM usuarios WHERE estado = 'activo'"
-            resultado = self.db.ejecutar_query(query)
-            return resultado if resultado else []
-        except Exception as e:
-            import logging
-            logging.getLogger("UsuariosModel").error(f"Error al obtener usuarios activos: {e}")
-            return []
+        query = "SELECT * FROM usuarios WHERE estado = 'activo'"
+        resultado = self.db.ejecutar_query(query)
+        return resultado if resultado else []

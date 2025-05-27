@@ -155,37 +155,37 @@ def mostrar_mensaje_dependencias(titulo, texto, detalles, tipo="error"):
     dialog.setWindowTitle(titulo)
     dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
     dialog.setFixedWidth(420)
-    dialog.setStyleSheet("""
-        QDialog {
+    dialog.setStyleSheet(f"""
+        QDialog {{
             background: #fff9f3;
             border-radius: 18px;
             border: 2px solid #e3e3e3;
-        }
-        QLabel#titulo {
+        }}
+        QLabel#titulo {{
             color: #2563eb;
             font-size: 18px;
             font-weight: bold;
             padding: 12px 0 0 0;
             qproperty-alignment: AlignCenter;
-        }
-        QLabel#mensaje {
+        }}
+        QLabel#mensaje {{
             color: #1e293b;
             font-size: 14px;
             font-weight: 500;
             padding: 8px 0 0 0;
             qproperty-alignment: AlignCenter;
-        }
-        QLabel#detalles {
-            color: #ef4444 if tipo=="error" else #fbbf24;
+        }}
+        QLabel#detalles {{
+            color: {'#ef4444' if tipo=='error' else '#fbbf24'};
             font-size: 13px;
             font-weight: 500;
-            background: #ffe5e5 if tipo=="error" else #fef9c3;
+            background: {'#ffe5e5' if tipo=='error' else '#fef9c3'};
             border-radius: 10px;
             padding: 10px 16px;
             margin: 12px 0 0 0;
             qproperty-alignment: AlignCenter;
-        }
-        QPushButton {
+        }}
+        QPushButton {{
             background: #2563eb;
             color: white;
             border-radius: 8px;
@@ -195,10 +195,10 @@ def mostrar_mensaje_dependencias(titulo, texto, detalles, tipo="error"):
             min-height: 32px;
             padding: 8px 24px;
             margin-top: 18px;
-        }
-        QPushButton:hover {
+        }}
+        QPushButton:hover {{
             background: #1e40af;
-        }
+        }}
     """)
     layout = QVBoxLayout()
     # Ícono grande

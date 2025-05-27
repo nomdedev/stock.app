@@ -22,7 +22,7 @@ class PedidosView(QWidget):
         icono_label.setToolTip("Icono de Pedidos")
         icono_label.setAccessibleName("Icono de Pedidos")
         titulo_label = QLabel("Gestión de Pedidos")
-        titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")
+        # titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")
         titulo_label.setAccessibleName("Título de módulo Pedidos")
         header_layout.addWidget(icono_label)
         header_layout.addWidget(titulo_label)
@@ -43,7 +43,7 @@ class PedidosView(QWidget):
         self.boton_nuevo.setGraphicsEffect(sombra)
         estilizar_boton_icono(self.boton_nuevo)
         self.boton_nuevo.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.boton_nuevo.setStyleSheet(self.boton_nuevo.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        # self.boton_nuevo.setStyleSheet(self.boton_nuevo.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
         font = self.boton_nuevo.font()
         if font.pointSize() < 12:
             font.setPointSize(12)
@@ -57,7 +57,7 @@ class PedidosView(QWidget):
         self.pedidos_headers = ["id", "obra", "fecha", "estado", "observaciones"]
         self.tabla_pedidos.setHorizontalHeaderLabels(self.pedidos_headers)
         self.tabla_pedidos.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.tabla_pedidos.setStyleSheet(self.tabla_pedidos.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # self.tabla_pedidos.setStyleSheet(self.tabla_pedidos.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
         self.tabla_pedidos.setToolTip("Tabla de pedidos")
         self.tabla_pedidos.setAccessibleName("Tabla principal de pedidos")
         self.main_layout.addWidget(self.tabla_pedidos)
@@ -75,7 +75,8 @@ class PedidosView(QWidget):
             header.setSectionsClickable(True)
             header.sectionClicked.connect(self.mostrar_menu_columnas_header)
             try:
-                header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                # header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                pass
             except Exception:
                 pass
         # Señal para mostrar QR al seleccionar un ítem
@@ -84,7 +85,7 @@ class PedidosView(QWidget):
         # Feedback visual
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
-        self.label_feedback.setStyleSheet("color: #2563eb; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        # self.label_feedback.setStyleSheet("color: #2563eb; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de pedidos")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
@@ -145,7 +146,7 @@ class PedidosView(QWidget):
         }
         icono = iconos.get(tipo, "ℹ️ ")
         self.label_feedback.clear()
-        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        # self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setText(f"{icono}{mensaje}")
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")

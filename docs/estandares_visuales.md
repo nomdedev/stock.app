@@ -159,3 +159,17 @@ self.icono = QLabel()
 pixmap = QPixmap("img/MPS_inicio_sesion.png")
 self.icono.setPixmap(pixmap.scaled(320, 320, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
 ```
+
+---
+
+## [2025-05-26] Nota crítica sobre helpers de estilos y QSS en PyQt6
+
+- Se detectó que helpers como `estilizar_boton_icono` y cualquier función que aplique QSS embebido pueden causar advertencias y bloquear la carga de la interfaz en PyQt6 si el QSS no es 100% compatible.
+- Para evitar bloqueos globales:
+  - Todo helper visual debe ser revisado y probado tras cada actualización de PyQt.
+  - El uso de `setStyleSheet` embebido en helpers debe ser evitado o documentado como excepción.
+  - Priorizar el uso de QSS global (archivos .qss) y helpers solo para tamaño, icono y accesibilidad, no para estilos visuales complejos.
+  - Documentar cualquier excepción en este archivo y en el código fuente.
+- Si aparecen advertencias como `Could not parse stylesheet of object ...`, revisar primero los helpers y QSS embebidos.
+
+---

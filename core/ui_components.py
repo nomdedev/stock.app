@@ -42,30 +42,32 @@ def estilizar_boton_icono(boton: QPushButton, tam_icono: int = 20, tam_boton: in
         boton: QPushButton a estilizar.
         tam_icono: tamaño del ícono (por defecto 20).
         tam_boton: tamaño del botón (por defecto 32).
+    NOTA: El setStyleSheet de este helper puede causar advertencias o bloqueos si el QSS es incompatible con PyQt6.
+    Para depuración, comentar la línea de setStyleSheet si aparecen errores de parseo QSS.
     """
     boton.setIconSize(QSize(tam_icono, tam_icono))
     boton.setFixedSize(tam_boton, tam_boton)
     # Fondo crema global, igual para todos los botones
-    boton.setStyleSheet(
-        f"""
-        QPushButton {{
-            background-color: {COLOR_BOTON_FONDO};
-            color: {COLOR_BOTON_TEXTO};
-            border-radius: 8px;
-            padding: 0px;
-            border: 1.5px solid {COLOR_BOTON_BORDE};
-            font-weight: bold;
-        }}
-        QPushButton:hover {{
-            background-color: {COLOR_BOTON_FONDO_HOVER};
-            color: {COLOR_BOTON_TEXTO};
-        }}
-        QPushButton:pressed {{
-            background-color: {COLOR_BOTON_FONDO_PRESSED};
-            color: {COLOR_BOTON_TEXTO};
-        }}
-        """
-    )
+    # boton.setStyleSheet(
+    #     f"""
+    #     QPushButton {{
+    #         background-color: {COLOR_BOTON_FONDO};
+    #         color: {COLOR_BOTON_TEXTO};
+    #         border-radius: 8px;
+    #         padding: 0px;
+    #         border: 1.5px solid {COLOR_BOTON_BORDE};
+    #         font-weight: bold;
+    #     }}
+    #     QPushButton:hover {{
+    #         background-color: {COLOR_BOTON_FONDO_HOVER};
+    #         color: {COLOR_BOTON_TEXTO};
+    #     }}
+    #     QPushButton:pressed {{
+    #         background-color: {COLOR_BOTON_FONDO_PRESSED};
+    #         color: {COLOR_BOTON_TEXTO};
+    #     }}
+    #     """
+    # )
 
 def aplicar_qss_global_y_tema(widget, qss_global_path="style_moderno.qss", qss_tema_path=None):
     """

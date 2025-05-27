@@ -9,6 +9,10 @@ from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 from core.logger import log_error
 
 class HerrajesView(QWidget, TableResponsiveMixin):
+    """
+    Vista de gestión de herrajes.
+    El botón principal de agregar herraje está disponible como self.boton_agregar para compatibilidad con el controlador.
+    """
     def __init__(self):
         super().__init__()
         # Inicialización de atributos antes de cualquier uso
@@ -26,12 +30,13 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(12)
         icono_label = QLabel()
-        icono_label.setPixmap(QIcon("img/herrajes.svg").pixmap(36, 36))
-        icono_label.setFixedSize(40, 40)
-        icono_label.setToolTip("Icono de Herrajes")
-        icono_label.setAccessibleName("Icono de Herrajes")
+        # icono_label.setPixmap(QIcon("img/herrajes.svg").pixmap(36, 36))
+        # icono_label.setFixedSize(40, 40)
+        # icono_label.setToolTip("Icono de Herrajes")
+        # icono_label.setAccessibleName("Icono de Herrajes")
         titulo_label = QLabel("Herrajes")
-        titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")
+        # QSS global gestiona el estilo del título
+        # titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")
         titulo_label.setAccessibleName("Título de módulo Herrajes")
         header_layout.addWidget(icono_label)
         header_layout.addWidget(titulo_label)
@@ -40,7 +45,8 @@ class HerrajesView(QWidget, TableResponsiveMixin):
 
         # Feedback visual centralizado y accesible
         self.label_feedback = QLabel()
-        self.label_feedback.setStyleSheet("font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500;")
+        # QSS global gestiona el estilo del feedback
+        # self.label_feedback.setStyleSheet("font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500;")
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Feedback visual de Herrajes")
         self.main_layout.addWidget(self.label_feedback)
@@ -92,6 +98,9 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             btn.setFont(font)
             barra_layout.addWidget(btn)
             self.barra_botones.append(btn)
+        # Asignar el primer botón como boton_agregar para compatibilidad con el controlador
+        if self.barra_botones:
+            self.boton_agregar = self.barra_botones[0]
         self.main_layout.addLayout(barra_layout)
         # --- FIN BARRA DE BOTONES PRINCIPALES ---
 
@@ -113,10 +122,10 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.tabla_herrajes.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.tabla_herrajes.setToolTip("Tabla principal de herrajes")
         self.tabla_herrajes.setAccessibleName("Tabla de herrajes")
-        self.tabla_herrajes.setStyleSheet(self.tabla_herrajes.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # El estilo de foco y fuente se define ahora en el QSS global/tema
         h_header = self.tabla_herrajes.horizontalHeader()
         if h_header is not None:
-            h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
             h_header.setSectionsMovable(True)
             h_header.setSectionsClickable(True)
 
@@ -139,7 +148,8 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             "error": "background: #fee2e2; color: #b91c1c;",
             "advertencia": "background: #fef9c3; color: #b45309;"
         }
-        self.label_feedback.setStyleSheet(f"font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; {colores.get(tipo, '')}")
+        # Solo aplicar color de fondo y texto, el resto lo gestiona el QSS global
+        self.label_feedback.setStyleSheet(colores.get(tipo, ""))
         self.label_feedback.setText(mensaje)
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(mensaje)

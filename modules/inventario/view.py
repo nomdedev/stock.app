@@ -21,6 +21,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
     generar_qr_signal = pyqtSignal()
     actualizar_signal = pyqtSignal()
     ajustar_stock_signal = pyqtSignal()
+    ajustes_stock_guardados = pyqtSignal(list)  # Señal para emitir ajustes de stock guardados
 
     def __init__(self, db_connection=None, usuario_actual="default"):
         super().__init__()

@@ -116,15 +116,15 @@ class UsuariosController(BaseController):
                 "Usuario Existente",
                 "Ya existe un usuario con el mismo email o nombre de usuario."
             )
-            self.view.email_input.setStyleSheet("border: 1px solid red;")
-            self.view.nombre_input.setStyleSheet("border: 1px solid red;")
+            # self.view.email_input.setStyleSheet("border: 1px solid red;")
+            # self.view.nombre_input.setStyleSheet("border: 1px solid red;")
             return
 
         self.model.agregar_usuario((nombre, email, rol))
         self.view.label.setText("Usuario agregado exitosamente.")
         self._registrar_evento_auditoria('agregar', estado="éxito")
-        self.view.email_input.setStyleSheet("")
-        self.view.nombre_input.setStyleSheet("")
+        # self.view.email_input.setStyleSheet("")
+        # self.view.nombre_input.setStyleSheet("")
 
     @permiso_auditoria_usuarios('actualizar')
     def actualizar_usuario(self, id_usuario, datos, fecha_actualizacion):

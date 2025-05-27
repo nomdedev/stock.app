@@ -2581,3 +2581,109 @@
 ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'roles_permisos' no es válido. (208) (SQLExecDirectW)")
 2025-05-26 21:32:31,840 - INFO - Aplicación iniciada
 2025-05-26 22:22:41,099 - INFO - Aplicación iniciada
+2025-05-26 22:30:41,312 - INFO - Aplicación iniciada
+2025-05-26 22:31:51,506 - INFO - Aplicación iniciada
+2025-05-26 22:35:55,391 - INFO - Aplicación iniciada
+2025-05-26 22:35:55,501 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 22:35:55,501 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 22:37:06,937 - INFO - Aplicación iniciada
+2025-05-26 22:37:07,102 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 22:37:07,102 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 22:40:15,828 - INFO - Aplicación iniciada
+2025-05-26 22:40:15,970 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 22:40:15,970 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 22:40:16,683 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 22:40:16,683 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 22:40:16,692 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 22:40:16,692 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 22:48:56,012 - INFO - Aplicación iniciada
+2025-05-26 22:48:56,159 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 22:48:56,159 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 22:48:56,830 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 22:48:56,830 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 22:48:56,835 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 22:48:56,835 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:00:31,443 - INFO - Aplicación iniciada
+2025-05-26 23:00:31,553 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:00:31,553 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:00:32,132 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:00:32,132 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:00:32,136 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:00:32,136 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:03:44,564 - INFO - Aplicación iniciada
+2025-05-26 23:03:44,687 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:03:44,687 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:03:45,302 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:03:45,302 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:03:45,306 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:03:45,306 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:06:58,789 - INFO - Aplicación iniciada
+2025-05-26 23:06:58,921 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:06:58,921 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:06:59,507 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:06:59,507 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:06:59,512 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:06:59,512 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:09:04,199 - INFO - Aplicación iniciada
+2025-05-26 23:09:04,339 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:09:04,339 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:09:04,969 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:09:04,969 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:09:04,974 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:09:04,974 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:11:46,371 - INFO - Aplicación iniciada
+2025-05-26 23:11:46,496 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:11:46,496 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:11:47,482 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:11:47,482 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:11:47,486 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:11:47,486 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:13:24,470 - INFO - Aplicación iniciada
+2025-05-26 23:13:24,630 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:13:24,630 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:13:25,269 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:13:25,269 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:13:25,274 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:13:25,274 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:18:40,835 - INFO - Aplicación iniciada
+2025-05-26 23:18:40,968 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:18:40,968 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:18:41,550 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:18:41,550 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:18:41,555 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:18:41,555 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:22:16,482 - INFO - Aplicación iniciada
+2025-05-26 23:22:16,690 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:22:16,690 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:22:17,353 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:22:17,353 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:22:17,357 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:22:17,357 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:25:06,069 - INFO - Aplicación iniciada
+2025-05-26 23:25:06,189 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:25:06,189 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:25:06,751 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:25:06,751 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:25:06,754 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:25:06,754 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:27:27,067 - INFO - Aplicación iniciada
+2025-05-26 23:27:27,208 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:27:27,208 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:27:27,889 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:27:27,889 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:27:27,893 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:27:27,893 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:29:10,268 - INFO - Aplicación iniciada
+2025-05-26 23:29:10,373 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:29:10,373 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:29:10,914 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:29:10,914 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:29:10,917 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:29:10,917 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:32:26,383 - INFO - Aplicación iniciada
+2025-05-26 23:32:26,490 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:32:26,490 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-26 23:32:27,029 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:32:27,029 - INFO - [PERMISOS] Módulos permitidos para admin: ['Configuración', 'Inventario', 'Logística', 'Obras', 'Usuarios']
+2025-05-26 23:32:27,032 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']
+2025-05-26 23:32:27,032 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Logística', 'Usuarios', 'Configuración']

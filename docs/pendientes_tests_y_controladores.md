@@ -12,6 +12,7 @@
 
 ### 1. USUARIOS
 
+- [x] Implementar y documentar el método `obtener_usuarios_activos` en `UsuariosModel` (robusto, retorna lista vacía si no hay resultados, cubierto por tests automáticos).
 - [ ] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
 - [ ] Validar que la función `crear_usuarios_iniciales` siempre asigne permisos completos a admin y permisos mínimos a prueba.
 - [ ] Mejorar feedback visual y accesibilidad en login_view.
