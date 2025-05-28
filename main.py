@@ -789,16 +789,25 @@ if __name__ == "__main__":
         login_view = LoginView()
         login_controller = LoginController(login_view, usuarios_model)
         def on_login_success():
-            user = login_controller.usuario_autenticado
-            if not user:
-                login_view.mostrar_error("Usuario o contraseña incorrectos.")
-                return
-            login_view.close()
-            modulos_permitidos = usuarios_model.obtener_modulos_permitidos(user)
-            main_window = MainWindow(user, modulos_permitidos)
-            main_window.actualizar_usuario_label(user)
-            main_window.mostrar_mensaje(f"Usuario actual: {user['usuario']} ({user['rol']})", tipo="info", duracion=4000)
-            main_window.show()
+            try:
+                user = login_controller.usuario_autenticado
+                if not user:
+                    login_view.mostrar_error("Usuario o contraseña incorrectos.")
+                    return
+                login_view.close()
+                modulos_permitidos = usuarios_model.obtener_modulos_permitidos(user)
+                main_window = MainWindow(user, modulos_permitidos)
+                main_window.actualizar_usuario_label(user)
+                main_window.mostrar_mensaje(f"Usuario actual: {user['usuario']} ({user['rol']})", tipo="info", duracion=4000)
+                main_window.show()
+            except Exception as e:
+                import traceback
+                print(f"[ERROR LOGIN/UI] {e}\n{traceback.format_exc()}", flush=True)
+                with open("logs/error_inicio_ui.txt", "a", encoding="utf-8") as f:
+                    f.write(f"[ERROR LOGIN/UI] {e}\n{traceback.format_exc()}\n")
+                from PyQt6.QtWidgets import QMessageBox
+                QMessageBox.critical(None, "Error crítico", f"Error al iniciar la interfaz: {e}\nRevisa logs/error_inicio_ui.txt para más detalles.")
+                app.quit()
         login_view.boton_login.clicked.connect(on_login_success)
         # Encadenar el fade out del splash al mostrar login
         def cerrar_splash_y_mostrar_login():

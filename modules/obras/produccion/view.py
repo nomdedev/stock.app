@@ -82,34 +82,22 @@ class ProduccionView(QWidget):
         # Robustecer: proteger acceso a header de tabla
         header_aberturas = self.tabla_aberturas.horizontalHeader() if hasattr(self.tabla_aberturas, 'horizontalHeader') else None
         if header_aberturas is not None:
-            header_aberturas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            header_aberturas.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_aberturas, self.aberturas_headers, self.columnas_visibles_aberturas, self.config_path_aberturas))
-            header_aberturas.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_aberturas))
-            header_aberturas.setSectionsMovable(True)
-            header_aberturas.setSectionsClickable(True)
-            header_aberturas.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_aberturas, self.aberturas_headers, self.columnas_visibles_aberturas, self.config_path_aberturas))
-            self.tabla_aberturas.setHorizontalHeader(header_aberturas)
-        self.tabla_aberturas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_aberturas))
-
+            try:
+                header_aberturas.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            except Exception:
+                pass
         # Tabla de etapas de fabricación
         self.tabla_etapas = QTableWidget()
         self.tabla_etapas.setColumnCount(5)
         self.tabla_etapas.setHorizontalHeaderLabels(["ID", "Etapa", "Estado", "Fecha Inicio", "Fecha Fin"])
         self.main_layout.addWidget(self.tabla_etapas)
-        self.etapas_headers = ["ID", "Etapa", "Estado", "Fecha Inicio", "Fecha Fin"]
-        self.config_path_etapas = f"config_produccion_etapas_columns.json"
-        self.columnas_visibles_etapas = self.cargar_config_columnas(self.config_path_etapas, self.etapas_headers)
-        self.aplicar_columnas_visibles(self.tabla_etapas, self.etapas_headers, self.columnas_visibles_etapas)
-        # Robustecer: proteger acceso a header de tabla
         header_etapas = self.tabla_etapas.horizontalHeader() if hasattr(self.tabla_etapas, 'horizontalHeader') else None
         if header_etapas is not None:
-            header_etapas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            header_etapas.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_etapas, self.etapas_headers, self.columnas_visibles_etapas, self.config_path_etapas))
-            header_etapas.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_etapas))
-            header_etapas.setSectionsMovable(True)
-            header_etapas.setSectionsClickable(True)
-            header_etapas.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_etapas, self.etapas_headers, self.columnas_visibles_etapas, self.config_path_etapas))
-            self.tabla_etapas.setHorizontalHeader(header_etapas)
+            try:
+                header_etapas.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            except Exception:
+                pass
+        self.tabla_aberturas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_aberturas))
         self.tabla_etapas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_etapas))
 
         # Refuerzo de accesibilidad en botones principales

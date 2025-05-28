@@ -16,39 +16,17 @@ class PedidosView(QWidget):
 
         # HEADER VISUAL MODERNO
         header_layout = QHBoxLayout()
-        icono_label = QLabel()
-        icono_label.setPixmap(QIcon("img/add-entrega.svg").pixmap(36, 36))
-        icono_label.setFixedSize(40, 40)
-        icono_label.setToolTip("Icono de Pedidos")
-        icono_label.setAccessibleName("Icono de Pedidos")
-        titulo_label = QLabel("Gestión de Pedidos")
-        # titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")
-        titulo_label.setAccessibleName("Título de módulo Pedidos")
-        header_layout.addWidget(icono_label)
-        header_layout.addWidget(titulo_label)
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(24)
+        self.label_titulo = QLabel("Gestión de Pedidos")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        # Botón principal (Agregar pedido)
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/add-entrega.svg"))
+        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setToolTip("Agregar pedido")
+        header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
-        # Botón principal de acción (Agregar pedido)
-        self.boton_nuevo = QPushButton()
-        self.boton_nuevo.setIcon(QIcon("img/add-entrega.svg"))
-        self.boton_nuevo.setIconSize(QSize(24, 24))
-        self.boton_nuevo.setToolTip("Agregar pedido")
-        self.boton_nuevo.setAccessibleName("Agregar pedido")
-        self.boton_nuevo.setText("")
-        self.boton_nuevo.setFixedSize(48, 48)
-        sombra = QGraphicsDropShadowEffect()
-        sombra.setBlurRadius(15)
-        sombra.setXOffset(0)
-        sombra.setYOffset(4)
-        sombra.setColor(QColor(0, 0, 0, 50))
-        self.boton_nuevo.setGraphicsEffect(sombra)
-        estilizar_boton_icono(self.boton_nuevo)
-        self.boton_nuevo.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        # self.boton_nuevo.setStyleSheet(self.boton_nuevo.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
-        font = self.boton_nuevo.font()
-        if font.pointSize() < 12:
-            font.setPointSize(12)
-        self.boton_nuevo.setFont(font)
-        header_layout.addWidget(self.boton_nuevo)
         self.main_layout.addLayout(header_layout)
 
         # Tabla de pedidos
@@ -75,7 +53,7 @@ class PedidosView(QWidget):
             header.setSectionsClickable(True)
             header.sectionClicked.connect(self.mostrar_menu_columnas_header)
             try:
-                # header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                # header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
                 pass
             except Exception:
                 pass

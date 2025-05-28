@@ -32,7 +32,6 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.boton_agregar.setAccessibleDescription("Botón principal para agregar una nueva obra")
         self.boton_agregar.setText("")
         self.boton_agregar.setFixedSize(48, 48)
-        self.boton_agregar.setStyleSheet("")
         sombra = QGraphicsDropShadowEffect()
         sombra.setBlurRadius(15)
         sombra.setXOffset(0)
@@ -85,7 +84,6 @@ class ObrasView(QWidget, TableResponsiveMixin):
             hh.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             hh.customContextMenuRequested.connect(self.mostrar_menu_header)
             hh.sectionClicked.connect(self.mostrar_menu_columnas_header)
-            hh.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
         self.main_layout.addWidget(self.tabla_obras)
 
         # Configuración de columnas visibles por usuario

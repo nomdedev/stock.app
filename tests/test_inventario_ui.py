@@ -43,17 +43,19 @@ class TestInventarioViewUI(unittest.TestCase):
             self.assertTrue(tooltip and len(tooltip) > 5, f"Tooltip ausente o insuficiente en botón: {btn}")
 
     def test_headers_visuales_estandar(self):
-        """Los headers de la tabla deben tener fondo celeste pastel y texto azul pastel."""
+        """Los headers de la tabla deben tener fondo muy claro (#f8fafc), texto azul pastel (#2563eb), radio 4px, fuente 10px y no negrita."""
         h_header = self.view.tabla_inventario.horizontalHeader()
         if h_header is None:
             self.fail("El header horizontal de la tabla es None, no se puede validar styleSheet")
         # Forzar styleSheet para entorno de test dummy
-        h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold;")
+        h_header.setStyleSheet("background-color: #f8fafc; color: #2563eb; font-size: 10px; border-radius: 4px; font-weight: normal;")
         if hasattr(h_header, 'styleSheet') and callable(getattr(h_header, 'styleSheet', None)):
             style = h_header.styleSheet()
-            self.assertIn("background-color: #e3f6fd", style, "Falta fondo celeste pastel en header o no se pudo validar styleSheet")
+            self.assertIn("background-color: #f8fafc", style, "Falta fondo muy claro en header o no se pudo validar styleSheet")
             self.assertIn("color: #2563eb", style, "Falta color azul pastel en header o no se pudo validar styleSheet")
-            self.assertIn("font-weight: bold", style, "Falta negrita en header o no se pudo validar styleSheet")
+            self.assertIn("font-size: 10px", style, "Falta tamaño de fuente 10px en header")
+            self.assertIn("border-radius: 4px", style, "Falta radio 4px en header")
+            self.assertIn("font-weight: normal", style, "El header no debe estar en negrita")
         else:
             self.fail("El header horizontal de la tabla no tiene método styleSheet")
 

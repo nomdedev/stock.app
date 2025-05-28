@@ -9,20 +9,26 @@ QMainWindow, QWidget {
 
 /* --- Botones --- */
 QPushButton {
-    background-color: #E4ECF7;
+    background-color: #E4ECF7; /* Color claro definido para el fondo */
     border: none;
     border-radius: 12px;
     padding: 8px 12px;
-    color: #333;
+    color: #333; /* Color del texto */
     font-size: 12px;
     font-weight: bold;
+    /* box-shadow eliminado para compatibilidad Qt */
 }
 QPushButton:hover {
-    background-color: #D3E0F2;
+    background-color: #D3E0F2; /* Color más claro al pasar el mouse */
 }
 QPushButton:checked {
-    background-color: #C0D4EB;
+    background-color: #C0D4EB; /* Color para botones seleccionados */
     font-weight: bold;
+}
+
+/* Asegurarse de que no haya estilos heredados que sobrescriban */
+QPushButton {
+    background: none;
 }
 
 /* Sidebar solo íconos */
@@ -31,22 +37,18 @@ QPushButton:checked {
     border: none;
 }
 #Sidebar QPushButton {
-    background-color: #F5F5DC;
-    border: 1.5px solid #f3f4f6;
-    color: #1e293b;
-    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: #E0E0E0;
+    border-radius: 10px;
     margin: 4px 0;
-    font-size: 12px;
-    font-weight: 500;
-    text-align: left;
-    padding: 4px 10px 4px 18px;
 }
 #Sidebar QPushButton:hover, #Sidebar QPushButton:checked {
-    background-color: #f3f4f6;
-    color: #1e293b;
-    border: 2px solid #f3f4f6;
+    background: rgba(109,253,195,0.08);
+    color: #6DFDC3;
 }
 
+/* Separadores sutiles en sidebar */
 #Sidebar QFrame {
     background: #232344;
     max-height: 1px;
@@ -73,22 +75,15 @@ QTableWidget {
     font-size: 12px;
     border-radius: 12px;
 }
-QTableWidget:focus {
-    outline: 2px solid rgb(133, 163, 226);
-    border: 2px solid #2563eb;
-}
 QHeaderView::section {
     background-color: #E4ECF7;
-    color: #2563EB;
-    font-size: 13px;
-    font-weight: bold;
     border: none;
-    padding: 8px 12px;
+    color: #333333;
+    font-weight: bold;
+    padding: 12px 16px;
     border-radius: 10px;
-}
-QHeaderView::section:focus {
-    border: 2px solid #3B82F6;
-    outline: none;
+    font-size: 13px;
+    min-height: 36px;
 }
 
 /* --- Etiquetas --- */
@@ -106,18 +101,6 @@ QLineEdit, QComboBox, QSpinBox {
     padding: 8px 12px;
     color: #232B36;
     font-size: 12px;
-}
-QComboBox:focus, QSpinBox:focus, QLineEdit:focus {
-    border: 2px solid #3B82F6;
-    outline: none;
-}
-
-QToolTip {
-    font-size: 12px;
-    background-color: #1E293B;
-    color: white;
-    border-radius: 6px;
-    padding: 6px;
 }
 
 /* Botones inferiores neumórficos Inventario (solo botones, no tabla) */
@@ -152,8 +135,12 @@ QLabel.contabilidad-titulo {
     font-weight: 600;
     margin-bottom: 12px;
 }
+QToolTip {
+    background-color: #1E293B;
+    color: white;
+    border-radius: 6px;
+    padding: 6px;
+}
 QTableWidget#tabla_recibos, QTableWidget#tabla_movimientos {
     border-radius: 10px;
 }
-
-/* EXCEPCIÓN: Si algún header requiere override local, justificar en el código fuente. */

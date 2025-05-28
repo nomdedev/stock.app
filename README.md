@@ -4,7 +4,7 @@ Este proyecto utiliza una estructura de documentación modular. Todos los están
 
 ## Índice de estándares y guías
 
-- [Estándares visuales](docs/estandares_visuales.md)
+- [Estándares visuales](docs/estandares_visuales.md) *(actualizado: headers de tablas fondo #f8fafc, radio 4px, fuente 10px, sin negrita)*
 - [Estándares de logging y feedback visual](docs/estandares_logging.md)
 - [Estándares de seguridad y manejo de datos sensibles](docs/estandares_seguridad.md)
 - [Estándares de feedback visual y procedimientos de carga](docs/estandares_feedback.md)
@@ -902,3 +902,31 @@ widget.setGraphicsEffect(sombra)
 - Antes de modificar la gestión de permisos, ejecuta el script `scripts/bootstrap_roles_permisos.sql` en la base de datos `users` para asegurar que el admin tiene permisos totales.
 - Documenta cualquier excepción visual o de permisos en este archivo y en el código afectado.
 - Consulta siempre los estándares de seguridad y feedback visual en `docs/estandares_seguridad.md` y `docs/estandares_feedback.md`.
+
+---
+
+# GESTIÓN DE USUARIOS Y PERMISOS POR USUARIO (MAYO 2025)
+
+Desde mayo 2025, la gestión de usuarios y la pestaña de permisos por usuario se encuentran en el módulo Usuarios, no en Configuración.
+
+### Gestión de usuarios (Usuarios > Usuarios)
+
+- Visualización de usuarios en tabla, con búsqueda y acciones (agregar, exportar).
+- Feedback visual inmediato y accesible.
+
+### Permisos por usuario (Usuarios > Permisos por usuario)
+
+- Selección de usuario mediante combo.
+- Tabla de módulos con checkboxes (ver, modificar, aprobar) y botón para guardar permisos.
+- Solo admin puede modificar roles/permisos.
+
+### Estándares visuales
+
+- Headers de todas las tablas: fondo #f8fafc (muy claro), radio 4px, fuente 10px, sin negrita.
+- Uso exclusivo de QSS global (themes/light.qss).
+
+### Referencias cruzadas
+
+- Ver también: docs/estandares_visuales.md, docs/estandares_feedback.md, docs/estandares_auditoria.md.
+
+---

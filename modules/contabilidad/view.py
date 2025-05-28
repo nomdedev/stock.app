@@ -28,9 +28,20 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(0)
 
-        self.label_titulo = QLabel("Gestión de Contabilidad y Recibos")
-        self.label_titulo.setProperty("class", "contabilidad-titulo")
-        self.main_layout.addWidget(self.label_titulo)
+        # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(24)
+        self.label_titulo = QLabel("Gestión de Contabilidad")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        # Botón principal (Agregar registro)
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
+        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setToolTip("Agregar registro")
+        header_layout.addWidget(self.boton_agregar)
+        header_layout.addStretch()
+        self.main_layout.addLayout(header_layout)
 
         # QTabWidget para las tres pestañas
         self.tabs = QTabWidget()
@@ -274,7 +285,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             tabla.setAccessibleName("Tabla principal de contabilidad")
             h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
             if h_header is not None:
-                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
         # Refuerzo de accesibilidad en QComboBox
         for widget in self.findChildren(QComboBox):
             widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -473,6 +484,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         qr_label = QLabel()
         qr_label.setPixmap(pixmap)
         vbox.addWidget(qr_label)
+        btns = QHBoxLayout()
         btns = QHBoxLayout()
         btn_guardar = QPushButton()
         btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
@@ -774,7 +786,6 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             ax.set_title('Desglose por Moneda')
             self.label_resumen.setText(f"Total en Pesos: ${ars:,.2f} | Total en Dólares: U$D {usd:,.2f}")
         fig.tight_layout()
-        self.grafico_canvas.draw()
 
     def procesar_movimientos(self, movimientos):
         entradas = {}

@@ -21,25 +21,20 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         self.label_feedback = QLabel()
         self.main_layout.addWidget(self.label_feedback)
 
-        # Botón principal de acción (Agregar)
-        botones_layout = QHBoxLayout()
+        # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(24)
+        self.label_titulo = QLabel("Gestión de Mantenimiento")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        # Botón principal (Agregar mantenimiento)
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("img/ajustar-stock.svg"))
+        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
-        self.boton_agregar.setToolTip("Agregar tarea de mantenimiento")
-        self.boton_agregar.setText("")
-        self.boton_agregar.setFixedSize(48, 48)
-        self.boton_agregar.setStyleSheet("")
-        sombra = QGraphicsDropShadowEffect()
-        sombra.setBlurRadius(15)
-        sombra.setXOffset(0)
-        sombra.setYOffset(4)
-        sombra.setColor(QColor(0, 0, 0, 50))
-        self.boton_agregar.setGraphicsEffect(sombra)
-        estilizar_boton_icono(self.boton_agregar)
-        botones_layout.addWidget(self.boton_agregar)
-        botones_layout.addStretch()
-        self.main_layout.addLayout(botones_layout)
+        self.boton_agregar.setToolTip("Agregar mantenimiento")
+        header_layout.addWidget(self.boton_agregar)
+        header_layout.addStretch()
+        self.main_layout.addLayout(header_layout)
 
         # Tabla de tareas
         self.tabla_tareas = QTableWidget()
@@ -302,9 +297,8 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         header = self.tabla_tareas.horizontalHeader() if hasattr(self.tabla_tareas, 'horizontalHeader') else None
         if header is not None:
             try:
-                header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
-            except Exception as e:
-                # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
+                header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            except Exception:
                 pass
         else:
             # EXCEPCIÓN VISUAL: No se puede aplicar refuerzo visual porque el header es None

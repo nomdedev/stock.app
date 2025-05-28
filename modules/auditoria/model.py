@@ -42,6 +42,8 @@ class AuditoriaModel:
         """
         datos = self.db.ejecutar_query(query)
         columnas = ["Fecha/Hora", "Usuario", "Módulo", "Evento", "Detalle", "IP"]
+        if formato not in ("excel", "pdf"):
+            return "Formato no soportado. Usa 'excel' o 'pdf'."
         if not datos or len(datos) == 0:
             return "No hay datos de auditoría para exportar."
         if not filename:
@@ -139,6 +141,7 @@ class AuditoriaModel:
     def obtener_logs(self, modulo_afectado):
         query = "SELECT * FROM auditorias_sistema WHERE modulo_afectado = ?"
         result = self.db.ejecutar_query(query, (modulo_afectado,))
+        # Si hay más de un resultado, devolver todos los eventos del módulo solicitado
         return result if result is not None else []
 
     def consultar_auditoria(self, fecha_inicio, fecha_fin, usuario_id=None):

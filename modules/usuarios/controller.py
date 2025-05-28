@@ -195,24 +195,31 @@ class UsuariosController(BaseController):
 
     def cargar_usuarios(self):
         usuarios = self.model.obtener_usuarios()
+        # Definir headers dinámicos según la base o fallback seguro
+        headers = [
+            "ID", "Nombre", "Apellido", "Email", "Usuario", "Rol", "Estado",
+            "Editar", "Susp/Act", "Reset Pass"
+        ]
+        self.view.tabla_usuarios.clear()
+        self.view.tabla_usuarios.setColumnCount(len(headers))
+        self.view.tabla_usuarios.setHorizontalHeaderLabels(headers)
         self.view.tabla_usuarios.setRowCount(len(usuarios))
         for row, usuario in enumerate(usuarios):
-            for col, dato in enumerate(usuario[:7]):  # id, nombre, apellido, email, usuario, rol, estado
+            # usuario: (id, nombre, apellido, email, usuario, password_hash, rol, estado, ...)
+            # Mostrar los campos principales
+            for col, dato in enumerate([usuario[0], usuario[1], usuario[2], usuario[3], usuario[4], usuario[6], usuario[7]]):
                 self.view.tabla_usuarios.setItem(row, col, QTableWidgetItem(str(dato)))
             # Botones de acción
-            cols = {'editar': 7, 'susp': 8, 'reset': 9}
-            # Editar
             btn_edit = QPushButton("Editar")
             btn_edit.clicked.connect(lambda _, u=usuario: self.editar_usuario(u))
-            self.view.tabla_usuarios.setCellWidget(row, cols['editar'], btn_edit)
-            # Suspender/Reactivar
+            self.view.tabla_usuarios.setCellWidget(row, 7, btn_edit)
             btn_susp = QPushButton("Susp/Act")
-            btn_susp.clicked.connect(lambda _, u_id=usuario[0], est=usuario[6]: self.cambiar_estado_usuario(u_id, est))
-            self.view.tabla_usuarios.setCellWidget(row, cols['susp'], btn_susp)
-            # Resetear Contraseña
+            btn_susp.clicked.connect(lambda _, u_id=usuario[0], est=usuario[7]: self.cambiar_estado_usuario(u_id, est))
+            self.view.tabla_usuarios.setCellWidget(row, 8, btn_susp)
             btn_reset = QPushButton("Reset Pass")
-            btn_reset.clicked.connect(lambda _, r=row: self._resetear_password_selected())
-            self.view.tabla_usuarios.setCellWidget(row, cols['reset'], btn_reset)
+            btn_reset.clicked.connect(lambda _, u_id=usuario[0]: self._resetear_password_selected())
+            self.view.tabla_usuarios.setCellWidget(row, 9, btn_reset)
+        self.view.tabla_usuarios.resizeColumnsToContents()
 
     @permiso_auditoria_usuarios('editar')
     def editar_usuario(self, usuario):

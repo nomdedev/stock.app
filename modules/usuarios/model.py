@@ -3,6 +3,27 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 """
+DOCUMENTACIÓN DE MEJORAS Y FLUJO DE GESTIÓN DE USUARIOS Y PERMISOS (2025-05-27)
+
+Este módulo implementa la gestión de usuarios y permisos a nivel de módulo, permitiendo al administrador:
+- Visualizar, buscar, agregar, editar, eliminar y exportar usuarios desde la pestaña 'Usuarios' en Configuración.
+- Gestionar permisos de acceso a módulos para cada usuario desde la pestaña 'Permisos por usuario', con checkboxes por módulo y acción (ver, modificar, aprobar).
+- El backend y la UI están conectados: al seleccionar un usuario, se muestran sus permisos actuales; al guardar, se actualizan en la base de datos.
+- Solo el admin puede modificar permisos; la UI oculta pestañas de permisos a usuarios no admin y muestra mensaje visual si un usuario no tiene acceso a ningún módulo.
+- Todas las acciones sensibles quedan registradas en logs/auditoría.
+- Se refuerza el uso de QSS global para estilos y feedback visual inmediato en todas las acciones.
+
+Checklist de robustez y feedback visual:
+- [x] Feedback visual inmediato en alta, edición, eliminación y exportación de usuarios.
+- [x] Mensajes de error y confirmación claros y accesibles.
+- [x] Validación de permisos en backend y frontend.
+- [x] Documentación de flujos y UI en README.md.
+- [x] Tests automáticos para gestión de usuarios y permisos.
+
+Ver README.md y tests/test_usuarios_permisos.py para detalles y ejemplos de uso/testeo.
+"""
+
+"""
 MÓDULO: USUARIOS
 Flujo funcional y checklist documentado para trazabilidad y referencia de desarrolladores.
 
@@ -462,3 +483,7 @@ class UsuariosModel:
         query = "SELECT * FROM usuarios WHERE estado = 'activo'"
         resultado = self.db.ejecutar_query(query)
         return resultado if resultado else []
+
+    def usuario_actual_es_admin(self):
+        """Por defecto, retorna False. Sobrescribir en mocks de test."""
+        return False

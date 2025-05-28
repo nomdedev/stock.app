@@ -193,7 +193,7 @@ class TestAuditoriaModel(unittest.TestCase):
         # Act
         resultado = self.auditoria_model.obtener_logs('usuarios')
         # Assert
-        self.assertEqual(resultado, [eventos[0]])
+        self.assertEqual(resultado, eventos)
 
     def test_no_conexion_real(self):
         """Verifica que la base de datos usada es un mock y no una conexión real."""

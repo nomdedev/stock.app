@@ -2789,3 +2789,76 @@
 2025-05-27 16:52:34,575 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-27 16:52:35,274 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
 2025-05-27 16:52:35,274 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 17:40:02,256 - INFO - Aplicación iniciada
+2025-05-27 17:40:02,496 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 17:40:02,496 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 17:40:03,115 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 17:40:03,115 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 17:50:36,492 - INFO - Aplicación iniciada
+2025-05-27 17:50:36,706 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 17:50:36,706 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 17:50:37,481 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 17:50:37,481 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 19:07:05,778 - INFO - Conexión establecida con la base de datos 'users'.
+2025-05-27 19:28:50,625 - INFO - Aplicación iniciada
+2025-05-27 19:28:50,901 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 19:28:50,901 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 19:28:52,901 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 19:28:52,901 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 19:56:11,421 - ERROR - Error en registrar_evento: DB error
+2025-05-27 19:56:11,467 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-27 19:56:11,467 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-27 19:58:12,127 - ERROR - Error en registrar_evento: DB error
+2025-05-27 19:58:12,132 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-27 19:58:12,132 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-27 19:58:42,506 - ERROR - Error en registrar_evento: DB error
+2025-05-27 19:58:42,508 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-27 19:58:42,508 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-27 20:00:20,240 - ERROR - Error en registrar_evento: DB error
+2025-05-27 20:00:20,244 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-27 20:00:20,244 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-27 20:42:31,710 - INFO - Aplicación iniciada
+2025-05-27 20:42:31,945 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 20:42:31,945 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 20:49:32,501 - INFO - Aplicación iniciada
+2025-05-27 20:49:32,677 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 20:49:32,677 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 20:49:33,324 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 20:49:33,324 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 21:05:54,668 - INFO - Aplicación iniciada
+2025-05-27 21:05:54,852 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 21:05:54,852 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 21:05:55,531 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 21:05:55,531 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 21:31:17,025 - INFO - Aplicación iniciada
+2025-05-27 21:38:06,005 - INFO - Aplicación iniciada
+2025-05-27 22:12:33,736 - INFO - Aplicación iniciada
+2025-05-27 22:12:33,927 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 22:12:33,927 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 22:12:34,657 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 22:12:34,657 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 22:23:59,460 - INFO - Aplicación iniciada
+2025-05-27 22:23:59,654 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 22:23:59,654 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 22:24:00,396 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 22:24:00,396 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 23:10:58,871 - INFO - Aplicación iniciada
+2025-05-27 23:10:59,148 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 23:10:59,148 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 23:11:00,144 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 23:11:00,144 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 23:17:12,122 - INFO - Aplicación iniciada
+2025-05-27 23:17:12,302 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 23:17:12,302 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 23:17:12,932 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 23:17:12,932 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 23:19:48,490 - INFO - Aplicación iniciada
+2025-05-27 23:19:48,682 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 23:19:48,682 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 23:19:49,693 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 23:19:49,693 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 23:28:03,958 - INFO - Aplicación iniciada
+2025-05-27 23:28:04,167 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 23:28:04,167 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-05-27 23:28:04,789 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-27 23:28:04,789 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']

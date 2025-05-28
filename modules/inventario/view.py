@@ -43,9 +43,20 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None
 
-        # Título
-        self.label_titulo = QLabel("INVENTORY")
-        self.main_layout.addWidget(self.label_titulo)
+        # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(24)
+        self.label_titulo = QLabel("Gestión de Inventario")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        # Botón principal (Agregar item)
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
+        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setToolTip("Agregar item")
+        header_layout.addWidget(self.boton_agregar)
+        header_layout.addStretch()
+        self.main_layout.addLayout(header_layout)
 
         # Validar conexión
         conexion_valida = self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])
@@ -67,6 +78,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
             ("pdf_icon.svg", "Exportar a PDF", self.exportar_pdf_signal),
             ("search_icon.svg", "Buscar ítem", self.buscar_signal),
             ("qr_icon.svg", "Generar código QR", self.generar_qr_signal),
+            ("viewdetails.svg", "", self.ver_obras_pendientes_material),
+            ("reserve-stock.svg", "", self.abrir_reserva_lote_perfiles),
         ]
         for icono, tooltip, signal in iconos:
             btn = QPushButton()
@@ -74,26 +87,10 @@ class InventarioView(QWidget, TableResponsiveMixin):
             btn.setIconSize(QSize(24, 24))
             btn.setToolTip(tooltip)
             btn.setText("")
-            btn.clicked.connect(signal.emit)
+            btn.clicked.connect(signal.emit if hasattr(signal, 'emit') else signal)
             estilizar_boton_icono(btn)
             top_btns_layout.addWidget(btn)
-        self.main_layout.addLayout(top_btns_layout)  # Cambiar insertLayout por addLayout para asegurar el orden
-
-        # Botón para ver obras pendientes de este material
-        self.btn_ver_obras_pendientes = QPushButton("Ver obras pendientes de este material")
-        self.btn_ver_obras_pendientes.setIcon(QIcon("img/viewdetails.svg"))
-        self.btn_ver_obras_pendientes.setIconSize(QSize(20, 20))
-        self.btn_ver_obras_pendientes.setToolTip("Mostrar obras a las que les falta este material")
-        self.btn_ver_obras_pendientes.clicked.connect(self.ver_obras_pendientes_material)
-        self.main_layout.addWidget(self.btn_ver_obras_pendientes)
-
-        # Botón para abrir reserva avanzada por lote
-        self.btn_reserva_lote = QPushButton("Reserva avanzada por lote")
-        self.btn_reserva_lote.setIcon(QIcon("img/reserve-stock.svg"))
-        self.btn_reserva_lote.setIconSize(QSize(20, 20))
-        self.btn_reserva_lote.setToolTip("Abrir ventana de reserva avanzada por lote")
-        self.btn_reserva_lote.clicked.connect(self.abrir_reserva_lote_perfiles)
-        self.main_layout.addWidget(self.btn_reserva_lote)
+        self.main_layout.addLayout(top_btns_layout)
 
         # Obtener headers desde la base de datos
         self.inventario_headers = self.obtener_headers_desde_db("inventario_perfiles")
@@ -109,7 +106,9 @@ class InventarioView(QWidget, TableResponsiveMixin):
             v_header.setVisible(False)
         h_header = self.tabla_inventario.horizontalHeader()
         if h_header is not None:
+            h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 11px; padding: 8px 16px; border: 1px solid #e3e3e3;")
             h_header.setHighlightSections(False)
+            # Corregir: usar QHeaderView.ResizeMode.Stretch en vez de QHeaderView.Stretch
             h_header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
             if hasattr(h_header, 'sectionDoubleClicked'):
                 h_header.sectionDoubleClicked.connect(self.autoajustar_columna)
@@ -119,8 +118,13 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 h_header.customContextMenuRequested.connect(self.mostrar_menu_header)
             if hasattr(h_header, 'sectionClicked'):
                 h_header.sectionClicked.connect(self.mostrar_menu_columnas_header)
+            h_header.setMinimumSectionSize(80)
+            h_header.setDefaultSectionSize(120)
         self.tabla_inventario.cellClicked.connect(self.toggle_expandir_fila)
         self.filas_expandidas = set()
+        # Hacer la tabla más alta
+        self.tabla_inventario.setMinimumHeight(520)
+        self.tabla_inventario.setMaximumHeight(900)
         self.main_layout.addWidget(self.tabla_inventario)
 
         self.main_layout.addStretch()  # Asegura que la tabla se vea correctamente

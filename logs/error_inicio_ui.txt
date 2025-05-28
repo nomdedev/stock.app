@@ -1,0 +1,51 @@
+[ERROR LOGIN/UI] 'ProduccionView' object has no attribute 'tabla_etapas'
+Traceback (most recent call last):
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 799, in on_login_success
+    main_window = MainWindow(user, modulos_permitidos)
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 388, in __init__
+    self.initUI(usuario, modulos_permitidos)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 454, in initUI
+    self.produccion_view = ProduccionView()
+                           ~~~~~~~~~~~~~~^^
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\modules\obras\produccion\view.py", line 89, in __init__
+    header_etapas = self.tabla_etapas.horizontalHeader() if hasattr(self.tabla_etapas, 'horizontalHeader') else None
+                                                                    ^^^^^^^^^^^^^^^^^
+AttributeError: 'ProduccionView' object has no attribute 'tabla_etapas'. Did you mean: 'tabla_aberturas'?
+
+[ERROR LOGIN/UI] type object 'QHeaderView' has no attribute 'Stretch'
+Traceback (most recent call last):
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 799, in on_login_success
+    main_window = MainWindow(user, modulos_permitidos)
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 388, in __init__
+    self.initUI(usuario, modulos_permitidos)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 446, in initUI
+    self.inventario_view = InventarioView(db_connection=self.db_connection_inventario, usuario_actual=usuario_str)
+                           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\modules\inventario\view.py", line 89, in __init__
+    self.make_table_responsive(self.tabla_inventario)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\core\table_responsive_mixin.py", line 15, in make_table_responsive
+    horizontal_header.setSectionResizeMode(QHeaderView.Stretch)
+                                           ^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'QHeaderView' has no attribute 'Stretch'
+
+[ERROR LOGIN/UI] type object 'QHeaderView' has no attribute 'Stretch'
+Traceback (most recent call last):
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 799, in on_login_success
+    main_window = MainWindow(user, modulos_permitidos)
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 388, in __init__
+    self.initUI(usuario, modulos_permitidos)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 446, in initUI
+    self.inventario_view = InventarioView(db_connection=self.db_connection_inventario, usuario_actual=usuario_str)
+                           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\modules\inventario\view.py", line 89, in __init__
+    self.make_table_responsive(self.tabla_inventario)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Oficina\Documents\Proyectos\stock.app\core\table_responsive_mixin.py", line 15, in make_table_responsive
+    horizontal_header.setSectionResizeMode(QHeaderView.Stretch)
+                                           ^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'QHeaderView' has no attribute 'Stretch'
+

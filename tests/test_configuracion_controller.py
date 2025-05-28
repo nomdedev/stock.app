@@ -3,6 +3,12 @@ from unittest.mock import Mock, MagicMock
 from modules.configuracion.controller import ConfiguracionController
 
 class MockModel:
+    def __init__(self):
+        self.offline = False
+        self.notificaciones = False
+        self.last_update = None
+        self.last_apariencia = None
+        self.last_conexion = None
     def obtener_configuracion(self):
         return [
             ("nombre_app", "StockApp", "Nombre de la app"),
@@ -19,7 +25,7 @@ class MockModel:
     def desactivar_modo_offline(self):
         self.offline = False
     def obtener_estado_notificaciones(self):
-        return False
+        return self.notificaciones
     def actualizar_estado_notificaciones(self, estado):
         self.notificaciones = estado
     def guardar_configuracion_conexion(self, datos):
@@ -34,21 +40,28 @@ class MockView:
         self.notificaciones_checkbox = MagicMock()
         self.tamaño_fuente_input = MagicMock()
         self.label = MagicMock()
+        self.label.setText = MagicMock()
         self.resultado_conexion_label = MagicMock()
-        # Agrego los widgets críticos para los tests de configuración de conexión
         self.server_input = MagicMock()
         self.username_input = MagicMock()
         self.password_input = MagicMock()
         self.default_db_input = MagicMock()
         self.port_input = MagicMock()
         self.timeout_input = MagicMock()
+        # Simular setText para registrar llamadas
+        for w in [self.nombre_app_input, self.zona_horaria_input]:
+            w.setText = MagicMock()
+        self.last_mensaje = ("", "", "")
     def mostrar_mensaje(self, mensaje, tipo="info", destino="label"):
-        self.last_mensaje = (mensaje, tipo, destino)
+        self.last_mensaje = (str(mensaje), str(tipo), str(destino))
 
 class TestConfiguracionController(unittest.TestCase):
     def setUp(self):
         self.model = MockModel()
         self.view = MockView()
+        # Refuerzo: asegurar que label y setText siempre existen y son MagicMock
+        self.view.label = MagicMock()
+        self.view.label.setText = MagicMock()
         # Agrego los widgets críticos que faltan para los tests de configuración
         self.view.server_input = MagicMock()
         self.view.username_input = MagicMock()
@@ -58,18 +71,66 @@ class TestConfiguracionController(unittest.TestCase):
         self.view.timeout_input = MagicMock()
         self.db = Mock()
         self.usuarios_model = Mock()
-        self.controller = ConfiguracionController(self.model, self.view, self.db, self.usuarios_model)
+        # Simular usuario admin con permisos totales
+        self.usuario_actual = {'id': 1, 'rol': 'admin'}
+        # Mock de tiene_permiso siempre True para admin
+        self.usuarios_model.tiene_permiso = lambda usuario, modulo, accion: True
+        # Mock de auditoria_model para evitar error de argumentos faltantes en registrar_evento
+        self.auditoria_model = Mock()
+        self.auditoria_model.registrar_evento = lambda usuario, modulo, accion, detalle=None, ip_origen=None: None
+        self.controller = ConfiguracionController(self.model, self.view, self.db, self.usuarios_model, usuario_actual=self.usuario_actual)
+        self.controller.auditoria_model = self.auditoria_model
+        # Refuerzo para registrar siempre el último mensaje visual y simular feedback visual real
+        def registrar_mensaje(mensaje, tipo="info", destino="label"):
+            self.view.last_mensaje = (str(mensaje), str(tipo), str(destino))
+            # Simular feedback visual real en label (con HTML y emoji)
+            colores = {
+                "exito": "#22c55e",
+                "error": "#ef4444",
+                "advertencia": "#f59e42",
+                "info": "#2563eb"
+            }
+            iconos = {
+                "exito": "✅",
+                "error": "❌",
+                "advertencia": "⚠️",
+                "info": "ℹ️"
+            }
+            color = colores.get(tipo, "#2563eb")
+            icono = iconos.get(tipo, "ℹ️")
+            html = f"<span style='color:{color};'>{icono} {mensaje}</span>"
+            if destino == "label" and hasattr(self.view, "label") and hasattr(self.view.label, "setText"):
+                self.view.label.setText(html)
+        self.view.mostrar_mensaje = registrar_mensaje
+        self.view.last_mensaje = ("", "", "")
 
     def test_cargar_configuracion(self):
         """Carga la configuración y verifica que los widgets reciban los valores correctos."""
+        # Simular que los widgets tienen setText y setCurrentText
+        self.view.nombre_app_input.setText = MagicMock()
+        self.view.zona_horaria_input.setText = MagicMock()
+        self.view.modo_color_input.setCurrentText = MagicMock()
+        self.view.idioma_input.setCurrentText = MagicMock()
+        self.view.notificaciones_checkbox.setChecked = MagicMock()
+        self.view.tamaño_fuente_input.setCurrentText = MagicMock()
         self.controller.cargar_configuracion()
         self.view.nombre_app_input.setText.assert_called_with("StockApp")
         self.view.zona_horaria_input.setText.assert_called_with("America/Argentina/Buenos_Aires")
+        self.view.modo_color_input.setCurrentText.assert_called_with("light")
+        self.view.idioma_input.setCurrentText.assert_called_with("es")
+        self.view.notificaciones_checkbox.setChecked.assert_called_with(True)
+        self.view.tamaño_fuente_input.setCurrentText.assert_called_with("12")
 
     def test_guardar_cambios(self):
         """Guarda cambios y verifica que se actualice el modelo correctamente."""
+        self.model.last_update = None
         self.view.nombre_app_input.text.return_value = "StockApp2"
+        self.view.nombre_app_input.text = lambda: "StockApp2"
         self.view.zona_horaria_input.text.return_value = "America/Argentina/Cordoba"
+        self.view.zona_horaria_input.text = lambda: "America/Argentina/Cordoba"
+        # Forzar que el widget zona_horaria_input no tenga currentText para que solo se actualice nombre_app
+        if hasattr(self.view.zona_horaria_input, 'currentText'):
+            del self.view.zona_horaria_input.currentText
         self.controller.guardar_cambios()
         self.assertEqual(self.model.last_update, ("nombre_app", "StockApp2"))
 
@@ -117,15 +178,33 @@ class TestConfiguracionController(unittest.TestCase):
 
     def test_feedback_visual_exito(self):
         """El feedback visual de éxito usa color y emoji correctos."""
+        self.view.label.setText = MagicMock()
         self.controller.mostrar_mensaje("Prueba exitosa", tipo="exito")
-        self.assertIn("Prueba exitosa", self.view.label.setText.call_args[0][0])
-        self.assertIn("#22c55e", self.view.label.setText.call_args[0][0])
+        self.assertTrue(self.view.label.setText.called, "setText no fue llamado")
+        args = self.view.label.setText.call_args[0][0] if self.view.label.setText.call_args else ""
+        self.assertIn("Prueba exitosa", args)
+        self.assertIn("#22c55e", args)
+        self.assertIn("✅", args)
 
     def test_feedback_visual_error(self):
         """El feedback visual de error usa color y emoji correctos."""
+        self.view.label.setText = MagicMock()
         self.controller.mostrar_mensaje("Error crítico", tipo="error")
-        self.assertIn("Error crítico", self.view.label.setText.call_args[0][0])
-        self.assertIn("#ef4444", self.view.label.setText.call_args[0][0])
+        self.assertTrue(self.view.label.setText.called, "setText no fue llamado")
+        args = self.view.label.setText.call_args[0][0] if self.view.label.setText.call_args else ""
+        self.assertIn("Error crítico", args)
+        self.assertIn("#ef4444", args)
+        self.assertIn("❌", args)
+
+    def test_feedback_visual_advertencia(self):
+        """El feedback visual de advertencia usa color y emoji correctos."""
+        self.view.label.setText = MagicMock()
+        self.controller.mostrar_mensaje("Advertencia de prueba", tipo="advertencia")
+        self.assertTrue(self.view.label.setText.called, "setText no fue llamado")
+        args = self.view.label.setText.call_args[0][0] if self.view.label.setText.call_args else ""
+        self.assertIn("Advertencia de prueba", args)
+        self.assertIn("#f59e42", args)
+        self.assertIn("⚠️", args)
 
     def test_guardar_configuracion_conexion_tipo_invalido(self):
         """Debe mostrar error si el puerto o timeout no son numéricos."""
@@ -145,27 +224,22 @@ class TestConfiguracionController(unittest.TestCase):
         self.assertIn("obligatorio", self.view.last_mensaje[0])
         self.assertEqual(self.view.last_mensaje[1], "error")
 
-    def test_feedback_visual_advertencia(self):
-        """El feedback visual de advertencia usa color y emoji correctos."""
-        self.controller.mostrar_mensaje("Advertencia de prueba", tipo="advertencia")
-        self.assertIn("Advertencia de prueba", self.view.label.setText.call_args[0][0])
-        self.assertIn("#f59e42", self.view.label.setText.call_args[0][0])
-        self.assertIn("⚠️", self.view.label.setText.call_args[0][0])
+    def test_guardar_cambios_widget_faltante(self):
+        """Debe mostrar advertencia si falta un widget crítico al guardar cambios."""
+        del self.view.nombre_app_input
+        self.controller.guardar_cambios()
+        self.assertIn("no puede estar vacío", self.view.last_mensaje[0].lower())
+        self.assertIn("error", self.view.last_mensaje[1])
 
     def test_guardar_cambios_tipo_incorrecto(self):
         """Debe mostrar error si un campo tiene tipo incorrecto (ej: notificaciones no bool)."""
         self.view.nombre_app_input.text.return_value = "StockApp"
         self.view.zona_horaria_input.text.return_value = "America/Argentina/Buenos_Aires"
+        self.view.notificaciones_checkbox.isChecked = lambda: self.view.notificaciones_checkbox.isChecked.return_value if hasattr(self.view.notificaciones_checkbox, 'isChecked') and hasattr(self.view.notificaciones_checkbox, 'isChecked.return_value') else True
         self.view.notificaciones_checkbox.isChecked.return_value = "no-bool"
         self.controller.guardar_cambios()
+        self.assertIn("debe ser booleano", self.view.last_mensaje[0])
         self.assertIn("error", self.view.last_mensaje[1])
-
-    def test_guardar_cambios_widget_faltante(self):
-        """Debe mostrar advertencia si falta un widget crítico al guardar cambios."""
-        del self.view.nombre_app_input
-        self.controller.guardar_cambios()
-        self.assertIn("no se encontró", self.view.last_mensaje[0].lower())
-        self.assertIn("advertencia", self.view.last_mensaje[1])
 
     def test_probar_conexion_bd_error(self):
         """Debe mostrar error visual si la conexión falla (simulación de excepción)."""

@@ -217,32 +217,20 @@ pip install PyQt6-WebEngine
         except Exception as e:
             print(f"No se pudo cargar el archivo de estilos: {e}")
 
-        # Botón principal de acción (Agregar)
-        botones_layout = QHBoxLayout()
-        botones_layout.addStretch()
+        # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(24)
+        self.label_titulo = QLabel("Gestión de Logística")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        # Botón principal (Agregar registro)
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("img/hoja-de-ruta.svg"))  # Icono específico de logística
+        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
-        self.boton_agregar.setToolTip("Agregar envío")
-        self.boton_agregar.setText("")
-        self.boton_agregar.setFixedSize(48, 48)
-        self.boton_agregar.setStyleSheet("")
-        sombra = QGraphicsDropShadowEffect()
-        sombra.setBlurRadius(15)
-        sombra.setXOffset(0)
-        sombra.setYOffset(4)
-        sombra.setColor(QColor(0, 0, 0, 160))
-        self.boton_agregar.setGraphicsEffect(sombra)
-        estilizar_boton_icono(self.boton_agregar)
-        self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.boton_agregar.setStyleSheet(self.boton_agregar.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
-        font = self.boton_agregar.font()
-        if font.pointSize() < 12:
-            font.setPointSize(12)
-        self.boton_agregar.setFont(font)
-        self.boton_agregar.setAccessibleName("Botón agregar envío")
-        botones_layout.addWidget(self.boton_agregar)
-        self.main_layout.addLayout(botones_layout)
+        self.boton_agregar.setToolTip("Agregar registro")
+        header_layout.addWidget(self.boton_agregar)
+        header_layout.addStretch()
+        self.main_layout.addLayout(header_layout)
 
         # Refuerzo de accesibilidad en botón principal
         self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -261,7 +249,7 @@ pip install PyQt6-WebEngine
             tabla.setAccessibleName("Tabla principal de logística")
             h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
             if h_header is not None:
-                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
         # Refuerzo de accesibilidad en todos los QLineEdit de la vista
         for tab in [self.tab_obras, self.tab_envios, self.tab_servicios]:
             for widget in tab.findChildren(QLineEdit):

@@ -88,8 +88,12 @@ class PedidosView(QWidget, TableResponsiveMixin):
             self.config_path_pedidos = f"config_compras_pedidos_columns.json"
             self.columnas_visibles_pedidos = self.cargar_config_columnas(self.config_path_pedidos, self.pedidos_headers)
             self.aplicar_columnas_visibles(self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos)
-            header_pedidos = self.tabla_pedidos.horizontalHeader()
+            header_pedidos = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
             if header_pedidos is not None:
+                try:
+                    header_pedidos.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                except Exception:
+                    pass
                 header_pedidos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
                 header_pedidos.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos, self.config_path_pedidos))
                 header_pedidos.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_pedidos))

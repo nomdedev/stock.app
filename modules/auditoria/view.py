@@ -39,6 +39,22 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
         except Exception as e:
             print(f"No se pudo cargar el archivo de estilos: {e}")
 
+        # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(24)
+        self.label_titulo = QLabel("Gestión de Auditoría")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        # Botón principal (Agregar registro)
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
+        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setToolTip("Agregar registro")
+        header_layout.addWidget(self.boton_agregar)
+        header_layout.addStretch()
+        self.main_layout.addLayout(header_layout)
+        # --- FIN HEADER VISUAL MODERNO ---
+
         # Botón principal de acción (Ver logs)
         botones_layout = QHBoxLayout()
         self.boton_ver_logs = QPushButton()
@@ -110,7 +126,7 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
         header = self.tabla_logs.horizontalHeader() if hasattr(self.tabla_logs, 'horizontalHeader') else None
         if header is not None:
             try:
-                header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
             except Exception as e:
                 # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
                 pass

@@ -1,6 +1,18 @@
-# Estándares visuales de la app
+# Historial de cambios visuales y de permisos
 
-## Paleta de colores
+| Fecha        | Cambio                                                                                       |
+|-------------|----------------------------------------------------------------------------------------------|
+| 2025-05-27  | Unificación de headers de tablas: fondo #f8fafc, radio 4px, fuente 10px, sin negrita.        |
+| 2025-05-27  | Migración de gestión de usuarios y permisos de Configuración a Usuarios.                      |
+| 2025-05-27  | Refuerzo de permisos: solo admin puede modificar roles/permisos; feedback visual robusto.     |
+| 2025-05-27  | Refuerzo de feedback visual en importación de inventario y gestión de usuarios.               |
+| 2025-05-27  | Actualización de tests automáticos y documentación para reflejar nuevos estándares visuales.   |
+
+---
+
+## Estándares visuales de la app
+
+### Paleta de colores
 
 - Fondo general: #fff9f3 (crema pastel muy claro)
 - Azul pastel principal:rgb(79, 129, 238) (texto, íconos, botones principales)
@@ -10,13 +22,13 @@
 - Rojo pastel: #ffe5e5 (errores)
 - Lila pastel: #f3eaff (hover)
 
-## Tipografía y tamaños
+### Tipografía y tamaños
 
 - Fuente: Segoe UI, Roboto o similar sans-serif
 - Tamaño base: 11px para secundarios, 12px para tablas y botones, 13-14px para títulos
 - Peso: 500-600 para títulos y botones, 400-500 para textos normales
 
-## Botones
+### Botones
 
 - Solo ícono, sin texto visible (excepto justificación documentada)
 - Bordes redondeados: 8px
@@ -24,36 +36,39 @@
 - Tamaño mínimo: 32x32px
 - Usar helper `estilizar_boton_icono`
 
-## Tablas
+### Tablas
 
 - Fondo: #fff9f3
-- Headers: #e3f6fd, texto azul pastel, bordes redondeados 8px
+- Headers: #f8fafc (mucho más claro que #e3f6fd), texto azul pastel (#2563eb), bordes redondeados 4px
 - Celdas: altura máxima 25px
-- Fuente: 12px o menor
+- Fuente: 10px en headers, 12px o menor en celdas
+- Peso: normal (no negrita) en headers
 
-## Layouts y diálogos
+> Desde 2025-05-27 todos los headers de tablas usan fondo #f8fafc, radio 4px, fuente 10px y no llevan negrita. Este estándar es obligatorio y se aplica por QSS global y refuerzo en cada vista.
+
+### Layouts y diálogos
 
 - Padding mínimo: 20px vertical, 24px horizontal
 - Márgenes entre elementos: mínimo 16px
 - Bordes redondeados: 8-12px
 
-## Sidebar
+### Sidebar
 
 - Fondo blanco
 - Botones: borde gris pastel, activo azul pastel, fuente 12px
 
-## QTabWidget
+### QTabWidget
 
 - Fondo crema, pestañas celeste pastel, activa con borde azul pastel
 - Padding horizontal: 24px, vertical: 20px
 
-## Prohibido
+### Prohibido
 
 - Fondos oscuros, negro, gris oscuro
 - Tamaños de fuente mayores a 14px en tablas/botones
 - Sobrescribir estilos globales sin justificación
 
-## Ejemplo de helper para botón
+### Ejemplo de helper para botón
 
 ```python
 from core.ui_components import estilizar_boton_icono

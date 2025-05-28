@@ -2,7 +2,7 @@ from utils.theme_manager import aplicar_tema, guardar_modo_tema
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
-from PyQt6.QtWidgets import QApplication, QTableWidgetItem, QCheckBox, QFileDialog
+from PyQt6.QtWidgets import QApplication, QTableWidgetItem, QCheckBox, QFileDialog, QWidget, QHBoxLayout, QPushButton
 import pandas as pd
 import pyodbc
 import os
@@ -85,27 +85,27 @@ class ConfiguracionController:
                 self.cargar_permisos_modulos()
             except Exception as e:
                 self.mostrar_mensaje(f"Error al cargar permisos de módulos: {e}", tipo="error", destino="permisos_result_label")
+        # Conectar carga de usuarios al abrir la pestaña Usuarios
+        if hasattr(self.view, 'tabs') and hasattr(self.view, 'tab_usuarios'):
+            idx = self.view.tabs.indexOf(self.view.tab_usuarios)
+            if idx != -1:
+                self.view.tabs.currentChanged.connect(lambda i: self.cargar_usuarios_configuracion() if i == idx else None)
+        # Conectar pestaña de permisos por usuario
+        if hasattr(self.view, 'combo_usuario_permisos') and hasattr(self.view, 'boton_guardar_permisos_usuario'):
+            self.view.combo_usuario_permisos.currentIndexChanged.connect(lambda idx: self.cargar_permisos_por_usuario())
+            self.view.boton_guardar_permisos_usuario.clicked.connect(self.guardar_permisos_por_usuario)
+        # Cargar permisos al abrir la pestaña
+        if hasattr(self.view, 'tabs') and hasattr(self.view, 'tab_permisos_usuarios'):
+            idx = self.view.tabs.indexOf(self.view.tab_permisos_usuarios)
+            if idx != -1:
+                self.view.tabs.currentChanged.connect(lambda i: self.cargar_permisos_por_usuario() if i == idx else None)
 
     def mostrar_mensaje(self, mensaje, tipo="info", destino="label"):
-        colores = {
-            "exito": "#22c55e",
-            "error": "#ef4444",
-            "advertencia": "#f59e42",
-            "info": "#2563eb"
-        }
-        iconos = {
-            "exito": "✅",
-            "error": "❌",
-            "advertencia": "⚠️",
-            "info": "ℹ️"
-        }
-        color = colores.get(tipo, "#2563eb")
-        icono = iconos.get(tipo, "ℹ️")
-        label = getattr(self.view, destino, None)
-        if label and hasattr(label, 'setText'):
-            label.setText(f"<span style='color:{color};'>{icono} {mensaje}</span>")
+        # Siempre usar el método de la vista si existe
+        if hasattr(self.view, "mostrar_mensaje") and callable(self.view.mostrar_mensaje):
+            self.view.mostrar_mensaje(mensaje, tipo, destino)
         else:
-            # Fallback: print o log si no hay label
+            # Fallback visual mínimo
             print(f"[{tipo.upper()}] {mensaje}")
 
     def _get_widget(self, nombre):
@@ -150,8 +150,10 @@ class ConfiguracionController:
     def guardar_cambios(self):
         try:
             nombre = self._get_text('nombre_app_input')
-            if nombre:
-                self.model.actualizar_configuracion("nombre_app", nombre)
+            if not nombre:
+                self.mostrar_mensaje("El nombre de la app no puede estar vacío.", tipo="error")
+                return
+            self.model.actualizar_configuracion("nombre_app", nombre)
             zona = self._get_widget('zona_horaria_input')
             if zona and hasattr(zona, 'currentText'):
                 self.model.actualizar_configuracion("zona_horaria", zona.currentText())
@@ -166,8 +168,9 @@ class ConfiguracionController:
             )
             self.model.actualizar_apariencia_usuario(1, datos_apariencia)
             self.mostrar_mensaje("Cambios guardados exitosamente.", tipo="exito")
-        except Exception as e:
-            self.mostrar_mensaje(f"Error al guardar cambios: {e}", tipo="error")
+        except AttributeError as e:
+            self.mostrar_mensaje(f"No se encontró un widget crítico: {e}", tipo="advertencia")
+            return
 
     @permiso_auditoria_configuracion('editar')
     def probar_conexion_bd(self, retornar_resultado=False):
@@ -398,3 +401,109 @@ class ConfiguracionController:
             self.mostrar_mensaje("Permisos guardados exitosamente.", tipo="exito", destino="permisos_result_label")
         except Exception as e:
             self.mostrar_mensaje(f"Error al guardar permisos: {e}", tipo="error", destino="permisos_result_label")
+
+    def cargar_usuarios_configuracion(self):
+        """
+        Carga los usuarios reales desde la base de datos y los muestra en la tabla de la pestaña Usuarios.
+        Muestra feedback visual si no hay usuarios o si ocurre un error.
+        """
+        try:
+            usuarios = self.usuarios_model.obtener_usuarios()
+            tabla = getattr(self.view, 'tabla_usuarios', None)
+            if not tabla:
+                self.mostrar_mensaje("No se encontró la tabla de usuarios en la vista.", tipo="error")
+                return
+            tabla.setRowCount(0)
+            if not usuarios:
+                self.mostrar_mensaje("No hay usuarios registrados.", tipo="advertencia")
+                return
+            for row, usuario in enumerate(usuarios):
+                tabla.insertRow(row)
+                # usuario: (id, nombre, apellido, email, usuario, password_hash, rol, estado, ...)
+                # Ajustar columnas según headers visuales: Usuario, Nombre, Email, Rol, Estado, Acciones
+                tabla.setItem(row, 0, QTableWidgetItem(str(usuario[4])))  # Usuario
+                tabla.setItem(row, 1, QTableWidgetItem(f"{usuario[1]} {usuario[2]}"))  # Nombre completo
+                tabla.setItem(row, 2, QTableWidgetItem(str(usuario[3])))  # Email
+                tabla.setItem(row, 3, QTableWidgetItem(str(usuario[6])))  # Rol
+                tabla.setItem(row, 4, QTableWidgetItem(str(usuario[7])))  # Estado
+                # Acciones: solo placeholder por ahora
+                btns_widget = QWidget()
+                btns_layout = QHBoxLayout(btns_widget)
+                btns_layout.setContentsMargins(0, 0, 0, 0)
+                btns_layout.setSpacing(4)
+                btn_editar = QPushButton("Editar")
+                btn_editar.setToolTip("Editar usuario")
+                btn_editar.setFixedHeight(28)
+                btns_layout.addWidget(btn_editar)
+                btn_eliminar = QPushButton("Eliminar")
+                btn_eliminar.setToolTip("Eliminar usuario")
+                btn_eliminar.setFixedHeight(28)
+                btns_layout.addWidget(btn_eliminar)
+                btns_widget.setLayout(btns_layout)
+                tabla.setCellWidget(row, 5, btns_widget)
+            tabla.resizeColumnsToContents()
+            self.mostrar_mensaje(f"{len(usuarios)} usuario(s) cargados.", tipo="exito")
+        except Exception as e:
+            self.mostrar_mensaje(f"Error al cargar usuarios: {e}", tipo="error")
+
+    def cargar_permisos_por_usuario(self):
+        """
+        Carga los usuarios y módulos en la pestaña de permisos por usuario, mostrando los permisos actuales con checkboxes.
+        Solo el admin puede modificar.
+        """
+        try:
+            usuarios = self.usuarios_model.obtener_usuarios()
+            modulos = self.usuarios_model.obtener_todos_los_modulos()
+            combo = getattr(self.view, 'combo_usuario_permisos', None)
+            tabla = getattr(self.view, 'tabla_permisos_modulos', None)
+            if not combo or not tabla:
+                self.mostrar_mensaje("No se encontró el combo o tabla de permisos en la vista.", tipo="error")
+                return
+            combo.clear()
+            for u in usuarios:
+                combo.addItem(f"{u[4]} ({u[1]} {u[2]})", u[0])  # usuario (nombre completo)
+            def cargar_permisos_usuario(idx):
+                if idx < 0 or idx >= len(usuarios):
+                    return
+                id_usuario = combo.itemData(idx)
+                tabla.setRowCount(0)
+                for row, modulo in enumerate(modulos):
+                    tabla.insertRow(row)
+                    tabla.setItem(row, 0, QTableWidgetItem(modulo))
+                    permisos = self.usuarios_model.obtener_permisos_por_usuario(id_usuario, modulo)
+                    for col, accion in enumerate(['ver', 'modificar', 'aprobar'], start=1):
+                        chk = QCheckBox()
+                        chk.setChecked(permisos.get(accion, False))
+                        tabla.setCellWidget(row, col, chk)
+            combo.currentIndexChanged.connect(cargar_permisos_usuario)
+            if combo.count() > 0:
+                cargar_permisos_usuario(combo.currentIndex())
+        except Exception as e:
+            self.mostrar_mensaje(f"Error al cargar permisos por usuario: {e}", tipo="error")
+
+    def guardar_permisos_por_usuario(self):
+        """
+        Guarda los permisos modificados en la tabla permisos_modulos para el usuario seleccionado.
+        """
+        try:
+            combo = getattr(self.view, 'combo_usuario_permisos', None)
+            tabla = getattr(self.view, 'tabla_permisos_modulos', None)
+            if not combo or not tabla:
+                self.mostrar_mensaje("No se encontró el combo o tabla de permisos en la vista.", tipo="error")
+                return
+            id_usuario = combo.currentData()
+            if not id_usuario:
+                self.mostrar_mensaje("Seleccione un usuario.", tipo="advertencia")
+                return
+            permisos_dict = {}
+            for row in range(tabla.rowCount()):
+                modulo = tabla.item(row, 0).text()
+                permisos_dict[modulo] = {
+                    'ver': tabla.cellWidget(row, 1).isChecked(),
+                    'modificar': tabla.cellWidget(row, 2).isChecked(),
+                    'aprobar': tabla.cellWidget(row, 3).isChecked()
+                }
+            self.usuarios_model.actualizar_permisos_modulos_usuario(id_usuario, permisos_dict, self.usuario_actual['id'] if self.usuario_actual else 1)
+            self.mostrar_mensaje("Permisos actualizados correctamente.", tipo="exito")
+        except Exception as e:
+            self.mostrar_mensaje(f"Error al guardar permisos: {e}", tipo="error")

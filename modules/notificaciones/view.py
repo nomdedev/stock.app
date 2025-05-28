@@ -72,10 +72,8 @@ class NotificacionesView(QWidget):
         h_header = self.tabla_notificaciones.horizontalHeader() if hasattr(self.tabla_notificaciones, 'horizontalHeader') else None
         if h_header is not None:
             try:
-                # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
-                pass
-            except Exception as e:
-                # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
+                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            except Exception:
                 pass
         else:
             # EXCEPCIÓN VISUAL: No se puede aplicar refuerzo visual porque el header es None

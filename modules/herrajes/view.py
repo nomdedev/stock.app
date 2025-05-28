@@ -25,21 +25,18 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.main_layout.setContentsMargins(24, 20, 24, 20)
         self.main_layout.setSpacing(16)
 
-        # --- HEADER VISUAL MODERNO ---
+        # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 0, 0)
-        header_layout.setSpacing(12)
-        icono_label = QLabel()
-        # icono_label.setPixmap(QIcon("img/herrajes.svg").pixmap(36, 36))
-        # icono_label.setFixedSize(40, 40)
-        # icono_label.setToolTip("Icono de Herrajes")
-        # icono_label.setAccessibleName("Icono de Herrajes")
-        titulo_label = QLabel("Herrajes")
-        # QSS global gestiona el estilo del título
-        # titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")
-        titulo_label.setAccessibleName("Título de módulo Herrajes")
-        header_layout.addWidget(icono_label)
-        header_layout.addWidget(titulo_label)
+        header_layout.setSpacing(24)
+        self.label_titulo = QLabel("Gestión de Herrajes")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        # Botón principal (Agregar herraje)
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
+        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setToolTip("Agregar herraje")
+        header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
 
@@ -123,9 +120,12 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.tabla_herrajes.setToolTip("Tabla principal de herrajes")
         self.tabla_herrajes.setAccessibleName("Tabla de herrajes")
         # El estilo de foco y fuente se define ahora en el QSS global/tema
-        h_header = self.tabla_herrajes.horizontalHeader()
+        h_header = self.tabla_herrajes.horizontalHeader() if hasattr(self.tabla_herrajes, 'horizontalHeader') else None
         if h_header is not None:
-            # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            try:
+                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            except Exception:
+                pass
             h_header.setSectionsMovable(True)
             h_header.setSectionsClickable(True)
 

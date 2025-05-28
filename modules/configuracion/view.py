@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QFileDialog, QTableWidget, QTableWidgetItem, QMessageBox, QLabel, QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QTabWidget
 from PyQt6.QtGui import QIcon
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSize
 import pandas as pd
 
 class ConfiguracionView(QMainWindow):
@@ -17,20 +17,18 @@ class ConfiguracionView(QMainWindow):
         self.setup_ui()
 
     def setup_ui(self):
-        # --- HEADER VISUAL MODERNO ---
+        # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 0, 0)
-        header_layout.setSpacing(12)
-        icono_label = QLabel()
-        icono_label.setPixmap(QIcon("img/configuracion.svg").pixmap(36, 36))
-        icono_label.setFixedSize(40, 40)
-        icono_label.setToolTip("Icono de Configuración")
-        icono_label.setAccessibleName("Icono de Configuración")
-        titulo_label = QLabel("Configuración del sistema")
-        titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")
-        titulo_label.setAccessibleName("Título de módulo Configuración")
-        header_layout.addWidget(icono_label)
-        header_layout.addWidget(titulo_label)
+        header_layout.setSpacing(24)
+        self.label_titulo = QLabel("Gestión de Configuración")
+        header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
+        # Botón principal (Agregar configuración)
+        self.boton_agregar = QPushButton()
+        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
+        self.boton_agregar.setIconSize(QSize(24, 24))
+        self.boton_agregar.setToolTip("Agregar configuración")
+        header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
 
@@ -78,6 +76,11 @@ class ConfiguracionView(QMainWindow):
         label_titulo = QLabel("Importar Inventario desde CSV/Excel")
         label_titulo.setStyleSheet("font-size: 18px; font-weight: bold; color: #2563eb;")
         layout_importar.addWidget(label_titulo)
+        # Mensaje de ayuda
+        self.label_ayuda_import = QLabel("Selecciona un archivo CSV o Excel con los datos de inventario. El sistema detectará y completará automáticamente las columnas requeridas. Puedes importar archivos incompletos: los campos faltantes se rellenarán por defecto.")
+        self.label_ayuda_import.setWordWrap(True)
+        self.label_ayuda_import.setStyleSheet("font-size: 13px; color: #64748b; background: #f1f5f9; border-radius: 8px; padding: 8px 12px;")
+        layout_importar.addWidget(self.label_ayuda_import)
         file_row = QHBoxLayout()
         self.csv_file_input = QLabel("Ningún archivo seleccionado")
         self.csv_file_input.setStyleSheet("background: #e3f6fd; border-radius: 8px; padding: 8px 16px; color: #2563eb;")
@@ -90,23 +93,33 @@ class ConfiguracionView(QMainWindow):
         file_row.addWidget(self.boton_seleccionar_csv)
         file_row.addStretch()
         layout_importar.addLayout(file_row)
+        # --- Preview visual ---
         self.preview_table = QTableWidget()
         self.preview_table.setMinimumHeight(160)
         self.preview_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.preview_table.setStyleSheet("background: #fff9f3; color: #2563eb; border-radius: 8px;")
         layout_importar.addWidget(self.preview_table)
+        # --- Área de advertencias/errores ---
+        self.advertencias_label = QLabel()
+        self.advertencias_label.setWordWrap(True)
+        self.advertencias_label.setStyleSheet("font-size: 13px; padding: 8px 0; color: #b45309; background: #fef9c3; border-radius: 8px;")
+        self.advertencias_label.setVisible(False)
+        layout_importar.addWidget(self.advertencias_label)
+        # --- Mensaje de feedback ---
         self.mensaje_label = QLabel()
         self.mensaje_label.setWordWrap(True)
         self.mensaje_label.setStyleSheet("font-size: 13px; padding: 8px 0;")
         layout_importar.addWidget(self.mensaje_label)
+        # --- Botón Importar Inventario ---
         self.boton_importar_csv = QPushButton()
         self.boton_importar_csv.setIcon(QIcon("img/finish-check.svg"))
+        self.boton_importar_csv.setText("Importar inventario")
         self.boton_importar_csv.setToolTip("Importar inventario a la base de datos")
-        self.boton_importar_csv.setText("")
-        self.boton_importar_csv.setFixedSize(48, 48)
+        self.boton_importar_csv.setFixedHeight(48)
+        self.boton_importar_csv.setMinimumWidth(220)
         self.boton_importar_csv.setEnabled(False)
-        self.boton_importar_csv.setStyleSheet("border-radius: 12px; background: #d1f7e7;")
-        layout_importar.addWidget(self.boton_importar_csv)
+        self.boton_importar_csv.setStyleSheet("border-radius: 12px; background: #d1f7e7; font-size: 16px; font-weight: bold; color: #15803d;")
+        layout_importar.addWidget(self.boton_importar_csv, alignment=Qt.AlignmentFlag.AlignCenter)
         layout_importar.addStretch()
         self.tab_importar.setLayout(layout_importar)
         self.tabs.addTab(self.tab_importar, "Importar Inventario")
@@ -136,7 +149,7 @@ class ConfiguracionView(QMainWindow):
         h_header = self.preview_table.horizontalHeader() if hasattr(self.preview_table, 'horizontalHeader') else None
         if h_header is not None:
             try:
-                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
             except Exception as e:
                 # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
                 pass
@@ -189,15 +202,21 @@ class ConfiguracionView(QMainWindow):
 
     def mostrar_advertencias(self, advertencias):
         if advertencias:
-            self.mostrar_mensaje("\n".join(advertencias), tipo="advertencia")
+            self.advertencias_label.setText("\n".join([f"⚠️ {a}" for a in advertencias]))
+            self.advertencias_label.setVisible(True)
+        else:
+            self.advertencias_label.clear()
+            self.advertencias_label.setVisible(False)
 
     def mostrar_errores(self, errores):
         if errores:
             self.mostrar_mensaje("\n".join(errores), tipo="error")
+            self.advertencias_label.setVisible(False)
 
     def mostrar_exito(self, mensajes):
         if mensajes:
             self.mostrar_mensaje("\n".join(mensajes), tipo="exito")
+            self.advertencias_label.setVisible(False)
 
     def mostrar_preview(self, dataframe):
         if dataframe is None or dataframe.empty:
@@ -205,6 +224,8 @@ class ConfiguracionView(QMainWindow):
             self.preview_table.setRowCount(0)
             self.preview_table.setColumnCount(0)
             self.preview_table.setHorizontalHeaderLabels([])
+            self.boton_importar_csv.setEnabled(False)
+            self.mostrar_mensaje("No se pudo cargar el archivo o está vacío.", tipo="error")
             return
         self.preview_table.setRowCount(min(10, len(dataframe)))
         self.preview_table.setColumnCount(len(dataframe.columns))
@@ -214,6 +235,8 @@ class ConfiguracionView(QMainWindow):
                 val = str(dataframe.iloc[i][col])
                 self.preview_table.setItem(i, j, QTableWidgetItem(val))
         self.preview_table.resizeColumnsToContents()
+        self.boton_importar_csv.setEnabled(True)
+        self.mostrar_mensaje(f"Archivo cargado correctamente. {len(dataframe)} filas detectadas.", tipo="exito")
 
     def confirmar_importacion(self, total_filas):
         msg = QMessageBox(self)
@@ -232,10 +255,10 @@ class ConfiguracionView(QMainWindow):
                     df = pd.read_csv(file, sep=';', encoding='utf-8')
                 else:
                     df = pd.read_excel(file)
-            except Exception:
+            except Exception as e:
                 df = None
+                self.mostrar_mensaje(f"Error al leer el archivo: {e}", tipo="error")
             self.mostrar_preview(df)
-            self.boton_importar_csv.setEnabled(df is not None and not df.empty)
         else:
             self.csv_file_input.setText("Ningún archivo seleccionado")
             self.mostrar_preview(None)
@@ -292,3 +315,9 @@ class ConfiguracionView(QMainWindow):
             idx = self.tabs.indexOf(self.tab_permisos)
             if idx != -1:
                 self.tabs.removeTab(idx)
+
+        # SUGERENCIAS DE MEJORA FUTURA:
+        # - Agregar validación visual de columnas requeridas/faltantes en el preview.
+        # - Mostrar resumen de filas válidas/erróneas antes de importar.
+        # - Permitir descargar plantilla de ejemplo.
+        # - Mostrar historial de importaciones recientes.

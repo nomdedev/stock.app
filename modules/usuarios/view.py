@@ -40,12 +40,8 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.boton_agregar.setIcon(QIcon("img/agregar-user.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar usuario")
-        self.boton_agregar.setText("")
-        self.boton_agregar.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.boton_agregar.setFixedSize(38, 38)
-        estilizar_boton_icono(self.boton_agregar)
+        header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
-        header_layout.addWidget(self.boton_agregar, alignment=Qt.AlignmentFlag.AlignVCenter)
         self.main_layout.addLayout(header_layout)
         self.main_layout.addSpacing(8)
 
@@ -188,6 +184,12 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 header.setSectionsClickable(True)
             if hasattr(header, 'sectionClicked'):
                 header.sectionClicked.connect(self.mostrar_menu_columnas_header)
+        # Refuerzo visual y robustez en header de tabla de usuarios
+        if header is not None:
+            try:
+                pass
+            except Exception:
+                pass
         # Señal para mostrar QR al seleccionar un ítem
         if hasattr(self.tabla_usuarios, 'itemSelectionChanged'):
             self.tabla_usuarios.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
