@@ -1,0 +1,28 @@
+/* theme_light.qss - Solo reglas para modo claro */
+QWidget {
+    background: #fff9f3;
+    color: #222;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+QLabel#label_feedback {
+    background: #f1f5f9;
+    color: #2563eb;
+    font-weight: bold;
+    font-size: 13px;
+    border-radius: 8px;
+    padding: 8px;
+}
+QPushButton {
+    background: #e3f6fd;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+QTableWidget QHeaderView::section {
+    background: #f8fafc;
+    color: #2563eb;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 400;
+}
+/* ...otros estilos claros... */

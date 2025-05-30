@@ -2862,3 +2862,64 @@
 2025-05-27 23:28:04,167 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-05-27 23:28:04,789 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
 2025-05-27 23:28:04,789 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-05-28 19:46:38,706 - ERROR - Error en registrar_evento: DB error
+2025-05-28 19:46:38,709 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-28 19:46:38,709 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-28 19:47:18,253 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-28 19:47:18,253 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-28 19:47:18,253 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-28 19:47:21,873 - ERROR - Error en login: division by zero
+2025-05-28 19:47:21,873 - ERROR - Error en login: division by zero
+2025-05-28 19:47:21,873 - ERROR - Error en login: division by zero
+2025-05-28 19:47:21,873 - ERROR - Error en login: division by zero
+2025-05-28 19:50:42,519 - ERROR - Error en registrar_evento: DB error
+2025-05-28 19:50:42,524 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-28 19:50:42,524 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-28 19:51:31,699 - ERROR - Error en registrar_evento: DB error
+2025-05-28 19:51:31,702 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-28 19:51:31,702 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-28 20:09:50,994 - ERROR - Error en registrar_evento: DB error
+2025-05-28 20:09:50,997 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-28 20:09:50,997 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-28 21:23:14,149 - ERROR - Error en registrar_evento: DB error
+2025-05-28 21:23:14,153 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-28 21:23:14,153 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-28 21:23:47,772 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-28 21:23:47,772 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-28 21:23:47,772 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-28 21:23:47,952 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-28 21:23:47,952 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-28 21:23:47,952 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-28 21:23:47,952 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-28 21:23:48,359 - ERROR - Error en login: division by zero
+2025-05-28 21:23:48,359 - ERROR - Error en login: division by zero
+2025-05-28 21:23:48,359 - ERROR - Error en login: division by zero
+2025-05-28 21:23:48,359 - ERROR - Error en login: division by zero
+2025-05-28 21:23:48,359 - ERROR - Error en login: division by zero
+2025-05-28 21:23:48,607 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-28 21:23:48,607 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-28 21:23:48,607 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-28 21:23:48,607 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-28 21:23:48,607 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-28 21:23:48,607 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-29 08:24:17,952 - ERROR - Error en registrar_evento: DB error
+2025-05-29 08:24:17,955 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-29 08:24:17,955 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-29 08:24:53,500 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-29 08:24:53,500 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-29 08:24:53,500 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-29 08:24:53,700 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-29 08:24:53,700 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-29 08:24:53,700 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-29 08:24:53,700 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-29 08:24:54,237 - ERROR - Error en login: division by zero
+2025-05-29 08:24:54,237 - ERROR - Error en login: division by zero
+2025-05-29 08:24:54,237 - ERROR - Error en login: division by zero
+2025-05-29 08:24:54,237 - ERROR - Error en login: division by zero
+2025-05-29 08:24:54,237 - ERROR - Error en login: division by zero
+2025-05-29 08:24:54,495 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-29 08:24:54,495 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-29 08:24:54,495 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-29 08:24:54,495 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-29 08:24:54,495 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-29 08:24:54,495 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible

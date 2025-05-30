@@ -65,6 +65,11 @@ import pandas as pd
 from fpdf import FPDF
 from core.database import ObrasDatabaseConnection
 
+class OptimisticLockError(Exception):
+    """Excepción para conflictos de bloqueo optimista en obras."""
+    pass
+
+# OPTIMISTIC LOCK: prevenir sobrescritura concurrente usando rowversion
 class ObrasModel:
     """
     Modelo de Obras. Debe recibir una instancia de InventarioDatabaseConnection (o hija de BaseDatabaseConnection) como parámetro db_connection.
@@ -84,6 +89,32 @@ class ObrasModel:
         return resultado if resultado else []
 
     def agregar_obra(self, datos):
+        # BACKEND VALIDATION: chequear reglas de negocio y prevenir inyección.
+        nombre = datos[0].strip() if len(datos) > 0 else ''
+        cliente = datos[1].strip() if len(datos) > 1 else ''
+        # Validar nombre y cliente: no vacíos, longitud ≤100, solo letras/números/espacios
+        if not nombre or not cliente:
+            raise ValueError("Nombre y cliente no pueden estar vacíos")
+        if len(nombre) > 100:
+            raise ValueError("Nombre muy largo (máx 100 caracteres)")
+        if len(cliente) > 100:
+            raise ValueError("Cliente muy largo (máx 100 caracteres)")
+        if not all(c.isalnum() or c.isspace() for c in nombre):
+            raise ValueError("Nombre solo puede contener letras, números y espacios")
+        if not all(c.isalnum() or c.isspace() for c in cliente):
+            raise ValueError("Cliente solo puede contener letras, números y espacios")
+        # Validar fechas si están presentes
+        from datetime import datetime
+        try:
+            fecha_medicion = datos[9] if len(datos) > 9 else None
+            fecha_entrega = datos[11] if len(datos) > 11 else None
+            if fecha_medicion and fecha_entrega:
+                fecha_med = datetime.strptime(fecha_medicion, "%Y-%m-%d")
+                fecha_ent = datetime.strptime(fecha_entrega, "%Y-%m-%d")
+                if fecha_ent < fecha_med:
+                    raise ValueError("La fecha de entrega no puede ser anterior a la fecha de medición")
+        except Exception:
+            raise ValueError("Fechas inválidas")
         try:
             query = """
                 INSERT INTO obras (
@@ -254,3 +285,21 @@ class ObrasModel:
             return headers
         except Exception:
             return ["id", "nombre", "cliente", "estado", "fecha", "fecha_entrega"]
+
+    def listar_obras(self):
+        """Devuelve todas las obras incluyendo el campo rowversion para control de concurrencia."""
+        query = "SELECT id, nombre, cliente, estado, fecha, fecha_entrega, rowversion FROM obras"
+        resultado = self.db_connection.ejecutar_query(query)
+        return resultado if resultado else []
+
+    def editar_obra(self, id_obra, datos, rowversion_orig):
+        """Actualiza una obra usando bloqueo optimista con rowversion. Lanza OptimisticLockError si hay conflicto."""
+        # datos: dict con los campos a actualizar (ej: nombre, cliente, estado, fecha_entrega...)
+        set_clause = ', '.join([f"{k} = ?" for k in datos.keys()])
+        valores = list(datos.values())
+        query = f"UPDATE obras SET {set_clause} WHERE id = ? AND rowversion = ?"
+        valores.extend([id_obra, rowversion_orig])
+        rows_affected = self.db_connection.ejecutar_query_return_rowcount(query, valores)
+        if rows_affected == 0:
+            raise OptimisticLockError("La obra fue modificada por otro usuario (conflicto de rowversion).")
+        return rows_affected

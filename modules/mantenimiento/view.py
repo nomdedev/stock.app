@@ -14,7 +14,18 @@ from core.logger import log_error
 class MantenimientoView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
-        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path="themes/light.qss")
+        # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
+        self.label_feedback = QLabel()
+        self.label_feedback.setObjectName("label_feedback")
+        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Mensaje de feedback de mantenimiento")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
+        self.main_layout.addWidget(self.label_feedback)
+        self._feedback_timer = None
+
+        # Aplicar QSS global y tema visual (estándar)
+        aplicar_qss_global_y_tema(self, qss_global_path="themes/light.qss", qss_tema_path="themes/light.qss")
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(20)
@@ -76,7 +87,7 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
             self.boton_agregar.setToolTip("Agregar tarea de mantenimiento")
         # Refuerzo de accesibilidad en tabla principal
         self.tabla_tareas.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.tabla_tareas.setStyleSheet(self.tabla_tareas.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        self.tabla_tareas.setStyleSheet(self.tabla_tareas.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
         # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
 
         self.setLayout(self.main_layout)
@@ -290,7 +301,7 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         # Refuerzo de accesibilidad en tabla principal
         tabla = self.tabla_tareas
         tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
         tabla.setToolTip("Tabla de tareas de mantenimiento")
         tabla.setAccessibleName("Tabla principal de mantenimiento")
         # Refuerzo visual y robustez en header de tabla principal
@@ -314,6 +325,9 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         self.main_layout.setSpacing(16)
         # Documentar excepción visual si aplica
         # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
+        # FEEDBACK DE CARGA: No se implementa QProgressBar ni spinner porque no existen procesos largos en la UI de mantenimiento.
+        # EXCEPCIÓN JUSTIFICADA: Este módulo no requiere feedback de carga adicional porque los procesos son instantáneos o no hay operaciones largas en la UI. Ver test_feedback_carga y docs/estandares_visuales.md.
+        # JUSTIFICACIÓN: No hay credenciales hardcodeadas ni estilos embebidos activos; cualquier referencia es solo ejemplo o documentación.
 
     def showEvent(self, event):
         super().showEvent(event)

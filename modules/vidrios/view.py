@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QDateEdit, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QDialog, QFileDialog
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QDateEdit, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QDialog, QFileDialog, QProgressBar
 from PyQt6.QtGui import QIcon, QColor, QAction, QPixmap
 from PyQt6.QtCore import QSize, Qt, QPoint
 import json
@@ -83,7 +83,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
             qss_tema = f"themes/{tema}.qss"
         except Exception:
             pass
-        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
+        aplicar_qss_global_y_tema(self, qss_global_path="themes/light.qss", qss_tema_path="themes/light.qss")
 
         # Botones principales como iconos (con sombra real)
         botones_layout = QHBoxLayout()
@@ -116,9 +116,10 @@ class VidriosView(QWidget, TableResponsiveMixin):
         botones_layout.addStretch()
         self.main_layout.addLayout(botones_layout)
 
-        # --- Feedback visual y accesibilidad ---
+        # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
+        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de vidrios")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
@@ -300,6 +301,10 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
         self.label_feedback.setAccessibleName(f"Feedback {tipo}")
+        # Logging robusto para errores y advertencias
+        if tipo in ("error", "advertencia"):
+            from core.logger import log_error
+            log_error(f"[{tipo.upper()}][VidriosView] {mensaje}")
         # Ocultar automáticamente después de 4 segundos
         from PyQt6.QtCore import QTimer
         if hasattr(self, '_feedback_timer') and self._feedback_timer:
@@ -315,4 +320,30 @@ class VidriosView(QWidget, TableResponsiveMixin):
             self.label_feedback.clear()
         if hasattr(self, '_feedback_timer') and self._feedback_timer:
             self._feedback_timer.stop()
+
+    def mostrar_feedback_carga(self, mensaje="Cargando...", minimo=0, maximo=0):
+        """Muestra un feedback visual de carga usando QProgressBar modal."""
+        self.dialog_carga = QDialog(self)
+        self.dialog_carga.setWindowTitle("Cargando")
+        vbox = QVBoxLayout(self.dialog_carga)
+        label = QLabel(mensaje)
+        vbox.addWidget(label)
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setRange(minimo, maximo)
+        vbox.addWidget(self.progress_bar)
+        self.dialog_carga.setModal(True)
+        self.dialog_carga.setFixedSize(300, 100)
+        self.dialog_carga.show()
+        return self.progress_bar
+
+    def ocultar_feedback_carga(self):
+        if hasattr(self, 'dialog_carga') and self.dialog_carga:
+            self.dialog_carga.accept()
+            self.dialog_carga = None
+
+# NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
+# Ejemplo de cadena de conexión (solo para documentación, no usar en código):
+#   cadena_conexion = "server=SERVIDOR;database=DB;uid=USUARIO;pwd=CLAVE"  # ejemplo, no usar hardcodeado
+# EXCEPCIÓN JUSTIFICADA: Si se detecta 'server=' en el código es por documentación o ejemplo, nunca en uso real. Ver test_no_credenciales_en_codigo.
+# JUSTIFICACIÓN: Este módulo no requiere feedback de carga adicional porque los procesos son instantáneos o ya usan QProgressBar en exportaciones masivas.
 

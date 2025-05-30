@@ -45,15 +45,10 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.main_layout.addLayout(header_layout)
         self.main_layout.addSpacing(8)
 
-        self._cargar_stylesheet()
-        self._init_tabs()
-        self._init_tab_usuarios()
-        self._init_tab_permisos()
-        self.setLayout(self.main_layout)
-
-        # --- Feedback visual centralizado ---
+        # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
+        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de usuarios")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
@@ -80,6 +75,9 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 widget.setToolTip("Selector de usuario")
             if not widget.accessibleName():
                 widget.setAccessibleName("Selector de usuario para permisos")
+
+        # Aplicar QSS global y tema visual (estándar)
+        aplicar_qss_global_y_tema(self, qss_global_path="themes/light.qss", qss_tema_path="themes/light.qss")
 
     def mostrar_feedback(self, mensaje, tipo="info"):
         if not hasattr(self, "label_feedback") or self.label_feedback is None:
@@ -315,3 +313,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 btn_guardar.clicked.connect(guardar)
                 btn_pdf.clicked.connect(exportar_pdf)
                 dialog.exec()
+
+# NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
+# Si necesitas una cadena de conexión, obténla de un archivo seguro o variable de entorno, nunca hardcodeada.
+# En los flujos de error, asegúrate de usar log_error y/o registrar_evento para cumplir el estándar de feedback visual y logging.

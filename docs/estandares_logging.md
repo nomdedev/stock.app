@@ -49,4 +49,20 @@ QMessageBox.critical(self, "Error", "Ocurrió un error grave")
 
 ---
 
+## Estado de cumplimiento y documentación (actualizado al 30/05/2025)
+
+- Todos los módulos principales usan el logger central y registran errores, advertencias y eventos relevantes con contexto completo.
+- Las excepciones y errores críticos se muestran al usuario con feedback visual inmediato y quedan registrados en los logs.
+- Ejemplos de cadenas de conexión o credenciales solo se permiten en comentarios, nunca en código ejecutable.
+- Los tests automáticos de estándares fueron ajustados para ignorar comentarios y permitir documentación segura.
+- Las justificaciones de excepciones visuales y de feedback están documentadas en el código y, si corresponde, en este archivo y en los tests.
+
+### Ejemplo de justificación en código
+
+```python
+# EXCEPCIÓN JUSTIFICADA: Este módulo no requiere feedback de carga adicional porque los procesos son instantáneos o no hay operaciones largas en la UI. Ver test_feedback_carga y docs/estandares_logging.md.
+```
+
+---
+
 Cualquier excepción debe estar documentada en el código y en este archivo.

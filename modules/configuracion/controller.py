@@ -1,4 +1,5 @@
-from utils.theme_manager import aplicar_tema, guardar_modo_tema
+from utils.theme_manager import aplicar_tema, guardar_modo_tema, set_theme
+from core.config import DEFAULT_THEME
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
@@ -99,6 +100,9 @@ class ConfiguracionController:
             idx = self.view.tabs.indexOf(self.view.tab_permisos_usuarios)
             if idx != -1:
                 self.view.tabs.currentChanged.connect(lambda i: self.cargar_permisos_por_usuario() if i == idx else None)
+        # Conectar cambio de tema visual
+        if hasattr(self.view, "theme_changed"):
+            self.view.theme_changed.connect(self.cambiar_tema)
 
     def mostrar_mensaje(self, mensaje, tipo="info", destino="label"):
         # Siempre usar el método de la vista si existe
@@ -268,6 +272,23 @@ class ConfiguracionController:
             guardar_modo_tema(nuevo_modo)
         except Exception as e:
             self.mostrar_mensaje(f"Error al cambiar tema: {e}", tipo="error")
+
+    def cambiar_tema(self, tema):
+        """Cambia el tema visual en tiempo real y lo guarda en config."""
+        app = QApplication.instance()
+        set_theme(app, tema)
+        # Guardar DEFAULT_THEME en config.py o DB (simplificado: config.py)
+        try:
+            with open("core/config.py", "r", encoding="utf-8") as f:
+                lines = f.readlines()
+            with open("core/config.py", "w", encoding="utf-8") as f:
+                for line in lines:
+                    if line.strip().startswith("DEFAULT_THEME"):
+                        f.write(f'DEFAULT_THEME = "{tema}"\n')
+                    else:
+                        f.write(line)
+        except Exception as e:
+            self.mostrar_mensaje(f"No se pudo guardar el tema: {e}", tipo="advertencia")
 
     def seleccionar_archivo_csv(self):
         try:

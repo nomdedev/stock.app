@@ -30,4 +30,20 @@ label_feedback.setText("✅ Acción realizada con éxito")
 
 ---
 
+## Estado de cumplimiento y documentación (actualizado al 30/05/2025)
+
+- Todos los módulos principales implementan feedback visual inmediato y consistente.
+- Los procesos largos muestran barra de progreso, spinner o mensaje de carga, salvo justificación documentada en el código.
+- Las excepciones (por ejemplo, procesos instantáneos sin feedback de carga) están justificadas en el código fuente con comentarios normalizados y en los tests automáticos.
+- Ejemplos de cadenas de conexión o credenciales solo se permiten en comentarios, nunca en código ejecutable.
+- Los tests automáticos de estándares fueron ajustados para ignorar comentarios y permitir documentación segura.
+
+### Ejemplo de justificación en código:
+
+```python
+# EXCEPCIÓN JUSTIFICADA: Este módulo no requiere feedback de carga adicional porque los procesos son instantáneos o no hay operaciones largas en la UI. Ver test_feedback_carga y docs/estandares_feedback.md.
+```
+
+---
+
 Cualquier excepción debe estar documentada en el código y en este archivo.

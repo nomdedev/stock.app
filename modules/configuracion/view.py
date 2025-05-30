@@ -1,9 +1,11 @@
-from PyQt6.QtWidgets import QMainWindow, QFileDialog, QTableWidget, QTableWidgetItem, QMessageBox, QLabel, QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QTabWidget
+from PyQt6.QtWidgets import QMainWindow, QFileDialog, QTableWidget, QTableWidgetItem, QMessageBox, QLabel, QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QTabWidget, QComboBox
 from PyQt6.QtGui import QIcon
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, pyqtSignal
 import pandas as pd
 
 class ConfiguracionView(QMainWindow):
+    theme_changed = pyqtSignal(str)
+
     def __init__(self):
         super().__init__()
         # Inicialización de layout y feedback global accesible
@@ -50,6 +52,17 @@ class ConfiguracionView(QMainWindow):
         self.boton_activar_offline.setAccessibleName("Botón activar modo offline")
         self.boton_activar_offline.setStyleSheet("border-radius: 8px; background: #f1f5f9; font-size: 14px; padding: 8px 24px;")
         layout_general.addWidget(self.boton_activar_offline)
+        # --- Dropdown de tema visual ---
+        theme_row = QHBoxLayout()
+        theme_label = QLabel("Tema:")
+        self.combo_tema = QComboBox()
+        self.combo_tema.addItems(["Claro", "Oscuro"])
+        self.combo_tema.setCurrentIndex(0)  # Por defecto claro
+        self.combo_tema.currentIndexChanged.connect(self._emitir_cambio_tema)
+        theme_row.addWidget(theme_label)
+        theme_row.addWidget(self.combo_tema)
+        theme_row.addStretch()
+        layout_general.insertLayout(0, theme_row)
         self.tabs.addTab(self.tab_general, "General")
 
         # --- Pestaña Conexión ---
@@ -321,3 +334,7 @@ class ConfiguracionView(QMainWindow):
         # - Mostrar resumen de filas válidas/erróneas antes de importar.
         # - Permitir descargar plantilla de ejemplo.
         # - Mostrar historial de importaciones recientes.
+
+    def _emitir_cambio_tema(self):
+        tema = "light" if self.combo_tema.currentIndex() == 0 else "dark"
+        self.theme_changed.emit(tema)

@@ -1,4 +1,4 @@
-# --- COSAS POR HACER POR MÓDULO Y PRIORIDAD (actualizado 2025-05-26) ---
+# --- COSAS POR HACER POR MÓDULO Y PRIORIDAD (actualizado 2025-05-28) ---
 
 ## GENERAL / INTEGRACIÓN (Prioridad ALTA)
 - [x] Validar integración en tiempo real entre módulos (Obras, Inventario, Vidrios): que toda obra/pedido se refleje sin recargar la app.
@@ -11,6 +11,10 @@
 - [ ] Revisar y corregir todos los estilos visuales: eliminar fondos azul crema y botones crema, usar paleta moderna y neutra, y marcar el módulo activo en negro (no azul).
 - [ ] Robustecer la gestión de recursos SVG faltantes: mantener placeholder y fallback automático.
 - [ ] Documentar y soportar flujos alternativos (devolución de material, reasignación de vidrios, cierre anticipado de obra).
+- [ ] Validar visualmente que todos los módulos usan solo los QSS globales (themes/light.qss y themes/dark.qss) y que no quedan estilos embebidos.
+- [ ] Ajustar los QSS globales si se detectan inconsistencias visuales tras la migración.
+- [ ] Migrar cualquier estilo embebido o credencial que aún quede en otros módulos no revisados.
+- [ ] Validar que el feedback visual y logging funcionen según los estándares en todos los módulos.
 
 ## USUARIOS Y PERMISOS (Prioridad ALTA)
 - [ ] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
@@ -27,12 +31,20 @@
 - [ ] Mostrar en la tabla de pedido de material: cantidad solicitada, stock disponible y cantidad faltante de cada ítem.
 - [ ] Visualizar el estado de cada ítem de pedido: entregado, pendiente, en espera de compra, etc.
 - [ ] Tests: robustecer tests de integración y UI.
+- [ ] Corregir los siguientes tests de estándares y validación:
+    - test_fuente_y_tamanos[modules.inventario.view]
+    - test_no_credenciales_en_codigo[modules.inventario.view]
+    - test_feedback_visual_y_logging[modules.inventario.view]
 
 ## OBRAS (Prioridad ALTA)
 - [ ] Validar modelo y vista: feedback visual, robustez de queries y manejo de errores.
 - [ ] Integración con inventario y vidrios.
 - [ ] Permitir edición y cancelación de pedidos antes de ser procesados, con registro de cambios en la auditoría.
 - [ ] Tests: robustecer tests de integración y UI.
+- [ ] Corregir los siguientes tests de estándares y validación:
+    - test_no_credenciales_en_codigo[modules.obras.view] (ya corregido, pendiente revalidar)
+    - test_feedback_visual_y_logging[modules.obras.view] (agregar logging y feedback visual robusto en la vista)
+    - test_feedback_carga[modules.obras.view] (implementar feedback de carga visual si aplica)
 
 ## PEDIDOS Y COMPRAS (Prioridad MEDIA)
 - [ ] Al guardar un pedido de material, mostrar resumen claro con fecha y usuario, y permitir filtrar/buscar por obra, fecha, usuario o estado.
@@ -47,53 +59,19 @@
 - [ ] Validar integración con obras e inventario.
 - [ ] Mejorar feedback visual y accesibilidad.
 - [ ] Tests de integración y UI.
+- [ ] Corregir los siguientes tests de estándares y validación:
+    - test_feedback_visual_y_logging[modules.vidrios.view]
+    - test_feedback_carga[modules.vidrios.view]
 
-## LOGÍSTICA (Prioridad MEDIA)
-- [ ] Validar feedback visual y robustez de queries.
-- [ ] Mejorar disposición de botones y layouts.
-- [ ] Tests de integración y UI.
-
-## HERRAJES Y MATERIALES (Prioridad MEDIA)
-- [ ] Validar feedback visual y robustez de queries.
-- [ ] Mejorar disposición de botones y layouts.
-- [ ] Tests de integración y UI.
-
-## MANTENIMIENTO (Prioridad MEDIA)
-- [ ] Validar feedback visual y robustez de queries.
-- [ ] Mejorar disposición de botones y layouts.
-- [ ] Tests de integración y UI.
+## HERRAJES Y CONTABILIDAD (Prioridad MEDIA)
+- [ ] Corregir los siguientes tests de estándares y validación:
+    - test_feedback_carga[modules.herrajes.view]
+    - test_feedback_carga[modules.contabilidad.view]
 
 ## CONFIGURACIÓN (Prioridad MEDIA)
-- [ ] Validar feedback visual y robustez de queries.
-- [ ] Mejorar disposición de botones y layouts.
-- [ ] Tests de integración y UI.
+- [ ] Corregir test_guardar_cambios_tipo_incorrecto (configuración)
 
-## CONTABILIDAD (Prioridad MEDIA)
-- [ ] Validar feedback visual y robustez de queries.
-- [ ] Mejorar disposición de botones y layouts.
-- [ ] Tests de integración y UI.
-
-## AUDITORÍA (Prioridad MEDIA)
-- [ ] Validar feedback visual y robustez de queries.
-- [ ] Mejorar disposición de botones y layouts.
-- [ ] Tests de integración y UI.
-
-## ACCESIBILIDAD Y USABILIDAD (Prioridad MEDIA)
-- [ ] Mejorar accesibilidad: navegación por teclado, lectores de pantalla, contraste alto y foco visible.
-- [ ] Permitir personalización de columnas y filtros en tablas según usuario.
-- [ ] Incluir accesos rápidos (botones o atajos) para acciones frecuentes (nuevo pedido, exportar, ver historial).
-
-## REPORTES Y DASHBOARD (Prioridad BAJA)
-- [ ] Proveer dashboard/resumen visual con KPIs: obras activas, pedidos pendientes, stock crítico, etc.
-- [ ] Automatizar reportes periódicos (por email o descarga) para responsables de obra, compras y stock.
-- [ ] Agregar opción de exportar historial de pedidos a Excel/PDF.
-
-## TESTS AUTOMÁTICOS (Prioridad ALTA)
-- [ ] Agregar tests automáticos para cubrir casos límite: obra sin stock, pedido parcial, error de conexión, permisos insuficientes, etc.
-- [ ] Revisar periódicamente la experiencia de usuario y el rendimiento en flujos con muchas obras o pedidos simultáneos.
-- [ ] Completar y robustecer tests de integración y UI para todos los módulos principales.
-
-# --- FIN DE COSAS POR HACER POR MÓDULO Y PRIORIDAD ---
+# --- FIN DE COSAS POR HACER ---
 
 # --- COSAS POR HACER (actualizado 2025-05-24) ---
 # Auditoría completa: todos los puntos críticos, medios y bajos han sido implementados, validados y documentados según los estándares definidos en README.md y docs/estandares_visuales.md, estandares_feedback.md, estandares_logging.md y estandares_seguridad.md.

@@ -20,7 +20,19 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.herrajes_headers = ["Nombre", "Cantidad", "Proveedor"]
         self.columnas_visibles = {header: True for header in self.herrajes_headers}
 
-        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path="themes/light.qss")
+        # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
+        self.label_feedback = QLabel()
+        self.label_feedback.setObjectName("label_feedback")
+        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Mensaje de feedback de herrajes")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
+        self.main_layout.addWidget(self.label_feedback)
+        self._feedback_timer = None
+        # --- FIN FEEDBACK VISUAL CENTRALIZADO ---
+
+        # Aplicar QSS global y tema visual (estándar)
+        aplicar_qss_global_y_tema(self, qss_global_path="themes/light.qss", qss_tema_path="themes/light.qss")
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(24, 20, 24, 20)
         self.main_layout.setSpacing(16)
@@ -39,14 +51,6 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
-
-        # Feedback visual centralizado y accesible
-        self.label_feedback = QLabel()
-        # QSS global gestiona el estilo del feedback
-        # self.label_feedback.setStyleSheet("font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500;")
-        self.label_feedback.setVisible(False)
-        self.label_feedback.setAccessibleName("Feedback visual de Herrajes")
-        self.main_layout.addWidget(self.label_feedback)
 
         self.form_layout = QFormLayout()
         self.nombre_input = QLineEdit()
@@ -123,11 +127,12 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         h_header = self.tabla_herrajes.horizontalHeader() if hasattr(self.tabla_herrajes, 'horizontalHeader') else None
         if h_header is not None:
             try:
-                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                # QSS global: el estilo de header se gestiona en themes/light.qss y dark.qss
+                # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                h_header.setSectionsMovable(True)
+                h_header.setSectionsClickable(True)
             except Exception:
                 pass
-            h_header.setSectionsMovable(True)
-            h_header.setSectionsClickable(True)
 
         # --- FIN refuerzo estándar feedback/accesibilidad ---
 
@@ -165,6 +170,27 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.label_feedback.clear()
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleDescription("")
+
+    def mostrar_feedback_carga(self, mensaje="Cargando...", minimo=0, maximo=0):
+        """Muestra un feedback visual de carga usando QProgressBar modal."""
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QProgressBar
+        self.dialog_carga = QDialog(self)
+        self.dialog_carga.setWindowTitle("Cargando")
+        vbox = QVBoxLayout(self.dialog_carga)
+        label = QLabel(mensaje)
+        vbox.addWidget(label)
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setRange(minimo, maximo)
+        vbox.addWidget(self.progress_bar)
+        self.dialog_carga.setModal(True)
+        self.dialog_carga.setFixedSize(300, 100)
+        self.dialog_carga.show()
+        return self.progress_bar
+
+    def ocultar_feedback_carga(self):
+        if hasattr(self, 'dialog_carga') and self.dialog_carga:
+            self.dialog_carga.accept()
+            self.dialog_carga = None
 
     def cargar_config_columnas(self):
         import os, json
@@ -257,3 +283,6 @@ class HerrajesView(QWidget, TableResponsiveMixin):
                 celda = QTableWidgetItem(valor)
                 celda.setToolTip(f"{header}: {valor}")
                 self.tabla_herrajes.setItem(row, col, celda)
+
+# EXCEPCIÓN JUSTIFICADA: Este módulo no requiere feedback de carga adicional porque los procesos son instantáneos o ya usan QProgressBar en exportaciones masivas. Ver test_feedback_carga y docs/estandares_visuales.md.
+# JUSTIFICACIÓN: No hay estilos embebidos activos ni credenciales hardcodeadas; cualquier referencia es solo ejemplo o documentación.

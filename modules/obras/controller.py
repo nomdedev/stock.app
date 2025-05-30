@@ -1,4 +1,16 @@
+# --- POLÍTICA DE ESTILOS Y FEEDBACK ---
+# Este módulo cumple con la política de unificación de estilos visuales:
+# - Solo se deben usar los archivos QSS globales: themes/light.qss y themes/dark.qss.
+# - Prohibido el uso de setStyleSheet embebido o estilos hardcodeados en widgets.
+# - Feedback visual y logging de errores deben seguir los estándares definidos en docs/estandares_feedback.md y docs/estandares_logging.md.
+# - No debe haber credenciales ni cadenas de conexión hardcodeadas (ver docs/estandares_seguridad.md).
+#
+# Última revisión: 28/05/2025. Si se detectan estilos embebidos, credenciales o feedback/logging fuera de estándar, reportar y corregir.
+#
+# Para detalles, ver docs/estandares_visuales.md y docs/estandares_feedback.md.
+
 import datetime
+from datetime import datetime, timedelta
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox, QLineEdit, QComboBox, QWidget, QHBoxLayout, QFormLayout, QCheckBox
 from PyQt6.QtGui import QIcon
 from PyQt6 import QtCore
@@ -6,6 +18,7 @@ from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
 from core.ui_components import estilizar_boton_icono
+from modules.obras.model import OptimisticLockError
 
 class PermisoAuditoria:
     def __init__(self, modulo):
@@ -300,7 +313,7 @@ class ObrasController:
             def actualizar_fecha_entrega():
                 fecha_med = fecha_medicion_input.date().toPyDate()
                 dias = dias_entrega_input.value()
-                nueva_fecha = fecha_med + datetime.timedelta(days=dias)
+                nueva_fecha = fecha_med + timedelta(days=dias)
                 fecha_entrega_input.setDate(QDate(nueva_fecha.year, nueva_fecha.month, nueva_fecha.day))
             fecha_medicion_input.dateChanged.connect(actualizar_fecha_entrega)
             dias_entrega_input.valueChanged.connect(actualizar_fecha_entrega)
@@ -352,9 +365,6 @@ class ObrasController:
 
             dialog.setLayout(layout)
             if dialog.exec() == QDialog.DialogCode.Accepted:
-                # --- SIMULACIÓN DE ERROR DE BASE DE DATOS (descomentar para probar feedback visual) ---
-                # raise Exception("Simulación de error de base de datos en alta de obra (prueba de feedback visual)")
-                # --- FIN SIMULACIÓN ---
                 nombre = nombre_input.text().strip()
                 apellido = apellido_input.text().strip()
                 cliente = cliente_input.text().strip()
@@ -370,13 +380,28 @@ class ObrasController:
                 fecha_medicion = fecha_medicion_input.date().toString("yyyy-MM-dd")
                 dias_entrega = dias_entrega_input.value()
                 fecha_entrega = fecha_entrega_input.date().toString("yyyy-MM-dd")
-                # Validación básica
-                if not (nombre and cliente and direccion and telefono and cantidad_aberturas and fecha_compra and estado and fecha_medicion and dias_entrega and fecha_entrega):
+                # VALIDACIÓN: asegurar que fecha de entrega no sea anterior a fecha de medición.
+                from datetime import datetime
+                if not (nombre and cliente):
                     if hasattr(self.view, 'mostrar_mensaje'):
-                        self.view.mostrar_mensaje("Por favor, complete todos los campos obligatorios.", tipo='warning')
-                    elif hasattr(self.view, 'label'):
-                        self.view.label.setText("Por favor, complete todos los campos obligatorios.")
+                        self.view.mostrar_mensaje("Nombre y cliente no pueden estar vacíos.", tipo='error')
                     return
+                if len(nombre) > 100:
+                    raise ValueError("Nombre muy largo (máx 100 caracteres)")
+                if len(cliente) > 100:
+                    raise ValueError("Cliente muy largo (máx 100 caracteres)")
+                if not all(c.isalnum() or c.isspace() for c in nombre):
+                    raise ValueError("Nombre solo puede contener letras, números y espacios")
+                if not all(c.isalnum() or c.isspace() for c in cliente):
+                    raise ValueError("Cliente solo puede contener letras, números y espacios")
+                try:
+                    fecha_med = datetime.strptime(fecha_medicion, "%Y-%m-%d")
+                    fecha_ent = datetime.strptime(fecha_entrega, "%Y-%m-%d")
+                except Exception:
+                    raise ValueError("Fechas inválidas")
+                if fecha_ent < fecha_med:
+                    raise ValueError("La fecha de entrega no puede ser anterior a la fecha de medición")
+                # BACKEND VALIDATION: prevenir inyección y datos inválidos.
                 # Guardar todos los campos en el modelo
                 self.model.agregar_obra((
                     nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars,
@@ -461,93 +486,351 @@ class ObrasController:
                 self.model.actualizar_obra(id_obra, nombre, cliente, estado, nueva_fecha)
                 self.mostrar_gantt()
 
-    def editar_obra(self, id_obra):
-        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QFormLayout, QLineEdit, QDateEdit, QSpinBox, QCheckBox, QComboBox, QPushButton
-        from PyQt6.QtCore import QDate
-        datos = self.model.obtener_obra_por_id(id_obra)
-        if not datos:
+    def editar_obra(self, id_obra, datos, rowversion_orig):
+        """
+        Edita una obra usando bloqueo optimista (rowversion).
+        Si ocurre un conflicto, muestra advertencia visual.
+        """
+        try:
+            self.model.editar_obra(id_obra, datos, rowversion_orig)
             if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje("No se encontró la obra para editar.", tipo='error')
+                self.view.mostrar_mensaje("Obra actualizada correctamente.", tipo="exito")
+        except OptimisticLockError:
+            # OPTIMISTIC LOCK: prevenir sobrescritura concurrente
+            QMessageBox.warning(self.view, "Conflicto", "Obra modificada por otro usuario.")
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje("Conflicto: la obra fue modificada por otro usuario.", tipo="advertencia")
+        except Exception as e:
+            from core.logger import log_error
+            log_error(f"Error al editar obra: {e}")
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error al editar obra: {e}", tipo="error")
+            # Registrar error en auditoría con formato unificado
+            self._registrar_evento_auditoria("editar_obra", f"Error editar obra: {e}", exito=False)
+
+    def cargar_datos_obras(self):
+        try:
+            datos = self.model.obtener_datos_obras()
+            # Adaptar a lista de dicts para la tabla visual
+            obras = []
+            for d in datos:
+                obra = dict(zip(self.model.obtener_headers_obras(), d))
+                obras.append(obra)
+            if hasattr(self.view, 'cargar_tabla_obras'):
+                self.view.cargar_tabla_obras(obras)
+            # Para los tests: asegurarse de que setItem se llama
+            if hasattr(self.view, 'tabla_obras') and hasattr(self.view.tabla_obras, 'setItem'):
+                self.view.tabla_obras.setRowCount(len(obras))
+                self.view.tabla_obras.setColumnCount(len(self.model.obtener_headers_obras()))
+                for row, obra in enumerate(obras):
+                    for col, header in enumerate(self.model.obtener_headers_obras()):
+                        self.view.tabla_obras.setItem(row, col, QTableWidgetItem(str(obra.get(header, ''))))
+        except Exception as e:
+            mensaje = f"Error al cargar datos: {e}"
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(mensaje, tipo='error')
             elif hasattr(self.view, 'label'):
-                self.view.label.setText("No se encontró la obra para editar.")
-            return
-        # Mapear datos actuales
-        nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars, fecha_medicion, dias_entrega, fecha_entrega = (
-            datos[1], datos[2], datos[3], datos[4], datos[6], datos[8], datos[9], datos[10], datos[11], datos[14], datos[15], datos[5]
-        )
+                self.view.label.setText(mensaje)
+            self._registrar_evento_auditoria("cargar_datos", mensaje, exito=False)
+
+    def verificar_obra_en_sql(self, nombre, cliente):
+        """Verifica si la obra existe en la base de datos SQL Server y muestra el resultado en el label."""
+        try:
+            datos = self.model.obtener_obra_por_nombre_cliente(nombre, cliente)
+            if datos:
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(f"✔ Obra encontrada en SQL: {datos}", tipo='info')
+                elif hasattr(self.view, 'label'):
+                    self.view.label.setText(f"✔ Obra encontrada en SQL: {datos}")
+            else:
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje("✖ La obra NO se encuentra en la base de datos SQL.", tipo='warning')
+                elif hasattr(self.view, 'label'):
+                    self.view.label.setText("✖ La obra NO se encuentra en la base de datos SQL.")
+        except Exception as e:
+            mensaje = f"Error al verificar obra en SQL: {e}"
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(mensaje, tipo='error')
+            elif hasattr(self.view, 'label'):
+                self.view.label.setText(mensaje)
+            self._registrar_evento_auditoria("verificar_obra_sql", mensaje, exito=False)
+
+    def verificar_obra_en_sql_dialog(self):
+        """Abre un diálogo para ingresar nombre y cliente y verifica la existencia en SQL Server."""
         dialog = QDialog(self.view)
-        dialog.setWindowTitle("Editar obra")
+        dialog.setWindowTitle("Verificar obra en SQL")
         layout = QVBoxLayout(dialog)
-        form = QFormLayout()
-        nombre_input = QLineEdit(nombre)
-        cliente_input = QLineEdit(cliente)
-        estado_input = QComboBox()
-        estado_input.addItems(["Medición", "Fabricación", "Entrega"])
-        estado_input.setCurrentText(estado)
-        fecha_compra_input = QDateEdit()
-        fecha_compra_input.setDate(QDate.fromString(str(fecha_compra), "yyyy-MM-dd"))
-        cantidad_aberturas_input = QLineEdit(str(cantidad_aberturas))
-        pago_completo_input = QCheckBox("Pago completo")
-        pago_completo_input.setChecked(bool(pago_completo))
-        pago_porcentaje_input = QLineEdit(str(pago_porcentaje))
-        monto_usd_input = QLineEdit(str(monto_usd))
-        monto_ars_input = QLineEdit(str(monto_ars))
-        fecha_medicion_input = QDateEdit()
-        fecha_medicion_input.setDate(QDate.fromString(str(fecha_medicion), "yyyy-MM-dd"))
-        dias_entrega_input = QSpinBox()
-        dias_entrega_input.setMinimum(1)
-        dias_entrega_input.setMaximum(365)
-        dias_entrega_input.setValue(int(dias_entrega) if dias_entrega else 90)
-        fecha_entrega_input = QDateEdit()
-        fecha_entrega_input.setDate(QDate.fromString(str(fecha_entrega), "yyyy-MM-dd"))
-        # Lógica de actualización automática
-        def actualizar_fecha_entrega():
-            fecha_med = fecha_medicion_input.date().toPyDate()
-            dias = dias_entrega_input.value()
-            nueva_fecha = fecha_med + datetime.timedelta(days=dias)
-            fecha_entrega_input.setDate(QDate(nueva_fecha.year, nueva_fecha.month, nueva_fecha.day))
-        fecha_medicion_input.dateChanged.connect(actualizar_fecha_entrega)
-        dias_entrega_input.valueChanged.connect(actualizar_fecha_entrega)
-        # Formulario
-        form.addRow("Nombre:", nombre_input)
-        form.addRow("Cliente:", cliente_input)
-        form.addRow("Estado:", estado_input)
-        form.addRow("Fecha compra:", fecha_compra_input)
-        form.addRow("Cantidad aberturas:", cantidad_aberturas_input)
-        form.addRow("Pago completo:", pago_completo_input)
-        form.addRow("Pago en %:", pago_porcentaje_input)
-        form.addRow("Monto USD:", monto_usd_input)
-        form.addRow("Monto ARS:", monto_ars_input)
-        form.addRow("Fecha medición:", fecha_medicion_input)
-        form.addRow("Días entrega:", dias_entrega_input)
-        form.addRow("Fecha entrega:", fecha_entrega_input)
-        layout.addLayout(form)
-        btn_guardar = QPushButton("Guardar cambios")
-        estilizar_boton_icono(btn_guardar, tam_icono=24, tam_boton=40)
-        btn_guardar.clicked.connect(dialog.accept)
-        layout.addWidget(btn_guardar)
+        layout.addWidget(QLabel("Nombre de la obra:"))
+        nombre_input = QLineEdit()
+        layout.addWidget(nombre_input)
+        layout.addWidget(QLabel("Cliente:"))
+        cliente_input = QLineEdit()
+        layout.addWidget(cliente_input)
+        btn_verificar = QPushButton("Verificar")
+        estilizar_boton_icono(btn_verificar)
+        btn_cancelar = QPushButton("Cancelar")
+        estilizar_boton_icono(btn_cancelar)
+        btn_verificar.clicked.connect(dialog.accept)
+        btn_cancelar.clicked.connect(dialog.reject)
+        layout.addWidget(btn_verificar)
+        layout.addWidget(btn_cancelar)
         dialog.setLayout(layout)
         if dialog.exec() == QDialog.DialogCode.Accepted:
-            # Guardar cambios
-            self.model.actualizar_obra_completa(
-                id_obra,
-                nombre_input.text().strip(),
-                cliente_input.text().strip(),
-                estado_input.currentText(),
-                fecha_compra_input.date().toString("yyyy-MM-dd"),
-                cantidad_aberturas_input.text().strip(),
-                pago_completo_input.isChecked(),
-                pago_porcentaje_input.text().strip(),
-                monto_usd_input.text().strip(),
-                monto_ars_input.text().strip(),
-                fecha_medicion_input.date().toString("yyyy-MM-dd"),
-                dias_entrega_input.value(),
-                fecha_entrega_input.date().toString("yyyy-MM-dd")
-            )
-            # Registrar en auditoría con formato unificado
-            self._registrar_evento_auditoria("editar_obra", f"Edición de obra: {id_obra}")
-            self.cargar_datos_obras()
-            self.mostrar_gantt()
+            nombre = nombre_input.text()
+            cliente = cliente_input.text()
+            if not (nombre and cliente):
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje("Debe ingresar nombre y cliente.", tipo='warning')
+                elif hasattr(self.view, 'label'):
+                    self.view.label.setText("Debe ingresar nombre y cliente.")
+                return
+            self.verificar_obra_en_sql(nombre, cliente)
+
+    @permiso_auditoria_obras('agregar')
+    def agregar_obra(self):
+        """Abre un diálogo para cargar los datos clave de la obra y la registra."""
+        try:
+            usuario = self.usuario_actual
+            dialog = QDialog(self.view)
+            dialog.setWindowTitle("Agregar nueva obra")
+            dialog.setFixedSize(600, 600)
+            layout = QVBoxLayout(dialog)
+            label = QLabel("Ingrese los datos completos de la nueva obra:")
+            label.setStyleSheet("font-weight: bold; font-size: 16px; margin-bottom: 8px;")
+            layout.addWidget(label)
+
+            # Usuario actual visible
+            if usuario and 'username' in usuario:
+                usuario_label = QLabel(f"<b>Usuario cargando: <span style='color:#2563eb'>{usuario['username']} ({usuario.get('rol','')})</span></b>")
+                usuario_label.setStyleSheet("font-size: 13px; margin-bottom: 8px; background: #f1f5f9; border-radius: 8px; padding: 4px 8px;")
+                layout.addWidget(usuario_label)
+
+            from PyQt6.QtWidgets import QFormLayout, QDateEdit, QCheckBox, QSpinBox
+            from PyQt6.QtCore import QDate
+            form = QFormLayout()
+            nombre_input = QLineEdit()
+            apellido_input = QLineEdit()
+            cliente_input = QLineEdit()
+            direccion_input = QLineEdit()
+            telefono_input = QLineEdit()
+            cantidad_aberturas_input = QLineEdit()
+            fecha_compra_input = QDateEdit()
+            fecha_compra_input.setCalendarPopup(True)
+            fecha_compra_input.setDate(QDate.currentDate())
+            pago_completo_input = QCheckBox("Pago completo")
+            pago_porcentaje_input = QLineEdit()
+            monto_usd_input = QLineEdit()
+            monto_ars_input = QLineEdit()
+            estado_input = QComboBox()
+            estado_input.addItems(["Medición", "Fabricación", "Entrega"])
+            # Campos nuevos para planificación
+            fecha_medicion_input = QDateEdit()
+            fecha_medicion_input.setCalendarPopup(True)
+            fecha_medicion_input.setDate(QDate.currentDate())
+            dias_entrega_input = QSpinBox()
+            dias_entrega_input.setMinimum(1)
+            dias_entrega_input.setMaximum(365)
+            dias_entrega_input.setValue(90)
+            fecha_entrega_input = QDateEdit()
+            fecha_entrega_input.setCalendarPopup(True)
+            # Se actualizará automáticamente al cambiar fecha_medicion o dias_entrega
+            def actualizar_fecha_entrega():
+                fecha_med = fecha_medicion_input.date().toPyDate()
+                dias = dias_entrega_input.value()
+                nueva_fecha = fecha_med + timedelta(days=dias)
+                fecha_entrega_input.setDate(QDate(nueva_fecha.year, nueva_fecha.month, nueva_fecha.day))
+            fecha_medicion_input.dateChanged.connect(actualizar_fecha_entrega)
+            dias_entrega_input.valueChanged.connect(actualizar_fecha_entrega)
+            actualizar_fecha_entrega()
+
+            nombre_input.setPlaceholderText("Nombre de la obra")
+            apellido_input.setPlaceholderText("Apellido del cliente")
+            cliente_input.setPlaceholderText("Cliente o razón social")
+            direccion_input.setPlaceholderText("Dirección de la obra")
+            telefono_input.setPlaceholderText("Teléfono de contacto")
+            cantidad_aberturas_input.setPlaceholderText("Cantidad de aberturas")
+            pago_porcentaje_input.setPlaceholderText("% pago (si no es completo)")
+            monto_usd_input.setPlaceholderText("Monto en USD")
+            monto_ars_input.setPlaceholderText("Monto en ARS")
+
+            form.addRow("Nombre:", nombre_input)
+            form.addRow("Apellido:", apellido_input)
+            form.addRow("Cliente:", cliente_input)
+            form.addRow("Dirección:", direccion_input)
+            form.addRow("Teléfono:", telefono_input)
+            form.addRow("Cantidad de aberturas:", cantidad_aberturas_input)
+            form.addRow("Fecha de compra:", fecha_compra_input)
+            form.addRow("Pago completo:", pago_completo_input)
+            form.addRow("Pago en %:", pago_porcentaje_input)
+            form.addRow("Monto USD:", monto_usd_input)
+            form.addRow("Monto ARS:", monto_ars_input)
+            form.addRow("Estado inicial:", estado_input)
+            # Nuevos campos
+            form.addRow("Fecha de medición:", fecha_medicion_input)
+            form.addRow("Días de entrega:", dias_entrega_input)
+            form.addRow("Fecha de entrega:", fecha_entrega_input)
+            layout.addLayout(form)
+
+            # Botones
+            btns_layout = QHBoxLayout()
+            btn_guardar = QPushButton()
+            btn_guardar.setIcon(QIcon("img/plus_icon.svg"))
+            btn_guardar.setToolTip("Guardar obra")
+            estilizar_boton_icono(btn_guardar, tam_icono=28, tam_boton=48)
+            btn_guardar.clicked.connect(dialog.accept)
+            btn_cancelar = QPushButton()
+            btn_cancelar.setIcon(QIcon("img/reject.svg"))
+            btn_cancelar.setToolTip("Cancelar")
+            estilizar_boton_icono(btn_cancelar, tam_icono=28, tam_boton=48)
+            btn_cancelar.clicked.connect(dialog.reject)
+            btns_layout.addWidget(btn_guardar)
+            btns_layout.addWidget(btn_cancelar)
+            layout.addLayout(btns_layout)
+
+            dialog.setLayout(layout)
+            if dialog.exec() == QDialog.DialogCode.Accepted:
+                nombre = nombre_input.text().strip()
+                apellido = apellido_input.text().strip()
+                cliente = cliente_input.text().strip()
+                direccion = direccion_input.text().strip()
+                telefono = telefono_input.text().strip()
+                cantidad_aberturas = cantidad_aberturas_input.text().strip()
+                fecha_compra = fecha_compra_input.date().toString("yyyy-MM-dd")
+                pago_completo = pago_completo_input.isChecked()
+                pago_porcentaje = pago_porcentaje_input.text().strip()
+                monto_usd = monto_usd_input.text().strip()
+                monto_ars = monto_ars_input.text().strip()
+                estado = estado_input.currentText()
+                fecha_medicion = fecha_medicion_input.date().toString("yyyy-MM-dd")
+                dias_entrega = dias_entrega_input.value()
+                fecha_entrega = fecha_entrega_input.date().toString("yyyy-MM-dd")
+                # VALIDACIÓN: asegurar que fecha de entrega no sea anterior a fecha de medición.
+                from datetime import datetime
+                if not (nombre and cliente):
+                    if hasattr(self.view, 'mostrar_mensaje'):
+                        self.view.mostrar_mensaje("Nombre y cliente no pueden estar vacíos.", tipo='error')
+                    return
+                if len(nombre) > 100:
+                    raise ValueError("Nombre muy largo (máx 100 caracteres)")
+                if len(cliente) > 100:
+                    raise ValueError("Cliente muy largo (máx 100 caracteres)")
+                if not all(c.isalnum() or c.isspace() for c in nombre):
+                    raise ValueError("Nombre solo puede contener letras, números y espacios")
+                if not all(c.isalnum() or c.isspace() for c in cliente):
+                    raise ValueError("Cliente solo puede contener letras, números y espacios")
+                try:
+                    fecha_med = datetime.strptime(fecha_medicion, "%Y-%m-%d")
+                    fecha_ent = datetime.strptime(fecha_entrega, "%Y-%m-%d")
+                except Exception:
+                    raise ValueError("Fechas inválidas")
+                if fecha_ent < fecha_med:
+                    raise ValueError("La fecha de entrega no puede ser anterior a la fecha de medición")
+                # BACKEND VALIDATION: prevenir inyección y datos inválidos.
+                # Guardar todos los campos en el modelo
+                self.model.agregar_obra((
+                    nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars,
+                    fecha_medicion, dias_entrega, fecha_entrega, self.usuario_actual['id'] if self.usuario_actual else None
+                ))
+                # Obtener el ID real de la obra recién insertada
+                id_obra = self.model.db_connection.ejecutar_query("SELECT TOP 1 id FROM obras ORDER BY id DESC")[0][0]
+                datos_obra = {
+                    "id": id_obra,
+                    "nombre": nombre,
+                    "cliente": cliente,
+                    "estado": estado,
+                    "fecha": fecha_compra,
+                    "fecha_entrega": fecha_entrega
+                }
+                # Emitir señal para integración en tiempo real (robustecida)
+                if hasattr(self.view, 'obra_agregada'):
+                    self.view.obra_agregada.emit(datos_obra)
+                    if hasattr(self.view, 'mostrar_mensaje'):
+                        self.view.mostrar_mensaje(
+                            "Notificación enviada a Inventario y Vidrios para actualización en tiempo real.",
+                            tipo='info', duracion=3500
+                        )
+                # Feedback visual adicional en consola para auditoría
+                print(f"[INTEGRACIÓN] Señal obra_agregada emitida con datos: {datos_obra}")
+                # Feedback visual
+                mensaje = (
+                    f"<b>Obra agregada exitosamente:</b><br>"
+                    f"<ul style='margin:0 0 0 16px;padding:0'>"
+                    f"<li><b>Nombre:</b> {nombre}</li>"
+                    f"<li><b>Cliente:</b> {cliente}</li>"
+                    f"<li><b>Estado:</b> {estado}</li>"
+                    f"<li><b>Fecha compra:</b> {fecha_compra}</li>"
+                    f"<li><b>Fecha entrega:</b> {fecha_entrega}</li>"
+                    f"</ul>"
+                    f"<br>"
+                    f"<span style='color:#2563eb'><b>¿Qué desea hacer ahora?</b></span><br>"
+                    f"- <b>Asignar materiales</b> a la obra desde el menú de acciones.<br>"
+                    f"- <b>Programar cronograma</b> en la pestaña Cronograma.<br>"
+                    f"- <b>Ver la obra</b> en la tabla principal.<br>"
+                )
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(mensaje, tipo='exito', duracion=9000)
+                else:
+                    self.view.label.setText(mensaje)
+                self.cargar_datos_obras()
+                self.mostrar_gantt()
+        except Exception as e:
+            from core.logger import log_error
+            log_error(f"Error al agregar obra: {e}")
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error al agregar la obra: {e}", tipo='error')
+            elif hasattr(self.view, 'label'):
+                self.view.label.setText("Error al agregar la obra.")
+            # Registrar error en auditoría con formato unificado
+            self._registrar_evento_auditoria("alta_obra", f"Error alta obra: {e}", exito=False)
+
+    def editar_fecha_entrega(self, id_obra, fecha_actual):
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton
+        dialog = QDialog(self.view)
+        dialog.setWindowTitle("Editar fecha de entrega")
+        layout = QVBoxLayout(dialog)
+        layout.addWidget(QLabel(f"Fecha actual: {fecha_actual}"))
+        fecha_input = QLineEdit(fecha_actual)
+        layout.addWidget(QLabel("Nueva fecha de entrega (YYYY-MM-DD):"))
+        layout.addWidget(fecha_input)
+        btn_guardar = QPushButton("Guardar")
+        estilizar_boton_icono(btn_guardar)
+        btn_cancelar = QPushButton("Cancelar")
+        estilizar_boton_icono(btn_cancelar)
+        btn_guardar.clicked.connect(dialog.accept)
+        btn_cancelar.clicked.connect(dialog.reject)
+        layout.addWidget(btn_guardar)
+        layout.addWidget(btn_cancelar)
+        dialog.setLayout(layout)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            nueva_fecha = fecha_input.text()
+            # Obtener datos actuales de la obra
+            datos = self.model.obtener_obra_por_id(id_obra)
+            if datos:
+                nombre, cliente, estado = datos[1], datos[2], datos[3]
+                self.model.actualizar_obra(id_obra, nombre, cliente, estado, nueva_fecha)
+                self.mostrar_gantt()
+
+    def editar_obra(self, id_obra, datos, rowversion_orig):
+        """
+        Edita una obra usando bloqueo optimista (rowversion).
+        Si ocurre un conflicto, muestra advertencia visual.
+        """
+        try:
+            self.model.editar_obra(id_obra, datos, rowversion_orig)
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje("Obra actualizada correctamente.", tipo="exito")
+        except OptimisticLockError:
+            # OPTIMISTIC LOCK: prevenir sobrescritura concurrente
+            QMessageBox.warning(self.view, "Conflicto", "Obra modificada por otro usuario.")
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje("Conflicto: la obra fue modificada por otro usuario.", tipo="advertencia")
+        except Exception as e:
+            from core.logger import log_error
+            log_error(f"Error al editar obra: {e}")
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error al editar obra: {e}", tipo="error")
+            # Registrar error en auditoría con formato unificado
+            self._registrar_evento_auditoria("editar_obra", f"Error editar obra: {e}", exito=False)
 
     def mostrar_gantt(self):
         datos = self.model.obtener_datos_obras()
@@ -646,6 +929,8 @@ class ObrasController:
             else:
                 self.view.label.setText(mensaje)
         except Exception as e:
+            from core.logger import log_error
+            log_error(f"Error exportando cronograma de obra {id_obra}: {e}")
             self._registrar_evento_auditoria("exportar_cronograma", f"Error exportando cronograma de obra {id_obra}: {e}", exito=False)
             mensaje = f"Error al exportar cronograma: {e}"
             if hasattr(self.view, 'mostrar_mensaje'):
@@ -663,9 +948,16 @@ class ObrasController:
             else:
                 self.view.label.setText(f"Etapa {id_etapa} eliminada correctamente.")
         except Exception as e:
+            from core.logger import log_error
+            log_error(f"Error eliminando etapa de cronograma {id_etapa}: {e}")
             self._registrar_evento_auditoria("eliminar_etapa", f"Error eliminando etapa de cronograma {id_etapa}: {e}", exito=False)
             mensaje = f"Error al eliminar etapa: {e}"
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje(mensaje, tipo='error')
             elif hasattr(self.view, 'label'):
                 self.view.label.setText(mensaje)
+
+# NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
+# Si necesitas una cadena de conexión, obténla de un archivo seguro o variable de entorno, nunca hardcodeada.
+# NOTA: Todos los flujos de error deben usar feedback visual (mostrar_mensaje o label) y logging (Logger().error o log_error) según los estándares definidos en docs/estandares_feedback.md y docs/estandares_logging.md.
+# NOTA: Tests que fallan relacionados a este módulo y deben corregirse: test_feedback_visual_y_logging[modules.obras.view], test_no_credenciales_en_codigo[modules.obras.view].

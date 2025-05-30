@@ -80,6 +80,34 @@ class BaseDatabaseConnection:
             )
             return None
 
+    def ejecutar_query_return_rowcount(self, query, parametros=None):
+        """Ejecuta una query y retorna el número de filas afectadas (para UPDATE/DELETE)."""
+        try:
+            if not self.connection:
+                self.conectar()
+            if not self.connection:
+                raise RuntimeError("No se pudo establecer la conexión a la base de datos.")
+            cursor = self.connection.cursor()
+            if parametros:
+                cursor.execute(query, parametros)
+            else:
+                cursor.execute(query)
+            rowcount = cursor.rowcount
+            self.connection.commit()
+            return rowcount
+        except pyodbc.OperationalError as e:
+            from core.logger import Logger
+            Logger().log_error_popup(
+                "No se pudo conectar a la base de datos.\n\nVerifica el servidor, credenciales y que SQL Server acepte conexiones remotas.\n\nError: " + str(e)
+            )
+            return 0
+        except Exception as e:
+            from core.logger import Logger
+            Logger().log_error_popup(
+                "Error al ejecutar la consulta en la base de datos.\n\n" + str(e)
+            )
+            return 0
+
 class InventarioDatabaseConnection(BaseDatabaseConnection):
     def __init__(self):
         super().__init__("inventario")

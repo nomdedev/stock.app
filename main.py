@@ -305,7 +305,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QPalette, QColor, QIcon
 from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal, QSize, QEvent
 from utils.icon_loader import get_icon
-from utils.theme_manager import aplicar_tema, cargar_modo_tema
+from utils.theme_manager import aplicar_tema, cargar_modo_tema, set_theme
+from core.config import DEFAULT_THEME
 from functools import partial
 import ctypes
 import sys, os
@@ -752,11 +753,8 @@ if __name__ == "__main__":
     splash.show()
     splash.fade_in.start()
     print("[LOG 4.3] Aplicando stylesheet neumórfico global...")
-    # with open("mps/ui/assets/stylesheet.qss", "r", encoding="utf-8") as f:
-    #     app.setStyleSheet(f.read())
-    # En vez de cargar un QSS vacío, cargar el tema light.qss por defecto para evitar advertencias y asegurar compatibilidad:
-    with open("themes/light.qss", "r", encoding="utf-8") as f:
-        app.setStyleSheet(f.read())
+    # MAIN: carga tema dinámico en lugar de QSS global
+    set_theme(app, DEFAULT_THEME)  # DEFAULT_THEME = 'light' o 'dark' desde core/config.py
     print("[LOG 4.4] Chequeando dependencias críticas y opcionales...")
     error_dependencias = False
     try:

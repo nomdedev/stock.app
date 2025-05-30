@@ -1,0 +1,29 @@
+/* theme_dark.qss - Solo reglas para modo oscuro */
+QWidget {
+    background: #232b36;
+    color: #f3f4f6;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+QLabel#label_feedback {
+    background: #2d3748;
+    color: #90cdf4;
+    font-weight: bold;
+    font-size: 13px;
+    border-radius: 8px;
+    padding: 8px;
+}
+QPushButton {
+    background: #2563eb;
+    color: #f3f4f6;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+QTableWidget QHeaderView::section {
+    background: #232b36;
+    color: #90cdf4;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 400;
+}
+/* ...otros estilos oscuros... */

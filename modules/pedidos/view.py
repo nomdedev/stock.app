@@ -60,10 +60,10 @@ class PedidosView(QWidget):
         # Señal para mostrar QR al seleccionar un ítem
         self.tabla_pedidos.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
 
-        # Feedback visual
+        # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
-        # self.label_feedback.setStyleSheet("color: #2563eb; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de pedidos")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
@@ -105,6 +105,9 @@ class PedidosView(QWidget):
 
         # Señales
         self.boton_nuevo.clicked.connect(self.crear_pedido)
+
+        # Aplicar QSS global y tema visual (estándar)
+        aplicar_qss_global_y_tema(self, qss_global_path="themes/light.qss", qss_tema_path="themes/light.qss")
 
     def mostrar_feedback(self, mensaje, tipo="info"):
         if not hasattr(self, "label_feedback") or self.label_feedback is None:
@@ -263,3 +266,7 @@ class PedidosView(QWidget):
 
     def rechazar_pedido(self):
         self.mostrar_feedback("Funcionalidad de rechazar pedido pendiente de implementación", tipo="info")
+
+# NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
+# Si necesitas una cadena de conexión, obténla de un archivo seguro o variable de entorno, nunca hardcodeada.
+# En los flujos de error, asegúrate de usar log_error y/o registrar_evento para cumplir el estándar de feedback visual y logging.

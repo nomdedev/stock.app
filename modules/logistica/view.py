@@ -294,12 +294,14 @@ pip install PyQt6-WebEngine
         # --- FEEDBACK VISUAL INMEDIATO (QLabel) ---
         # Estándar: único label de feedback visual, accesible, con estilos modernos y oculto por defecto.
         # Usar siempre self.feedback_label para feedback visual inmediato.
-        self.feedback_label = QLabel()
-        self.feedback_label.setVisible(False)
-        self.feedback_label.setStyleSheet("QLabel { font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; background: #f1f5f9; }")
-        self.feedback_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        self.feedback_label.setAccessibleName("Feedback visual de Logística")
-        self.main_layout.addWidget(self.feedback_label)
+        # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
+        self.label_feedback = QLabel()
+        self.label_feedback.setObjectName("label_feedback")
+        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Mensaje de feedback de logística")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
+        self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None  # Temporizador para ocultar feedback automáticamente
 
         # --- FEEDBACK DE PROGRESO (QProgressBar) ---
@@ -333,11 +335,11 @@ pip install PyQt6-WebEngine
         }
         icono = iconos.get(tipo, "ℹ️ ")
         # Limpiar mensaje anterior y estilos
-        self.feedback_label.clear()
-        self.feedback_label.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
-        self.feedback_label.setText(f"{icono}{mensaje}")
-        self.feedback_label.setVisible(True)
-        self.feedback_label.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
+        self.label_feedback.clear()
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        self.label_feedback.setText(f"{icono}{mensaje}")
+        self.label_feedback.setVisible(True)
+        self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
         # Ocultado automático con temporizador
         if self._feedback_timer:
             self._feedback_timer.stop()
@@ -354,8 +356,8 @@ pip install PyQt6-WebEngine
         """
         Oculta y limpia el label de feedback visual.
         """
-        self.feedback_label.clear()
-        self.feedback_label.setVisible(False)
+        self.label_feedback.clear()
+        self.label_feedback.setVisible(False)
         if self._feedback_timer:
             self._feedback_timer.stop()
             self._feedback_timer.deleteLater()

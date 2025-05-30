@@ -266,6 +266,10 @@ class ProduccionView(QWidget):
         from PyQt6.QtWidgets import QMessageBox
         QMessageBox.information(self, "Finalizar Etapa", "Acción de finalizar etapa ejecutada.")
 
+# NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
+# Si necesitas una cadena de conexión, obténla de un archivo seguro o variable de entorno, nunca hardcodeada.
+# En los flujos de error, asegúrate de usar log_error y/o registrar_evento para cumplir el estándar de feedback visual y logging.
+
 class Produccion(QWidget):
     def __init__(self):
         super().__init__()

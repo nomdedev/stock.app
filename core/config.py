@@ -13,3 +13,8 @@ FILE_STORAGE_PATH = "./storage"     # Ruta para almacenar archivos
 DEFAULT_LANGUAGE = "es"             # Idioma predeterminado
 DEFAULT_TIMEZONE = "UTC-3"          # Zona horaria predeterminada
 NOTIFICATIONS_ENABLED = True        # Activar o desactivar notificaciones
+DEFAULT_THEME = "light"            # Tema visual por defecto ('light' o 'dark')
+
+def get_db_server():
+    # Devuelve el servidor de base de datos principal, permite lógica futura para alternar
+    return DB_SERVER
