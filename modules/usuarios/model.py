@@ -97,6 +97,8 @@ class UsuariosModel:
     No crear conexiones nuevas internamente. Usar siempre la conexión persistente y unificada.
     """
     def __init__(self, db_connection):
+        if db_connection is None:
+            raise TypeError("UsuariosModel requiere un db_connection explícito para evitar conexiones reales en tests y cumplir la política de aislamiento.")
         self.db = db_connection
 
     def obtener_usuarios(self):
