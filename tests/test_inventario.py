@@ -164,7 +164,7 @@ class TestInventarioModel(unittest.TestCase):
         assert mock_model.agregar_item.call_count == 1
         args, kwargs = mock_model.agregar_item.call_args
         assert isinstance(args[0], tuple)
-        mock_view.mostrar_mensaje.assert_called_with("Ítem '12345' agregado correctamente.")
+        mock_view.mostrar_mensaje.assert_called_with("Ítem '12345' agregado correctamente.", tipo='success')
 
     def test_integracion_agregar_y_reflejar_en_ui_db(self):
         mock_model = Mock()

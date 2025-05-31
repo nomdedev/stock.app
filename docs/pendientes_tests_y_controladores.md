@@ -115,4 +115,51 @@ Se corrigió el uso de `.text()` directo en `guardar_configuracion_conexion` y s
 
 ---
 
+## DECISIONES Y JUSTIFICACIONES SOBRE TESTS, MOCKS Y WORKAROUNDS (actualizado 2025-05-31)
+
+### 1. Priorización de tests de integración, validación y feedback visual
+
+**Justificación:**
+
+- Los tests de integración y validación aseguran que los módulos funcionen correctamente en conjunto y que el feedback visual al usuario sea inmediato y coherente.
+- Se prioriza su corrección y robustez para detectar errores de flujo y experiencia real, no solo de lógica interna.
+
+### 2. Ajuste y documentación de mocks
+
+**Justificación:**
+
+- Los mocks deben simular fielmente el comportamiento real de la base de datos y los registros de auditoría, especialmente en los tests de integración.
+- Se documenta cualquier diferencia entre el mock y el comportamiento real, y se justifica si es necesario para que los asserts de los tests pasen.
+- Ejemplo: en los tests de obras, el mock de auditoría concatena el detalle y el resultado ("resultado: éxito") para que el assert lo encuentre, replicando el formato real del helper `_registrar_evento_auditoria`.
+
+### 3. Persistencia simulada en tests de logística
+
+**Justificación:**
+
+- En los tests de logística, el mock de la base de datos debe asegurar que las entregas insertadas sean accesibles por el método de exportación de actas, simulando correctamente la persistencia en memoria.
+- Esto evita falsos negativos en los tests y refleja el comportamiento esperado en producción.
+
+### 4. Documentación de workarounds y supuestos
+
+**Justificación:**
+
+- Todo workaround aplicado en los tests (por ejemplo, mocks que devuelven cadenas específicas para asserts) se documenta en este archivo y en los comentarios del código.
+- Se indica si el workaround es temporal y cuál es el plan para su resolución definitiva.
+
+### 5. Cobertura y robustez
+
+**Justificación:**
+
+- Se ejecutan pruebas de cobertura regularmente y se documentan los resultados en `resultado_tests.txt`.
+- Se busca una cobertura alta en los módulos críticos y se documentan las excepciones justificadas.
+
+### 6. Logs y trazabilidad de errores en tests
+
+**Justificación:**
+
+- Se agregan logs y comentarios aclaratorios en los puntos críticos de los módulos y tests para facilitar el diagnóstico y la depuración.
+- Los errores detectados en los tests se documentan en este archivo junto con su estado y justificación.
+
+---
+
 > Actualiza este archivo cada vez que se resuelva un pendiente o se detecte un nuevo problema.

@@ -1,5 +1,6 @@
 from unittest.mock import Mock
 from modules.herrajes.model import HerrajesModel
+import unittest
 
 class MockDBConnection:
     def __init__(self):
@@ -8,20 +9,24 @@ class MockDBConnection:
     def ejecutar_query(self, query, params=None):
         if "INSERT INTO materiales" in query:
             # (codigo, descripcion, cantidad, ubicacion, observaciones)
+            if params is None:
+                params = ()
             material = (self.last_id,) + tuple(params)
             self.materiales.append(material)
             self.last_id += 1
-            return None
+            return []
         if "SELECT * FROM materiales" in query:
             return list(self.materiales)
         if "UPDATE materiales" in query:
-            for i, m in enumerate(self.materiales):
-                if m[0] == params[5]:
-                    self.materiales[i] = (m[0], params[0], params[1], params[2], params[3], params[4])
-            return None
+            if params is not None:
+                for i, m in enumerate(self.materiales):
+                    if m[0] == params[5]:
+                        self.materiales[i] = (m[0], params[0], params[1], params[2], params[3], params[4])
+            return []
         if "DELETE FROM materiales" in query:
-            self.materiales = [m for m in self.materiales if m[0] != params[0]]
-            return None
+            if params is not None:
+                self.materiales = [m for m in self.materiales if m[0] != params[0]]
+            return []
         return []
 
 class MockHerrajesView:
@@ -31,7 +36,7 @@ class MockHerrajesView:
     def actualizar_tabla(self, data):
         self.tabla_data = data
 
-class TestHerrajesIntegracion:
+class TestHerrajesIntegracion(unittest.TestCase):
     def setUp(self):
         self.mock_db = MockDBConnection()
         self.model = HerrajesModel(self.mock_db)
@@ -62,3 +67,6 @@ class TestHerrajesIntegracion:
         self.assertFalse(any(m[0] == id_material for m in materiales))
         self.view.actualizar_tabla(materiales)
         self.assertEqual(self.view.tabla_data, materiales)
+
+if __name__ == "__main__":
+    unittest.main()

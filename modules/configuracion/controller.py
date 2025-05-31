@@ -164,10 +164,15 @@ class ConfiguracionController:
             modo_mant = self._get_widget('modo_mantenimiento_checkbox')
             if modo_mant and hasattr(modo_mant, 'isChecked'):
                 self.model.actualizar_configuracion("modo_mantenimiento", str(modo_mant.isChecked()))
+            # Validación robusta de notificaciones_checkbox (debe ser bool)
+            notificaciones = self._get_checked('notificaciones_checkbox')
+            if not isinstance(notificaciones, bool):
+                self.mostrar_mensaje("El campo 'notificaciones' debe ser booleano (True/False).", tipo="error")
+                return
             datos_apariencia = (
                 self._get_text('modo_color_input'),
                 self._get_text('idioma_input'),
-                self._get_checked('notificaciones_checkbox'),
+                notificaciones,
                 self._get_text('tamaño_fuente_input')
             )
             self.model.actualizar_apariencia_usuario(1, datos_apariencia)

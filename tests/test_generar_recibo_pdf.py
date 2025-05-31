@@ -11,8 +11,7 @@ class MockDB:
 def test_generar_recibo_pdf():
     # Configuración
     db = MockDB()
-    model = ContabilidadModel()
-    model.db = db  # Inyectamos la base de datos simulada
+    model = ContabilidadModel(db)  # Corregido: pasar db_connection al constructor
 
     # Caso 1: Recibo existente
     resultado = model.generar_recibo_pdf(1)

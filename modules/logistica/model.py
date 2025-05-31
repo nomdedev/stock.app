@@ -164,11 +164,16 @@ class LogisticaModel:
 
     def programar_entrega(self, id_obra, fecha_programada, vehiculo_asignado, chofer_asignado, control_subida=None, fecha_llegada=None):
         # Nuevo: registrar quién lo llevó, quién lo controló y cuándo se llevó
+        # Si no se pasa fecha_llegada, el estado debe ser 'pendiente' y fecha_realizada None
+        estado = "Entregado" if fecha_llegada else "pendiente"
+        fecha_realizada = fecha_llegada if fecha_llegada else None
         query = """
-        INSERT INTO entregas_obras (id_obra, fecha_programada, vehiculo_asignado, chofer_asignado, control_subida, fecha_llegada)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO entregas_obras (id_obra, fecha_programada, fecha_realizada, estado, vehiculo_asignado, chofer_asignado, control_subida, fecha_llegada, observaciones)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
-        self.db.ejecutar_query(query, (id_obra, fecha_programada, vehiculo_asignado, chofer_asignado, control_subida, fecha_llegada))
+        self.db.ejecutar_query(query, (
+            id_obra, fecha_programada, fecha_realizada, estado, vehiculo_asignado, chofer_asignado, control_subida, fecha_llegada, "Sin observaciones"
+        ))
 
     def generar_acta_entrega(self, id_entrega):
         query = "SELECT id, id_obra, fecha_programada, estado FROM entregas_obras WHERE id = ?"

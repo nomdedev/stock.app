@@ -2868,3 +2868,161 @@
 2025-05-29 08:24:54,495 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
 2025-05-29 08:24:54,495 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
 2025-05-29 08:24:54,495 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 13:08:49,186 - ERROR - Error en registrar_evento: DB error
+2025-05-30 13:08:49,193 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-30 13:08:49,193 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-30 13:09:28,291 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 13:09:28,291 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 13:09:28,291 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 13:09:28,682 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 13:09:28,682 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 13:09:28,682 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 13:09:28,682 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 13:09:28,685 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 13:09:28,685 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 13:09:28,685 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 13:09:28,685 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 13:09:28,685 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 13:09:29,295 - ERROR - Error en login: division by zero
+2025-05-30 13:09:29,295 - ERROR - Error en login: division by zero
+2025-05-30 13:09:29,295 - ERROR - Error en login: division by zero
+2025-05-30 13:09:29,295 - ERROR - Error en login: division by zero
+2025-05-30 13:09:29,295 - ERROR - Error en login: division by zero
+2025-05-30 13:09:29,295 - ERROR - Error en login: division by zero
+2025-05-30 13:09:29,761 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 13:09:29,761 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 13:09:29,761 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 13:09:29,761 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 13:09:29,761 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 13:09:29,761 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 13:09:29,761 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 13:09:29,761 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 16:25:23,521 - ERROR - Error en registrar_evento: DB error
+2025-05-30 16:25:23,525 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-30 16:25:23,525 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-30 16:25:58,742 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 16:25:58,742 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 16:25:58,742 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 16:25:59,031 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 16:25:59,031 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 16:25:59,031 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 16:25:59,031 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 16:25:59,033 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 16:25:59,033 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 16:25:59,033 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 16:25:59,033 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 16:25:59,033 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 16:25:59,469 - ERROR - Error en login: division by zero
+2025-05-30 16:25:59,469 - ERROR - Error en login: division by zero
+2025-05-30 16:25:59,469 - ERROR - Error en login: division by zero
+2025-05-30 16:25:59,469 - ERROR - Error en login: division by zero
+2025-05-30 16:25:59,469 - ERROR - Error en login: division by zero
+2025-05-30 16:25:59,469 - ERROR - Error en login: division by zero
+2025-05-30 16:25:59,752 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 16:25:59,752 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 16:25:59,752 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 16:25:59,752 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 16:25:59,752 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 16:25:59,752 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 16:25:59,752 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 16:25:59,752 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:01:57,281 - ERROR - Error en registrar_evento: DB error
+2025-05-30 17:01:57,285 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-30 17:01:57,285 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-30 17:02:29,878 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 17:02:29,878 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 17:02:29,878 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 17:02:30,076 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 17:02:30,076 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 17:02:30,076 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 17:02:30,076 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 17:02:30,078 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 17:02:30,078 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 17:02:30,078 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 17:02:30,078 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 17:02:30,078 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-30 17:02:30,800 - ERROR - Error en login: division by zero
+2025-05-30 17:02:30,800 - ERROR - Error en login: division by zero
+2025-05-30 17:02:30,800 - ERROR - Error en login: division by zero
+2025-05-30 17:02:30,800 - ERROR - Error en login: division by zero
+2025-05-30 17:02:30,800 - ERROR - Error en login: division by zero
+2025-05-30 17:02:30,800 - ERROR - Error en login: division by zero
+2025-05-30 17:02:31,094 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:31,094 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:31,094 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:31,094 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:31,094 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:31,094 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:31,094 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:31,094 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:34,194 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:34,194 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:34,194 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:34,194 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:34,194 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:34,194 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:34,194 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:34,194 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:34,194 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 17:02:34,690 - ERROR - [ObrasView] Error de prueba
+2025-05-30 17:02:34,690 - ERROR - [ObrasView] Error de prueba
+2025-05-30 17:02:34,690 - ERROR - [ObrasView] Error de prueba
+2025-05-30 17:02:34,690 - ERROR - [ObrasView] Error de prueba
+2025-05-30 17:02:34,690 - ERROR - [ObrasView] Error de prueba
+2025-05-30 17:02:34,690 - ERROR - [ObrasView] Error de prueba
+2025-05-30 17:02:34,690 - ERROR - [ObrasView] Error de prueba
+2025-05-30 17:02:34,690 - ERROR - [ObrasView] Error de prueba
+2025-05-30 17:02:34,690 - ERROR - [ObrasView] Error de prueba
+2025-05-30 17:02:34,690 - ERROR - [ObrasView] Error de prueba
+2025-05-30 17:11:59,066 - ERROR - Error en registrar_evento: DB error
+2025-05-30 17:11:59,069 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-30 17:11:59,069 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-30 17:12:31,538 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 17:12:31,538 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 17:12:31,538 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 19:51:36,411 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 19:53:47,741 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 20:00:42,780 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 20:01:49,232 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 20:18:50,136 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-30 20:21:25,989 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 20:21:28,027 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 20:21:28,027 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-30 20:21:28,805 - ERROR - [ObrasView] Error de prueba
+2025-05-30 20:21:28,805 - ERROR - [ObrasView] Error de prueba
+2025-05-30 20:21:28,805 - ERROR - [ObrasView] Error de prueba
+2025-05-31 09:31:20,143 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-31 09:31:22,845 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-31 09:31:22,845 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-31 09:31:23,434 - ERROR - [ObrasView] Error de prueba
+2025-05-31 09:31:23,434 - ERROR - [ObrasView] Error de prueba
+2025-05-31 09:31:23,434 - ERROR - [ObrasView] Error de prueba
+2025-05-31 10:16:33,809 - ERROR - Error en registrar_evento: DB error
+2025-05-31 10:16:33,823 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-31 10:16:33,823 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-05-31 10:17:08,483 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-31 10:17:08,483 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-31 10:17:08,483 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-05-31 10:17:08,698 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-31 10:17:08,698 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-31 10:17:08,698 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-31 10:17:08,698 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-05-31 10:17:08,700 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-31 10:17:08,700 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-31 10:17:08,700 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-31 10:17:08,700 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-31 10:17:08,700 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-05-31 10:17:09,343 - ERROR - Error en login: division by zero
+2025-05-31 10:17:09,343 - ERROR - Error en login: division by zero
+2025-05-31 10:17:09,343 - ERROR - Error en login: division by zero
+2025-05-31 10:17:09,343 - ERROR - Error en login: division by zero
+2025-05-31 10:17:09,343 - ERROR - Error en login: division by zero
+2025-05-31 10:17:09,343 - ERROR - Error en login: division by zero
+2025-05-31 10:17:09,715 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-31 10:17:09,715 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-31 10:17:09,715 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-31 10:17:09,715 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-31 10:17:09,715 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-31 10:17:09,715 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-31 10:17:09,715 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-05-31 10:17:09,715 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible

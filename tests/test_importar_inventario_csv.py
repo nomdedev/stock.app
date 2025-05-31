@@ -49,14 +49,17 @@ def test_importar_csv_y_consultar():
 
 def test_coincidencia_columnas_csv_sql():
     # Leer el CSV y verificar que las columnas requeridas existen
-    csv_path = os.path.join('data_inventario', 'INVENTARIO COMPLETO - REHAU.csv')
+    csv_path = os.path.join('data_inventario', 'INVENTARIO_COMPLETO_REHAU_LIMPIO.csv')
     try:
         df = pd.read_csv(csv_path, sep=';', encoding='utf-8')
-    except UnicodeDecodeError:
-        df = pd.read_csv(csv_path, sep=';', encoding='latin1')
-    print("Columnas detectadas en el CSV:", list(df.columns))
-    requeridas = {'Código', 'Descripción', 'STOCK', 'PEDIDOS'}
-    assert requeridas.issubset(set(df.columns)), f"Faltan columnas requeridas en el CSV: {requeridas - set(df.columns)}"
+        df.columns = [col.lower() for col in df.columns]
+    except FileNotFoundError:
+        assert False, f"No se encontró el archivo de prueba: {csv_path}"
+    columnas_requeridas = [
+        'codigo', 'nombre', 'tipo_material', 'unidad', 'stock_actual', 'stock_minimo', 'ubicacion', 'descripcion', 'qr', 'imagen'
+    ]
+    for col in columnas_requeridas:
+        assert col in df.columns, f"Falta la columna requerida: {col}"
     print("Test de columnas del CSV: OK")
 
 if __name__ == "__main__":
