@@ -199,7 +199,8 @@ def backup_tabla_sql():
                     elif isinstance(v, (int, float)):
                         values.append(str(v))
                     else:
-                        values.append(f"'{str(v).replace("'", "''")}'")
+                        # Solución robusta: usar format() en vez de f-string para evitar problemas de comillas
+                        values.append("'{}'".format(str(v).replace("'", "''")))
                 sql = f"INSERT INTO {backup_table} ({','.join(columns)}) VALUES ({','.join(values)});\n"
                 f.write(sql)
         print(f"Backup de la tabla realizado en: {backup_file}")

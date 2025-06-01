@@ -8,21 +8,39 @@ class MockDBConnection:
         self.last_id = 1
         self.last_query = None
         self.last_params = None
-    def ejecutar_query(self, query, params=None):
+    def ejecutar_query(self, query, params=None, *args, **kwargs):
         self.last_query = query
         self.last_params = params
         if "INSERT INTO auditorias_sistema" in query:
             # (modulo_afectado, tipo_evento, detalle, ip_origen)
-            auditoria = (self.last_id,) + tuple(params)
+            # Asegurar que params nunca sea None
+            safe_params = tuple(params) if params is not None else ()
+            auditoria = (self.last_id,) + safe_params
             self.auditorias.append(auditoria)
             self.last_id += 1
-            return None
+            return []
         if "SELECT * FROM auditorias_sistema" in query:
             if params:
-                # Filtrar por campo
-                campo = query.split("WHERE ")[1].split(" = ")[0]
-                valor = params[0]
-                return [a for a in self.auditorias if a[1] == valor]
+                # Mejorar parsing de WHERE para soportar espacios y mayúsculas
+                import re
+                # Buscar todos los campos de la cláusula WHERE (soporta varios)
+                matches = re.findall(r"([a-zA-Z_]+)\s*=\s*\?", query, re.IGNORECASE)
+                if matches:
+                    campo_indices = {
+                        "modulo_afectado": 1,
+                        "tipo_evento": 2,
+                        "detalle": 3,
+                        "ip_origen": 4
+                    }
+                    # Filtrar por todos los campos encontrados
+                    resultados = self.auditorias
+                    for i, campo in enumerate(matches):
+                        idx = campo_indices.get(campo.lower(), 1)
+                        valor = params[i] if i < len(params) else None
+                        resultados = [a for a in resultados if a[idx] == valor]
+                    return resultados
+                # Si no hay WHERE válido, devolver todo
+                return list(self.auditorias)
             return list(self.auditorias)
         return []
 

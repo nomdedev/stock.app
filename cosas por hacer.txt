@@ -160,3 +160,76 @@
 # - Verificar que todos los layouts principales usen QVBoxLayout con setContentsMargins(24, 20, 24, 20) y setSpacing(16).
 
 # Mantener este checklist actualizado y marcar los tests implementados y validados.
+
+# --- COSAS POR HACER - PLAN DE MEJORAS Y REFACTORIZACIÓN
+
+## 1. ESTRUCTURA Y ORGANIZACIÓN
+- Unificar recursos:
+  - Mover QSS a resources/qss/ (eliminar style_moderno.qss si ya existen theme_light.qss y theme_dark.qss).
+  - Centralizar íconos en resources/icons/.
+  - Agrupar scripts de DB en scripts/db/.
+  - Mover PDFs/Excels sueltos a docs/auditoria/ o subcarpetas temáticas.
+- Organizar tests:
+  - Crear subcarpetas en tests/ por módulo (tests/obras/, tests/inventario/, etc.).
+  - Usar fixtures en tests/fixtures/ para datos de prueba.
+- Centralizar documentación:
+  - Crear índice en docs/README.md.
+  - Separar estándares visuales, logging y guías en subcarpetas de docs/.
+
+## 2. CONFIGURACIÓN Y SEGURIDAD
+- Implementar core/config.py que lea variables desde .env usando python-dotenv.
+- Eliminar credenciales hard-coded.
+- Documentar en el README la necesidad de .env local.
+
+## 3. BACKEND Y MODELOS
+- core/database.py:
+  - Añadir soporte para timeout y retries en transacciones.
+  - Exponer métodos begin_transaction(), commit(), rollback().
+  - Diferenciar excepciones (timeout, FK, etc.).
+- core/logger.py:
+  - Emitir logs en JSON con correlation_id.
+  - Configurar rotación automática de logs.
+  - Documentar el formato en docs/estándares/logging.md.
+
+## 4. TEMAS Y UI
+- Refactorizar theme_manager.py para solo cargar theme_light.qss o theme_dark.qss.
+- Eliminar referencias a style_moderno.qss.
+- En el formulario de configuración, permitir elegir y persistir el tema.
+
+## 5. PERMISOS Y SIDEBAR
+- Implementar filtrado de módulos en el sidebar según permisos del usuario.
+- Centralizar la obtención de permisos en un método (usuarios_model.obtener_permisos_por_rol).
+
+## 6. MÓDULOS DE NEGOCIO
+- Obras: Implementar bloqueo optimista (rowversion), eliminar lógicamente y editar obras, mejorar validaciones y feedback en UI.
+- Inventario, Herrajes, Vidrios: Completar flujos de reserva y devolución, usar transacciones atómicas, añadir alertas de stock bajo y reportes.
+- Compras/Pedidos: Integrar generación automática de pedidos desde materiales pendientes, implementar recepción de pedidos con actualización de stock y auditoría.
+- Logística: Validar disponibilidad de vehículos/choferes, registrar auditoría en cada cambio de estado.
+- Usuarios: Validar unicidad de email y seguridad de contraseña, permitir desactivar usuarios y cambiar contraseñas, integrar pestaña de permisos por rol en la UI.
+- Auditoría: Añadir filtros, paginación y exportación, suscribirse a eventos de dominio para enriquecer la auditoría.
+- Configuración: Centralizar parámetros en DB y/o core/config.py, permitir guardar y restaurar configuración de tema, notificaciones, etc.
+
+## 7. TESTS
+- Crear tests unitarios y de integración para cada módulo.
+- Usar mocks para la base de datos en local.
+- Integrar pytest en CI.
+- Mover datos de prueba a tests/fixtures/.
+
+## 8. DEPENDENCIAS Y ENTORNO
+- Eliminar duplicados/conflictos en requirements.txt (elegir PyQt5 o PyQt6, no ambos).
+- Añadir dependencias faltantes: python-dotenv, prometheus_client, pytest, pytest-qt.
+- Usar venv para desarrollo estándar, conda solo si hay dependencias científicas complejas.
+
+## 9. MÉTRICAS Y OBSERVABILIDAD
+- Agregar endpoint /metrics con prometheus_client en main.py.
+- Documentar cómo activar y consultar métricas.
+
+## 10. INTERNACIONALIZACIÓN Y CALIDAD
+- Comenzar a usar tr("Texto...") para textos en la UI.
+- Centralizar validaciones y manejo de errores global con sys.excepthook.
+
+## 11. DOCUMENTACIÓN Y TAREAS
+- Convertir cosas por hacer.txt en issues de GitHub o tareas formales.
+- Actualizar el README para reflejar la nueva estructura y flujos.
+
+# FIN DEL PLAN DE MEJORAS
