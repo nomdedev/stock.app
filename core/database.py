@@ -4,6 +4,7 @@ from datetime import datetime
 from core.logger import Logger
 from core.config import DB_SERVER, DB_USERNAME, DB_PASSWORD
 import logging
+import time
 
 def get_connection_string(driver, database):
     """
@@ -20,7 +21,7 @@ def get_connection_string(driver, database):
     )
 
 class BaseDatabaseConnection:
-    def __init__(self, database):
+    def __init__(self, database, timeout=None, max_retries=None):
         self.server = DB_SERVER
         self.username = DB_USERNAME
         self.password = DB_PASSWORD
@@ -28,6 +29,9 @@ class BaseDatabaseConnection:
         self.driver = self.detectar_driver_odbc()
         self.logger = Logger()
         self.connection = None  # Conexión persistente
+        from core.config import DB_TIMEOUT
+        self.timeout = timeout if timeout is not None else int(os.getenv("DB_TIMEOUT", DB_TIMEOUT))
+        self.max_retries = max_retries if max_retries is not None else int(os.getenv("DB_MAX_RETRIES", 3))
 
     @staticmethod
     def detectar_driver_odbc():
@@ -40,13 +44,21 @@ class BaseDatabaseConnection:
             raise RuntimeError("No se encontró un controlador ODBC compatible. Instala ODBC Driver 17 o 18 para SQL Server.")
 
     def conectar(self):
-        try:
-            connection_string = get_connection_string(self.driver, self.database)
-            self.connection = pyodbc.connect(connection_string, timeout=10)
-            self.logger.info(f"Conexión establecida con la base de datos '{self.database}'.")
-        except pyodbc.OperationalError as e:
-            self.logger.error(f"Error al conectar a la base de datos: {e}")
-            raise RuntimeError("No se pudo conectar a la base de datos.") from e
+        attempt = 0
+        last_exception = None
+        while attempt < self.max_retries:
+            try:
+                connection_string = get_connection_string(self.driver, self.database)
+                self.connection = pyodbc.connect(connection_string, timeout=self.timeout)
+                self.logger.info(f"Conexión establecida con la base de datos '{self.database}' (intento {attempt+1}).")
+                return
+            except pyodbc.OperationalError as e:
+                last_exception = e
+                self.logger.warning(f"Intento {attempt+1} de conexión fallido: {e}")
+                time.sleep(2 ** attempt)  # backoff exponencial
+                attempt += 1
+        self.logger.error(f"No se pudo conectar a la base de datos '{self.database}' tras {self.max_retries} intentos.")
+        raise RuntimeError("No se pudo conectar a la base de datos tras varios intentos.") from last_exception
 
     def cerrar_conexion(self):
         if self.connection:
@@ -107,6 +119,68 @@ class BaseDatabaseConnection:
                 "Error al ejecutar la consulta en la base de datos.\n\n" + str(e)
             )
             return 0
+
+    def begin_transaction(self):
+        if not self.connection:
+            self.conectar()
+        # pyodbc: desactivar autocommit para iniciar transacción solo si la conexión es válida y tiene el atributo
+        conn = self.connection
+        if conn is not None and hasattr(conn, 'autocommit') and getattr(conn, 'autocommit', None) is not None:
+            conn.autocommit = False
+        self.logger.debug(f"Transacción iniciada en '{self.database}'.")
+
+    def commit(self):
+        if self.connection:
+            self.connection.commit()
+            conn = self.connection
+            if conn is not None and hasattr(conn, 'autocommit') and getattr(conn, 'autocommit', None) is not None:
+                conn.autocommit = True
+            self.logger.debug(f"Transacción confirmada (commit) en '{self.database}'.")
+
+    def rollback(self):
+        if self.connection:
+            self.connection.rollback()
+            conn = self.connection
+            if conn is not None and hasattr(conn, 'autocommit') and getattr(conn, 'autocommit', None) is not None:
+                conn.autocommit = True
+            self.logger.debug(f"Transacción revertida (rollback) en '{self.database}'.")
+
+    class TransactionContext:
+        def __init__(self, db, timeout, retries):
+            self.db = db
+            self.timeout = timeout
+            self.retries = retries
+
+        def __enter__(self):
+            self.start_time = time.time()
+            self.db.begin_transaction()
+            return self.db
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            if exc_type:
+                self.db.rollback()
+            else:
+                attempt = 0
+                while attempt <= self.retries:
+                    try:
+                        self.db.commit()
+                        return
+                    except pyodbc.OperationalError as te:
+                        if (time.time() - self.start_time) < self.timeout:
+                            attempt += 1
+                            time.sleep(1)
+                        else:
+                            self.db.rollback()
+                            raise
+
+    def transaction(self, timeout=30, retries=2):
+        """
+        Context manager para transacciones seguras con timeout y reintentos.
+        Uso:
+            with db.transaction(timeout=30, retries=2):
+                ...
+        """
+        return self.TransactionContext(self, timeout, retries)
 
 class InventarioDatabaseConnection(BaseDatabaseConnection):
     def __init__(self):

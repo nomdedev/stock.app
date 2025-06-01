@@ -3960,3 +3960,6 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-01 19:24:52,888 - ERROR - [ObrasView] Error de prueba
 2025-06-01 19:24:52,888 - ERROR - [ObrasView] Error de prueba
 2025-06-01 19:24:52,888 - ERROR - [ObrasView] Error de prueba
+2025-06-01 20:24:02,795 - INFO - Test log info
+2025-06-01 20:24:02,797 - ERROR - Test log error
+2025-06-01 20:24:02,798 - INFO - Auditoría - Usuario: testuser, Acción: accion_test, Detalles: detalle de prueba

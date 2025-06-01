@@ -144,7 +144,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
             qss_tema = f"themes/{tema}.qss"
         except Exception:
             pass
-        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
+        aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
 
     def obtener_headers_desde_db(self, tabla):
         """Obtiene los headers de una tabla de la base de datos de forma segura y estándar."""

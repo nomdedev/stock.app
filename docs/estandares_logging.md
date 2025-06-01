@@ -7,6 +7,23 @@
 - Formato: timestamp, nivel, módulo, función, usuario, mensaje.
 - Los logs se guardan en `logs/app.log` y `logs/audit.log`.
 
+## Formato y rotación de logs (JSON y texto)
+
+El sistema de logging genera dos tipos de logs:
+- **Texto legible:** en `logs/app.log` (rotativo, 5MB, 3 backups)
+- **JSON estructurado:** en `logs/app_json.log` (rotativo, 5MB, 3 backups)
+- **Auditoría:** en `logs/audit.log` (rotativo, 2MB, 2 backups)
+
+Cada entrada JSON incluye:
+- `timestamp`: fecha y hora
+- `level`: nivel de log
+- `message`: mensaje
+- `correlation_id`: identificador único de la operación
+- `module`, `funcName`, `lineno`: contexto de ejecución
+- `exception`: (opcional) traza de error
+
+**Convención:** Usa siempre el logger centralizado (`core/logger.py`). Si necesitas correlacionar logs de una operación, pasa un `correlation_id` único.
+
 ## Decoradores y registro de eventos
 
 - Usar decoradores de auditoría en controladores para registrar acciones y errores.

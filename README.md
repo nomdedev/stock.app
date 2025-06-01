@@ -998,3 +998,13 @@ La aplicación utiliza un archivo `.env` para gestionar todas las variables sens
 - El sistema carga automáticamente las variables usando `python-dotenv`.
 
 ---
+
+## Organización de tests y fixtures
+
+- Los tests están organizados en subcarpetas por módulo dentro de `tests/` (ej: `tests/obras/`, `tests/inventario/`, etc.).
+- Los datos de prueba reutilizables (fixtures) se encuentran en `tests/fixtures/`.
+- Cada módulo puede tener su propio README en la subcarpeta de tests para explicar casos especiales.
+- Los tests unitarios usan mocks y datos de fixtures; los de integración pueden requerir base real y deben estar claramente separados.
+- Consulta y edita `tests/fixtures/README.md` para ver la convención de fixtures y cómo usarlos en los tests.
+
+---

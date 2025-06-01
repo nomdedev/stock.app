@@ -1,0 +1,4 @@
+{"timestamp": "2025-06-01 20:24:02,795", "level": "INFO", "message": "Test log info", "correlation_id": "9dcedf8a-3bfb-411e-8f12-2b54523a3abf", "module": "logger", "funcName": "info", "lineno": 74}
+{"timestamp": "2025-06-01 20:24:02,797", "level": "ERROR", "message": "Test log error", "correlation_id": "9dcedf8a-3bfb-411e-8f12-2b54523a3abf", "module": "logger", "funcName": "error", "lineno": 80}
+{"timestamp": "2025-06-01 20:24:02,798", "level": "DEBUG", "message": "Test log debug", "correlation_id": "9dcedf8a-3bfb-411e-8f12-2b54523a3abf", "module": "logger", "funcName": "debug", "lineno": 71}
+{"timestamp": "2025-06-01 20:24:02,798", "level": "INFO", "message": "Auditoría - Usuario: testuser, Acción: accion_test, Detalles: detalle de prueba", "correlation_id": "9dcedf8a-3bfb-411e-8f12-2b54523a3abf", "module": "logger", "funcName": "log_auditoria", "lineno": 94}
