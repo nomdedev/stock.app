@@ -47,11 +47,11 @@ class MockView:
 class MockAuditoriaModel:
     def __init__(self):
         self.registros = []
-    def registrar_evento(self, usuario, modulo, accion, ip_origen=None, resultado=None):
-        # Simula el formato unificado de auditoría
-        detalle = accion
-        if resultado:
-            detalle = f"{accion} | resultado: {resultado}"
+    def registrar_evento(self, usuario, modulo, accion, detalle=None, ip_origen=None):
+        # Simula el formato real de auditoría del controlador
+        # Si se llama con solo 3 args, compatibilidad con tests antiguos
+        if detalle is None:
+            detalle = accion
         self.registros.append((usuario, modulo, detalle))
 
 class MockPedidosController:
@@ -257,13 +257,13 @@ class TestObrasIntegracion(unittest.TestCase):
         self.mock_view.mostrar_mensaje = MagicMock()
         self.obras_model.exportar_cronograma = MagicMock(return_value="Exportación exitosa")
         self.controller.exportar_cronograma("excel", 1)
-        self.assertTrue(any("Exportación de cronograma de obra 1 a excel" in x[2] and "resultado: éxito" in x[2] for x in self.mock_auditoria.registros))
+        self.assertTrue(any("Exportación de cronograma de obra 1 a excel" in x[2] and "- éxito" in x[2] for x in self.mock_auditoria.registros))
 
     def test_eliminar_etapa_cronograma_auditoria(self):
         self.mock_view.mostrar_mensaje = MagicMock()
         self.obras_model.eliminar_etapa_cronograma = MagicMock()
         self.controller.eliminar_etapa_cronograma(5)
-        self.assertTrue(any("Eliminación de etapa de cronograma 5" in x[2] and "resultado: éxito" in x[2] for x in self.mock_auditoria.registros))
+        self.assertTrue(any("Eliminación de etapa de cronograma 5" in x[2] and "- éxito" in x[2] for x in self.mock_auditoria.registros))
 
 if __name__ == "__main__":
     unittest.main()

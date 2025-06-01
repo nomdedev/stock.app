@@ -1,0 +1,1301 @@
+Unificar y reorganizar recursos (QSS, iconos, scripts)
+text
+Copiar
+Editar
+PROMPT: “Unifica y reorganiza todos los recursos estáticos en carpetas dedicadas, elimina QSS global
+
+> Justificación técnica:
+Actualmente los recursos (QSS, iconos, imágenes) están dispersos en varias carpetas (`img/`, `static/`, `mps/ui/`, `themes/`). Esto dificulta el mantenimiento, la búsqueda de assets y provoca rutas relámpago rotas. Al centralizar en `resources/qss/` y `resources/icons/`, ganamos claridad y facilidades para cambiar temas o iconos sin romper referencias.
+
+> Pasos:
+
+1. Mover archivos QSS:
+   - Carpeta origen: raíz `style_moderno.qss`
+   - Carpeta destino: `resources/qss/theme_light.qss`
+   - Crear archivo `resources/qss/theme_dark.qss` vacío por ahora
+   - Eliminar `style_moderno.qss` de la raíz
+
+2. Mover iconos SVG/PNG:
+   - Carpeta origen: `img/`, `static/`, `mps/ui/assets/icons/` (si existen)
+   - Carpeta destino: `resources/icons/`
+   - Eliminar carpetas vacías `img/`, `static/`, `themes/`, `mps/ui/assets/icons/`
+   - Asegurarse de renombrar si hay duplicados; unificar nombres en minúsculas sin espacios
+
+3. Actualizar rutas en código:
+   - Archivo: `utils/theme_manager.py`
+     • Eliminar cualquier referencia a `"mps/ui/assets/stylesheet.qss"`
+     • Agregar:
+       ```python
+       THEMES = {
+           "light": os.path.join(os.path.dirname(__file__), "../resources/qss/theme_light.qss"),
+           "dark":  os.path.join(os.path.dirname(__file__), "../resources/qss/theme_dark.qss")
+       }
+
+       def set_theme(app, theme_name):
+           path = THEMES.get(theme_name, THEMES["light"])
+           with open(path, 'r', encoding='utf-8') as f:
+               app.setStyleSheet(f.read())
+       ```
+       // DOCUMENTACIÓN: centralizar QSS en recursos para facilitar mantenimiento
+
+   - Archivo: `utils/icon_loader.py`
+     • Cambiar cualquier path hardcoded a:
+       ```python
+       base = os.path.join(os.path.dirname(__file__), "../resources/icons")
+       return QIcon(os.path.join(base, f"{icon_name}.svg"))
+       ```
+       // DOCUMENTACIÓN: todos los iconos cargados desde resources/icons
+
+   - Archivo: `main.py`
+     • Eliminar:
+       ```python
+       with open("mps/ui/assets/stylesheet.qss", "r", encoding="utf-8") as f:
+           app.setStyleSheet(f.read())
+       ```
+     • Agregar antes de mostrar ventana:
+       ```python
+       from utils.theme_manager import set_theme
+       from core.config import DEFAULT_THEME
+       set_theme(app, DEFAULT_THEME)
+       ```
+       // DOCUMENTACIÓN: aplicar tema desde configuración en lugar de QSS global
+     • Actualizar sidebar y cualquier `QIcon("img/...")` a `QIcon("resources/icons/...")`
+
+4. Documentar en `docs/estándares/visual.md`:
+   - Crear si no existe `docs/estándares/visual.md`
+   - Incluir sección “Temas QSS”:
+     • Explicar que solo existen `theme_light.qss` y `theme_dark.qss`
+     • Convenciones para agregar nuevas reglas (por tema, no global)
+   - Incluir sección “Iconos”:
+     • Ubicación: `resources/icons/`
+     • Nombres en minúsculas, con guiones bajos, sin espacios
+     • Tamaño recomendado: 32×32 con bordes redondeados (Coherencia visual)
+
+5. Test de recursos:
+   - Crear archivo: `tests/test_resources.py`
+     • Test 1: verificar que `resources/qss/theme_light.qss` y `theme_dark.qss` existen y no están vacíos.
+     • Test 2: recorrer `resources/icons/`, para cada `.svg` o `.png` intentar cargar con `QIcon` y comprobar que `not icon.isNull()`.
+     • Documentar en tests:
+       # TEST RESOURCES: asegurar que todos los archivos QSS e iconos se cargan correctamente
+2️⃣ Sistema de permisos completo (filtrar sidebar y acciones)
+text
+Copiar
+Editar
+PROMPT: “Completa e integra el sistema de permisos para que la UI y el sidebar muestren/oculten módulos según roles
+
+> Justificación técnica:
+El acceso a módulos y acciones debe controlarse mediante permisos basados en roles (`permisos_por_rol`). SAP implementa RBAC para garantizar que un usuario solo vea lo que puede ver y solo realice acciones autorizadas. Filtrar el sidebar y deshabilitar botones mejora seguridad y experiencia.
+
+> Pasos:
+
+1. Verificar que las tablas SQL existen:
+   - `roles(id_rol, nombre_rol, descripcion)`
+   - `permisos_por_rol(id, rol_id, modulo, permiso_ver, permiso_crear, permiso_editar, permiso_eliminar, permiso_aprobar)`
+   - Si no existen, crear migración en `scripts/db/2025_create_roles_perm.sql`:
+     ```sql
+     CREATE TABLE roles (
+         id_rol INT IDENTITY(1,1) PRIMARY KEY,
+         nombre_rol VARCHAR(100) NOT NULL,
+         descripcion TEXT
+     );
+     CREATE TABLE permisos_por_rol (
+         id INT IDENTITY(1,1) PRIMARY KEY,
+         rol_id INT REFERENCES roles(id_rol),
+         modulo VARCHAR(50) NOT NULL,
+         permiso_ver BIT DEFAULT 0,
+         permiso_crear BIT DEFAULT 0,
+         permiso_editar BIT DEFAULT 0,
+         permiso_eliminar BIT DEFAULT 0,
+         permiso_aprobar BIT DEFAULT 0
+     );
+     ```
+     // DOCUMENTACIÓN: tablas para RBAC según estándar SAP
+
+2. Extender `modules/usuarios/model.py`:
+   ```python
+   class UsuariosModel:
+       # … constructor y métodos existentes …
+
+       def obtener_permisos_por_rol(self, rol_id):
+           """
+           Retorna un diccionario { modulo: { 'ver': bool, 'crear': bool, … } }
+           """
+           sql = "SELECT modulo, permiso_ver, permiso_crear, permiso_editar, permiso_eliminar, permiso_aprobar FROM permisos_por_rol WHERE rol_id = ?"
+           rows = self.db.consultar(sql, (rol_id,))
+           permisos = {}
+           for r in rows:
+               permisos[r['modulo']] = {
+                   'ver': bool(r['permiso_ver']),
+                   'crear': bool(r['permiso_crear']),
+                   'editar': bool(r['permiso_editar']),
+                   'eliminar': bool(r['permiso_eliminar']),
+                   'aprobar': bool(r['permiso_aprobar'])
+               }
+           return permisos
+       # DOCUMENTACIÓN: método para cargar permisos de un rol desde DB
+Filtrar sidebar en main.py:
+
+python
+Copiar
+Editar
+# Al autenticar usuario, obtener permisos:
+usuario = self.usuarios_model.login(usuario_input, pass_input)
+permisos = self.usuarios_model.obtener_permisos_por_rol(usuario['rol_id'])
+# Construir sidebar_sections solo si permisos[modulo]['ver'] es True
+sidebar_sections = []
+if permisos.get('obras', {}).get('ver', False):
+    sidebar_sections.append(("Obras", "resources/icons/obras.svg"))
+if permisos.get('inventario', {}).get('ver', False):
+    sidebar_sections.append(("Inventario", "resources/icons/inventario.svg"))
+# … repetir para cada módulo … 
+self.sidebar = Sidebar("resources/icons", sidebar_sections, mostrar_nombres=True)
+// DOCUMENTACIÓN: sidebar dinámico basado en permisos
+
+Deshabilitar botones por permiso en cada módulo:
+
+Ejemplo en modules/obras/view.py:
+
+python
+Copiar
+Editar
+class ObrasView(QWidget):
+    def __init__(self, permisos):
+        # …
+        self.btn_agregar = QPushButton()
+        self.btn_agregar.setEnabled(permisos.get('obras', {}).get('crear', False))
+        # … repetimos para btn_editar, btn_eliminar, btn_aprobar segun permisos …
+// DOCUMENTACIÓN: deshabilitar botones si no se tiene permiso
+
+En modules/obras/controller.py, conservar @permiso_auditoria_modulo('crear') para evitar bypass
+
+Tests de permisos:
+
+Crear tests/test_permissions.py
+• Test 1: rol “Viewer” con permiso_ver=True y permiso_crear=False. Al autenticar con ese rol, verificar que sidebar_sections no incluya “Obras” en modo crear y que btn_agregar.isEnabled() == False.
+• Test 2: rol “Admin” con todos permisos = True. Verificar que sidebar incluya todos los módulos y todos los botones habilitados.
+• Documentar:
+
+TEST PERMISSIONS: validar acceso de roles a módulos y acciones
+yaml
+Copiar
+Editar
+
+---
+
+## 3️⃣ Bloqueo optimista en `obras` y validaciones de fechas
+
+```text
+PROMPT: “Implementa bloqueo optimista en tabla obras usando rowversion y agrega validaciones de fechas en UI y backend
+
+> Justificación técnica:
+Para evitar sobrescrituras de datos cuando múltiples usuarios editan la misma obra, SAP usa bloqueo optimista basado en timestamp o version. Al agregar columna `rowversion`, detectamos si alguien más actualizó antes de guardar. También reforzamos validaciones de fecha en UI/backend para garantizar integridad de datos.
+
+> Pasos:
+
+1. Migración SQL: `scripts/db/2025_add_rowversion_obras.sql`
+   ```sql
+   ALTER TABLE obras ADD rowversion ROWVERSION NOT NULL;
+   -- DOCUMENTACIÓN: "rowversion" se usa para bloqueo optimista en actualizaciones concurrentes
+Modificar modules/obras/model.py:
+
+python
+Copiar
+Editar
+class ObrasModel:
+    # … constructor …
+
+    def listar_obras(self):
+        sql = "SELECT id_obra, nombre, cliente, fecha_medicion, fecha_entrega, estado, rowversion FROM obras ORDER BY fecha_medicion DESC"
+        return self.db.consultar(sql)
+
+    def editar_obra(self, id_obra, nombre, cliente, fecha_entrega, rowversion_orig):
+        """
+        Updates obra solo si la versión coincide. Si no, arroja OptimisticLockError.
+        """
+        sql = """
+          UPDATE obras
+          SET nombre=?, cliente=?, fecha_entrega=?
+          WHERE id_obra=? AND rowversion=?
+        """
+        filas = self.db.ejecutar(sql, (nombre, cliente, fecha_entrega, id_obra, rowversion_orig))
+        if filas == 0:
+            raise OptimisticLockError("Obra modificada por otro usuario")
+# DOCUMENTACIÓN: el método 'editar_obra' previene errores de concurrencia
+Modificar UI en modules/obras/view.py (en diálogo de edición):
+
+python
+Copiar
+Editar
+class EditarObraDialog(QDialog):
+    def __init__(self, obra):
+        super().__init__()
+        # Campos pre cargados: self.input_nombre.setText(obra['nombre']), etc.
+        # Guardar rowversion en atributo local:
+        self.rowversion_orig = obra['rowversion']
+
+        # Validación de fechas:
+        self.input_fecha_med.setMinimumDate(QDate.currentDate())
+        self.input_fecha_entrega.setMinimumDate(self.input_fecha_med.date().addDays(1))
+        self.input_fecha_med.dateChanged.connect(self.ajustar_fecha_entrega_min)
+
+    def ajustar_fecha_entrega_min(self, date_med):
+        min_entrega = date_med.addDays(1)
+        self.input_fecha_entrega.setMinimumDate(min_entrega)
+
+    def accept(self):
+        nombre = self.input_nombre.text().strip()
+        cliente = self.input_cliente.text().strip()
+        fecha_med = self.input_fecha_med.date().toPyDate()
+        fecha_ent = self.input_fecha_entrega.date().toPyDate()
+        # VALIDACIÓN UI: campos no vacíos y fecha_ent ≥ fecha_med + 1
+        if not nombre or not cliente:
+            QMessageBox.warning(self, "Validación", "Nombre y cliente son obligatorios")
+            return
+        if fecha_ent <= fecha_med:
+            QMessageBox.warning(self, "Validación", "Fecha de entrega debe ser posterior a medición")
+            return
+        super().accept()
+
+    def obtener_datos(self):
+        return {
+          "id_obra": self.obra['id_obra'],
+          "nombre": self.input_nombre.text().strip(),
+          "cliente": self.input_cliente.text().strip(),
+          "fecha_entrega": self.input_fecha_entrega.date().toPyDate(),
+          "rowversion": self.rowversion_orig
+        }
+# DOCUMENTACIÓN: UI bloquea guardado si fechas inválidas o campos vacíos
+Modificar modules/obras/controller.py:
+
+python
+Copiar
+Editar
+from modules.obras.model import OptimisticLockError
+
+class ObrasController:
+    def __init__(self, model, view, aud_model, db):
+        # … constructor …
+        self.view.signal_editar_obra.connect(self.editar_obra)
+
+    @permiso_auditoria_modulo('editar')
+    def editar_obra(self, datos):
+        try:
+            # Validación backend: fecha_entrega ≥ fecha_medición en DB
+            obra_actual = self.model.obtener_obra_por_id(datos['id_obra'])
+            if datos['fecha_entrega'] <= obra_actual['fecha_medicion']:
+                raise ValueError("Fecha de entrega inválida (debe ser posterior a medición)")
+
+            self.model.editar_obra(
+                datos['id_obra'],
+                datos['nombre'],
+                datos['cliente'],
+                datos['fecha_entrega'],
+                datos['rowversion']
+            )
+            # Auditoría
+            self.aud_model.registrar_evento(
+                self.usuario_actual, 'obras',
+                f"Editó obra {datos['id_obra']}"
+            )
+            self.view.mostrar_mensaje("Obra actualizada correctamente")
+            self.view.refrescar_lista(self.model.listar_obras())
+        except ValueError as ve:
+            self.view.mostrar_error(str(ve))
+        except OptimisticLockError as ole:
+            QMessageBox.warning(self.view, "Conflicto", "Otro usuario modificó esta obra. Recargando lista.")
+            self.view.refrescar_lista(self.model.listar_obras())
+# DOCUMENTACIÓN: manejo de conflicto optimista y validaciones backend
+Tests:
+
+tests/test_obras_optimistic_lock.py:
+
+python
+Copiar
+Editar
+import pytest
+from modules.obras.model import ObrasModel, OptimisticLockError
+from core.database import DatabaseConnection
+
+@pytest.fixture
+def db():
+    return DatabaseConnection(":memory:")  # o DB de pruebas
+@pytest.fixture
+def model(db):
+    return ObrasModel(db)
+
+def test_optimistic_lock_conflict(model):
+    # Crear esquema y obra
+    model.db.ejecutar("CREATE TABLE obras (id_obra INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, cliente TEXT, fecha_medicion DATE, fecha_entrega DATE, estado TEXT, rowversion BLOB DEFAULT X'00')")
+    # Insertar obra con rowversion inicial
+    model.db.ejecutar("INSERT INTO obras (nombre, cliente, fecha_medicion, fecha_entrega, estado) VALUES ('A','C','2025-01-01','2025-04-01','Medición')")
+    obra = model.db.consultar("SELECT * FROM obras")[0]
+    rv1 = obra['rowversion']
+    # Simular cambio externo (update)
+    model.db.ejecutar("UPDATE obras SET nombre='Modificado' WHERE id_obra=?",(obra['id_obra'],))
+    with pytest.raises(OptimisticLockError):
+        model.editar_obra(obra['id_obra'], 'Otro', 'Cliente', '2025-05-01', rv1)
+# DOCUMENTACIÓN: validar que editar_obra lanza OptimisticLockError en conflicto
+4️⃣ Transacciones con timeout y reintentos
+text
+Copiar
+Editar
+PROMPT: “Mejora la clase DatabaseConnection para soportar timeout y reintentos, y aplica en alta_obra
+
+> Justificación técnica:
+En entornos de alta concurrencia o redes inestables, las operaciones DB pueden tardar o fallar temporalmente. Agregar timeout y reintentos mejora la robustez, evitando bloqueos prolongados o inconsistencias a mitad de operación.
+
+> Pasos:
+
+1. Modificar `core/database.py`:
+   ```python
+   import time
+   class DatabaseConnection:
+       # … constructor y métodos existentes …
+
+       def transaction(self, timeout=30, retries=2):
+           """
+           Context manager para transacción con timeout y reintentos.
+           :param timeout: segundos antes de dar timeout
+           :param retries: número de reintentos en caso de timeout
+           """
+           class TransactionContext:
+               def __init__(self, db, timeout, retries):
+                   self.db = db
+                   self.timeout = timeout
+                   self.retries = retries
+
+               def __enter__(self):
+                   self.start_time = time.time()
+                   self.db.conn.autocommit = False
+                   return self.db
+
+               def __exit__(self, exc_type, exc_val, exc_tb):
+                   if exc_type:
+                       self.db.conn.rollback()
+                   else:
+                       try:
+                           self.db.conn.commit()
+                       except TimeoutError as te:
+                           if self.retries > 0 and (time.time() - self.start_time) < self.timeout:
+                               self.retries -= 1
+                               time.sleep(1)  # breve espera
+                               return False  # repite transacción
+                           else:
+                               self.db.conn.rollback()
+                               raise
+               # DOCUMENTACIÓN: agrega timeout y reintentos al commit
+           return TransactionContext(self, timeout, retries)
+Aplicar en modules/obras/controller.py (método alta_obra):
+
+python
+Copiar
+Editar
+@permiso_auditoria_modulo('crear')
+def alta_obra(self, datos):
+    try:
+        with self.db.transaction(timeout=30, retries=2):
+            id_obra = self.model.crear_obra(**datos)
+            fecha_pred = datos["fecha_medicion"] + timedelta(days=90)
+            self.model.crear_etapa(id_obra, "Fabricación", fecha_pred)
+            self.aud_model.registrar_evento(self.usuario_actual, 'obras', f'Creó obra {id_obra}')
+        self.view.mostrar_mensaje("Obra creada correctamente")
+        self.view.refrescar_lista(self.model.listar_obras())
+    except TimeoutError:
+        self.view.mostrar_error("Timeout al guardar obra, inténtalo nuevamente")
+    except Exception as e:
+        self.view.mostrar_error(f"Error al crear obra: {e}")
+# DOCUMENTACIÓN: se usa transaction(timeout, retries) para robustez frente a errores transitorios
+Tests en tests/test_obras_transaction.py:
+
+python
+Copiar
+Editar
+import pytest
+from modules.obras.controller import ObrasController
+from modules.obras.model import ObrasModel
+from core.database import DatabaseConnection
+
+class FakeDB(DatabaseConnection):
+    def __init__(self):
+        super().__init__(":memory:")
+        self.fail_count = 0
+
+    def transaction(self, timeout=30, retries=2):
+        class Ctx:
+            def __enter__(inner):
+                return inner
+            def __exit__(inner, exc_type, exc_val, exc_tb):
+                # Simular fallo de timeout las dos primeras veces
+                if self.fail_count < 2:
+                    self.fail_count += 1
+                    raise TimeoutError("Simulado")
+                return False  # Commit correcto la tercera vez
+        return Ctx()
+
+    def ejecutar(self, sql, params=None):
+        if "INSERT INTO obras" in sql and self.fail_count < 2:
+            raise TimeoutError("Simulado")
+        return super().ejecutar(sql, params)
+
+@pytest.fixture
+def controller():
+    db = FakeDB()
+    model = ObrasModel(db)
+    aud_model = None  # mock simple o real
+    view = type("V", (), {"mostrar_mensaje": lambda self,x: None, "mostrar_error": lambda self,x: (_ for _ in ()).throw(Exception(x)), "refrescar_lista": lambda self,x: None})
+    return ObrasController(model, view, aud_model, db)
+
+def test_timeout_retries(controller):
+    datos = { "nombre": "Test", "cliente": "C", "fecha_medicion": date.today(), "fecha_entrega": date.today() + timedelta(days=90) }
+    # Debe reintentar 2 veces y luego completar sin excepción
+    controller.alta_obra(datos)
+
+def test_timeout_falla(controller):
+    # Forzar fallo indefinido
+    controller.db.fail_count = 10
+    datos = { "nombre": "Test", "cliente": "C", "fecha_medicion": date.today(), "fecha_entrega": date.today() + timedelta(days=90) }
+    with pytest.raises(Exception):
+        controller.alta_obra(datos)
+# DOCUMENTACIÓN: asegurar que transaction reintente y lance error tras retries agotados
+python
+Copiar
+Editar
+
+---
+
+## 5️⃣ Consolidar auditoría: filtros, paginación y exportación
+
+```text
+PROMPT: “Amplía el módulo auditoría para soportar filtros, paginación y exportación a Excel
+
+> Justificación técnica:
+La tabla de auditoría se puede llenar rápidamente en entornos productivos. Para consultar eficientemente, necesitamos filtros por fecha, módulo y usuario, paginación y exportación a Excel, como sucede en SAP SM20. Esto mejora la trazabilidad y el análisis de incidentes.
+
+> Pasos:
+
+1. Modificar `modules/auditoria/model.py`:
+   ```python
+   class AuditoriaModel:
+       # … constructor …
+
+       def listar_auditorias(self, fecha_desde=None, fecha_hasta=None, modulo=None, usuario=None, offset=0, limit=50):
+           """
+           Retorna registros filtrados y paginados.
+           """
+           conditions = []
+           params = []
+           if fecha_desde:
+               conditions.append("fecha >= ?")
+               params.append(fecha_desde)
+           if fecha_hasta:
+               conditions.append("fecha <= ?")
+               params.append(fecha_hasta)
+           if modulo:
+               conditions.append("modulo = ?")
+               params.append(modulo)
+           if usuario:
+               conditions.append("usuario = ?")
+               params.append(usuario)
+
+           where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+           sql = f"SELECT * FROM auditorias_sistema {where_clause} ORDER BY fecha DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
+           params.extend([offset, limit])
+           return self.db.consultar(sql, tuple(params))
+
+       def contar_auditorias(self, fecha_desde=None, fecha_hasta=None, modulo=None, usuario=None):
+           """
+           Retorna el total de registros para paginación.
+           """
+           conditions = []
+           params = []
+           if fecha_desde:
+               conditions.append("fecha >= ?")
+               params.append(fecha_desde)
+           if fecha_hasta:
+               conditions.append("fecha <= ?")
+               params.append(fecha_hasta)
+           if modulo:
+               conditions.append("modulo = ?")
+               params.append(modulo)
+           if usuario:
+               conditions.append("usuario = ?")
+               params.append(usuario)
+
+           where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+           sql = f"SELECT COUNT(*) as total FROM auditorias_sistema {where_clause}"
+           result = self.db.consultar(sql, tuple(params))
+           return result[0]['total']
+   # DOCUMENTACIÓN: permite filtrar y paginar registros de auditoría
+Modificar modules/auditoria/controller.py:
+
+python
+Copiar
+Editar
+class AuditoriaController:
+    def __init__(self, model, view, db):
+        self.model = model
+        self.view = view
+        self.db = db
+        self.view.signal_filtrar.connect(self.filtrar_auditorias)
+        self.view.signal_exportar.connect(self.exportar_excel)
+
+    def filtrar_auditorias(self, filtros, pagina):
+        offset = (pagina - 1) * filtros['limit']
+        total = self.model.contar_auditorias(**filtros)
+        registros = self.model.listar_auditorias(offset=offset, limit=filtros['limit'], **filtros)
+        self.view.actualizar_tabla(registros, total, pagina)
+
+    def exportar_excel(self, filtros):
+        """
+        Genera un archivo Excel con todas las auditorías según filtros.
+        """
+        # Obtener todas las filas (limit arbitrario grande o paginación interna)
+        total = self.model.contar_auditorias(**filtros)
+        registros = self.model.listar_auditorias(offset=0, limit=total, **filtros)
+        import pandas as pd
+        df = pd.DataFrame(registros)
+        filepath = f"exports/auditorias_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+        df.to_excel(filepath, index=False)
+        self.view.mostrar_mensaje(f"Exportado a {filepath}")
+# DOCUMENTACIÓN: método para filtrar dinámicamente y exportar a Excel con pandas
+Modificar modules/auditoria/view.py:
+
+python
+Copiar
+Editar
+class AuditoriaView(QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout(self)
+        # Filtros
+        self.fecha_desde = QDateEdit()
+        self.fecha_hasta = QDateEdit()
+        self.combo_modulo = QComboBox()
+        self.combo_modulo.addItem("Todos", None)
+        for mod in ["obras", "inventario", "compras", "logistica", "usuarios", "configuracion", "mantenimiento"]:
+            self.combo_modulo.addItem(mod.capitalize(), mod)
+        self.input_usuario = QLineEdit()
+        self.btn_filtrar = QPushButton("Filtrar")
+        self.btn_filtrar.clicked.connect(self.on_filtrar)
+
+        # Tabla
+        self.tabla = QTableWidget()
+        self.tabla.setColumnCount(4)
+        self.tabla.setHorizontalHeaderLabels(["Usuario", "Módulo", "Acción", "Fecha"])
+
+        # Botones de paginación
+        self.btn_anterior = QPushButton("Anterior")
+        self.btn_siguiente = QPushButton("Siguiente")
+        self.lbl_pagina = QLabel("Página 1")
+
+        # Exportar
+        self.btn_exportar = QPushButton("Exportar a Excel")
+        self.btn_exportar.clicked.connect(self.on_exportar)
+
+        # Layout de filtros y tabla
+        filters_layout = QHBoxLayout()
+        filters_layout.addWidget(QLabel("Desde"))
+        filters_layout.addWidget(self.fecha_desde)
+        filters_layout.addWidget(QLabel("Hasta"))
+        filters_layout.addWidget(self.fecha_hasta)
+        filters_layout.addWidget(QLabel("Módulo"))
+        filters_layout.addWidget(self.combo_modulo)
+        filters_layout.addWidget(QLabel("Usuario"))
+        filters_layout.addWidget(self.input_usuario)
+        filters_layout.addWidget(self.btn_filtrar)
+        layout.addLayout(filters_layout)
+        layout.addWidget(self.tabla)
+        nav_layout = QHBoxLayout()
+        nav_layout.addWidget(self.btn_anterior)
+        nav_layout.addWidget(self.lbl_pagina)
+        nav_layout.addWidget(self.btn_siguiente)
+        layout.addLayout(nav_layout)
+        layout.addWidget(self.btn_exportar)
+
+    def on_filtrar(self):
+        filtros = {
+            "fecha_desde": self.fecha_desde.date().toPyDate(),
+            "fecha_hasta": self.fecha_hasta.date().toPyDate(),
+            "modulo": self.combo_modulo.currentData(),
+            "usuario": self.input_usuario.text().strip(),
+            "limit": 50
+        }
+        self.signal_filtrar.emit(filtros, 1)
+    def actualizar_tabla(self, registros, total, pagina):
+        self.tabla.setRowCount(len(registros))
+        for i, r in enumerate(registros):
+            self.tabla.setItem(i, 0, QTableWidgetItem(r['usuario']))
+            self.tabla.setItem(i, 1, QTableWidgetItem(r['modulo']))
+            self.tabla.setItem(i, 2, QTableWidgetItem(r['accion']))
+            self.tabla.setItem(i, 3, QTableWidgetItem(str(r['fecha'])))
+        self.lbl_pagina.setText(f"Página {pagina} de {((total-1)//50)+1}")
+        # Habilitar/Deshabilitar botones segun página
+        self.btn_anterior.setEnabled(pagina > 1)
+        self.btn_siguiente.setEnabled(pagina * 50 < total)
+
+    def on_exportar(self):
+        filtros = {
+            "fecha_desde": self.fecha_desde.date().toPyDate(),
+            "fecha_hasta": self.fecha_hasta.date().toPyDate(),
+            "modulo": self.combo_modulo.currentData(),
+            "usuario": self.input_usuario.text().strip()
+        }
+        self.signal_exportar.emit(filtros)
+# DOCUMENTACIÓN: vista con filtros, paginación y exportación en Excel
+Tests en tests/test_auditoria.py:
+
+python
+Copiar
+Editar
+import pytest
+from modules.auditoria.model import AuditoriaModel
+from core.database import DatabaseConnection
+
+@pytest.fixture
+def model(tmp_path):
+    db_path = str(tmp_path / "aud.db")
+    db = DatabaseConnection(db_path)
+    # Crear esquema
+    db.ejecutar("""
+      CREATE TABLE auditorias_sistema (
+        id INT PRIMARY KEY AUTOINCREMENT,
+        usuario TEXT, modulo TEXT, accion TEXT, fecha DATE
+      )
+    """)
+    return AuditoriaModel(db)
+
+def test_listar_y_contar(model):
+    # Insertar 3 registros con distintos módulos y fechas
+    model.db.ejecutar("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES ('U1','obras','A1','2025-01-01')")
+    model.db.ejecutar("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES ('U2','inventario','A2','2025-02-01')")
+    model.db.ejecutar("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES ('U1','obras','A3','2025-03-01')")
+    total = model.contar_auditorias(fecha_desde='2025-01-01', fecha_hasta='2025-02-15', modulo='obras', usuario='U1')
+    assert total == 1
+    registros = model.listar_auditorias(fecha_desde='2025-01-01', fecha_hasta='2025-02-15', modulo='obras', usuario='U1', offset=0, limit=50)
+    assert len(registros) == 1
+# DOCUMENTACIÓN: validar filtros y paginación de auditorías
+
+def test_exportar_excel(tmp_path, model):
+    # Insertar registros
+    model.db.ejecutar("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES ('U1','obras','A1','2025-01-01')")
+    from modules.auditoria.controller import AuditoriaController
+    class FakeView:
+        def mostrar_mensaje(self, msg):
+            self.msg = msg
+    view = FakeView()
+    controller = AuditoriaController(model, view, model.db)
+    filtros = {"fecha_desde":"2025-01-01","fecha_hasta":"2025-12-31","modulo":None,"usuario":None}
+    controller.exportar_excel(filtros)
+    assert "exports/auditorias_" in view.msg
+# DOCUMENTACIÓN: exportación a Excel con pandas y mensaje al usuario
+6️⃣ Flujos de reserva/devolución en Inventario, Herrajes y Vidrios
+text
+Copiar
+Editar
+PROMPT: “Completa los flujos de reserva y devolución de stock en inventario, herrajes y vidrios
+
+> Justificación técnica:
+Para mantener exactitud del inventario y evitar inconsistencias, cualquier reserva o devolución de material (perfiles, herrajes, vidrios) debe actualizar stock, registrar movimientos y auditarse. SAP WM maneja lotes y movimientos atómicos; aquí simulamos esas mejores prácticas.
+
+> Pasos:
+
+1. **Inventario** (`modules/inventario/model.py`):
+   ```python
+   class InventarioModel:
+       # … constructor …
+
+       def obtener_stock_item(self, id_item):
+           sql = "SELECT cantidad FROM inventario_items WHERE id_item = ?"
+           row = self.db.consultar(sql, (id_item,))
+           return row[0]['cantidad'] if row else 0
+
+       def reservar_stock(self, id_item, cantidad, id_obra):
+           """
+           Reserva stock para una obra: disminuye inventario_items y crea registro en reservas_stock.
+           """
+           stock_actual = self.obtener_stock_item(id_item)
+           if stock_actual < cantidad:
+               raise ValueError("Stock insuficiente")
+           with self.db.transaction(timeout=30, retries=2):
+               sql1 = "UPDATE inventario_items SET cantidad = cantidad - ? WHERE id_item = ?"
+               self.db.ejecutar(sql1, (cantidad, id_item))
+               sql2 = "INSERT INTO reservas_stock (id_item, cantidad_reservada, id_obra) VALUES (?, ?, ?)"
+               self.db.ejecutar(sql2, (id_item, cantidad, id_obra))
+       # DOCUMENTACIÓN: reserva atómica con transacción y chequeo de stock
+
+       def devolver_stock(self, id_item, cantidad, id_obra):
+           """
+           Devuelve stock reservado: aumenta inventario_items y elimina reserva.
+           """
+           with self.db.transaction(timeout=30, retries=2):
+               sql1 = "UPDATE inventario_items SET cantidad = cantidad + ? WHERE id_item = ?"
+               self.db.ejecutar(sql1, (cantidad, id_item))
+               sql2 = "DELETE FROM reservas_stock WHERE id_item = ? AND id_obra = ?"
+               self.db.ejecutar(sql2, (id_item, id_obra))
+       # DOCUMENTACIÓN: devolución atómica con transacción
+Herrajes (modules/herrajes/model.py):
+
+python
+Copiar
+Editar
+class HerrajesModel:
+    # … constructor …
+
+    def reservar_herraje(self, id_herraje, cantidad, id_obra):
+        """
+        Reserva herraje para obra: disminuye stock y crea registro en herrajes_por_obra.
+        """
+        sql_stock = "SELECT stock FROM herrajes WHERE id_herraje = ?"
+        row = self.db.consultar(sql_stock, (id_herraje,))
+        if not row or row[0]['stock'] < cantidad:
+            raise ValueError("Stock de herrajes insuficiente")
+        with self.db.transaction(timeout=30, retries=2):
+            sql1 = "UPDATE herrajes SET stock = stock - ? WHERE id_herraje = ?"
+            self.db.ejecutar(sql1, (cantidad, id_herraje))
+            sql2 = "INSERT INTO herrajes_por_obra (id_obra, id_herraje, cantidad, estado) VALUES (?, ?, ?, 'Reservado')"
+            self.db.ejecutar(sql2, (id_obra, id_herraje, cantidad))
+    # DOCUMENTACIÓN: reserva atómica de herrajes
+
+    def devolver_herraje(self, id_obra, id_herraje):
+        """
+        Devuelve herraje reservado: elimina asociación y suma stock.
+        """
+        row = self.db.consultar("SELECT cantidad FROM herrajes_por_obra WHERE id_obra = ? AND id_herraje = ?", (id_obra, id_herraje))
+        if not row:
+            raise ValueError("No hay reserva para este herraje en la obra")
+        cantidad = row[0]['cantidad']
+        with self.db.transaction(timeout=30, retries=2):
+            sql1 = "UPDATE herrajes SET stock = stock + ? WHERE id_herraje = ?"
+            self.db.ejecutar(sql1, (cantidad, id_herraje))
+            sql2 = "DELETE FROM herrajes_por_obra WHERE id_obra = ? AND id_herraje = ?"
+            self.db.ejecutar(sql2, (id_obra, id_herraje))
+    # DOCUMENTACIÓN: devolución atómica de herrajes
+Vidrios (modules/vidrios/model.py):
+
+python
+Copiar
+Editar
+class VidriosModel:
+    # … constructor …
+
+    def reservar_vidrio(self, id_vidrio, cantidad, id_obra):
+        """
+        Reserva vidrio para obra: disminuye stock y crea registro en vidrios_por_obra.
+        """
+        row = self.db.consultar("SELECT cantidad FROM vidrios WHERE id_vidrio = ?", (id_vidrio,))
+        if not row or row[0]['cantidad'] < cantidad:
+            raise ValueError("Stock de vidrios insuficiente")
+        with self.db.transaction(timeout=30, retries=2):
+            sql1 = "UPDATE vidrios SET cantidad = cantidad - ? WHERE id_vidrio = ?"
+            self.db.ejecutar(sql1, (cantidad, id_vidrio))
+            sql2 = "INSERT INTO vidrios_por_obra (id_obra, id_vidrio, cantidad, estado) VALUES (?, ?, ?, 'Reservado')"
+            self.db.ejecutar(sql2, (id_obra, id_vidrio, cantidad))
+    # DOCUMENTACIÓN: reserva atómica de vidrios
+
+    def devolver_vidrio(self, id_obra, id_vidrio):
+        """
+        Devuelve vidrio reservado: elimina asociación y suma stock.
+        """
+        row = self.db.consultar("SELECT cantidad FROM vidrios_por_obra WHERE id_obra = ? AND id_vidrio = ?", (id_obra, id_vidrio))
+        if not row:
+            raise ValueError("No hay reserva para este vidrio en la obra")
+        cantidad = row[0]['cantidad']
+        with self.db.transaction(timeout=30, retries=2):
+            sql1 = "UPDATE vidrios SET cantidad = cantidad + ? WHERE id_vidrio = ?"
+            self.db.ejecutar(sql1, (cantidad, id_vidrio))
+            sql2 = "DELETE FROM vidrios_por_obra WHERE id_obra = ? AND id_vidrio = ?"
+            self.db.ejecutar(sql2, (id_obra, id_vidrio))
+    # DOCUMENTACIÓN: devolución atómica de vidrios
+Modificar controladores para usar estos métodos y registrar auditoría:
+
+modules/inventario/controller.py:
+
+python
+Copiar
+Editar
+class InventarioController:
+    def reservar_material(self, id_item, cantidad, id_obra):
+        try:
+            self.model.reservar_stock(id_item, cantidad, id_obra)
+            self.aud_model.registrar_evento(self.usuario_actual, 'inventario', f'Reservó {cantidad} unidades del item {id_item} para obra {id_obra}')
+            self.view.mostrar_mensaje("Stock reservado correctamente")
+        except ValueError as ve:
+            self.view.mostrar_error(str(ve))
+    def devolver_material(self, id_item, id_obra):
+        try:
+            self.model.devolver_stock(id_item, cantidad, id_obra)
+            self.aud_model.registrar_evento(self.usuario_actual, 'inventario', f'Devolvió {cantidad} unidades del item {id_item} de la obra {id_obra}')
+            self.view.mostrar_mensaje("Stock devuelto correctamente")
+        except ValueError as ve:
+            self.view.mostrar_error(str(ve))
+# DOCUMENTACIÓN: flujos de reserva y devolución en inventario, con auditoría
+modules/herrajes/controller.py:
+
+python
+Copiar
+Editar
+class HerrajesController:
+    @permiso_auditoria_modulo('crear')
+    def asociar_herraje(self, id_obra, id_herraje, cantidad):
+        try:
+            self.model.reservar_herraje(id_herraje, cantidad, id_obra)
+            self.aud_model.registrar_evento(self.usuario_actual, 'herrajes', f'Reservó {cantidad} de herraje {id_herraje} para obra {id_obra}')
+            self.view.mostrar_mensaje("Herraje reservado para obra")
+        except ValueError as ve:
+            self.view.mostrar_error(str(ve))
+
+    @permiso_auditoria_modulo('editar')
+    def devolver_herraje_control(self, id_obra, id_herraje):
+        try:
+            self.model.devolver_herraje(id_obra, id_herraje)
+            self.aud_model.registrar_evento(self.usuario_actual, 'herrajes', f'Devolvió herraje {id_herraje} de obra {id_obra}')
+            self.view.mostrar_mensaje("Herraje devuelto correctamente")
+        except ValueError as ve:
+            self.view.mostrar_error(str(ve))
+modules/vidrios/controller.py:
+
+python
+Copiar
+Editar
+class VidriosController:
+    @permiso_auditoria_modulo('crear')
+    def asociar_vidrio(self, id_obra, id_vidrio, cantidad):
+        try:
+            self.model.reservar_vidrio(id_vidrio, cantidad, id_obra)
+            self.aud_model.registrar_evento(self.usuario_actual, 'vidrios', f'Reservó {cantidad} de vidrio {id_vidrio} para obra {id_obra}')
+            self.view.mostrar_mensaje("Vidrio reservado para obra")
+        except ValueError as ve:
+            self.view.mostrar_error(str(ve))
+
+    @permiso_auditoria_modulo('editar')
+    def devolver_vidrio_control(self, id_obra, id_vidrio):
+        try:
+            self.model.devolver_vidrio(id_obra, id_vidrio)
+            self.aud_model.registrar_evento(self.usuario_actual, 'vidrios', f'Devolvió vidrio {id_vidrio} de obra {id_obra}')
+            self.view.mostrar_mensaje("Vidrio devuelto correctamente")
+        except ValueError as ve:
+            self.view.mostrar_error(str(ve))
+Tests para cada modelo:
+
+tests/test_inventario_reservas.py:
+
+python
+Copiar
+Editar
+import pytest
+from modules.inventario.model import InventarioModel
+from core.database import DatabaseConnection
+
+@pytest.fixture
+def model(tmp_path):
+    db = DatabaseConnection(":memory:")
+    # Crear esquema
+    db.ejecutar("CREATE TABLE inventario_items (id_item INTEGER PRIMARY KEY AUTOINCREMENT, cantidad INTEGER)")
+    db.ejecutar("INSERT INTO inventario_items (cantidad) VALUES (10)")
+    db.ejecutar("CREATE TABLE reservas_stock (id_item INTEGER, cantidad_reservada INTEGER, id_obra INTEGER)")
+    return InventarioModel(db)
+
+def test_reservar_stock_ok(model):
+    model.reservar_stock(1, 5, 1)
+    stock = model.obtener_stock_item(1)
+    assert stock == 5
+    reservas = model.db.consultar("SELECT * FROM reservas_stock WHERE id_obra=1 AND id_item=1")
+    assert reservas[0]['cantidad_reservada'] == 5
+
+def test_reservar_stock_insuficiente(model):
+    with pytest.raises(ValueError):
+        model.reservar_stock(1, 20, 1)
+
+def test_devolver_stock_ok(model):
+    # Primero reservar
+    model.reservar_stock(1, 3, 1)
+    model.devolver_stock(1, 3, 1)
+    stock = model.obtener_stock_item(1)
+    assert stock == 10  # regresa a valor inicial
+    reservas = model.db.consultar("SELECT * FROM reservas_stock")
+    assert not reservas  # tabla vacía
+# DOCUMENTACIÓN: flujos de reserva y devolución en inventario
+tests/test_herrajes_reservas.py (similar estructura)
+
+tests/test_vidrios_reservas.py (similar estructura)
+
+// DOCUMENTACIÓN: validar que los flujos de reserva/devolución mantengan integridad de stock
+
+yaml
+Copiar
+Editar
+
+---
+
+## 7️⃣ Agregar métricas Prometheus y endpoint `/metrics`
+
+```text
+PROMPT: “Instrumenta métodos críticos con Prometheus y expón /metrics
+
+> Justificación técnica:
+La observabilidad en tiempo real permite detectar cuellos de botella y errores en producción. Al medir la latencia y errores en `alta_obra` y otras operaciones, podemos crear alertas. Exponer `/metrics` es estándar para Prometheus.
+
+> Pasos:
+
+1. Instalar dependencia: agregar a `requirements.txt`
+prometheus_client
+
+python
+Copiar
+Editar
+// DOCUMENTACIÓN: librería oficial para métricas Prometheus en Python
+
+2. Modificar `modules/obras/controller.py`:
+```python
+from prometheus_client import Histogram, Counter
+
+REQUEST_LATENCY = Histogram('alta_obra_latency_seconds', 'Latencia del método alta_obra')
+ERROR_COUNT = Counter('alta_obra_errors_total', 'Cantidad de errores en alta_obra')
+
+class ObrasController:
+    @REQUEST_LATENCY.time()
+    @permiso_auditoria_modulo('crear')
+    def alta_obra(self, datos):
+        try:
+            with self.db.transaction(timeout=30, retries=2):
+                id_obra = self.model.crear_obra(**datos)
+                fecha_pred = datos["fecha_medicion"] + timedelta(days=90)
+                self.model.crear_etapa(id_obra, "Fabricación", fecha_pred)
+                self.aud_model.registrar_evento(self.usuario_actual, 'obras', f'Creó obra {id_obra}')
+            self.view.mostrar_mensaje("Obra creada correctamente")
+            self.view.refrescar_lista(self.model.listar_obras())
+        except Exception as e:
+            ERROR_COUNT.inc()
+            self.view.mostrar_error(f"Error al crear obra: {e}")
+            raise
+# DOCUMENTACIÓN: medir latencia y contar errores de alta_obra
+Modificar main.py para exponer /metrics:
+
+python
+Copiar
+Editar
+from prometheus_client import start_http_server
+
+if __name__ == "__main__":
+    start_http_server(8000)  # expone métricas en http://localhost:8000/metrics
+    app = QApplication(sys.argv)
+    # Aplicar tema
+    from utils.theme_manager import set_theme
+    from core.config import DEFAULT_THEME
+    set_theme(app, DEFAULT_THEME)
+    main_window = MainWindow()
+    main_window.show()
+    sys.exit(app.exec())
+# DOCUMENTACIÓN: endpoint metrics para Prometheus
+Tests de métricas en tests/test_obras_metrics.py:
+
+python
+Copiar
+Editar
+import pytest
+from modules.obras.controller import REQUEST_LATENCY, ERROR_COUNT
+
+def test_error_count_increments(monkeypatch):
+    # Forzar excepción en alta_obra simulando ValueError
+    class FakeController:
+        def __init__(self):
+            pass
+        @REQUEST_LATENCY.time()
+        def alta_obra(self):
+            raise ValueError("Simulado")
+    ctrl = FakeController()
+    with pytest.raises(ValueError):
+        ctrl.alta_obra()
+    assert ERROR_COUNT._value.get() >= 1  # se incrementó un error
+# DOCUMENTACIÓN: contador de errores se incrementa tras excepción
+8️⃣ Crear tests automatizados (Unit, Integration, E2E)
+text
+Copiar
+Editar
+PROMPT: “Agrega suites de tests Unit, Integration y E2E para los módulos clave
+
+> Justificación técnica:
+Garantizar que cada módulo funcione correctamente tras cambios y que no se introduzcan regresiones. Tests E2E con PyQt6 QTest comprueban la UI completa, simulando la interacción de usuario.
+
+> Pasos:
+
+1. **Pruebas Unitarias** (Modelos):
+   - Carpeta: `tests/test_obras_model.py`
+     ```python
+     import pytest
+     from modules.obras.model import ObrasModel
+     from core.database import DatabaseConnection
+
+     @pytest.fixture
+     def model(tmp_path):
+         db = DatabaseConnection(":memory:")
+         db.ejecutar("CREATE TABLE obras (id_obra INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, cliente TEXT, fecha_medicion DATE, fecha_entrega DATE, estado TEXT, rowversion BLOB DEFAULT X'00')")
+         return ObrasModel(db)
+
+     def test_crear_obra(model):
+         datos = {"nombre":"Obra1","cliente":"Cliente1","fecha_medicion":"2025-01-01","fecha_entrega":"2025-04-01"}
+         idn = model.crear_obra(**datos)
+         assert idn == 1
+         rows = model.db.consultar("SELECT * FROM obras WHERE id_obra=1")
+         assert rows[0]['nombre'] == "Obra1"
+     # DOCUMENTACIÓN: test unitario de crear_obra
+
+     def test_listar_obras_vacio(model):
+         lista = model.listar_obras()
+         assert lista == []
+     ```
+
+   - Carpeta: `tests/test_inventario_model.py`
+     (similar a test de reserva/devolución ya mostrado)
+
+2. **Pruebas de Integración** (Controller + DB real):
+   - Carpeta: `tests/test_obras_controller.py`
+     ```python
+     import pytest
+     from modules.obras.controller import ObrasController
+     from modules.obras.model import ObrasModel
+     from modules.auditoria.model import AuditoriaModel
+     from core.database import DatabaseConnection
+     from PyQt6.QtWidgets import QApplication
+     import sys
+
+     @pytest.fixture(scope="module")
+     def app():
+         app = QApplication(sys.argv)
+         yield app
+         app.quit()
+
+     @pytest.fixture
+     def controller(app, tmp_path):
+         db_path = str(tmp_path / "db.sqlite")
+         db = DatabaseConnection(db_path)
+         # Crear esquema obras y auditorias
+         db.ejecutar("CREATE TABLE obras (id_obra INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, cliente TEXT, fecha_medicion DATE, fecha_entrega DATE, estado TEXT, rowversion BLOB DEFAULT X'00')")
+         db.ejecutar("CREATE TABLE cronograma_obras (id INTEGER PRIMARY KEY AUTOINCREMENT, id_obra INTEGER, etapa TEXT, fecha_programada DATE, fecha_real DATE)")
+         db.ejecutar("CREATE TABLE auditorias_sistema (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario TEXT, modulo TEXT, accion TEXT, fecha DATE)")
+         model = ObrasModel(db)
+         aud = AuditoriaModel(db)
+         # Crear vista y controlador con permisos completos
+         permisos = {'obras':{'ver':True,'crear':True,'editar':True,'eliminar':True,'aprobar':True}}
+         view = type("V", (), {
+             "signal_alta_obra": type("S", (), {"connect": lambda self,f: None})(),
+             "mostrar_mensaje": lambda self,txt: setattr(self, 'msg', txt),
+             "mostrar_error": lambda self,txt: setattr(self, 'err', txt),
+             "refrescar_lista": lambda self,lista: setattr(self, 'lista', lista)
+         })
+         controller = ObrasController(model, view, aud, db)
+         return controller
+
+     def test_alta_obra_exitoso(controller):
+         datos = {"nombre":"ObraInt","cliente":"ClienteI","fecha_medicion":"2025-02-01","fecha_entrega":"2025-05-01"}
+         controller.alta_obra(datos)
+         filas = controller.model.db.consultar("SELECT * FROM obras")
+         assert len(filas) == 1
+         assert filas[0]['nombre'] == "ObraInt"
+     # DOCUMENTACIÓN: prueba de integración alta_obra contra DB real
+
+     def test_error_fecha_invalida(controller):
+         datos = {"nombre":"ObraInt","cliente":"ClienteI","fecha_medicion":"2025-06-01","fecha_entrega":"2025-05-01"}
+         controller.alta_obra(datos)
+         assert "Fecha de entrega" in controller.view.err
+     # DOCUMENTACIÓN: verificar validación de fecha en controller
+     ```
+
+3. **Pruebas E2E** (PyQt6 QTest):
+   - Carpeta: `tests/test_obras_e2e.py`
+     ```python
+     import pytest
+     from PyQt6.QtTest import QTest
+     from PyQt6.QtCore import Qt
+     from core.database import DatabaseConnection
+     from modules.obras.model import ObrasModel
+     from modules.auditoria.model import AuditoriaModel
+     from modules.obras.view import ObrasView, AltaObraDialog
+     from modules.obras.controller import ObrasController
+     from PyQt6.QtWidgets import QApplication
+     import sys
+
+     @pytest.fixture(scope="module")
+     def app():
+         app = QApplication(sys.argv)
+         yield app
+         app.quit()
+
+     @pytest.fixture
+     def window(app, tmp_path):
+         # Preparar DB en memoria
+         db_path = str(tmp_path / "db_e2e.sqlite")
+         db = DatabaseConnection(db_path)
+         db.ejecutar("CREATE TABLE obras (id_obra INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, cliente TEXT, fecha_medicion DATE, fecha_entrega DATE, estado TEXT, rowversion BLOB DEFAULT X'00')")
+         db.ejecutar("CREATE TABLE cronograma_obras (id INTEGER PRIMARY KEY AUTOINCREMENT, id_obra INTEGER, etapa TEXT, fecha_programada DATE, fecha_real DATE)")
+         db.ejecutar("CREATE TABLE auditorias_sistema (id INTEGER PRIMARY KEY AUTOINCREMENT, usuario TEXT, modulo TEXT, accion TEXT, fecha DATE)")
+         model = ObrasModel(db)
+         aud = AuditoriaModel(db)
+         permisos = {'obras':{'ver':True,'crear':True,'editar':True,'eliminar':True,'aprobar':True}}
+         view = ObrasView(permisos)
+         controller = ObrasController(model, view, aud, db)
+         view.signal_alta_obra.connect(controller.alta_obra)
+         view.show()
+         return view
+
+     def test_e2e_alta_obra(window):
+         # Abrir diálogo
+         QTest.mouseClick(window.btn_agregar, Qt.MouseButton.LeftButton)
+         dlg = window.findChild(AltaObraDialog)
+         # Completar campos
+         QTest.keyClicks(dlg.input_nombre, "E2E Obra")
+         QTest.keyClicks(dlg.input_cliente, "ClienteE2E")
+         dlg.input_fecha_med.setDate(QDate(2025, 7, 1))
+         dlg.input_fecha_entrega.setDate(QDate(2025, 10, 1))
+         # Clic Guardar
+         QTest.mouseClick(dlg.btn_guardar, Qt.MouseButton.LeftButton)
+         # Verificar que la tabla se actualizó
+         assert any(item.text() == "E2E Obra" for item in window.tabla_obras_items())
+     # DOCUMENTACIÓN: test E2E simula flujo completo de alta de obra
+     ```
+
+   - Asegurarse de tener `pytest-qt` en `requirements.txt`
+   - Agregar en CI job de e2e ejecutando: `pytest tests/test_obras_e2e.py --maxfail=1 --disable-warnings`
+
+9️⃣ Depurar y actualizar dependencias (requirements.txt)
+text
+Copiar
+Editar
+PROMPT: “Revisa y actualiza el archivo requirements.txt, eliminando librerías duplicadas y añadiendo las nuevas
+
+> Justificación técnica:
+Tener PyQt5 y PyQt6 juntos genera conflictos. Debemos estandarizar en uno solo (preferible PyQt6). Además, agregar librerías requeridas para tests, métricas y dotenv. Esto asegura un entorno reproducible y evita errores de instalación.
+
+> Pasos:
+
+1. Abrir `requirements.txt` y eliminar:
+   - PyQt5==5.15.11
+   - logger==1.4 (si no se usa)
+   - DataAccessLayer==0.1.0 (si no se usa directamente)
+2. Mantener:
+   - PyQt6==6.10.0
+   - pandas==2.2.4
+   - fpdf==1.7.2
+   - matplotlib==3.7.1
+   - pyodbc==4.0.35
+3. Agregar las siguientes líneas:
+python-dotenv==1.0.0
+prometheus-client==0.15.0
+pytest==7.2.0
+pytest-qt==4.0.0
+
+markdown
+Copiar
+Editar
+// DOCUMENTACIÓN: dependencias para variables de entorno, métricas y tests
+
+4. Ejecutar `pip install -r requirements.txt` en entorno limpio para verificar compatibilidad.
+
+5. Test de instalación:
+- Crear un entorno virtual nuevo
+- Ejecutar `pip install -r requirements.txt`
+- Importar en Python REPL:
+  ```python
+  import PyQt6, pandas, fpdf, pytest, prometheus_client, dotenv
+  ```
+  Asegurarse de que no hay ImportError
+# TEST DEPENDENCIES: comprueba que todas las librerías se instalan correctamente
+🔟 Centralizar configuración en core/config.py usando .env
+text
+Copiar
+Editar
+PROMPT: “Crea core/config.py que cargue variables de entorno con python-dotenv y actualiza database.py para usarlas
+
+> Justificación técnica:
+Evitar hard-coded de credenciales en el repo y facilitar despliegue en distintos entornos (dev, staging, prod). Usar `.env` y `os.getenv` es un estándar moderno.
+
+> Pasos:
+
+1. Instalar `python-dotenv` (ya en requirements.txt)
+
+2. Crear archivo `core/config.py`:
+   ```python
+   import os
+   from dotenv import load_dotenv
+
+   # Cargar variables de .env en la raíz del proyecto
+   load_dotenv()
+
+   DB_SERVER = os.getenv("DB_SERVER", "localhost")
+   DB_USERNAME = os.getenv("DB_USERNAME", "sa")
+   DB_PASSWORD = os.getenv("DB_PASSWORD", "")
+   DB_PORT = os.getenv("DB_PORT", "1433")
+   DB_DEFAULT_DATABASE = os.getenv("DB_DEFAULT_DATABASE", "mps.app-inventario")
+   DB_TIMEOUT = int(os.getenv("DB_TIMEOUT", "30"))
+
+   DEFAULT_THEME = os.getenv("DEFAULT_THEME", "light")
+   DEBUG_MODE = os.getenv("DEBUG_MODE", "False") == "True"
+   LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
+   # DOCUMENTACIÓN: variables de entorno para configuración de base de datos y tema
+Actualizar core/database.py para usar core/config.py:
+
+python
+Copiar
+Editar
+from core.config import DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_PORT, DB_DEFAULT_DATABASE, DB_TIMEOUT
+
+class DatabaseConnection:
+    def __init__(self, database=None):
+        server = DB_SERVER + ("," + DB_PORT if DB_PORT else "")
+        database = database if database else DB_DEFAULT_DATABASE
+        conn_str = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={DB_USERNAME};PWD={DB_PASSWORD};Connection Timeout={DB_TIMEOUT}"
+        self.conn = pyodbc.connect(conn_str)
+        self.conn.autocommit = True
+        self.cursor = self.conn.cursor()
+    # DOCUMENTACIÓN: usar variables de entorno para construir string de conexión
+Crear .env.example (ya existe) y eliminar cualquier .env real del repo (agregar .env a .gitignore).
+
+Test configuración:
+
+Crear un archivo temporal .env.test con:
+
+ini
+Copiar
+Editar
+DB_SERVER=127.0.0.1
+DB_USERNAME=test
+DB_PASSWORD=secret
+DB_PORT=1433
+DB_DEFAULT_DATABASE=testdb
+DEFAULT_THEME=dark
+DEBUG_MODE=True
+En tests/test_config.py:
+
+python
+Copiar
+Editar
+import os
+from core.config import DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_PORT, DB_DEFAULT_DATABASE, DEFAULT_THEME, DEBUG_MODE
+
+def test_load_env(tmp_path, monkeypatch):
+    # Crear .env temporal
+    env_path = tmp_path / ".env"
+    env_content = "\n".join([
+        "DB_SERVER=127.0.0.1",
+        "DB_USERNAME=testuser",
+        "DB_PASSWORD=pass123",
+        "DB_PORT=1434",
+        "DB_DEFAULT_DATABASE=mydb",
+        "DEFAULT_THEME=dark",
+        "DEBUG_MODE=True"
+    ])
+    env_path.write_text(env_content)
+    monkeypatch.setenv("DOTENV_CONFIG_PATH", str(env_path))
+    # Recargar core/config
+    import importlib
+    import core.config as cfg_module
+    importlib.reload(cfg_module)
+    assert cfg_module.DB_SERVER == "127.0.0.1"
+    assert cfg_module.DB_USERNAME == "testuser"
+    assert cfg_module.DB_PASSWORD == "pass123"
+    assert cfg_module.DB_PORT == "1434"
+    assert cfg_module.DB_DEFAULT_DATABASE == "mydb"
+    assert cfg_module.DEFAULT_THEME == "dark"
+    assert cfg_module.DEBUG_MODE is True
+# DOCUMENTACIÓN: validar carga de variables de entorno

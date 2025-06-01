@@ -1,9 +1,9 @@
 import pytest
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 from modules.obras.model import ObrasModel
-from mock_db import DummyDB
+from tests.mock_db import DummyDB
 
 @pytest.fixture
 def model():

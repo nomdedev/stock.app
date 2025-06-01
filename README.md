@@ -930,3 +930,36 @@ Desde mayo 2025, la gestión de usuarios y la pestaña de permisos por usuario s
 - Ver también: docs/estandares_visuales.md, docs/estandares_feedback.md, docs/estandares_auditoria.md.
 
 ---
+
+## Recursos y temas visuales
+
+- Los archivos QSS de temas deben estar en `resources/qss/`.
+- Los íconos deben estar en `resources/icons/`.
+- Los scripts de base de datos deben estar en `scripts/db/`.
+- Los archivos PDF y Excel de auditoría/documentación deben estar en `docs/auditoria/`.
+- Si existen archivos QSS en `themes/`, deben eliminarse si ya están en `resources/qss/` y no son requeridos por compatibilidad.
+- El código debe apuntar a las rutas de recursos centralizadas.
+
+Ejemplo de carga de tema:
+```python
+qss_path = os.path.join('resources', 'qss', 'theme_light.qss')
+```
+
+---
+
+## Convención de tests: unitarios vs integración
+
+- **Tests unitarios**: No dependen de base de datos real ni servicios externos. Usan mocks y stubs. Se ubican en las subcarpetas de `tests/` por módulo (ej: `tests/obras/`, `tests/inventario/`, etc.).
+- **Tests de integración**: Verifican la interacción real con la base de datos u otros servicios. Se ubican en archivos con sufijo `_integracion.py` o en subcarpetas específicas. Solo deben ejecutarse en entornos preparados.
+- Los tests que requieren concurrencia, transacciones reales o validación de integridad (ej: optimistic lock) deben migrarse a integración y no ejecutarse como unitarios.
+- Para agregar un nuevo test:
+  1. Si es unitario, usa mocks y colócalo en la subcarpeta del módulo.
+  2. Si requiere base real, colócalo en un archivo `*_integracion.py` y documenta los prerequisitos.
+- Ejecuta todos los tests unitarios con:
+  ```powershell
+  pytest tests/ --maxfail=5 --disable-warnings -v
+  ```
+- Ejecuta solo los de integración cuando el entorno esté preparado:
+  ```powershell
+  pytest tests/obras/test_obras_optimistic_lock_integracion.py
+  ```

@@ -6,11 +6,15 @@ theme_base_path = os.path.join(os.path.dirname(__file__))
 
 def aplicar_tema(nombre_tema):
     """Aplica el tema especificado a la aplicación."""
-    qss_path = os.path.join(theme_base_path, f"{nombre_tema}.qss")
+    # Buscar primero en resources/qss/
+    qss_path = os.path.join(os.path.dirname(__file__), '..', 'resources', 'qss', f"theme_{nombre_tema}.qss")
     if not os.path.exists(qss_path):
-        raise FileNotFoundError(f"El archivo de tema {qss_path} no existe.")
+        # Fallback: buscar en la carpeta actual (legacy)
+        qss_path = os.path.join(os.path.dirname(__file__), f"{nombre_tema}.qss")
+        if not os.path.exists(qss_path):
+            raise FileNotFoundError(f"El archivo de tema {qss_path} no existe.")
 
-    with open(qss_path, "r") as file:
+    with open(qss_path, "r", encoding="utf-8") as file:
         qss = file.read()
 
     app = QApplication.instance()
