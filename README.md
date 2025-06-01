@@ -584,7 +584,7 @@ Para configurar las credenciales de conexión a la base de datos, edita el archi
 # filepath: c:\Users\Escorpio\Desktop\Martin\Proyectos\stock.app\core\config.py
 DB_SERVER = "192.168.1.100"  # Dirección o IP del servidor SQL
 DB_USERNAME = "sa"           # Usuario de la base de datos
-DB_PASSWORD = "mps.1887"     # Contraseña del usuario
+DB_PASSWORD = "<tu_contraseña>"     # Contraseña del usuario (NO usar credenciales reales en ejemplos)
 ```
 
 ### Notas
@@ -604,7 +604,7 @@ El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de qu
 
 ---
 
-## Configuración y Seguridad de la Conexión a la Base de Datos
+## Configuración y seguridad de la conexión a la base de datos
 
 ### Seguridad y buenas prácticas
 
@@ -963,3 +963,38 @@ qss_path = os.path.join('resources', 'qss', 'theme_light.qss')
   ```powershell
   pytest tests/obras/test_obras_optimistic_lock_integracion.py
   ```
+
+---
+
+## Configuración y seguridad
+
+- Todas las variables sensibles y de entorno deben definirse en un archivo `.env` (no versionado).
+- Ejemplo de archivo: `.env.example2` (renómbralo a `.env` y completa los valores).
+- El archivo `core/config.py` carga automáticamente las variables usando `python-dotenv`.
+- Nunca subas `.env` real ni credenciales al repositorio.
+- Si agregas una nueva variable de configuración, documenta su propósito en `.env.example2` y en este README.
+
+---
+
+## Configuración y seguridad de variables de entorno (.env)
+
+La aplicación utiliza un archivo `.env` para gestionar todas las variables sensibles y de entorno. Nunca subas tus credenciales reales al repositorio.
+
+- Usa el archivo `.env.example` como plantilla: cópialo y renómbralo a `.env` en la raíz del proyecto.
+- Completa los valores según tu entorno (servidor, usuario, contraseña, etc.).
+- Todas las variables requeridas están documentadas en `.env.example` y son leídas automáticamente por la app.
+- El archivo `.env` debe estar en `.gitignore` y nunca debe compartirse ni subirse a ningún repositorio.
+- Si necesitas compartir la configuración, usa solo `.env.example` (sin datos reales).
+
+### Variables principales
+
+- `DB_SERVER`, `DB_USERNAME`, `DB_PASSWORD`, `DB_PORT`, `DB_DEFAULT_DATABASE`, etc.
+- Consulta y edita el archivo `.env.example` para ver todas las variables soportadas.
+
+### Seguridad
+
+- Nunca dejes credenciales hard-coded en el código fuente ni en notebooks.
+- Si encuentras datos sensibles en el código, reemplázalos por variables de entorno y actualiza `.env.example`.
+- El sistema carga automáticamente las variables usando `python-dotenv`.
+
+---

@@ -1,3 +1,6 @@
+import os
+import pyodbc
+
 def probar_conexion(driver, server, username, password, database):
     try:
         print(f"Probando conexión con el controlador: {driver}")
@@ -14,11 +17,11 @@ def probar_conexion(driver, server, username, password, database):
         print(f"Error al conectar con el controlador {driver}: {e}")
 
 if __name__ == "__main__":
-    # Configuración de la base de datos
-    server = "DESKTOP-QHMPTG0\\SQLEXPRESS"
-    username = "sa"
-    password = "mps.1887"
-    database = "inventario_perfiles"
+    # Configuración de la base de datos desde variables de entorno
+    server = os.getenv("DB_SERVER", "<TU_SERVIDOR>")
+    username = os.getenv("DB_USERNAME", "<TU_USUARIO>")
+    password = os.getenv("DB_PASSWORD", "<TU_PASSWORD>")
+    database = os.getenv("DB_DEFAULT_DATABASE", "inventario_perfiles")
 
     # Lista de controladores a probar
     drivers = ["ODBC Driver 18 for SQL Server", "ODBC Driver 17 for SQL Server"]

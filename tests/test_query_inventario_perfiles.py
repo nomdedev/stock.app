@@ -1,11 +1,12 @@
+import os
 import pyodbc
 
-# Parámetros de conexión
-server = "192.168.88.205"
-database = "inventario"
-username = "sa"
-password = "mps.1887"
-driver = "ODBC Driver 17 for SQL Server"
+# Parámetros de conexión desde variables de entorno para evitar hardcodeo
+server = os.getenv("DB_SERVER", "<TU_SERVIDOR>")
+database = os.getenv("DB_DEFAULT_DATABASE", "inventario")
+username = os.getenv("DB_USERNAME", "<TU_USUARIO>")
+password = os.getenv("DB_PASSWORD", "<TU_PASSWORD>")
+driver = os.getenv("DB_DRIVER", "ODBC Driver 17 for SQL Server")
 
 try:
     connection_string = (
@@ -24,4 +25,4 @@ try:
         for row in rows:
             print(row)
 except Exception as e:
-    print(f"Error al consultar la base de datos: {e}")
+    print(f"Error al conectar: {e}")
