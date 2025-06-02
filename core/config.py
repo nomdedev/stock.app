@@ -1,8 +1,14 @@
 import os
 from dotenv import load_dotenv
 
-# Cargar variables desde .env si existe
-load_dotenv()
+# Cargar variables desde .env usando ruta absoluta para máxima compatibilidad
+DOTENV_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env'))
+load_dotenv(dotenv_path=DOTENV_PATH, override=True)
+
+# Diagnóstico: imprimir valores leídos desde .env
+print("[DEBUG CONFIG] DB_SERVER:", os.getenv("DB_SERVER"))
+print("[DEBUG CONFIG] DB_USERNAME:", os.getenv("DB_USERNAME"))
+print("[DEBUG CONFIG] DB_PASSWORD:", os.getenv("DB_PASSWORD"))
 
 # Configuración de conexión a la base de datos
 DB_SERVER = os.getenv("DB_SERVER", "")

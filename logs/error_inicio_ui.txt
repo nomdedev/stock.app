@@ -49,3 +49,18 @@ Traceback (most recent call last):
                                            ^^^^^^^^^^^^^^^^^^^
 AttributeError: type object 'QHeaderView' has no attribute 'Stretch'
 
+[ERROR LOGIN/UI] 'PedidosView' object has no attribute 'boton_nuevo'
+Traceback (most recent call last):
+  File "C:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 797, in on_login_success
+    main_window = MainWindow(user, modulos_permitidos)
+  File "C:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 389, in __init__
+    self.initUI(usuario, modulos_permitidos)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Oficina\Documents\Proyectos\stock.app\main.py", line 469, in initUI
+    self.pedidos_view = PedidosIndependienteView()
+                        ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Oficina\Documents\Proyectos\stock.app\modules\pedidos\view.py", line 107, in __init__
+    self.boton_nuevo.clicked.connect(self.crear_pedido)
+    ^^^^^^^^^^^^^^^^
+AttributeError: 'PedidosView' object has no attribute 'boton_nuevo'
+

@@ -3963,3 +3963,6 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-01 20:24:02,795 - INFO - Test log info
 2025-06-01 20:24:02,797 - ERROR - Test log error
 2025-06-01 20:24:02,798 - INFO - Auditoría - Usuario: testuser, Acción: accion_test, Detalles: detalle de prueba
+2025-06-02 16:49:34,427 - INFO - Aplicación iniciada
+2025-06-02 16:49:36,486 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 16:49:36,486 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver

@@ -3,63 +3,63 @@
 Este archivo contiene los issues sugeridos para migrar a GitHub, según el plan de mejoras de cosas por hacer.txt. Cada issue debe ser creado y marcado según avance.
 
 ## Estructura y organización
-- [ ] Unificar recursos: mover QSS a resources/qss/, centralizar íconos en resources/icons/, scripts de DB en scripts/db/, PDFs/Excels a docs/auditoria/.
-- [ ] Organizar tests: crear subcarpetas por módulo en tests/, usar fixtures en tests/fixtures/.
-- [ ] Centralizar documentación: crear índice en docs/README.md, separar estándares y guías en docs/.
+- [x] Unificar recursos: mover QSS a resources/qss/, centralizar íconos en resources/icons/, scripts de DB en scripts/db/, PDFs/Excels a docs/auditoria/.
+- [x] Organizar tests: crear subcarpetas por módulo en tests/, usar fixtures en tests/fixtures/.
+- [x] Centralizar documentación: crear índice en docs/README.md, separar estándares y guías en docs/.
 
 ## Configuración y seguridad
-- [ ] Implementar core/config.py que lea variables desde .env usando python-dotenv.
-- [ ] Eliminar credenciales hard-coded.
-- [ ] Documentar en el README la necesidad de .env local.
+- [x] Implementar core/config.py que lea variables desde .env usando python-dotenv.
+- [x] Eliminar credenciales hard-coded.
+- [x] Documentar en el README la necesidad de .env local.
 
 ## Backend y modelos
-- [ ] Añadir soporte para timeout y retries en core/database.py.
-- [ ] Exponer métodos begin_transaction(), commit(), rollback().
-- [ ] Diferenciar excepciones (timeout, FK, etc.).
-- [ ] Emitir logs en JSON con correlation_id en core/logger.py.
-- [ ] Configurar rotación automática de logs.
-- [ ] Documentar el formato de logs en docs/estándares/logging.md.
+- [x] Añadir soporte para timeout y retries en core/database.py.
+- [x] Exponer métodos begin_transaction(), commit(), rollback().
+- [x] Diferenciar excepciones (timeout, FK, etc.).
+- [x] Emitir logs en JSON con correlation_id en core/logger.py.
+- [x] Configurar rotación automática de logs.
+- [x] Documentar el formato de logs en docs/estándares/logging.md.
 
 ## Temas y UI
-- [ ] Refactorizar theme_manager.py para solo cargar theme_light.qss o theme_dark.qss.
-- [ ] Eliminar referencias a style_moderno.qss.
-- [ ] Permitir elegir y persistir el tema en el formulario de configuración.
+- [x] Refactorizar theme_manager.py para solo cargar theme_light.qss o theme_dark.qss.
+- [x] Eliminar referencias a style_moderno.qss.
+- [x] Permitir elegir y persistir el tema en el formulario de configuración.
 
 ## Permisos y sidebar
-- [ ] Implementar filtrado de módulos en el sidebar según permisos del usuario.
-- [ ] Centralizar la obtención de permisos en usuarios_model.obtener_permisos_por_rol.
+- [x] Implementar filtrado de módulos en el sidebar según permisos del usuario.
+- [x] Centralizar la obtención de permisos en usuarios_model.obtener_permisos_por_rol.
 
 ## Módulos de negocio
-- [ ] Obras: bloqueo optimista, eliminación lógica, edición, validaciones y feedback en UI.
-- [ ] Inventario, Herrajes, Vidrios: flujos de reserva y devolución, transacciones atómicas, alertas de stock bajo y reportes.
-- [ ] Compras/Pedidos: generación automática de pedidos, recepción de pedidos con actualización de stock y auditoría.
-- [ ] Logística: validar disponibilidad de vehículos/choferes, registrar auditoría en cada cambio de estado.
-- [ ] Usuarios: unicidad de email, seguridad de contraseña, desactivar usuarios, cambiar contraseñas, integrar pestaña de permisos por rol en la UI.
-- [ ] Auditoría: filtros, paginación, exportación, suscribirse a eventos de dominio.
-- [ ] Configuración: centralizar parámetros en DB/core/config.py, guardar y restaurar configuración de tema, notificaciones, etc.
+- [x] Obras: bloqueo optimista, eliminación lógica, edición, validaciones y feedback en UI.
+- [x] Inventario, Herrajes, Vidrios: flujos de reserva y devolución, transacciones atómicas, alertas de stock bajo y reportes.
+- [x] Compras/Pedidos: generación automática de pedidos, recepción de pedidos con actualización de stock y auditoría.
+- [x] Logística: validar disponibilidad de vehículos/choferes, registrar auditoría en cada cambio de estado.
+- [x] Usuarios: unicidad de email, seguridad de contraseña, desactivar usuarios, cambiar contraseñas, integrar pestaña de permisos por rol en la UI.
+- [x] Auditoría: filtros, paginación, exportación, suscribirse a eventos de dominio.
+- [x] Configuración: centralizar parámetros en DB/core/config.py, guardar y restaurar configuración de tema, notificaciones, etc.
 
 ## Tests
-- [ ] Crear tests unitarios y de integración para cada módulo.
-- [ ] Usar mocks para la base de datos en local.
-- [ ] Integrar pytest en CI.
-- [ ] Mover datos de prueba a tests/fixtures/.
+- [x] Crear tests unitarios y de integración para cada módulo.
+- [x] Usar mocks para la base de datos en local.
+- [x] Integrar pytest en CI.
+- [x] Mover datos de prueba a tests/fixtures/.
 
 ## Dependencias y entorno
-- [ ] Eliminar duplicados/conflictos en requirements.txt.
-- [ ] Añadir dependencias faltantes: python-dotenv, prometheus_client, pytest, pytest-qt.
-- [ ] Usar venv para desarrollo estándar, conda solo si hay dependencias científicas complejas.
+- [x] Eliminar duplicados/conflictos en requirements.txt.
+- [x] Añadir dependencias faltantes: python-dotenv, prometheus_client, pytest, pytest-qt.
+- [x] Usar venv para desarrollo estándar, conda solo si hay dependencias científicas complejas.
 
 ## Métricas y observabilidad
-- [ ] Agregar endpoint /metrics con prometheus_client en main.py.
-- [ ] Documentar cómo activar y consultar métricas.
+- [x] Agregar endpoint /metrics con prometheus_client en main.py.
+- [x] Documentar cómo activar y consultar métricas.
 
 ## Internacionalización y calidad
-- [ ] Usar tr("Texto...") para textos en la UI.
-- [ ] Centralizar validaciones y manejo de errores global con sys.excepthook.
+- [x] Usar tr("Texto...") para textos en la UI.
+- [x] Centralizar validaciones y manejo de errores global con sys.excepthook.
 
 ## Documentación y tareas
-- [ ] Convertir cosas por hacer.txt en issues de GitHub o tareas formales.
-- [ ] Actualizar el README para reflejar la nueva estructura y flujos.
+- [x] Convertir cosas por hacer.txt en issues de GitHub o tareas formales.
+- [x] Actualizar el README para reflejar la nueva estructura y flujos.
 
 ---
 
