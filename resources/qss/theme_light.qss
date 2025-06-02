@@ -25,4 +25,232 @@ QTableWidget QHeaderView::section {
     font-size: 10px;
     font-weight: 400;
 }
-/* ...otros estilos claros... */
+QLabel#label_titulo_pedidos {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #2563eb;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+QPushButton#boton_agregar_pedidos {
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+QPushButton#boton_nuevo_compras,
+QPushButton#boton_add-entrega,
+QPushButton#boton_search_icon,
+QPushButton#boton_excel_icon {
+    border-radius: 12px;
+    background: #f1f5f9;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+QPushButton:focus {
+    outline: 2px solid #2563eb;
+    border: 2px solid #2563eb;
+}
+QTableWidget#tabla_comparacion,
+QTableWidget#tabla_pedidos {
+    font-size: 13px;
+}
+QHeaderView#header_comparacion,
+QHeaderView#header_pedidos {
+    background-color: #e3f6fd;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+    font-weight: 400;
+}
+QLabel#titulo_label_logistica {
+    color: #2563eb;
+    font-size: 22px;
+    font-weight: 600;
+    padding-left: 4px;
+}
+QPushButton#boton_agregar_logistica {
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+QTableWidget#tabla_logistica {
+    font-size: 13px;
+}
+QHeaderView#header_logistica {
+    background-color: #e3f6fd;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+    font-weight: 400;
+}
+QLineEdit#input_logistica,
+QLineEdit#input_logistica_prop {
+    font-size: 12px;
+}
+QLineEdit#input_logistica:focus,
+QLineEdit#input_logistica_prop:focus {
+    outline: 2px solid #2563eb;
+    border: 2px solid #2563eb;
+}
+QProgressBar#progress_bar_logistica {
+    border-radius: 8px;
+    height: 18px;
+    background: #e3f6fd;
+}
+QProgressBar#progress_bar_logistica::chunk {
+    background: #2563eb;
+    border-radius: 8px;
+}
+QFrame#login_card {
+    background: #f3f4f6;
+    border-radius: 28px;
+    padding: 0px;
+}
+QLabel#label_titulo_usuarios {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #2563eb;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+QLabel#icono {
+    margin-top: 32px;
+    margin-bottom: 8px;
+}
+QLabel#subtitulo {
+    color: #374151;
+    font-size: 1.1rem;
+    margin-bottom: 18px;
+}
+QLineEdit#usuario_input,
+QLineEdit#password_input {
+    background: #fff;
+    color: #1e293b;
+    border: 2px solid #d1d5db;
+    border-radius: 14px;
+    padding: 12px;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+QLineEdit#usuario_input:focus,
+QLineEdit#password_input:focus {
+    border: 2px solid #2563eb;
+    background: #f3f4f6;
+    color: #1e293b;
+}
+QLineEdit#usuario_input::placeholder,
+QLineEdit#password_input::placeholder {
+    color: #bdbdbd;
+    font-style: italic;
+}
+QPushButton#boton_login {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #2563eb, stop:1 #60a5fa);
+    color: #fff;
+    border-radius: 14px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 14px;
+    margin-top: 18px;
+    margin-bottom: 8px;
+}
+QPushButton#boton_login:hover {
+    background: #1d4ed8;
+}
+QLabel#error {
+    color: #ef4444;
+    font-size: 1rem;
+    margin-top: 8px;
+}
+QPushButton#boton_agregar_usuarios {
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+QTableWidget#tabla_usuarios {
+    font-size: 13px;
+}
+/* --- Herrajes feedback y error input --- */
+QLabel#label_feedback[feedback_tipo="info"] {
+    background: #e3f6fd;
+    color: #2563eb;
+}
+QLabel#label_feedback[feedback_tipo="exito"] {
+    background: #d1f7e7;
+    color: #15803d;
+}
+QLabel#label_feedback[feedback_tipo="error"] {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+QLabel#label_feedback[feedback_tipo="advertencia"] {
+    background: #fef9c3;
+    color: #b45309;
+}
+QLineEdit#nombre_input_herrajes[error="true"] {
+    border: 2px solid #b91c1c;
+    background: #fee2e2;
+}
+QLineEdit#nombre_input_herrajes[error="false"], QLineEdit#nombre_input_herrajes {
+    border: 1px solid #e3e3e3;
+    background: #fff;
+}
+/* --- Fin herrajes feedback y error input --- */
+/* --- Obras feedback visual y error input --- */
+QLabel#label_feedback[feedback_tipo="info"] {
+    background: #e3f6fd;
+    color: #2563eb;
+}
+QLabel#label_feedback[feedback_tipo="exito"] {
+    background: #d1f7e7;
+    color: #15803d;
+}
+QLabel#label_feedback[feedback_tipo="error"] {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+QLabel#label_feedback[feedback_tipo="advertencia"] {
+    background: #fef9c3;
+    color: #b45309;
+}
+QLineEdit#nombre_input_obra[error="true"],
+QLineEdit#cliente_input_obra[error="true"],
+QDateEdit#fecha_entrega_input_obra[error="true"] {
+    border: 2px solid #ef4444;
+    background: #fee2e2;
+}
+QLineEdit#nombre_input_obra[error="false"], QLineEdit#nombre_input_obra,
+QLineEdit#cliente_input_obra[error="false"], QLineEdit#cliente_input_obra,
+QDateEdit#fecha_entrega_input_obra[error="false"], QDateEdit#fecha_entrega_input_obra {
+    border: 1px solid #e3e3e3;
+    background: #fff;
+}
+QLabel#label_titulo_dialogo_obra {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+QLabel#label_usuario_dialogo_obra {
+    font-size: 13px;
+    margin-bottom: 8px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 4px 8px;
+}
+/* --- Fin obras feedback visual y error input --- */

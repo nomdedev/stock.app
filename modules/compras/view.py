@@ -21,8 +21,8 @@ class ComprasView(QWidget, TableResponsiveMixin):
         try:
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
-            tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
+            tema = config.get("theme", "theme_light")
+            archivo_qss = f"resources/qss/{tema}.qss"
             with open(archivo_qss, "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
         except Exception as e:
@@ -44,7 +44,8 @@ class ComprasView(QWidget, TableResponsiveMixin):
 
         # --- FEEDBACK VISUAL GLOBAL (accesible, visible siempre arriba del QTabWidget) ---
         self.label_feedback = QLabel()
-        self.label_feedback.setStyleSheet("font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; background: #f1f5f9;")
+        self.label_feedback.setObjectName("label_feedback")  # Para QSS global
+        # self.label_feedback.setStyleSheet("font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; background: #f1f5f9;")  # Migrado a QSS global
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Feedback visual de Compras")
         self.main_layout.addWidget(self.label_feedback)
@@ -60,12 +61,13 @@ class ComprasView(QWidget, TableResponsiveMixin):
         # Botón principal de acción (Nuevo pedido)
         botones_layout = QHBoxLayout()
         self.boton_nuevo = QPushButton()
+        self.boton_nuevo.setObjectName("boton_nuevo_compras")  # Para QSS global
         self.boton_nuevo.setIcon(QIcon("resources/icons/add-entrega.svg"))
         self.boton_nuevo.setIconSize(QSize(24, 24))
         self.boton_nuevo.setToolTip("Nuevo pedido")
         self.boton_nuevo.setText("")
         self.boton_nuevo.setFixedSize(48, 48)
-        self.boton_nuevo.setStyleSheet("")
+        # self.boton_nuevo.setStyleSheet("")  # Migrado a QSS global
         sombra = QGraphicsDropShadowEffect()
         sombra.setBlurRadius(15)
         sombra.setXOffset(0)
@@ -78,7 +80,7 @@ class ComprasView(QWidget, TableResponsiveMixin):
 
         # Refuerzo de accesibilidad en botón principal
         self.boton_nuevo.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.boton_nuevo.setStyleSheet(self.boton_nuevo.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        # self.boton_nuevo.setStyleSheet(self.boton_nuevo.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")  # Migrado a QSS global
         font = self.boton_nuevo.font()
         if font.pointSize() < 12:
             font.setPointSize(12)
@@ -87,8 +89,8 @@ class ComprasView(QWidget, TableResponsiveMixin):
             self.boton_nuevo.setToolTip("Nuevo pedido")
         # Refuerzo de accesibilidad en tabla de comparación si existe
         if hasattr(self, 'tabla_comparacion'):
-            self.tabla_comparacion.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            self.tabla_comparacion.setStyleSheet(self.tabla_comparacion.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+            self.tabla_comparacion.setObjectName("tabla_comparacion")  # Para QSS global
+            # self.tabla_comparacion.setStyleSheet(self.tabla_comparacion.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")  # Migrado a QSS global
         # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
 
     def mostrar_comparacion_presupuestos(self, presupuestos):
@@ -123,7 +125,8 @@ class ComprasView(QWidget, TableResponsiveMixin):
             header_comp = self.tabla_comparacion.horizontalHeader() if hasattr(self.tabla_comparacion, 'horizontalHeader') else None
             if header_comp is not None:
                 try:
-                    header_comp.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                    header_comp.setObjectName("header_comparacion")  # Para QSS global
+                    # header_comp.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")  # Migrado a QSS global
                 except Exception:
                     pass
             else:
@@ -244,7 +247,7 @@ class ComprasView(QWidget, TableResponsiveMixin):
             "advertencia": "⚠️ ",
             "error": "❌ "
         }
-        self.label_feedback.setStyleSheet(f"font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; {colores.get(tipo, '')}")
+        # self.label_feedback.setStyleSheet(f"font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; {colores.get(tipo, '')}")  # Migrado a QSS global
         self.label_feedback.setText(f"{iconos.get(tipo, 'ℹ️ ')}{mensaje}")
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(mensaje)
@@ -284,3 +287,5 @@ class ComprasView(QWidget, TableResponsiveMixin):
         if not hasattr(self, '_id_item_input'):
             self._id_item_input = QLineEdit()
         return self._id_item_input
+
+# Todas las líneas setStyleSheet comentadas corresponden a estilos migrados a QSS global. Ver docs/estandares_visuales.md

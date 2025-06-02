@@ -1,7 +1,10 @@
-from PyQt6.QtWidgets import QMainWindow, QFileDialog, QTableWidget, QTableWidgetItem, QMessageBox, QLabel, QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QTabWidget, QComboBox
+from PyQt6.QtWidgets import QMainWindow, QFileDialog, QTableWidget, QTableWidgetItem, QMessageBox, QLabel, QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QTabWidget, QComboBox, QLineEdit, QFormLayout, QCheckBox
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize, pyqtSignal
 import pandas as pd
+from core.config_manager import ConfigManager
+from core.ui_components import HelpButton
+import os
 
 class ConfiguracionView(QMainWindow):
     theme_changed = pyqtSignal(str)
@@ -17,6 +20,7 @@ class ConfiguracionView(QMainWindow):
         self.label_feedback.setAccessibleDescription("Mensaje de feedback global")
         self.main_layout.addWidget(self.label_feedback)
         self.setup_ui()
+        self._cargar_configuracion_conexion()
 
     def setup_ui(self):
         # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
@@ -35,8 +39,7 @@ class ConfiguracionView(QMainWindow):
         self.main_layout.addLayout(header_layout)
 
         # QTabWidget principal
-        self.tabs = QTabWidget()
-        self.tabs.setStyleSheet("QTabWidget::pane { border-radius: 12px; background: #f1f5f9; } QTabBar::tab { min-width: 160px; min-height: 36px; font-size: 14px; font-weight: 600; border-radius: 8px; padding: 8px 24px; margin-right: 8px; } QTabBar::tab:selected { background: #e3f6fd; color: #2563eb; }")
+        # self.tabs.setStyleSheet("QTabWidget::pane { border-radius: 12px; background: #f1f5f9; } QTabBar::tab { min-width: 160px; min-height: 36px; font-size: 14px; font-weight: 600; border-radius: 8px; padding: 8px 24px; margin-right: 8px; } QTabBar::tab:selected { background: #e3f6fd; color: #2563eb; }")
 
         # --- Pestaña General ---
         self.tab_general = QWidget()
@@ -50,7 +53,7 @@ class ConfiguracionView(QMainWindow):
         self.boton_activar_offline.setIcon(QIcon("resources/icons/offline_icon.svg"))
         self.boton_activar_offline.setToolTip("Activa el modo offline de la app")
         self.boton_activar_offline.setAccessibleName("Botón activar modo offline")
-        self.boton_activar_offline.setStyleSheet("border-radius: 8px; background: #f1f5f9; font-size: 14px; padding: 8px 24px;")
+        # self.boton_activar_offline.setStyleSheet("border-radius: 8px; background: #f1f5f9; font-size: 14px; padding: 8px 24px;")
         layout_general.addWidget(self.boton_activar_offline)
         # --- Dropdown de tema visual ---
         theme_row = QHBoxLayout()
@@ -68,11 +71,54 @@ class ConfiguracionView(QMainWindow):
         # --- Pestaña Conexión ---
         self.tab_conexion = QWidget()
         layout_conexion = QVBoxLayout(self.tab_conexion)
-        label_conexion = QLabel("Configuración de conexión a base de datos (próximamente)")
-        label_conexion.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout_conexion.addWidget(label_conexion)
-        self.tabs.addTab(self.tab_conexion, "Conexión")
-
+        self.form_conexion = QFormLayout()
+        self.input_db_server = QLineEdit()
+        self.input_db_username = QLineEdit()
+        self.input_db_password = QLineEdit()
+        self.input_db_password.setEchoMode(QLineEdit.EchoMode.Password)
+        self.input_db_database = QLineEdit()
+        self.input_db_timeout = QLineEdit()
+        self.input_db_timeout.setPlaceholderText("5")
+        self.checkbox_mostrar_password = QCheckBox("Mostrar contraseña")
+        self.checkbox_mostrar_password.toggled.connect(
+            lambda checked: self.input_db_password.setEchoMode(QLineEdit.EchoMode.Normal if checked else QLineEdit.EchoMode.Password)
+        )
+        self.form_conexion.addRow("Servidor/IP:", self.input_db_server)
+        self.form_conexion.addRow("Usuario:", self.input_db_username)
+        self.form_conexion.addRow("Contraseña:", self.input_db_password)
+        self.form_conexion.addRow("", self.checkbox_mostrar_password)
+        self.form_conexion.addRow("Base de datos:", self.input_db_database)
+        self.form_conexion.addRow("Timeout (seg):", self.input_db_timeout)
+        # --- Botón de ayuda contextual ---
+        ayuda_texto = (
+            "<b>Gestión de configuraciones críticas</b><br>"
+            "Desde aquí puedes ver y editar los datos de conexión a la base de datos.\n<br><br>"
+            "<b>Recomendaciones:</b><ul>"
+            "<li>Utiliza siempre 'Probar conexión' antes de guardar cambios.</li>"
+            "<li>No compartas el archivo .env fuera del entorno seguro.</li>"
+            "<li>Consulta la guía completa para pasos detallados y mejores prácticas.</li>"
+            "</ul>"
+            "<br>Guía completa: <code>docs/buenas_practicas_configuraciones_criticas.md</code>"
+        )
+        self.boton_ayuda_config = HelpButton(ayuda_texto, parent=self.tab_conexion, icon_path="resources/icons/help-circle.svg", title="Ayuda - Configuración Crítica")
+        ayuda_row = QHBoxLayout()
+        ayuda_row.addStretch()
+        ayuda_row.addWidget(self.boton_ayuda_config)
+        layout_conexion.addLayout(self.form_conexion)
+        layout_conexion.addLayout(ayuda_row)
+        # Botones de acción para conexión
+        self.btn_probar_conexion = QPushButton("Probar conexión")
+        self.btn_guardar_conexion = QPushButton("Guardar configuración")
+        btn_row = QHBoxLayout()
+        btn_row.addWidget(self.btn_probar_conexion)
+        btn_row.addWidget(self.btn_guardar_conexion)
+        layout_conexion.addLayout(btn_row)
+        self.label_estado_conexion = QLabel()
+        layout_conexion.addWidget(self.label_estado_conexion)
+        self.tab_conexion.setLayout(layout_conexion)
+        # Eventos
+        self.btn_probar_conexion.clicked.connect(self._probar_conexion)
+        self.btn_guardar_conexion.clicked.connect(self._guardar_configuracion_conexion)
         # --- Pestaña Permisos ---
         self.tab_permisos = QWidget()
         layout_permisos = QVBoxLayout(self.tab_permisos)
@@ -87,21 +133,21 @@ class ConfiguracionView(QMainWindow):
         layout_importar.setContentsMargins(0, 0, 0, 0)
         layout_importar.setSpacing(12)
         label_titulo = QLabel("Importar Inventario desde CSV/Excel")
-        label_titulo.setStyleSheet("font-size: 18px; font-weight: bold; color: #2563eb;")
+        # label_titulo.setStyleSheet("font-size: 18px; font-weight: bold; color: #2563eb;")
         layout_importar.addWidget(label_titulo)
         # Mensaje de ayuda
         self.label_ayuda_import = QLabel("Selecciona un archivo CSV o Excel con los datos de inventario. El sistema detectará y completará automáticamente las columnas requeridas. Puedes importar archivos incompletos: los campos faltantes se rellenarán por defecto.")
         self.label_ayuda_import.setWordWrap(True)
-        self.label_ayuda_import.setStyleSheet("font-size: 13px; color: #64748b; background: #f1f5f9; border-radius: 8px; padding: 8px 12px;")
+        # self.label_ayuda_import.setStyleSheet("font-size: 13px; color: #64748b; background: #f1f5f9; border-radius: 8px; padding: 8px 12px;")
         layout_importar.addWidget(self.label_ayuda_import)
         file_row = QHBoxLayout()
         self.csv_file_input = QLabel("Ningún archivo seleccionado")
-        self.csv_file_input.setStyleSheet("background: #e3f6fd; border-radius: 8px; padding: 8px 16px; color: #2563eb;")
+        # self.csv_file_input.setStyleSheet("background: #e3f6fd; border-radius: 8px; padding: 8px 16px; color: #2563eb;")
         self.boton_seleccionar_csv = QPushButton()
         self.boton_seleccionar_csv.setIcon(QIcon("resources/icons/excel_icon.svg"))
         self.boton_seleccionar_csv.setToolTip("Seleccionar archivo CSV/Excel")
         self.boton_seleccionar_csv.setFixedSize(36, 36)
-        self.boton_seleccionar_csv.setStyleSheet("border-radius: 8px; background: #e3f6fd;")
+        # self.boton_seleccionar_csv.setStyleSheet("border-radius: 8px; background: #e3f6fd;")
         file_row.addWidget(self.csv_file_input)
         file_row.addWidget(self.boton_seleccionar_csv)
         file_row.addStretch()
@@ -110,18 +156,18 @@ class ConfiguracionView(QMainWindow):
         self.preview_table = QTableWidget()
         self.preview_table.setMinimumHeight(160)
         self.preview_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-        self.preview_table.setStyleSheet("background: #fff9f3; color: #2563eb; border-radius: 8px;")
+        # self.preview_table.setStyleSheet("background: #fff9f3; color: #2563eb; border-radius: 8px;")
         layout_importar.addWidget(self.preview_table)
         # --- Área de advertencias/errores ---
         self.advertencias_label = QLabel()
         self.advertencias_label.setWordWrap(True)
-        self.advertencias_label.setStyleSheet("font-size: 13px; padding: 8px 0; color: #b45309; background: #fef9c3; border-radius: 8px;")
+        # self.advertencias_label.setStyleSheet("font-size: 13px; padding: 8px 0; color: #b45309; background: #fef9c3; border-radius: 8px;")
         self.advertencias_label.setVisible(False)
         layout_importar.addWidget(self.advertencias_label)
         # --- Mensaje de feedback ---
         self.mensaje_label = QLabel()
         self.mensaje_label.setWordWrap(True)
-        self.mensaje_label.setStyleSheet("font-size: 13px; padding: 8px 0;")
+        # self.mensaje_label.setStyleSheet("font-size: 13px; padding: 8px 0;")
         layout_importar.addWidget(self.mensaje_label)
         # --- Botón Importar Inventario ---
         self.boton_importar_csv = QPushButton()
@@ -131,7 +177,7 @@ class ConfiguracionView(QMainWindow):
         self.boton_importar_csv.setFixedHeight(48)
         self.boton_importar_csv.setMinimumWidth(220)
         self.boton_importar_csv.setEnabled(False)
-        self.boton_importar_csv.setStyleSheet("border-radius: 12px; background: #d1f7e7; font-size: 16px; font-weight: bold; color: #15803d;")
+        # self.boton_importar_csv.setStyleSheet("border-radius: 12px; background: #d1f7e7; font-size: 16px; font-weight: bold; color: #15803d;")
         layout_importar.addWidget(self.boton_importar_csv, alignment=Qt.AlignmentFlag.AlignCenter)
         layout_importar.addStretch()
         self.tab_importar.setLayout(layout_importar)
@@ -144,7 +190,7 @@ class ConfiguracionView(QMainWindow):
         # Refuerzo de accesibilidad en botones principales
         for btn in [self.boton_seleccionar_csv, self.boton_importar_csv]:
             btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            # btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
             font = btn.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
@@ -155,14 +201,14 @@ class ConfiguracionView(QMainWindow):
                 btn.setAccessibleName("Botón de acción de configuración")
         # Refuerzo de accesibilidad en tabla de preview
         self.preview_table.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.preview_table.setStyleSheet(self.preview_table.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # self.preview_table.setStyleSheet(self.preview_table.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
         self.preview_table.setToolTip("Tabla de previsualización de inventario")
         self.preview_table.setAccessibleName("Tabla de preview de configuración")
         # Refuerzo visual y robustez en header de tabla de preview
         h_header = self.preview_table.horizontalHeader() if hasattr(self.preview_table, 'horizontalHeader') else None
         if h_header is not None:
             try:
-                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
             except Exception as e:
                 # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
                 pass
@@ -302,7 +348,7 @@ class ConfiguracionView(QMainWindow):
             "error": "❌ "
         }
         icono = iconos.get(tipo, "ℹ️ ")
-        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        # self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setText(f"{icono}{mensaje}")
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
@@ -338,3 +384,45 @@ class ConfiguracionView(QMainWindow):
     def _emitir_cambio_tema(self):
         tema = "light" if self.combo_tema.currentIndex() == 0 else "dark"
         self.theme_changed.emit(tema)
+
+    def _cargar_configuracion_conexion(self):
+        keys = ["DB_SERVER", "DB_USERNAME", "DB_PASSWORD", "DB_DATABASE", "DB_TIMEOUT"]
+        valores = ConfigManager.get_all(keys)
+        self.input_db_server.setText(valores.get("DB_SERVER", ""))
+        self.input_db_username.setText(valores.get("DB_USERNAME", ""))
+        self.input_db_password.setText(valores.get("DB_PASSWORD", ""))
+        self.input_db_database.setText(valores.get("DB_DATABASE", ""))
+        self.input_db_timeout.setText(valores.get("DB_TIMEOUT", "5"))
+
+    def _probar_conexion(self):
+        import pyodbc
+        servidor = self.input_db_server.text().strip()
+        usuario = self.input_db_username.text().strip()
+        password = self.input_db_password.text()
+        database = self.input_db_database.text().strip()
+        timeout = int(self.input_db_timeout.text() or 5)
+        try:
+            conn_str = (
+                f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={servidor};DATABASE={database};UID={usuario};PWD={password};TrustServerCertificate=yes;"
+            )
+            with pyodbc.connect(conn_str, timeout=timeout):
+                self.label_estado_conexion.setText("<span style='color:#22c55e;'>✅ Conexión exitosa</span>")
+        except Exception as e:
+            self.label_estado_conexion.setText(f"<span style='color:#ef4444;'>❌ Error: {e}</span>")
+
+    def _guardar_configuracion_conexion(self):
+        data = {
+            "DB_SERVER": self.input_db_server.text().strip(),
+            "DB_USERNAME": self.input_db_username.text().strip(),
+            "DB_PASSWORD": self.input_db_password.text(),
+            "DB_DATABASE": self.input_db_database.text().strip(),
+            "DB_TIMEOUT": self.input_db_timeout.text().strip() or "5"
+        }
+        errores = ConfigManager.validate(data)
+        if errores:
+            self.label_estado_conexion.setText("<span style='color:#ef4444;'>❌ " + ", ".join(errores.values()) + "</span>")
+            return
+        for k, v in data.items():
+            ConfigManager.set(k, v)
+        self.label_estado_conexion.setText("<span style='color:#22c55e;'>✅ Configuración guardada correctamente</span>")
+        # Opcional: recargar conexión global aquí

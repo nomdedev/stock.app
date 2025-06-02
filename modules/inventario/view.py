@@ -157,10 +157,11 @@ class InventarioView(QWidget, TableResponsiveMixin):
             import json
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
-            tema = config.get("tema", "claro")
-            qss_tema = f"themes/{tema}.qss"
-        except Exception:
-            pass
+            tema = config.get("theme", "theme_light")
+            qss_tema = f"resources/qss/{tema}.qss"
+            # Eliminado setStyleSheet embebido, migrado a QSS global (ver docs/estandares_visuales.md)
+        except Exception as e:
+            print(f"No se pudo cargar el archivo de estilos: {e}")
         from utils.theme_manager import cargar_modo_tema
         tema = cargar_modo_tema()
         qss_tema = f"resources/qss/theme_{tema}.qss"
@@ -538,26 +539,13 @@ class InventarioView(QWidget, TableResponsiveMixin):
     # Reemplazar la función antigua por la nueva
     abrir_reserva_lote_perfiles = abrir_pedido_material_obra
 
-    def mostrar_feedback(self, mensaje, tipo="info"):
-        if not hasattr(self, "label_feedback") or self.label_feedback is None:
-            return
-        colores = {
-            "info": "#2563eb",
-            "exito": "#22c55e",
-            "advertencia": "#fbbf24",
-            "error": "#ef4444"
-        }
-        color = colores.get(tipo, "#2563eb")
-        iconos = {
-            "info": "ℹ️ ",
-            "exito": "✅ ",
-            "advertencia": "⚠️ ",
-            "error": "❌ "
-        }
-        icono = iconos.get(tipo, "ℹ️ ")
-        self.label_feedback.clear()
+    def mostrar_feedback(self, mensaje, tipo="info", icono="", duracion=4000):
         # QSS global: el color y formato de feedback se define en themes/light.qss y dark.qss
-        self.label_feedback.setProperty("feedback", tipo)
+        self.label_feedback.setProperty("feedback_tipo", tipo)
+        style = self.label_feedback.style()
+        if style is not None:
+            style.unpolish(self.label_feedback)
+            style.polish(self.label_feedback)
         self.label_feedback.setText(f"{icono}{mensaje}")
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
@@ -573,7 +561,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self._feedback_timer = QTimer(self)
         self._feedback_timer.setSingleShot(True)
         self._feedback_timer.timeout.connect(self.ocultar_feedback)
-        self._feedback_timer.start(4000)
+        self._feedback_timer.start(duracion)
 
     def ocultar_feedback(self):
         if hasattr(self, "label_feedback") and self.label_feedback:

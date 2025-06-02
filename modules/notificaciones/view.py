@@ -18,11 +18,10 @@ class NotificacionesView(QWidget):
         try:
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
-            tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
+            tema = config.get("theme", "theme_light")
+            archivo_qss = f"resources/qss/{tema}.qss"
             with open(archivo_qss, "r", encoding="utf-8") as f:
-                # self.setStyleSheet(f.read())
-                pass
+                self.setStyleSheet(f.read())
         except Exception as e:
             print(f"No se pudo cargar el archivo de estilos: {e}")
 

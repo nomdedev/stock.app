@@ -109,7 +109,6 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
         # QSS global: el color, peso y tamaño de fuente de label_feedback se gestiona en themes/light.qss y dark.qss
-        # self.label_feedback.setStyleSheet("color: #2563eb; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de obras")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
@@ -307,7 +306,11 @@ class ObrasView(QWidget, TableResponsiveMixin):
         }
         icono = iconos.get(tipo, "ℹ️ ")
         self.label_feedback.clear()
-        # self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        self.label_feedback.setProperty("feedback_tipo", tipo)
+        style = self.label_feedback.style()
+        if style is not None:
+            style.unpolish(self.label_feedback)
+            style.polish(self.label_feedback)
         self.label_feedback.setText(f"{icono}{mensaje}")
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
@@ -365,11 +368,14 @@ class AltaObraDialog(QDialog):
         form = QFormLayout()
         # Campos
         self.nombre_input = QLineEdit()
+        self.nombre_input.setObjectName("nombre_input_obra")
         self.cliente_input = QLineEdit()
+        self.cliente_input.setObjectName("cliente_input_obra")
         self.fecha_medicion_input = QDateEdit()
         self.fecha_medicion_input.setCalendarPopup(True)
         self.fecha_medicion_input.setDate(QDate.currentDate())
         self.fecha_entrega_input = QDateEdit()
+        self.fecha_entrega_input.setObjectName("fecha_entrega_input_obra")
         self.fecha_entrega_input.setCalendarPopup(True)
         self.fecha_entrega_input.setDate(QDate.currentDate().addDays(7))
         # VALIDACIÓN UI: nombre y cliente no vacíos
@@ -395,31 +401,55 @@ class AltaObraDialog(QDialog):
         fecha_ent = self.fecha_entrega_input.date()
         if fecha_ent < fecha_med:
             self.btn_guardar.setEnabled(False)
-            self.fecha_entrega_input.setStyleSheet("border: 2px solid #ef4444;")
+            self.fecha_entrega_input.setProperty("error", True)
+            style = self.fecha_entrega_input.style()
+            if style is not None:
+                style.unpolish(self.fecha_entrega_input)
+                style.polish(self.fecha_entrega_input)
             self.fecha_entrega_input.setToolTip("La fecha de entrega no puede ser anterior a la de medición.")
         else:
             self.btn_guardar.setEnabled(True)
-            self.fecha_entrega_input.setStyleSheet("")
+            self.fecha_entrega_input.setProperty("error", False)
+            style = self.fecha_entrega_input.style()
+            if style is not None:
+                style.unpolish(self.fecha_entrega_input)
+                style.polish(self.fecha_entrega_input)
             self.fecha_entrega_input.setToolTip("")
     def accept(self):
         # VALIDACIÓN UI: nombre y cliente no vacíos
         nombre = self.nombre_input.text().strip()
         cliente = self.cliente_input.text().strip()
         if not nombre:
-            self.nombre_input.setStyleSheet("border: 2px solid #ef4444;")
+            self.nombre_input.setProperty("error", True)
+            style = self.nombre_input.style()
+            if style is not None:
+                style.unpolish(self.nombre_input)
+                style.polish(self.nombre_input)
             self.nombre_input.setToolTip("El nombre es obligatorio.")
             from core.logger import log_error
             log_error("[AltaObraDialog] Nombre vacío en alta de obra")
         else:
-            self.nombre_input.setStyleSheet("")
+            self.nombre_input.setProperty("error", False)
+            style = self.nombre_input.style()
+            if style is not None:
+                style.unpolish(self.nombre_input)
+                style.polish(self.nombre_input)
             self.nombre_input.setToolTip("")
         if not cliente:
-            self.cliente_input.setStyleSheet("border: 2px solid #ef4444;")
+            self.cliente_input.setProperty("error", True)
+            style = self.cliente_input.style()
+            if style is not None:
+                style.unpolish(self.cliente_input)
+                style.polish(self.cliente_input)
             self.cliente_input.setToolTip("El cliente es obligatorio.")
             from core.logger import log_error
             log_error("[AltaObraDialog] Cliente vacío en alta de obra")
         else:
-            self.cliente_input.setStyleSheet("")
+            self.cliente_input.setProperty("error", False)
+            style = self.cliente_input.style()
+            if style is not None:
+                style.unpolish(self.cliente_input)
+                style.polish(self.cliente_input)
             self.cliente_input.setToolTip("")
         fecha_med = self.fecha_medicion_input.date()
         fecha_ent = self.fecha_entrega_input.date()
@@ -427,7 +457,11 @@ class AltaObraDialog(QDialog):
         if not nombre or not cliente:
             return  # No cerrar diálogo
         if fecha_ent < fecha_med:
-            self.fecha_entrega_input.setStyleSheet("border: 2px solid #ef4444;")
+            self.fecha_entrega_input.setProperty("error", True)
+            style = self.fecha_entrega_input.style()
+            if style is not None:
+                style.unpolish(self.fecha_entrega_input)
+                style.polish(self.fecha_entrega_input)
             self.fecha_entrega_input.setToolTip("La fecha de entrega no puede ser anterior a la de medición.")
             from core.logger import log_error
             log_error("[AltaObraDialog] Fecha de entrega anterior a medición")

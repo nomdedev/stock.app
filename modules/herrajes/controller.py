@@ -102,12 +102,18 @@ class HerrajesController:
                     "Material Existente",
                     "Ya existe un material con el mismo nombre."
                 )
-                self.view.nombre_input.setStyleSheet("border: 1px solid red;")
+                # Migrado a QSS: se usa property 'error' en vez de setStyleSheet
+                self.view.nombre_input.setProperty("error", True)
+                self.view.nombre_input.style().unpolish(self.view.nombre_input)
+                self.view.nombre_input.style().polish(self.view.nombre_input)
                 self._registrar_evento_auditoria('agregar_material', 'material existente', 'denegado')
                 return
             self.model.agregar_material((nombre, cantidad, proveedor))
             self.view.label.setText("Material agregado exitosamente.")
-            self.view.nombre_input.setStyleSheet("")
+            # Limpiar estado de error visual en input
+            self.view.nombre_input.setProperty("error", False)
+            self.view.nombre_input.style().unpolish(self.view.nombre_input)
+            self.view.nombre_input.style().polish(self.view.nombre_input)
             self._registrar_evento_auditoria('agregar_material', '', 'éxito')
         except Exception as e:
             self.view.label.setText(f"Error al agregar material: {e}")

@@ -31,7 +31,8 @@ class LogisticaView(QWidget, TableResponsiveMixin):
         icono_label.setToolTip("Icono de Logística")
         icono_label.setAccessibleName("Icono de Logística")
         titulo_label = QLabel("Logística")
-        titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")
+        titulo_label.setObjectName("titulo_label_logistica")  # Para QSS global
+        # titulo_label.setStyleSheet("color: #2563eb; font-size: 22px; font-weight: 600; padding-left: 4px;")  # Migrado a QSS global
         titulo_label.setAccessibleName("Título de módulo Logística")
         header_layout.addWidget(icono_label)
         header_layout.addWidget(titulo_label)
@@ -210,8 +211,8 @@ pip install PyQt6-WebEngine
         try:
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
-            tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
+            tema = config.get("theme", "theme_light")
+            archivo_qss = f"resources/qss/{tema}.qss"
             with open(archivo_qss, "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
         except Exception as e:
@@ -225,6 +226,8 @@ pip install PyQt6-WebEngine
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar registro)
         self.boton_agregar = QPushButton()
+        self.boton_agregar.setObjectName("boton_agregar_logistica")  # Para QSS global
+        # self.boton_agregar.setStyleSheet(self.boton_agregar.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")  # Migrado a QSS global
         self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar registro")
@@ -234,7 +237,6 @@ pip install PyQt6-WebEngine
 
         # Refuerzo de accesibilidad en botón principal
         self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.boton_agregar.setStyleSheet(self.boton_agregar.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
         font = self.boton_agregar.font()
         if font.pointSize() < 12:
             font.setPointSize(12)
@@ -243,18 +245,19 @@ pip install PyQt6-WebEngine
         self.boton_agregar.setAccessibleName("Botón agregar envío")
         # Refuerzo de accesibilidad en tablas principales
         for tabla in [self.tabla_obras, self.tabla_envios, self.tabla_servicios]:
-            tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+            tabla.setObjectName("tabla_logistica")  # Para QSS global
+            # tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")  # Migrado a QSS global
             tabla.setToolTip("Tabla de datos")
             tabla.setAccessibleName("Tabla principal de logística")
             h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
             if h_header is not None:
-                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                h_header.setObjectName("header_logistica")  # Para QSS global
+                # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")  # Migrado a QSS global
         # Refuerzo de accesibilidad en todos los QLineEdit de la vista
         for tab in [self.tab_obras, self.tab_envios, self.tab_servicios]:
             for widget in tab.findChildren(QLineEdit):
-                widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-                widget.setStyleSheet(widget.styleSheet() + "\nQLineEdit:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQLineEdit { font-size: 12px; }")
+                widget.setObjectName("input_logistica")  # Para QSS global
+                # widget.setStyleSheet(widget.styleSheet() + "\nQLineEdit:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQLineEdit { font-size: 12px; }")  # Migrado a QSS global
                 font = widget.font()
                 if font.pointSize() < 12:
                     font.setPointSize(12)
@@ -265,8 +268,8 @@ pip install PyQt6-WebEngine
                     widget.setAccessibleName("Campo de texto de logística")
         # Refuerzo en propiedades QLineEdit
         for prop in [self.buscar_input, self.id_item_input]:
-            prop.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            prop.setStyleSheet(prop.styleSheet() + "\nQLineEdit:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQLineEdit { font-size: 12px; }")
+            prop.setObjectName("input_logistica_prop")  # Para QSS global
+            # prop.setStyleSheet(prop.styleSheet() + "\nQLineEdit:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQLineEdit { font-size: 12px; }")  # Migrado a QSS global
             font = prop.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
@@ -306,11 +309,12 @@ pip install PyQt6-WebEngine
 
         # --- FEEDBACK DE PROGRESO (QProgressBar) ---
         self.progress_bar = QProgressBar()
+        self.progress_bar.setObjectName("progress_bar_logistica")  # Para QSS global
+        # self.progress_bar.setStyleSheet("QProgressBar { border-radius: 8px; height: 18px; background: #e3f6fd; } QProgressBar::chunk { background: #2563eb; border-radius: 8px; }")  # Migrado a QSS global
         self.progress_bar.setVisible(False)
         self.progress_bar.setMinimum(0)
         self.progress_bar.setMaximum(0)  # Modo indeterminado (spinner)
         self.progress_bar.setTextVisible(False)
-        self.progress_bar.setStyleSheet("QProgressBar { border-radius: 8px; height: 18px; background: #e3f6fd; } QProgressBar::chunk { background: #2563eb; border-radius: 8px; }")
         self.progress_bar.setAccessibleName("Barra de progreso de Logística")
         self.main_layout.addWidget(self.progress_bar)
 
@@ -336,7 +340,7 @@ pip install PyQt6-WebEngine
         icono = iconos.get(tipo, "ℹ️ ")
         # Limpiar mensaje anterior y estilos
         self.label_feedback.clear()
-        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        # self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")  # Migrado a QSS global
         self.label_feedback.setText(f"{icono}{mensaje}")
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
@@ -487,3 +491,5 @@ pip install PyQt6-WebEngine
         if not hasattr(self, '_id_item_input'):
             self._id_item_input = QLineEdit()
         return self._id_item_input
+
+# Todas las líneas setStyleSheet comentadas corresponden a estilos migrados a QSS global. Ver docs/estandares_visuales.md

@@ -69,7 +69,7 @@ class StartupUpdateChecker(QWidget):
         super().__init__()
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         self.setFixedSize(400, 220)
-        self.setStyleSheet("background: white; border-radius: 12px;")
+        # El estilo visual se gestiona por QSS de theme global, no usar setStyleSheet aquí
         layout = QVBoxLayout(self)
         self.label = QLabel("Cargando y verificando actualizaciones...")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)

@@ -9,6 +9,18 @@
   - Error: rojo pastel, "❌"
   - Advertencia: naranja pastel, "⚠️"
   - Info: azul pastel, "ℹ️"
+- Todo feedback visual (errores, advertencias, éxito, info) debe estar definido en los archivos QSS de theme global (`resources/qss/theme_light.qss` y `resources/qss/theme_dark.qss`).
+- **Prohibido** usar `setStyleSheet` embebido para feedback visual en labels, botones, tablas, etc.
+- Si se requiere un refuerzo visual especial, debe hacerse vía QSS global. Si no es posible, documentar la excepción en `docs/estandares_visuales.md`.
+  - Ejemplo correcto:
+  ```python
+  self.label_feedback.setText("¡Guardado con éxito!")  # El color y formato lo define el QSS global
+  ```
+  - Ejemplo incorrecto:
+  ```python
+  self.label_feedback.setStyleSheet("color: green;")  # PROHIBIDO
+  ```
+  - Si encuentras feedback visual hardcodeado, migra el estilo al QSS global y elimina el setStyleSheet.
 
 ## Procedimiento de carga/progreso
 

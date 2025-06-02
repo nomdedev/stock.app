@@ -31,8 +31,8 @@ class PedidosView(QWidget, TableResponsiveMixin):
         try:
             with open("themes/config.json", "r", encoding="utf-8") as f:
                 config = json.load(f)
-            tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
+            tema = config.get("theme", "theme_light")
+            archivo_qss = f"resources/qss/{tema}.qss"
             with open(archivo_qss, "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
         except Exception as e:
@@ -41,7 +41,8 @@ class PedidosView(QWidget, TableResponsiveMixin):
         # HEADER VISUAL MODERNO: título y botones alineados
         header_layout = QHBoxLayout()
         self.label_titulo = QLabel("Pedidos de Compras")
-        self.label_titulo.setStyleSheet("color: #2563eb; font-size: 18px; font-weight: bold; padding: 0 0 0 0;")
+        self.label_titulo.setObjectName("label_titulo_pedidos")  # Para QSS global
+        # self.label_titulo.setStyleSheet("color: #2563eb; font-size: 18px; font-weight: bold; padding: 0 0 0 0;")  # Migrado a QSS global
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         header_layout.addStretch()
         # Crear botones principales como atributos de la clase
@@ -54,19 +55,15 @@ class PedidosView(QWidget, TableResponsiveMixin):
             (self.boton_cargar_presupuesto, "excel_icon.svg", "Cargar presupuesto")
         ]
         for boton, icono, tooltip in botones:
-            boton.setIcon(QtGui.QIcon(f"resources/icons/{icono}"))
-            boton.setIconSize(QSize(24, 24))
-            boton.setToolTip(tooltip)
-            boton.setAccessibleName(tooltip)
-            boton.setText("")
-            boton.setFixedSize(48, 48)
-            boton.setStyleSheet("border-radius: 12px; background: #f1f5f9; color: #2563eb; min-width: 48px; min-height: 48px; margin-left: 16px;")
+            boton.setObjectName(f"boton_{icono.split('.')[0]}")  # Para QSS global
+            # boton.setStyleSheet("border-radius: 12px; background: #f1f5f9; color: #2563eb; min-width: 48px; min-height: 48px; margin-left: 16px;")  # Migrado a QSS global
             estilizar_boton_icono(boton)
             header_layout.addWidget(boton, alignment=Qt.AlignmentFlag.AlignVCenter)
         main_layout.insertLayout(0, header_layout)
 
         # Tabla principal de pedidos (si existe)
         self.tabla_pedidos = QTableWidget()
+        self.tabla_pedidos.setObjectName("tabla_pedidos")  # Para QSS global
         self.make_table_responsive(self.tabla_pedidos)
         main_layout.addWidget(self.tabla_pedidos)
 
@@ -91,7 +88,8 @@ class PedidosView(QWidget, TableResponsiveMixin):
             header_pedidos = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
             if header_pedidos is not None:
                 try:
-                    header_pedidos.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                    header_pedidos.setObjectName("header_pedidos")  # Para QSS global
+                    # header_pedidos.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")  # Migrado a QSS global
                 except Exception:
                     pass
                 header_pedidos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
@@ -106,6 +104,7 @@ class PedidosView(QWidget, TableResponsiveMixin):
 
         # Refuerzo de accesibilidad en botones principales
         for btn in [self.boton_crear, self.boton_ver_detalles, self.boton_cargar_presupuesto]:
+            # btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")  # Migrado a QSS global
             btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
             btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
             font = btn.font()
@@ -118,12 +117,13 @@ class PedidosView(QWidget, TableResponsiveMixin):
                 btn.setAccessibleName("Botón de acción de pedidos")
         # Refuerzo de accesibilidad en tabla principal
         self.tabla_pedidos.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.tabla_pedidos.setStyleSheet(self.tabla_pedidos.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # self.tabla_pedidos.setStyleSheet(self.tabla_pedidos.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")  # Migrado a QSS global
         self.tabla_pedidos.setToolTip("Tabla de pedidos")
         self.tabla_pedidos.setAccessibleName("Tabla principal de pedidos")
         h_header = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
         if h_header is not None:
-            h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")  # Migrado a QSS global
+            pass
         # Refuerzo de accesibilidad en QLabel
         for widget in self.findChildren(QLabel):
             font = widget.font()
@@ -245,3 +245,4 @@ class PedidosView(QWidget, TableResponsiveMixin):
         btn_guardar.clicked.connect(guardar)
         btn_pdf.clicked.connect(exportar_pdf)
         dialog.exec()
+# Todas las líneas setStyleSheet comentadas corresponden a estilos migrados a QSS global. Ver docs/estandares_visuales.md

@@ -509,7 +509,7 @@ label_feedback.setText("<span style='color:#22c55e;'>✅ Acción realizada con �
 1. Clonar el repositorio:
 
    ```bash
-   git clone <URL_DEL_REPOSITORIO>
+   git clone <URL_DEL_REPOSITOR>
    cd stock.admin
    ```
 
@@ -1006,5 +1006,16 @@ La aplicación utiliza un archivo `.env` para gestionar todas las variables sens
 - Cada módulo puede tener su propio README en la subcarpeta de tests para explicar casos especiales.
 - Los tests unitarios usan mocks y datos de fixtures; los de integración pueden requerir base real y deben estar claramente separados.
 - Consulta y edita `tests/fixtures/README.md` para ver la convención de fixtures y cómo usarlos en los tests.
+
+---
+
+## Estilos visuales y QSS
+
+- Todos los estilos visuales de la app están centralizados en dos archivos QSS:
+  - `resources/qss/theme_light.qss`
+  - `resources/qss/theme_dark.qss`
+- **No se permite** el uso de `setStyleSheet` embebido en widgets/componentes, excepto para aplicar el theme global o personalizar dialogs (ejemplo: QMessageBox, QDialog), debidamente documentado.
+- Si encuentras un uso de `setStyleSheet` fuera de estos casos, repórtalo y migra el estilo al QSS global.
+- Consulta `docs/estandares_visuales.md` para detalles y excepciones documentadas.
 
 ---

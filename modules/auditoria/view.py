@@ -20,10 +20,14 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
 
         # --- FEEDBACK VISUAL GLOBAL (accesible, visible siempre arriba de la tabla) ---
         self.label_feedback = QLabel()
-        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setProperty("feedback", True)
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Feedback visual de Auditoría")
+        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
+        # Si se requiere refuerzo visual, hacerlo solo vía QSS global (resources/qss/theme_light.qss o theme_dark.qss)
+        # Eliminado setStyleSheet directo en header para unificar estilo visual global y evitar doble fondo/conflictos
+        #         header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+        #         # EXCEPCIÓN VISUAL: Si el header no soporta QSS global, documentar aquí y en docs/estandares_visuales.md
         self.main_layout.addWidget(self.label_feedback)
         # --- FIN FEEDBACK VISUAL GLOBAL ---
 

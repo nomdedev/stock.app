@@ -59,6 +59,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
 
         self.form_layout = QFormLayout()
         self.nombre_input = QLineEdit()
+        self.nombre_input.setObjectName("nombre_input_herrajes")
         self.cantidad_input = QLineEdit()
         self.proveedor_input = QLineEdit()
         self.form_layout.addRow("Nombre:", self.nombre_input)
@@ -152,14 +153,12 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         Muestra un mensaje de feedback visual accesible en el label_feedback.
         tipo: info, exito, error, advertencia
         """
-        colores = {
-            "info": "background: #e3f6fd; color: #2563eb;",
-            "exito": "background: #d1f7e7; color: #15803d;",
-            "error": "background: #fee2e2; color: #b91c1c;",
-            "advertencia": "background: #fef9c3; color: #b45309;"
-        }
-        # Solo aplicar color de fondo y texto, el resto lo gestiona el QSS global
-        self.label_feedback.setStyleSheet(colores.get(tipo, ""))
+        # Migrado a QSS: se asigna clase por tipo de feedback, no se usa setStyleSheet
+        self.label_feedback.setProperty("feedback_tipo", tipo)
+        style = self.label_feedback.style()
+        if style is not None:
+            style.unpolish(self.label_feedback)
+            style.polish(self.label_feedback)
         self.label_feedback.setText(mensaje)
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(mensaje)

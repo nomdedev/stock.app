@@ -1,4 +1,4 @@
-# --- POLÍTICA DE ESTILOS Y FEEDBACK ---
+# --- POLÍTICA DE ESTILLOS Y FEEDBACK ---
 # Este módulo cumple con la política de unificación de estilos visuales:
 # - Solo se deben usar los archivos QSS globales: themes/light.qss y themes/dark.qss.
 # - Prohibido el uso de setStyleSheet embebido o estilos hardcodeados en widgets.
@@ -272,13 +272,15 @@ class ObrasController:
             dialog.setFixedSize(600, 600)
             layout = QVBoxLayout(dialog)
             label = QLabel("Ingrese los datos completos de la nueva obra:")
-            label.setStyleSheet("font-weight: bold; font-size: 16px; margin-bottom: 8px;")
+            label.setObjectName("label_titulo_dialogo_obra")
+            # QSS global: el estilo visual de este label se gestiona en theme_light.qss y theme_dark.qss
             layout.addWidget(label)
 
             # Usuario actual visible
             if usuario and 'username' in usuario:
                 usuario_label = QLabel(f"<b>Usuario cargando: <span style='color:#2563eb'>{usuario['username']} ({usuario.get('rol','')})</span></b>")
-                usuario_label.setStyleSheet("font-size: 13px; margin-bottom: 8px; background: #f1f5f9; border-radius: 8px; padding: 4px 8px;")
+                usuario_label.setObjectName("label_usuario_dialogo_obra")
+                # QSS global: el estilo visual de este label se gestiona en theme_light.qss y theme_dark.qss
                 layout.addWidget(usuario_label)
 
             from PyQt6.QtWidgets import QFormLayout, QDateEdit, QCheckBox, QSpinBox
@@ -596,13 +598,15 @@ class ObrasController:
             dialog.setFixedSize(600, 600)
             layout = QVBoxLayout(dialog)
             label = QLabel("Ingrese los datos completos de la nueva obra:")
-            label.setStyleSheet("font-weight: bold; font-size: 16px; margin-bottom: 8px;")
+            label.setObjectName("label_titulo_dialogo_obra")
+            # QSS global: el estilo visual de este label se gestiona en theme_light.qss y theme_dark.qss
             layout.addWidget(label)
 
             # Usuario actual visible
             if usuario and 'username' in usuario:
                 usuario_label = QLabel(f"<b>Usuario cargando: <span style='color:#2563eb'>{usuario['username']} ({usuario.get('rol','')})</span></b>")
-                usuario_label.setStyleSheet("font-size: 13px; margin-bottom: 8px; background: #f1f5f9; border-radius: 8px; padding: 4px 8px;")
+                usuario_label.setObjectName("label_usuario_dialogo_obra")
+                # QSS global: el estilo visual de este label se gestiona en theme_light.qss y theme_dark.qss
                 layout.addWidget(usuario_label)
 
             from PyQt6.QtWidgets import QFormLayout, QDateEdit, QCheckBox, QSpinBox

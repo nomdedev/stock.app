@@ -17,7 +17,7 @@ class TableResponsiveMixin:
             horizontal_header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
             horizontal_header.setMinimumSectionSize(80)
             horizontal_header.setDefaultSectionSize(120)
-            # Eliminar setStyleSheet aquí para evitar conflicto de estilos
+            # No usar setStyleSheet aquí. El estilo visual de headers se gestiona por QSS de theme global.
             horizontal_header.setVisible(True)
             for i in range(table.columnCount()):
                 horizontal_header.setSectionHidden(i, False)

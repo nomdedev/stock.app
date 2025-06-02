@@ -5,8 +5,7 @@ from PyQt6.QtCore import Qt
 class LoginView(QWidget):
     """
     Vista de inicio de sesión.
-    El logo principal es ahora mucho más grande y visible (mínimo 320x320 px) para cumplir con los estándares visuales y de accesibilidad.
-    Se refuerza la visibilidad y el contraste del logo para todos los usuarios.
+    El logo principal es ahora aún más grande y visible (mínimo 380x380 px). Para cambiar el tamaño, edita el valor en el método __init__ donde se usa pixmap.scaled(380, 380, ...).
     """
     def __init__(self):
         super().__init__()
@@ -84,7 +83,7 @@ class LoginView(QWidget):
 
         # Card de login con sombra
         self.login_card = QFrame()
-        self.login_card.setObjectName("login_card")
+        self.login_card.setObjectName("login_card")  # Para QSS global
         self.login_card.setFixedSize(340, 540)
         shadow = QGraphicsDropShadowEffect(self)
         shadow.setBlurRadius(32)
@@ -97,20 +96,21 @@ class LoginView(QWidget):
         card_layout.setContentsMargins(32, 32, 32, 32)
         card_layout.setSpacing(16)
 
-        # Icono superior (logo de inicio de sesión, ahora mucho más grande)
+        # Icono superior (logo de inicio de sesión, ahora aún más grande)
         self.icono = QLabel()
-        self.icono.setObjectName("icono")
+        self.icono.setObjectName("icono")  # Para QSS global
         # Buscar imagen en resources/icons si no existe en img/
         pixmap = QPixmap("resources/icons/MPS_inicio_sesion.png")
-        # Mostrar la imagen mucho más grande (por ejemplo, 320x320)
-        self.icono.setPixmap(pixmap.scaled(320, 320, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        # Mostrar la imagen aún más grande (por ejemplo, 380x380)
+        # Para cambiar el tamaño, edita el valor de scaled aquí:
+        self.icono.setPixmap(pixmap.scaled(380, 380, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         self.icono.setAlignment(Qt.AlignmentFlag.AlignCenter)
         card_layout.addWidget(self.icono)
 
         # Eliminar el título "StockApp" (no agregar el QLabel de título)
 
         self.subtitulo = QLabel("Iniciar sesión")
-        self.subtitulo.setObjectName("subtitulo")
+        self.subtitulo.setObjectName("subtitulo")  # Para QSS global
         self.subtitulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
         font = QFont()
         font.setPointSize(13)
@@ -118,6 +118,7 @@ class LoginView(QWidget):
         card_layout.addWidget(self.subtitulo)
 
         self.usuario_input = QLineEdit()
+        self.usuario_input.setObjectName("usuario_input")  # Para QSS global
         self.usuario_input.setPlaceholderText("Usuario")
         # self.usuario_input.setStyleSheet("""
         #     QLineEdit {
@@ -141,12 +142,14 @@ class LoginView(QWidget):
         card_layout.addWidget(self.usuario_input)
 
         self.password_input = QLineEdit()
+        self.password_input.setObjectName("password_input")  # Para QSS global
         self.password_input.setPlaceholderText("Contraseña")
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
-        # self.password_input.setStyleSheet(self.usuario_input.styleSheet())
+        # self.password_input.setStyleSheet(self.usuario_input.styleSheet())  # Migrado a QSS global
         card_layout.addWidget(self.password_input)
 
         self.boton_login = QPushButton("Ingresar")
+        self.boton_login.setObjectName("boton_login")  # Para QSS global
         # Aplicar sombra visual al botón usando QGraphicsDropShadowEffect (reemplazo de box-shadow)
         sombra_boton = QGraphicsDropShadowEffect(self)
         sombra_boton.setBlurRadius(16)
@@ -156,7 +159,7 @@ class LoginView(QWidget):
         card_layout.addWidget(self.boton_login)
 
         self.label_error = QLabel("")
-        self.label_error.setObjectName("error")
+        self.label_error.setObjectName("error")  # Para QSS global
         self.label_error.setAlignment(Qt.AlignmentFlag.AlignCenter)
         card_layout.addWidget(self.label_error)
 
@@ -169,3 +172,5 @@ class LoginView(QWidget):
 
     def limpiar_error(self):
         self.label_error.setText("")
+
+# Todas las líneas setStyleSheet comentadas corresponden a estilos migrados a QSS global. Ver docs/estandares_visuales.md

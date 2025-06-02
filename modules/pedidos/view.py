@@ -19,9 +19,11 @@ class PedidosView(QWidget):
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Pedidos")
+        self.label_titulo.setObjectName("label_titulo_pedidos")  # Para QSS global
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar pedido)
         self.boton_agregar = QPushButton()
+        self.boton_agregar.setObjectName("boton_agregar_pedidos")  # Para QSS global
         self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar pedido")
@@ -31,11 +33,12 @@ class PedidosView(QWidget):
 
         # Tabla de pedidos
         self.tabla_pedidos = QTableWidget()
+        self.tabla_pedidos.setObjectName("tabla_pedidos")  # Para QSS global
         self.tabla_pedidos.setColumnCount(5)
         self.pedidos_headers = ["id", "obra", "fecha", "estado", "observaciones"]
         self.tabla_pedidos.setHorizontalHeaderLabels(self.pedidos_headers)
         self.tabla_pedidos.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        # self.tabla_pedidos.setStyleSheet(self.tabla_pedidos.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+        # self.tabla_pedidos.setStyleSheet(self.tabla_pedidos.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")  # Migrado a QSS global
         self.tabla_pedidos.setToolTip("Tabla de pedidos")
         self.tabla_pedidos.setAccessibleName("Tabla principal de pedidos")
         self.main_layout.addWidget(self.tabla_pedidos)
@@ -46,23 +49,20 @@ class PedidosView(QWidget):
         self.aplicar_columnas_visibles()
         header = self.tabla_pedidos.horizontalHeader()
         if header is not None:
+            header.setObjectName("header_pedidos")  # Para QSS global
+            # header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")  # Migrado a QSS global
             header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
             header.sectionDoubleClicked.connect(self.auto_ajustar_columna)
             header.setSectionsMovable(True)
             header.setSectionsClickable(True)
             header.sectionClicked.connect(self.mostrar_menu_columnas_header)
-            try:
-                # header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
-                pass
-            except Exception:
-                pass
         # Señal para mostrar QR al seleccionar un ítem
         self.tabla_pedidos.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
 
         # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
-        self.label_feedback.setObjectName("label_feedback")
+        self.label_feedback.setObjectName("label_feedback")  # Para QSS global
         # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de pedidos")
@@ -130,7 +130,7 @@ class PedidosView(QWidget):
         }
         icono = iconos.get(tipo, "ℹ️ ")
         self.label_feedback.clear()
-        # self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        # self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")  # Migrado a QSS global
         self.label_feedback.setText(f"{icono}{mensaje}")
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")

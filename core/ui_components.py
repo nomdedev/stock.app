@@ -1,5 +1,6 @@
-from PyQt6.QtWidgets import QPushButton
-from PyQt6.QtCore import QSize
+from PyQt6.QtWidgets import QPushButton, QMessageBox, QWidget
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import QSize, Qt
 import os
 
 # Color crema global para botones
@@ -12,28 +13,12 @@ COLOR_BOTON_BORDE = "#e0e7ef"  # Borde sutil
 class CustomButton(QPushButton):
     def __init__(self, text, parent=None, style=None):
         super().__init__(text, parent)
-        self.setStyleSheet(self.default_style())
+        # El estilo visual se gestiona por QSS de theme global. Solo usar setStyleSheet aquí si se justifica como excepción (ver docs/estandares_visuales.md)
+        # self.setStyleSheet(self.default_style())
 
     def default_style(self):
-        return f"""
-            QPushButton {{
-                background-color: {COLOR_BOTON_FONDO};
-                color: {COLOR_BOTON_TEXTO};
-                font-size: 12px;
-                font-weight: bold;
-                border-radius: 8px;
-                border: 1.5px solid {COLOR_BOTON_BORDE};
-                padding: 4px 8px;
-            }}
-            QPushButton:hover {{
-                background-color: {COLOR_BOTON_FONDO_HOVER};
-                color: {COLOR_BOTON_TEXTO};
-            }}
-            QPushButton:pressed {{
-                background-color: {COLOR_BOTON_FONDO_PRESSED};
-                color: {COLOR_BOTON_TEXTO};
-            }}
-        """
+        # Deprecated: los estilos deben estar en QSS de theme global
+        return ""
 
 def estilizar_boton_icono(boton: QPushButton, tam_icono: int = 20, tam_boton: int = 32):
     """
@@ -47,27 +32,9 @@ def estilizar_boton_icono(boton: QPushButton, tam_icono: int = 20, tam_boton: in
     """
     boton.setIconSize(QSize(tam_icono, tam_icono))
     boton.setFixedSize(tam_boton, tam_boton)
-    # Fondo crema global, igual para todos los botones
-    # boton.setStyleSheet(
-    #     f"""
-    #     QPushButton {{
-    #         background-color: {COLOR_BOTON_FONDO};
-    #         color: {COLOR_BOTON_TEXTO};
-    #         border-radius: 8px;
-    #         padding: 0px;
-    #         border: 1.5px solid {COLOR_BOTON_BORDE};
-    #         font-weight: bold;
-    #     }}
-    #     QPushButton:hover {{
-    #         background-color: {COLOR_BOTON_FONDO_HOVER};
-    #         color: {COLOR_BOTON_TEXTO};
-    #     }}
-    #     QPushButton:pressed {{
-    #         background-color: {COLOR_BOTON_FONDO_PRESSED};
-    #         color: {COLOR_BOTON_TEXTO};
-    #     }}
-    #     """
-    # )
+    # Quitar setStyleSheet aquí para evitar advertencias de QSS incompatibles con PyQt6
+    # Si se requiere estilo visual, usar QSS global o el método default_style de CustomButton
+    # boton.setStyleSheet(...)
 
 def aplicar_qss_global_y_tema(widget, qss_global_path=None, qss_tema_path=None):
     """
@@ -89,3 +56,33 @@ def aplicar_qss_global_y_tema(widget, qss_global_path=None, qss_tema_path=None):
             pass
     if qss:
         widget.setStyleSheet(qss)
+
+class HelpButton(QPushButton):
+    """
+    Botón de ayuda contextual reutilizable. Al hacer clic, muestra un mensaje o documentación relevante.
+    Uso:
+        help_btn = HelpButton("Texto de ayuda", parent=self, icon_path="resources/icons/help-circle.svg")
+        layout.addWidget(help_btn)
+    """
+    def __init__(self, help_text, parent=None, icon_path=None, title="Ayuda", tooltip="Ver ayuda contextual"):
+        super().__init__(parent)
+        self.help_text = help_text
+        self.setToolTip(tooltip)
+        self.setAccessibleName("Botón de ayuda contextual")
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        if icon_path and os.path.exists(icon_path):
+            self.setIcon(QIcon(icon_path))
+            self.setIconSize(QSize(22, 22))
+        else:
+            self.setText("?")
+        self.clicked.connect(self.mostrar_ayuda)
+        estilizar_boton_icono(self)
+        self.title = title
+
+    def mostrar_ayuda(self):
+        # Buscar un QWidget válido como parent
+        parent = self.parent()
+        while parent and not isinstance(parent, QWidget):
+            parent = parent.parent() if hasattr(parent, 'parent') else None
+        parent_widget = parent if isinstance(parent, QWidget) else None
+        QMessageBox.information(parent_widget, self.title, self.help_text)

@@ -10,6 +10,38 @@
 
 ---
 
+# Estándares visuales y de estilos para la aplicación
+
+## Política de estilos
+
+- **Prohibido** el uso de `setStyleSheet` embebido en widgets/componentes, excepto para:
+  - Aplicar el theme global (resources/qss/theme_light.qss o theme_dark.qss) a nivel de aplicación.
+  - Personalización explícita de dialogs (ejemplo: QMessageBox, QDialog), debidamente documentada.
+- **Todos los estilos visuales** (colores, bordes, feedback, etc.) deben centralizarse en los archivos QSS de theme global.
+- **No existe** un QSS global adicional ni helpers que apliquen QSS embebido. Helpers solo pueden modificar tamaño de íconos, paddings, etc., pero nunca estilos visuales vía QSS embebido.
+- Si algún widget requiere una excepción (por limitación de Qt), debe documentarse aquí y en el código.
+
+## Archivos de theme
+- `resources/qss/theme_light.qss`
+- `resources/qss/theme_dark.qss`
+
+## Ejemplo de excepción permitida
+```python
+# Solo permitido para dialogs personalizados:
+dialog = QDialog()
+dialog.setStyleSheet("background: #fff; border-radius: 12px;")
+```
+
+## Migración y auditoría
+- Todos los módulos y widgets deben ser auditados para eliminar cualquier uso de setStyleSheet embebido.
+- Si se detecta un uso, debe migrarse a QSS global y dejar comentario explicativo.
+
+## Documentar excepciones
+- Si un widget no soporta QSS global y requiere setStyleSheet, debe documentarse aquí:
+  - [ ] (Ninguna excepción activa al 2024-06)
+
+---
+
 ## Estándares visuales de la app
 
 ### Paleta de colores
@@ -351,3 +383,43 @@ set_theme(app, 'light')  # o 'dark'
 Para más detalles sobre feedback visual y logging, ver también:
 - [docs/estandares_feedback.md](estandares_feedback.md)
 - [docs/estandares_logging.md](estandares_logging.md)
+
+---
+
+# Uso de QSS en la app: solo temas, nunca QSS global
+
+- Está prohibido crear o mantener un QSS global (por ejemplo, stylesheet.qss o estilos compartidos fuera de los temas).
+- Todos los estilos visuales deben definirse únicamente en los archivos de tema:
+  - `resources/qss/theme_light.qss` (modo claro)
+  - `resources/qss/theme_dark.qss` (modo oscuro)
+- Cualquier personalización visual, color, tipografía, bordes, etc., debe agregarse en estos archivos.
+- No se debe usar setStyleSheet embebido en widgets individuales, salvo en diálogos modales personalizados y solo si es estrictamente necesario.
+- Si se requiere una excepción, debe justificarse y documentarse aquí.
+- Si se detecta un nuevo QSS global, debe eliminarse y migrar los estilos a los archivos de tema.
+- Esto asegura compatibilidad, coherencia visual y evita advertencias/errores en PyQt6.
+
+---
+
+# [2025-06-02] Migración completa de estilos embebidos en módulo Usuarios (login y vista principal) a QSS global (`theme_light.qss` y `theme_dark.qss`). Todas las líneas `setStyleSheet` han sido comentadas y justificadas en el código fuente. No existen excepciones activas. Ver comentarios en `modules/usuarios/login_view.py` y `modules/usuarios/view.py` para trazabilidad.
+
+---
+
+# [2025-06-02] Migración completa de estilos embebidos en módulo Pedidos a QSS global (`theme_light.qss` y `theme_dark.qss`). Todas las líneas `setStyleSheet` han sido comentadas y justificadas en el código fuente. No existen excepciones activas. Ver comentarios en `modules/pedidos/view.py` para trazabilidad.
+
+---
+
+# [2025-06-02] Migración completa de estilos embebidos en módulo Contabilidad a QSS global (`theme_light.qss` y `theme_dark.qss`). Todas las líneas `setStyleSheet` han sido comentadas y justificadas en el código fuente. No existen excepciones activas. Ver comentarios en `modules/contabilidad/view.py` para trazabilidad.
+
+---
+
+# [2025-06-02] Migración completa de estilos embebidos en módulo Herrajes a QSS global (`theme_light.qss` y `theme_dark.qss`). Todas las líneas `setStyleSheet` han sido eliminadas o migradas a uso de property y QSS. No existen excepciones activas. Ver comentarios en `modules/herrajes/view.py` y `modules/herrajes/controller.py` para trazabilidad.
+
+---
+
+# [2025-06-02] Migración completa de estilos embebidos en módulo Inventario a QSS global (`theme_light.qss` y `theme_dark.qss`). Todas las líneas `setStyleSheet` han sido eliminadas o migradas a uso de property y QSS. No existen excepciones activas. Ver comentarios en `modules/inventario/view.py` para trazabilidad.
+
+---
+
+# [2025-06-02] Migración completa de estilos embebidos en módulo Obras a QSS global (`theme_light.qss` y `theme_dark.qss`). Todas las líneas `setStyleSheet` han sido eliminadas o migradas a uso de property/objectName y QSS. No existen excepciones activas. Ver comentarios en `modules/obras/view.py` y `modules/obras/controller.py` para trazabilidad.
+
+---

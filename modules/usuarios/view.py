@@ -38,9 +38,11 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Usuarios")
+        self.label_titulo.setObjectName("label_titulo_usuarios")  # Para QSS global
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar usuario)
         self.boton_agregar = QPushButton()
+        self.boton_agregar.setObjectName("boton_agregar_usuarios")  # Para QSS global
         self.boton_agregar.setIcon(QIcon("resources/icons/agregar-user.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar usuario")
@@ -51,7 +53,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
 
         # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
-        self.label_feedback.setObjectName("label_feedback")
+        self.label_feedback.setObjectName("label_feedback")  # Para QSS global
         # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de usuarios")
@@ -68,6 +70,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
 
         # Refuerzo de accesibilidad en tabla principal
         self.tabla_usuarios.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.tabla_usuarios.setObjectName("tabla_usuarios")  # Para QSS global
         # Refuerzo de accesibilidad en todos los QLineEdit de la vista principal
         for widget in self.findChildren(QComboBox):
             widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -151,6 +154,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         tab_usuarios_layout = QVBoxLayout(self.tab_usuarios)
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
+        self.boton_agregar.setObjectName("boton_agregar_usuarios")  # Para QSS global
         self.boton_agregar.setIcon(QIcon("resources/icons/agregar-user.svg"))
         self.boton_agregar.setIconSize(QSize(20, 20))
         self.boton_agregar.setToolTip("Agregar usuario")

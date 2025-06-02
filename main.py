@@ -1,3 +1,17 @@
+"""
+# Para el estándar de inicialización robusto y el flujo recomendado de arranque, ver:
+# docs/decisiones_main.md y docs/estandares_seguridad.md
+#
+# Para los principios de diseño UI/UX y buenas prácticas visuales, ver:
+# docs/estandares_visuales.md
+#
+# Para detalles de logging, feedback y manejo de errores críticos, ver:
+# docs/estandares_feedback.md y docs/estandares_logging.md
+#
+# Para reglas de seguridad y manejo de variables sensibles, ver:
+# docs/estandares_seguridad.md
+"""
+
 # --- PRINCIPIOS Y PARÁMETROS DE DISEÑO UI/UX PARA TODA LA APP ---
 # Estos lineamientos deben aplicarse SIEMPRE al crear cualquier ventana, diálogo, botón, label, input, tabla, etc.
 # Si se requiere una excepción, debe justificarse y documentarse.
@@ -51,8 +65,13 @@
 import sys
 import subprocess
 import os
-import pkg_resources
 import platform
+import importlib.metadata as importlib_metadata  # Sustituye pkg_resources (deprecado)
+
+# --- UTILIDAD PARA COMPARAR VERSIONES ---
+def version_mayor_igual(version_actual, version_requerida):
+    from packaging import version
+    return version.parse(version_actual) >= version.parse(version_requerida)
 
 # --- INSTALACIÓN AUTOMÁTICA DE DEPENDENCIAS CRÍTICAS (WHEELS) PARA TODA LA APP ---
 def instalar_dependencias_criticas():
@@ -94,10 +113,9 @@ def instalar_dependencias_criticas():
     def instalar_dependencia_si_falta(paquete, version):
         print(f"[LOG 1.3.1] Chequeando {paquete} >= {version if version else ''}...")
         try:
-            if version:
-                pkg_resources.require(f"{paquete}>={version}")
-            else:
-                __import__(paquete)
+            actual = importlib_metadata.version(paquete)
+            if version and not version_mayor_igual(actual, version):
+                raise Exception(f"Versión instalada {actual} < requerida {version}")
             print(f"[LOG 1.3.2] ✅ {paquete} ya está instalado y cumple versión.")
             return True
         except Exception:
@@ -121,11 +139,10 @@ def instalar_dependencias_criticas():
                 pkg = line.strip().split("==")[0] if "==" in line else line.strip()
                 if not pkg or pkg.startswith("#"): continue
                 try:
-                    print(f"[LOG 1.4.2] Chequeando {pkg}...")
-                    pkg_resources.require(line.strip())
-                    print(f"[LOG 1.4.3] ✅ {pkg} ya está instalado.")
+                    actual = importlib_metadata.version(pkg)
+                    print(f"[LOG 1.4.2] Chequeando {pkg}... versión instalada: {actual}")
                 except Exception:
-                    print(f"[LOG 1.4.4] ❌ {pkg} no está instalado o la versión es incorrecta. Instalando...")
+                    print(f"[LOG 1.4.4] ❌ {pkg} no está instalado. Instalando...")
                     subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", line.strip()])
         os.remove(req_tmp_path)
         print("[LOG 1.4.5] ✅ Todas las dependencias instaladas correctamente.")
@@ -155,6 +172,8 @@ def mostrar_mensaje_dependencias(titulo, texto, detalles, tipo="error"):
     dialog.setWindowTitle(titulo)
     dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
     dialog.setFixedWidth(420)
+    # Solo se permite setStyleSheet aquí para personalizar el diálogo de dependencias.
+    # No usar setStyleSheet embebido en widgets individuales fuera de diálogos personalizadas o theme global.
     dialog.setStyleSheet(f"""
         QDialog {{
             background: #fff9f3;
@@ -204,9 +223,9 @@ def mostrar_mensaje_dependencias(titulo, texto, detalles, tipo="error"):
     # Ícono grande
     icon_label = QLabel()
     if tipo == "error":
-        icon_label.setPixmap(QPixmap("img/reject.svg").scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        icon_label.setPixmap(QPixmap("resources/icons/reject.svg").scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
     else:
-        icon_label.setPixmap(QPixmap("img/warning.svg").scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        icon_label.setPixmap(QPixmap("resources/icons/warning.svg").scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
     icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
     layout.addWidget(icon_label)
     # Título
@@ -237,7 +256,6 @@ def verificar_dependencias():
     Si faltan secundarias, muestra advertencia visual pero permite iniciar la app.
     Ahora acepta versiones IGUALES O SUPERIORES a las requeridas.
     """
-    import pkg_resources
     from PyQt6.QtWidgets import QApplication
     requeridos_criticos = [
         ("PyQt6", "6.9.0"), ("pandas", "2.2.2"), ("pyodbc", "5.0.1")
@@ -253,10 +271,9 @@ def verificar_dependencias():
     print("[LOG 2.1] Chequeando dependencias críticas...", flush=True)
     for paquete, version in requeridos_criticos:
         try:
-            if version:
-                pkg_resources.require(f"{paquete}>={version}")
-            else:
-                __import__(paquete)
+            actual = importlib_metadata.version(paquete)
+            if version and not version_mayor_igual(actual, version):
+                raise Exception(f"Versión instalada {actual} < requerida {version}")
             print(f"[LOG 2.1.1] ✅ {paquete} presente y versión >= {version if version else ''}.", flush=True)
         except Exception:
             print(f"[LOG 2.1.2] ❌ {paquete} faltante o versión menor a la requerida.", flush=True)
@@ -264,10 +281,9 @@ def verificar_dependencias():
     print("[LOG 2.2] Chequeando dependencias secundarias...", flush=True)
     for paquete, version in requeridos_secundarios:
         try:
-            if version:
-                pkg_resources.require(f"{paquete}>={version}")
-            else:
-                __import__(paquete)
+            actual = importlib_metadata.version(paquete)
+            if version and not version_mayor_igual(actual, version):
+                raise Exception(f"Versión instalada {actual} < requerida {version}")
             print(f"[LOG 2.2.1] ✅ {paquete} presente.", flush=True)
         except Exception:
             print(f"[LOG 2.2.2] ❌ {paquete} faltante.", flush=True)
@@ -383,7 +399,7 @@ class MainWindow(QMainWindow):
         self.modulos_permitidos = modulos_permitidos
         self.usuario_label = QLabel()
         self.usuario_label.setObjectName("usuarioActualLabel")
-        self.usuario_label.setStyleSheet("")
+        # El estilo visual de usuario_label se gestiona por QSS de theme global. No usar setStyleSheet aquí.
         self.usuario_label.setText("")
         self._status_bar.addPermanentWidget(self.usuario_label, 1)
         self.initUI(usuario, modulos_permitidos)
@@ -396,7 +412,7 @@ class MainWindow(QMainWindow):
             "error": "#ef4444"
         }
         color = colores.get(tipo, "#2563eb")
-        self._status_bar.setStyleSheet(f"background: #f1f5f9; color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 4px 12px;")
+        # El estilo visual del status bar se gestiona por QSS de theme global. No usar setStyleSheet aquí.
         self._status_bar.showMessage(mensaje, duracion)
         if tipo == "error":
             QMessageBox.critical(self, "Error", mensaje)
@@ -413,9 +429,7 @@ class MainWindow(QMainWindow):
             'usuario': '#22c55e'
         }
         color = colores.get(rol, '#1e293b')
-        self.usuario_label.setStyleSheet(
-            f"background: #e0e7ef; color: {color}; font-size: 13px; font-weight: bold; border-radius: 8px; padding: 4px 12px; margin-right: 8px; border: 1.5px solid {color};"
-        )
+        # El estilo visual de usuario_label se gestiona por QSS de theme global. No usar setStyleSheet aquí.
         self.usuario_label.setText(f"Usuario: {usuario['usuario']} ({usuario['rol']})")
 
     def initUI(self, usuario=None, modulos_permitidos=None):
@@ -693,7 +707,7 @@ def chequear_conexion_bd_gui():
     msg.setWindowTitle("Error de conexión a la base de datos")
     msg.setText("❌ No se pudo conectar a la base de datos.")
     msg.setInformativeText(f"Verifica usuario, contraseña, servidor (puede ser IP o nombre) y que SQL Server acepte autenticación SQL.\n\nIntentado con: {DB_SERVER} y {DB_SERVER_ALTERNATE}")
-    msg.setStyleSheet("")
+    # El estilo visual de QMessageBox puede personalizarse con setStyleSheet SOLO aquí, si se requiere una excepción visual.
     msg.exec()
     sys.exit(1)
 
@@ -737,7 +751,7 @@ diagnostico_entorno_dependencias()
 # 9. El diseño debe ser responsivo y accesible, evitando textos demasiado pequeños o contrastes bajos.
 # 10. El código debe centralizar estilos y reutilizar componentes visuales para mantener coherencia.
 # 11. Evitar hardcodear estilos en cada widget: usar QSS global o helpers.
-# 12. Siempre usar setStyleSheet para personalizar QMessageBox y otros diálogos.
+# 12. Siempre usar setStyleSheet para personalizar QMessageBox y otros diálogos (justificado y documentado).
 # 13. Los errores críticos deben mostrarse en ventana modal, nunca solo en consola.
 # 14. Los formularios y tablas deben tener suficiente espacio y no estar saturados.
 # 15. El diseño debe ser minimalista, sin recargar de información ni colores innecesarios.
@@ -745,6 +759,21 @@ diagnostico_entorno_dependencias()
 
 chequear_conexion_bd_gui()
 
+# (No hay referencias activas a 'themes/claro.qss' en main.py, solo advertencias por archivos faltantes en otros módulos o helpers)
+# Si algún módulo intenta cargar 'themes/claro.qss', debe migrarse a usar 'resources/qss/theme_light.qss'.
+
+# --- FLUJO ROBUSTO DE INICIALIZACIÓN DE LA APP ---
+# 1. Diagnóstico de entorno y dependencias
+from core.config import DEBUG_MODE, DEFAULT_THEME
+from core.logger import Logger
+from core.database import DatabaseConnection
+from core.splash_screen import SplashScreen
+from utils.theme_manager import set_theme
+from PyQt6.QtWidgets import QApplication
+import sys
+import os
+
+# 2. Inicialización de QApplication y SplashScreen
 if __name__ == "__main__":
     print("[LOG 4.1] Iniciando QApplication...")
     app = QApplication(sys.argv)
@@ -752,69 +781,41 @@ if __name__ == "__main__":
     splash = SplashScreen(message="Cargando módulos y base de datos...", duration=2200)
     splash.show()
     splash.fade_in.start()
-    print("[LOG 4.3] Aplicando stylesheet neumórfico global...")
-    # MAIN: carga tema dinámico en lugar de QSS global
-    set_theme(app, DEFAULT_THEME)  # DEFAULT_THEME = 'light' o 'dark' desde core/config.py
-    print("[LOG 4.4] Chequeando dependencias críticas y opcionales...")
-    error_dependencias = False
-    try:
-        print("[LOG 4.4.1] Ejecutando verificar_dependencias()...")
-        verificar_dependencias()
-        print("[LOG 4.4.2] Dependencias verificadas.")
-    except SystemExit:
-        error_dependencias = True
-        print("[LOG 4.4.3] SystemExit lanzado por dependencias críticas.")
-    except Exception as e:
-        error_dependencias = True
-        print(f"[LOG 4.4.4] Error inesperado en dependencias: {e}")
+    print("[LOG 4.3] Aplicando stylesheet global desde configuración...")
+    set_theme(app, DEFAULT_THEME)
 
+    # 3. Verificar dependencias críticas y abortar si falta alguna
+    chequear_conexion_bd_gui()
+
+    # 4. Importar y mostrar LoginView solo si todo lo anterior fue exitoso
     from modules.usuarios.login_view import LoginView
     from modules.usuarios.login_controller import LoginController
     from modules.usuarios.model import UsuariosModel
-    from core.database import DatabaseConnection
+    db_connection_usuarios = DatabaseConnection()
+    db_connection_usuarios.conectar_a_base("users")
+    usuarios_model = UsuariosModel(db_connection=db_connection_usuarios)
+    login_view = LoginView()
+    login_controller = LoginController(login_view, usuarios_model)
 
-    def continuar_inicio():
-        if error_dependencias:
-            print("[LOG 4.5] Error de dependencias. Cerrando SplashScreen y abortando inicio de interfaz principal.")
-            splash.fade_out.finished.connect(splash.close)
-            splash.fade_out.start()
-            QTimer.singleShot(1000, app.quit)
+    def on_login_success():
+        user = login_controller.usuario_autenticado
+        if not user:
+            login_view.mostrar_error("Usuario o contraseña incorrectos.")
             return
-        print("[LOG 4.6] Preparando LoginView y controladores...")
-        db_connection_usuarios = DatabaseConnection()
-        db_connection_usuarios.conectar_a_base("users")
-        usuarios_model = UsuariosModel(db_connection=db_connection_usuarios)
-        login_view = LoginView()
-        login_controller = LoginController(login_view, usuarios_model)
-        def on_login_success():
-            try:
-                user = login_controller.usuario_autenticado
-                if not user:
-                    login_view.mostrar_error("Usuario o contraseña incorrectos.")
-                    return
-                login_view.close()
-                modulos_permitidos = usuarios_model.obtener_modulos_permitidos(user)
-                main_window = MainWindow(user, modulos_permitidos)
-                main_window.actualizar_usuario_label(user)
-                main_window.mostrar_mensaje(f"Usuario actual: {user['usuario']} ({user['rol']})", tipo="info", duracion=4000)
-                main_window.show()
-            except Exception as e:
-                import traceback
-                print(f"[ERROR LOGIN/UI] {e}\n{traceback.format_exc()}", flush=True)
-                with open("logs/error_inicio_ui.txt", "a", encoding="utf-8") as f:
-                    f.write(f"[ERROR LOGIN/UI] {e}\n{traceback.format_exc()}\n")
-                from PyQt6.QtWidgets import QMessageBox
-                QMessageBox.critical(None, "Error crítico", f"Error al iniciar la interfaz: {e}\nRevisa logs/error_inicio_ui.txt para más detalles.")
-                app.quit()
-        login_view.boton_login.clicked.connect(on_login_success)
-        # Encadenar el fade out del splash al mostrar login
-        def cerrar_splash_y_mostrar_login():
-            splash.close()
-            QTimer.singleShot(0, login_view.show)
-        splash.fade_out.finished.connect(cerrar_splash_y_mostrar_login)
-        splash.fade_out.start()
+        login_view.close()
+        modulos_permitidos = usuarios_model.obtener_modulos_permitidos(user)
+        from main import MainWindow
+        main_window = MainWindow(user, modulos_permitidos)
+        main_window.actualizar_usuario_label(user)
+        main_window.mostrar_mensaje(f"Usuario actual: {user['usuario']} ({user['rol']})", tipo="info", duracion=4000)
+        main_window.show()
 
-    print("[LOG 4.9] Iniciando flujo robusto: SplashScreen permanece hasta que LoginView está lista...")
-    continuar_inicio()
+    login_view.boton_login.clicked.connect(on_login_success)
+    from PyQt6.QtCore import QTimer
+    def cerrar_splash_y_mostrar_login():
+        splash.close()
+        QTimer.singleShot(0, login_view.show)
+    splash.fade_out.finished.connect(cerrar_splash_y_mostrar_login)
+    splash.fade_out.start()
     print("[LOG 4.10] QApplication loop iniciado.")
     sys.exit(app.exec())
