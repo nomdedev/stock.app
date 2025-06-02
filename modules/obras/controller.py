@@ -112,14 +112,14 @@ class ObrasController:
         self.logistica_controller = logistica_controller  # Referencia cruzada opcional
         self.pedidos_controller = pedidos_controller  # Nuevo: para gestión de pedidos
         self.produccion_controller = produccion_controller  # Nuevo: para gestión de producción
-        self.view.boton_agregar.clicked.connect(self.agregar_obra)
-        self.view.gantt_on_bar_clicked = self.editar_fecha_entrega
+        self.view.boton_agregar.clicked.connect(self.agregar_obra_dialog)
+        self.view.gantt_on_bar_clicked = self.editar_fecha_entrega_dialog
         # Conexión del botón de verificación manual (si existe en la vista)
         if hasattr(self.view, 'boton_verificar_obra'):
-            self.view.boton_verificar_obra.clicked.connect(self.verificar_obra_en_sql_dialog)
+            self.view.boton_verificar_obra.clicked.connect(self.verificar_obra_en_sql_dialog_base)
         self._insertar_obras_ejemplo_si_vacio()
         self.cargar_headers_obras()
-        self.cargar_datos_obras()
+        self.cargar_datos_obras_tabla()
         self.mostrar_gantt()
         self.actualizar_calendario()
 
@@ -184,7 +184,7 @@ class ObrasController:
                 self.view.label.setText(mensaje)
             self._registrar_evento_auditoria("cargar_headers", mensaje, exito=False)
 
-    def cargar_datos_obras(self):
+    def cargar_datos_obras_tabla(self):
         try:
             datos = self.model.obtener_datos_obras()
             # Adaptar a lista de dicts para la tabla visual
@@ -209,7 +209,7 @@ class ObrasController:
                 self.view.label.setText(mensaje)
             self._registrar_evento_auditoria("cargar_datos", mensaje, exito=False)
 
-    def verificar_obra_en_sql(self, nombre, cliente):
+    def verificar_obra_en_sql_base(self, nombre, cliente):
         """Verifica si la obra existe en la base de datos SQL Server y muestra el resultado en el label."""
         try:
             datos = self.model.obtener_obra_por_nombre_cliente(nombre, cliente)
@@ -231,7 +231,7 @@ class ObrasController:
                 self.view.label.setText(mensaje)
             self._registrar_evento_auditoria("verificar_obra_sql", mensaje, exito=False)
 
-    def verificar_obra_en_sql_dialog(self):
+    def verificar_obra_en_sql_dialog_base(self):
         """Abre un diálogo para ingresar nombre y cliente y verifica la existencia en SQL Server."""
         dialog = QDialog(self.view)
         dialog.setWindowTitle("Verificar obra en SQL")
@@ -260,10 +260,10 @@ class ObrasController:
                 elif hasattr(self.view, 'label'):
                     self.view.label.setText("Debe ingresar nombre y cliente.")
                 return
-            self.verificar_obra_en_sql(nombre, cliente)
+            self.verificar_obra_en_sql_base(nombre, cliente)
 
     @permiso_auditoria_obras('agregar')
-    def agregar_obra(self):
+    def agregar_obra_dialog(self):
         """Abre un diálogo para cargar los datos clave de la obra y la registra."""
         try:
             usuario = self.usuario_actual
@@ -461,7 +461,7 @@ class ObrasController:
             # Registrar error en auditoría con formato unificado
             self._registrar_evento_auditoria("alta_obra", f"Error alta obra: {e}", exito=False)
 
-    def editar_fecha_entrega(self, id_obra, fecha_actual):
+    def editar_fecha_entrega_dialog(self, id_obra, fecha_actual):
         from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton
         dialog = QDialog(self.view)
         dialog.setWindowTitle("Editar fecha de entrega")
@@ -488,7 +488,7 @@ class ObrasController:
                 self.model.actualizar_obra(id_obra, nombre, cliente, estado, nueva_fecha)
                 self.mostrar_gantt()
 
-    def editar_obra(self, id_obra, datos, rowversion_orig):
+    def editar_obra_con_bloqueo(self, id_obra, datos, rowversion_orig):
         """
         Edita una obra usando bloqueo optimista (rowversion).
         Si ocurre un conflicto, muestra advertencia visual.

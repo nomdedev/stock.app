@@ -39,6 +39,7 @@ class ConfiguracionView(QMainWindow):
         self.main_layout.addLayout(header_layout)
 
         # QTabWidget principal
+        self.tabs = QTabWidget(self)
         # self.tabs.setStyleSheet("QTabWidget::pane { border-radius: 12px; background: #f1f5f9; } QTabBar::tab { min-width: 160px; min-height: 36px; font-size: 14px; font-weight: 600; border-radius: 8px; padding: 8px 24px; margin-right: 8px; } QTabBar::tab:selected { background: #e3f6fd; color: #2563eb; }")
 
         # --- Pestaña General ---
