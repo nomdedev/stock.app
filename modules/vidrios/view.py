@@ -74,16 +74,11 @@ class VidriosView(QWidget, TableResponsiveMixin):
             if hasattr(header, 'sectionClicked'):
                 header.sectionClicked.connect(self.mostrar_menu_columnas_header)
 
-        # Cargar y aplicar QSS global y tema visual
-        qss_tema = None
-        try:
-            with open("themes/config.json", "r", encoding="utf-8") as f:
-                config = json.load(f)
-            tema = config.get("tema", "claro")
-            qss_tema = f"themes/{tema}.qss"
-        except Exception:
-            pass
-        aplicar_qss_global_y_tema(self, qss_global_path="themes/light.qss", qss_tema_path="themes/light.qss")
+        # Cargar y aplicar QSS global y tema visual (solo desde resources/qss/)
+        from utils.theme_manager import cargar_modo_tema
+        tema = cargar_modo_tema()
+        qss_tema = f"resources/qss/theme_{tema}.qss"
+        aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
 
         # Botones principales como iconos (con sombra real)
         botones_layout = QHBoxLayout()

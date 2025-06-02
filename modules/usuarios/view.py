@@ -76,8 +76,11 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             if not widget.accessibleName():
                 widget.setAccessibleName("Selector de usuario para permisos")
 
-        # Aplicar QSS global y tema visual (estándar)
-        aplicar_qss_global_y_tema(self, qss_global_path="themes/light.qss", qss_tema_path="themes/light.qss")
+        # Aplicar QSS global y tema visual (solo desde resources/qss/)
+        from utils.theme_manager import cargar_modo_tema
+        tema = cargar_modo_tema()
+        qss_tema = f"resources/qss/theme_{tema}.qss"
+        aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
 
     def mostrar_feedback(self, mensaje, tipo="info"):
         if not hasattr(self, "label_feedback") or self.label_feedback is None:
@@ -126,17 +129,11 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             self.tabs.removeTab(idx)
 
     def _cargar_stylesheet(self):
-        # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
-        qss_tema = None
-        try:
-            import json
-            with open("themes/config.json", "r", encoding="utf-8") as f:
-                config = json.load(f)
-            tema = config.get("tema", "claro")
-            qss_tema = f"themes/{tema}.qss"
-        except Exception:
-            pass
-        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
+        # Cargar y aplicar QSS global y tema visual (solo desde resources/qss/)
+        from utils.theme_manager import cargar_modo_tema
+        tema = cargar_modo_tema()
+        qss_tema = f"resources/qss/theme_{tema}.qss"
+        aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
 
     def _init_tabs(self):
         self.tabs = QTabWidget()

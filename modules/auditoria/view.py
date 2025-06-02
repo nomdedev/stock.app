@@ -29,16 +29,12 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
 
         self._feedback_timer = None  # Temporizador para feedback visual
 
-        # Cargar el stylesheet visual moderno para Auditoría según el tema activo
-        try:
-            with open("themes/config.json", "r", encoding="utf-8") as f:
-                config = json.load(f)
-            tema = config.get("tema", "claro")
-            archivo_qss = f"themes/{tema}.qss"
-            with open(archivo_qss, "r", encoding="utf-8") as f:
-                self.setStyleSheet(f.read())
-        except Exception as e:
-            print(f"No se pudo cargar el archivo de estilos: {e}")
+        # Aplicar QSS global y tema visual (solo desde resources/qss/)
+        from utils.theme_manager import cargar_modo_tema
+        tema = cargar_modo_tema()
+        qss_tema = f"resources/qss/theme_{tema}.qss"
+        from core.ui_components import aplicar_qss_global_y_tema
+        aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
 
         # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
         header_layout = QHBoxLayout()

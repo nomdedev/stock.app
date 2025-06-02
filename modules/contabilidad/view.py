@@ -25,7 +25,11 @@ from core.logger import log_error
 class ContabilidadView(QWidget, TableResponsiveMixin):
     def __init__(self, db_connection=None, obras_model=None):
         super().__init__()
-        aplicar_qss_global_y_tema(self, qss_global_path="themes/light.qss", qss_tema_path="themes/light.qss")
+        # Aplicar QSS global y tema visual (solo desde resources/qss/)
+        from utils.theme_manager import cargar_modo_tema
+        tema = cargar_modo_tema()
+        qss_tema = f"resources/qss/theme_{tema}.qss"
+        aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
         self.db_connection = db_connection
         self.obras_model = obras_model
         # Inicialización segura de headers para evitar AttributeError

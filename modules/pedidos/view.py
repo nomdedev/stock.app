@@ -106,8 +106,11 @@ class PedidosView(QWidget):
         # Señales
         self.boton_nuevo.clicked.connect(self.crear_pedido)
 
-        # Aplicar QSS global y tema visual (estándar)
-        aplicar_qss_global_y_tema(self, qss_global_path="themes/light.qss", qss_tema_path="themes/light.qss")
+        # Aplicar QSS global y tema visual (solo desde resources/qss/)
+        from utils.theme_manager import cargar_modo_tema
+        tema = cargar_modo_tema()
+        qss_tema = f"resources/qss/theme_{tema}.qss"
+        aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
 
     def mostrar_feedback(self, mensaje, tipo="info"):
         if not hasattr(self, "label_feedback") or self.label_feedback is None:

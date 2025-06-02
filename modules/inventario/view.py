@@ -161,7 +161,10 @@ class InventarioView(QWidget, TableResponsiveMixin):
             qss_tema = f"themes/{tema}.qss"
         except Exception:
             pass
-        aplicar_qss_global_y_tema(self, qss_global_path="themes/light.qss", qss_tema_path="themes/light.qss")
+        from utils.theme_manager import cargar_modo_tema
+        tema = cargar_modo_tema()
+        qss_tema = f"resources/qss/theme_{tema}.qss"
+        aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
 
         # Conectar la señal exportar_excel_signal al método exportar_tabla_a_excel
         self.exportar_excel_signal.connect(self.exportar_tabla_a_excel)

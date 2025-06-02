@@ -18,22 +18,16 @@ class ProduccionView(QWidget):
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(20)
         
-        # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
-        qss_tema = None
-        try:
-            import json
-            with open("themes/config.json", "r", encoding="utf-8") as f:
-                config = json.load(f)
-            tema = config.get("tema", "claro")
-            qss_tema = f"themes/{tema}.qss"
-        except Exception:
-            pass
-        aplicar_qss_global_y_tema(self, qss_global_path="style_moderno.qss", qss_tema_path=qss_tema)
+        # Cargar y aplicar QSS global y tema visual (solo desde resources/qss/)
+        from utils.theme_manager import cargar_modo_tema
+        tema = cargar_modo_tema()
+        qss_tema = f"resources/qss/theme_{tema}.qss"
+        aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
 
         # HEADER VISUAL MODERNO: título y botones alineados
         header_layout = QHBoxLayout()
         self.label_titulo = QLabel("Gestión de Producción")
-        self.label_titulo.setStyleSheet("color: #2563eb; font-size: 18px; font-weight: bold; padding: 0 0 0 0;")
+        # El color y tamaño de fuente se gestiona por QSS global
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         header_layout.addStretch()
         # Crear botones principales como atributos de la clase
@@ -52,7 +46,7 @@ class ProduccionView(QWidget):
             boton.setAccessibleName(tooltip)
             boton.setText("")
             boton.setFixedSize(48, 48)
-            boton.setStyleSheet("border-radius: 12px; background: #f1f5f9; color: #2563eb; min-width: 48px; min-height: 48px; margin-left: 16px;")
+            # El estilo visual se gestiona por QSS global y helper estilizar_boton_icono
             estilizar_boton_icono(boton)
             header_layout.addWidget(boton, alignment=Qt.AlignmentFlag.AlignVCenter)
         self.main_layout.insertLayout(0, header_layout)
@@ -79,11 +73,11 @@ class ProduccionView(QWidget):
         self.config_path_aberturas = f"config_produccion_aberturas_columns.json"
         self.columnas_visibles_aberturas = self.cargar_config_columnas(self.config_path_aberturas, self.aberturas_headers)
         self.aplicar_columnas_visibles(self.tabla_aberturas, self.aberturas_headers, self.columnas_visibles_aberturas)
-        # Robustecer: proteger acceso a header de tabla
+        # El estilo de header se gestiona por QSS global
         header_aberturas = self.tabla_aberturas.horizontalHeader() if hasattr(self.tabla_aberturas, 'horizontalHeader') else None
         if header_aberturas is not None:
             try:
-                header_aberturas.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                pass  # QSS global gestiona el estilo visual
             except Exception:
                 pass
         # Tabla de etapas de fabricación
@@ -94,7 +88,7 @@ class ProduccionView(QWidget):
         header_etapas = self.tabla_etapas.horizontalHeader() if hasattr(self.tabla_etapas, 'horizontalHeader') else None
         if header_etapas is not None:
             try:
-                header_etapas.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                pass  # QSS global gestiona el estilo visual
             except Exception:
                 pass
         self.tabla_aberturas.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_aberturas))
