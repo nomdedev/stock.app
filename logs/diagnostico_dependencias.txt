@@ -439,3 +439,52 @@
 2025-06-02T16:49:23.017638 | [DIAG 4] pandas importado correctamente. Versión: 2.2.3
 2025-06-02T16:49:23.018160 | [DIAG 5] reportlab importado correctamente. Versión: 4.4.0
 2025-06-02T16:49:23.018644 | [DIAG 6] === FIN DIAGNÓSTICO ===
+2025-06-02T16:52:45.981850 | [DIAG 0] === INICIO DIAGNÓSTICO DE ENTORNO Y DEPENDENCIAS ===
+2025-06-02T16:52:45.982456 | [DIAG 1] sys.executable: C:\Users\Oficina\AppData\Local\Programs\Python\Python313\python.exe
+2025-06-02T16:52:45.983144 | [DIAG 2] sys.version: 3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]
+2025-06-02T16:52:45.984148 | [DIAG 3] sys.path: ['C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\python313.zip', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\DLLs', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313', 'C:\\Users\\Oficina\\AppData\\Roaming\\Python\\Python313\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor']
+2025-06-02T16:52:45.984825 | [DIAG 4] pandas importado correctamente. Versión: 2.2.3
+2025-06-02T16:52:45.985455 | [DIAG 5] reportlab importado correctamente. Versión: 4.4.0
+2025-06-02T16:52:45.986229 | [DIAG 6] === FIN DIAGNÓSTICO ===
+2025-06-02T16:54:56.593595 | [DIAG 0] === INICIO DIAGNÓSTICO DE ENTORNO Y DEPENDENCIAS ===
+2025-06-02T16:54:56.594326 | [DIAG 1] sys.executable: C:\Users\Oficina\AppData\Local\Programs\Python\Python313\python.exe
+2025-06-02T16:54:56.595284 | [DIAG 2] sys.version: 3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]
+2025-06-02T16:54:56.596182 | [DIAG 3] sys.path: ['C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\python313.zip', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\DLLs', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313', 'C:\\Users\\Oficina\\AppData\\Roaming\\Python\\Python313\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor']
+2025-06-02T16:54:56.596675 | [DIAG 4] pandas importado correctamente. Versión: 2.2.3
+2025-06-02T16:54:56.597181 | [DIAG 5] reportlab importado correctamente. Versión: 4.4.0
+2025-06-02T16:54:56.597705 | [DIAG 6] === FIN DIAGNÓSTICO ===
+2025-06-02T16:55:59.016873 | [DIAG 0] === INICIO DIAGNÓSTICO DE ENTORNO Y DEPENDENCIAS ===
+2025-06-02T16:55:59.017470 | [DIAG 1] sys.executable: C:\Users\Oficina\AppData\Local\Programs\Python\Python313\python.exe
+2025-06-02T16:55:59.018075 | [DIAG 2] sys.version: 3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]
+2025-06-02T16:55:59.019252 | [DIAG 3] sys.path: ['C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\python313.zip', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\DLLs', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313', 'C:\\Users\\Oficina\\AppData\\Roaming\\Python\\Python313\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor']
+2025-06-02T16:55:59.019871 | [DIAG 4] pandas importado correctamente. Versión: 2.2.3
+2025-06-02T16:55:59.020382 | [DIAG 5] reportlab importado correctamente. Versión: 4.4.0
+2025-06-02T16:55:59.020917 | [DIAG 6] === FIN DIAGNÓSTICO ===
+2025-06-02T16:56:56.481805 | [DIAG 0] === INICIO DIAGNÓSTICO DE ENTORNO Y DEPENDENCIAS ===
+2025-06-02T16:56:56.482333 | [DIAG 1] sys.executable: C:\Users\Oficina\AppData\Local\Programs\Python\Python313\python.exe
+2025-06-02T16:56:56.482840 | [DIAG 2] sys.version: 3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]
+2025-06-02T16:56:56.483841 | [DIAG 3] sys.path: ['C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\python313.zip', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\DLLs', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313', 'C:\\Users\\Oficina\\AppData\\Roaming\\Python\\Python313\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor']
+2025-06-02T16:56:56.484621 | [DIAG 4] pandas importado correctamente. Versión: 2.2.3
+2025-06-02T16:56:56.485134 | [DIAG 5] reportlab importado correctamente. Versión: 4.4.0
+2025-06-02T16:56:56.485606 | [DIAG 6] === FIN DIAGNÓSTICO ===
+2025-06-02T16:58:06.313448 | [DIAG 0] === INICIO DIAGNÓSTICO DE ENTORNO Y DEPENDENCIAS ===
+2025-06-02T16:58:06.313968 | [DIAG 1] sys.executable: C:\Users\Oficina\AppData\Local\Programs\Python\Python313\python.exe
+2025-06-02T16:58:06.314474 | [DIAG 2] sys.version: 3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]
+2025-06-02T16:58:06.315537 | [DIAG 3] sys.path: ['C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\python313.zip', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\DLLs', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313', 'C:\\Users\\Oficina\\AppData\\Roaming\\Python\\Python313\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor']
+2025-06-02T16:58:06.316178 | [DIAG 4] pandas importado correctamente. Versión: 2.2.3
+2025-06-02T16:58:06.316771 | [DIAG 5] reportlab importado correctamente. Versión: 4.4.0
+2025-06-02T16:58:06.317346 | [DIAG 6] === FIN DIAGNÓSTICO ===
+2025-06-02T17:01:39.007940 | [DIAG 0] === INICIO DIAGNÓSTICO DE ENTORNO Y DEPENDENCIAS ===
+2025-06-02T17:01:39.008477 | [DIAG 1] sys.executable: C:\Users\Oficina\AppData\Local\Programs\Python\Python313\python.exe
+2025-06-02T17:01:39.008993 | [DIAG 2] sys.version: 3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]
+2025-06-02T17:01:39.010049 | [DIAG 3] sys.path: ['C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\python313.zip', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\DLLs', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313', 'C:\\Users\\Oficina\\AppData\\Roaming\\Python\\Python313\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor']
+2025-06-02T17:01:39.011054 | [DIAG 4] pandas importado correctamente. Versión: 2.2.3
+2025-06-02T17:01:39.011885 | [DIAG 5] reportlab importado correctamente. Versión: 4.4.0
+2025-06-02T17:01:39.012941 | [DIAG 6] === FIN DIAGNÓSTICO ===
+2025-06-02T17:02:20.961955 | [DIAG 0] === INICIO DIAGNÓSTICO DE ENTORNO Y DEPENDENCIAS ===
+2025-06-02T17:02:20.962492 | [DIAG 1] sys.executable: C:\Users\Oficina\AppData\Local\Programs\Python\Python313\python.exe
+2025-06-02T17:02:20.963045 | [DIAG 2] sys.version: 3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]
+2025-06-02T17:02:20.964794 | [DIAG 3] sys.path: ['C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\Documents\\Proyectos\\stock.app', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\python313.zip', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\DLLs', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313', 'C:\\Users\\Oficina\\AppData\\Roaming\\Python\\Python313\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages', 'C:\\Users\\Oficina\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor']
+2025-06-02T17:02:20.965893 | [DIAG 4] pandas importado correctamente. Versión: 2.2.3
+2025-06-02T17:02:20.966743 | [DIAG 5] reportlab importado correctamente. Versión: 4.4.0
+2025-06-02T17:02:20.967552 | [DIAG 6] === FIN DIAGNÓSTICO ===

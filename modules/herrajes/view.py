@@ -20,6 +20,11 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.herrajes_headers = ["Nombre", "Cantidad", "Proveedor"]
         self.columnas_visibles = {header: True for header in self.herrajes_headers}
 
+        # Inicializar main_layout antes de cualquier uso
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(24, 20, 24, 20)
+        self.main_layout.setSpacing(16)
+
         # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
@@ -36,9 +41,6 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         tema = cargar_modo_tema()
         qss_tema = f"resources/qss/theme_{tema}.qss"
         aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
-        self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(24, 20, 24, 20)
-        self.main_layout.setSpacing(16)
 
         # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
         header_layout = QHBoxLayout()
@@ -48,7 +50,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar herraje)
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
+        self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar herraje")
         header_layout.addWidget(self.boton_agregar)
@@ -84,7 +86,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         ]
         for icono, tooltip, accesible in botones_info:
             btn = QPushButton()
-            btn.setIcon(QIcon(f"img/{icono}"))
+            btn.setIcon(QIcon(f"resources/icons/{icono}"))
             btn.setToolTip(tooltip)
             btn.setAccessibleName(accesible)
             btn.setText("")

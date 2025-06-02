@@ -29,6 +29,10 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.main_layout.setContentsMargins(24, 20, 24, 20)
         self.main_layout.setSpacing(20)
 
+        # Inicializar tabs y tabla antes de cualquier uso
+        self._init_tabs()
+        self._init_tab_usuarios()
+
         # --- Header visual: título y barra de botones alineados ---
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 0, 0)
@@ -37,7 +41,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar usuario)
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("img/agregar-user.svg"))
+        self.boton_agregar.setIcon(QIcon("resources/icons/agregar-user.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar usuario")
         header_layout.addWidget(self.boton_agregar)
@@ -147,7 +151,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         tab_usuarios_layout = QVBoxLayout(self.tab_usuarios)
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("img/agregar-user.svg"))
+        self.boton_agregar.setIcon(QIcon("resources/icons/agregar-user.svg"))
         self.boton_agregar.setIconSize(QSize(20, 20))
         self.boton_agregar.setToolTip("Agregar usuario")
         self.boton_agregar.setText("")

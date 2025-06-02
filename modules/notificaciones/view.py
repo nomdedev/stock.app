@@ -29,7 +29,7 @@ class NotificacionesView(QWidget):
         # Botón principal de acción (Agregar notificación)
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("img/plus_icon.svg"))
+        self.boton_agregar.setIcon(QIcon("resources/icons/plus_icon.svg"))
         self.boton_agregar.setIconSize(QSize(20, 20))
         self.boton_agregar.setToolTip("Agregar notificación")
         self.boton_agregar.setText("")
@@ -38,7 +38,7 @@ class NotificacionesView(QWidget):
 
         # Botón principal de acción (Marcar como leído)
         self.boton_marcar_leido = QPushButton()
-        self.boton_marcar_leido.setIcon(QIcon("img/finish-check.svg"))
+        self.boton_marcar_leido.setIcon(QIcon("resources/icons/finish-check.svg"))
         self.boton_marcar_leido.setIconSize(QSize(20, 20))
         self.boton_marcar_leido.setToolTip("Marcar como leído")
         self.boton_marcar_leido.setText("")

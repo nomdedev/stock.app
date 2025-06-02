@@ -40,7 +40,7 @@ class ProduccionView(QWidget):
             (self.boton_finalizar_etapa, "finish-check.svg", "Finalizar etapa seleccionada")
         ]
         for boton, icono, tooltip in botones:
-            boton.setIcon(QIcon(f"img/{icono}"))
+            boton.setIcon(QIcon(f"resources/icons/{icono}"))
             boton.setIconSize(QSize(24, 24))
             boton.setToolTip(tooltip)
             boton.setAccessibleName(tooltip)
@@ -216,11 +216,11 @@ class ProduccionView(QWidget):
         vbox.addWidget(qr_label)
         btns = QHBoxLayout()
         btn_guardar = QPushButton()
-        btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+        btn_guardar.setIcon(QIcon("resources/icons/guardar-qr.svg"))
         btn_guardar.setToolTip("Guardar QR como imagen")
         estilizar_boton_icono(btn_guardar)
         btn_pdf = QPushButton()
-        btn_pdf.setIcon(QIcon("img/pdf.svg"))
+        btn_pdf.setIcon(QIcon("resources/icons/pdf.svg"))
         btn_pdf.setToolTip("Exportar QR a PDF")
         estilizar_boton_icono(btn_pdf)
         btns.addWidget(btn_guardar)

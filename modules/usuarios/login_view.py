@@ -100,9 +100,8 @@ class LoginView(QWidget):
         # Icono superior (logo de inicio de sesión, ahora mucho más grande)
         self.icono = QLabel()
         self.icono.setObjectName("icono")
-        pixmap = QPixmap("img/MPS_inicio_sesion.png")
-        if pixmap.isNull():
-            pixmap = QPixmap("img/placeholder.svg")
+        # Buscar imagen en resources/icons si no existe en img/
+        pixmap = QPixmap("resources/icons/MPS_inicio_sesion.png")
         # Mostrar la imagen mucho más grande (por ejemplo, 320x320)
         self.icono.setPixmap(pixmap.scaled(320, 320, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         self.icono.setAlignment(Qt.AlignmentFlag.AlignCenter)

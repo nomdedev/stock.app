@@ -14,6 +14,10 @@ from core.logger import log_error
 class MantenimientoView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
+        # Inicializar main_layout antes de cualquier uso
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setSpacing(20)
         # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
@@ -29,11 +33,6 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         tema = cargar_modo_tema()
         qss_tema = f"resources/qss/theme_{tema}.qss"
         aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
-        self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(20, 20, 20, 20)
-        self.main_layout.setSpacing(20)
-        self.label_feedback = QLabel()
-        self.main_layout.addWidget(self.label_feedback)
 
         # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
         header_layout = QHBoxLayout()
@@ -43,7 +42,7 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar mantenimiento)
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
+        self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar mantenimiento")
         header_layout.addWidget(self.boton_agregar)
@@ -253,11 +252,11 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         vbox.addWidget(qr_label)
         btns = QHBoxLayout()
         btn_guardar = QPushButton()
-        btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+        btn_guardar.setIcon(QIcon("resources/icons/guardar-qr.svg"))
         btn_guardar.setToolTip("Guardar QR como imagen")
         estilizar_boton_icono(btn_guardar)
         btn_pdf = QPushButton()
-        btn_pdf.setIcon(QIcon("img/pdf.svg"))
+        btn_pdf.setIcon(QIcon("resources/icons/pdf.svg"))
         btn_pdf.setToolTip("Exportar QR a PDF")
         estilizar_boton_icono(btn_pdf)
         btns.addWidget(btn_guardar)

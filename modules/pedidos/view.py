@@ -22,7 +22,7 @@ class PedidosView(QWidget):
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar pedido)
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("img/add-entrega.svg"))
+        self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar pedido")
         header_layout.addWidget(self.boton_agregar)
@@ -104,7 +104,7 @@ class PedidosView(QWidget):
             widget.setFont(font)
 
         # Señales
-        self.boton_nuevo.clicked.connect(self.crear_pedido)
+        self.boton_agregar.clicked.connect(self.crear_pedido)
 
         # Aplicar QSS global y tema visual (solo desde resources/qss/)
         from utils.theme_manager import cargar_modo_tema
@@ -228,11 +228,11 @@ class PedidosView(QWidget):
         vbox.addWidget(qr_label)
         btns = QHBoxLayout()
         btn_guardar = QPushButton()
-        btn_guardar.setIcon(QIcon("img/guardar-qr.svg"))
+        btn_guardar.setIcon(QIcon("resources/icons/guardar-qr.svg"))
         btn_guardar.setToolTip("Guardar QR como imagen")
         estilizar_boton_icono(btn_guardar)
         btn_pdf = QPushButton()
-        btn_pdf.setIcon(QIcon("img/pdf.svg"))
+        btn_pdf.setIcon(QIcon("resources/icons/pdf.svg"))
         btn_pdf.setToolTip("Exportar QR a PDF")
         estilizar_boton_icono(btn_pdf)
         btns.addWidget(btn_guardar)

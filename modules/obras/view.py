@@ -30,7 +30,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
         # Botón principal de acción (Agregar obra)
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
+        self.boton_agregar.setIcon(QIcon("resources/icons/plus_icon.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar nueva obra")
         self.boton_agregar.setAccessibleName("Botón agregar obra")
@@ -51,7 +51,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
 
         # Botón para verificar obra en SQL
         self.boton_verificar_obra = QPushButton("Verificar obra en SQL")
-        self.boton_verificar_obra.setIcon(QIcon("img/search_icon.svg"))
+        self.boton_verificar_obra.setIcon(QIcon("resources/icons/search_icon.svg"))
         self.boton_verificar_obra.setIconSize(QSize(20, 20))
         self.boton_verificar_obra.setToolTip("Verificar existencia de obra en la base de datos SQL")
         self.boton_verificar_obra.setAccessibleName("Botón verificar obra en SQL")

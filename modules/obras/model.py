@@ -1,7 +1,7 @@
 """
 DOCUMENTACIÓN DE FLUJO Y CUMPLIMIENTO DE DIAGRAMA DE FLUJO DETALLADO
 
-Este módulo implementa el flujo funcional y la interconexión de datos según el diagrama de flujo detallado (ver img/diagrama-de-flujo-detallado.png) y el README.md.
+Este módulo implementa el flujo funcional y la interconexión de datos según el diagrama de flujo detallado (ver resources/icons/diagrama-de-flujo-detallado.png) y el README.md.
 
 FLUJO FUNCIONAL Y DE DATOS (RESUMEN):
 1. Alta de obra: registro en tabla obras, con nombre, cliente, estado, fecha de medición y fecha de entrega (editable, por defecto +90 días).

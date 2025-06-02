@@ -3966,3 +3966,26 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-02 16:49:34,427 - INFO - Aplicación iniciada
 2025-06-02 16:49:36,486 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-06-02 16:49:36,486 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 16:54:00,912 - INFO - Aplicación iniciada
+2025-06-02 16:54:03,529 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 16:54:03,529 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 16:55:02,622 - INFO - Aplicación iniciada
+2025-06-02 16:55:05,404 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 16:55:05,404 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 16:56:06,075 - INFO - Aplicación iniciada
+2025-06-02 16:56:08,094 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 16:56:08,094 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 16:57:04,477 - INFO - Aplicación iniciada
+2025-06-02 16:57:06,257 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 16:57:06,257 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 16:58:38,644 - INFO - Aplicación iniciada
+2025-06-02 16:58:41,981 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 16:58:41,981 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 17:01:49,131 - INFO - Aplicación iniciada
+2025-06-02 17:01:51,125 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 17:01:51,125 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 17:02:28,705 - INFO - Aplicación iniciada
+2025-06-02 17:02:31,704 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 17:02:31,704 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-02 17:02:33,029 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-02 17:02:33,029 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
