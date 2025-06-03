@@ -97,7 +97,9 @@ class ProduccionView(QWidget):
         # Refuerzo de accesibilidad en botones principales
         for boton in [self.boton_agregar, self.boton_ver_detalles, self.boton_finalizar_etapa]:
             boton.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            boton.setStyleSheet(boton.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            boton.setObjectName("boton_produccion")
+            # [MIGRACIÓN QSS] El estilo de focus y visual de boton_produccion se gestiona solo por QSS global
+            # boton.setStyleSheet(boton.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
             font = boton.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
@@ -107,7 +109,9 @@ class ProduccionView(QWidget):
         # Refuerzo de accesibilidad en tablas
         for tabla in [self.tabla_aberturas, self.tabla_etapas]:
             tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
+            tabla.setObjectName("tabla_produccion")
+            # [MIGRACIÓN QSS] El estilo de focus y visual de tabla_produccion se gestiona solo por QSS global
+            # tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
         # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
 
     def agregar_grafico(self, datos):
@@ -144,7 +148,9 @@ class ProduccionView(QWidget):
     def agregar_tarjeta_kanban(self, etapa, tarjeta_texto):
         if etapa in self.columnas:
             tarjeta = QLabel(tarjeta_texto)
-            tarjeta.setStyleSheet("background-color: lightblue; padding: 5px; margin: 5px; border: 1px solid black;")
+            tarjeta.setObjectName("tarjeta_kanban")
+            # [MIGRACIÓN QSS] El estilo visual de tarjeta_kanban se gestiona solo por QSS global
+            # tarjeta.setStyleSheet("background-color: lightblue; padding: 5px; margin: 5px; border: 1px solid black;")
             self.columnas[etapa].addWidget(tarjeta)
 
     def cargar_config_columnas(self, config_path, headers):

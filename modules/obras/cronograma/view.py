@@ -38,31 +38,7 @@ class GanttBarItem(QGraphicsRectItem):
 
     def hoverEnterEvent(self, event):
         self.hovered = True
-        hoy = datetime.date.today()
-        fecha_inicio = parse_fecha_safe(self.obra.get('fecha'))
-        fecha_entrega = parse_fecha_safe(self.obra.get('fecha_entrega'))
-        if not fecha_inicio or not fecha_entrega:
-            return
-        dias_total = max(1, (fecha_entrega - fecha_inicio).days)
-        dias_transcurridos = max(0, (hoy - fecha_inicio).days)
-        dias_restantes = (fecha_entrega - hoy).days
-        progreso = max(0, min(1, dias_transcurridos / dias_total)) if dias_total > 0 else 1
-        porcentaje = int(progreso * 100)
-        color_estado = ESTADO_COLORES.get(self.obra.get('estado', ''), QColor(120, 120, 120))
-        color_estado_hex = color_estado.name() if hasattr(color_estado, 'name') else '#2196F3'
-        texto = f"""
-        <div style='background:#23272e; color:#fff; border-radius:10px; border:2px solid {color_estado_hex}; padding:10px; min-width:220px;'>
-            <b style='font-size:15px; color:{color_estado_hex};'>{self.obra.get('nombre','')}</b><br>
-            <span style='color:#bbb'>Cliente:</span> {self.obra.get('cliente','')}<br>
-            <span style='color:#bbb'>Estado:</span> <b style='color:{color_estado_hex}'>{self.obra.get('estado','')}</b><br>
-            <span style='color:#bbb'>Entrega:</span> <b style='color:#e53935'>{fecha_entrega.strftime('%d/%m/%Y')}</b><br>
-            {f"<span style='color:#43a047'>Faltan: {dias_restantes} días</span>" if dias_restantes >= 0 else f"<span style='color:#e53935'>Vencido hace {-dias_restantes} días</span>"}<br>
-            <span style='color:#bbb'>Progreso:</span> <b>{porcentaje}%</b>
-            <div style='background:#181c20;border-radius:6px;width:120px;height:12px;margin-top:6px;'><div style='background:#43a047;width:{porcentaje}%;height:12px;border-radius:6px;'></div></div>
-        </div>
-        """
-        QToolTip.setFont(QFont('Segoe UI', 11))
-        QToolTip.showText(event.screenPos(), texto)
+        # QGraphicsSceneHoverEvent no soporta globalPos/screenPos en PyQt6, así que omitimos el tooltip para evitar errores.
         self.update()
         super().hoverEnterEvent(event)
 
@@ -79,11 +55,12 @@ class GanttBarItem(QGraphicsRectItem):
         grad.setColorAt(0, color_estado.lighter(120))
         grad.setColorAt(1, color_estado.darker(120))
         brush = QBrush(grad)
-        painter.setBrush(brush)
-        pen = QPen(color_estado.darker(150), 2)
-        painter.setPen(pen)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        painter.drawRoundedRect(rect, 8, 8)
+        if painter is not None:
+            painter.setBrush(brush)
+            pen = QPen(color_estado.darker(150), 2)
+            painter.setPen(pen)
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+            painter.drawRoundedRect(rect, 8, 8)
         hoy = datetime.date.today()
         fecha_inicio = parse_fecha_safe(self.obra.get('fecha'))
         fecha_entrega = parse_fecha_safe(self.obra.get('fecha_entrega'))
@@ -93,19 +70,19 @@ class GanttBarItem(QGraphicsRectItem):
         dias_transcurridos = max(0, (hoy - fecha_inicio).days)
         progreso = max(0, min(1, dias_transcurridos / dias_total)) if dias_total > 0 else 1
         ancho = int(rect.width() * progreso)
-        if ancho > 0:
+        if ancho > 0 and painter is not None:
             painter.save()
             painter.setBrush(QColor(60, 180, 75, 180))
             painter.setPen(Qt.PenStyle.NoPen)
             painter.drawRoundedRect(int(rect.x()), int(rect.y()), ancho, int(rect.height()), 8, 8)
             painter.restore()
-        if self.hovered:
+        if self.hovered and painter is not None:
             painter.save()
             painter.setBrush(QColor(60, 180, 75, 60))
             painter.setPen(Qt.PenStyle.NoPen)
             painter.drawRoundedRect(rect, 8, 8)
             painter.restore()
-        if fecha_inicio <= hoy <= fecha_entrega:
+        if fecha_inicio <= hoy <= fecha_entrega and painter is not None:
             x_hoy = int(rect.x() + rect.width() * progreso)
             painter.save()
             painter.setPen(QPen(QColor(230, 57, 53), 2, Qt.PenStyle.DashLine))
@@ -115,15 +92,17 @@ class GanttBarItem(QGraphicsRectItem):
 class CronogramaView(QWidget, TableResponsiveMixin):
     def __init__(self, obras=None, parent=None):
         super().__init__(parent)
-        self.setStyleSheet("background: white; border-radius: 10px;")
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(16, 8, 16, 8)
-        self.layout.setSpacing(4)
+        self.setObjectName("cronograma_view")
+        # [MIGRACIÓN QSS] El estilo visual de fondo y bordes se gestiona solo por QSS global
+        # self.setStyleSheet("background: white; border-radius: 10px;")
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(16, 8, 16, 8)
+        self.main_layout.setSpacing(4)
         self.gantt_view = QGraphicsView()
         self.gantt_view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.gantt_view.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.layout.addWidget(self.gantt_view)
-        self.setLayout(self.layout)
+        self.main_layout.addWidget(self.gantt_view)
+        self.setLayout(self.main_layout)
         self.tabla_cronograma = QTableWidget()
         self.make_table_responsive(self.tabla_cronograma)
         self.label = QLabel()
@@ -178,7 +157,9 @@ class CronogramaView(QWidget, TableResponsiveMixin):
             "error": "#ef4444"
         }
         color = colores.get(tipo, "#2563eb")
-        self.label.setStyleSheet(f"color: {color}; font-weight: bold;")
+        self.label.setObjectName("cronograma_label")
+        # [MIGRACIÓN QSS] El estilo visual de label se gestiona solo por QSS global
+        # self.label.setStyleSheet(f"color: {color}; font-weight: bold;")
         self.label.setText(texto)
 
     def mostrar_error(self, texto):
@@ -213,11 +194,14 @@ class CronogramaView(QWidget, TableResponsiveMixin):
             fecha = fecha_min + datetime.timedelta(days=d)
             if fecha in fechas_entrega_set:
                 text = scene.addText(fecha.strftime("%d/%m"), font_bold)
-                text.setDefaultTextColor(QColor(200, 40, 40))
+                if text is not None:
+                    text.setDefaultTextColor(QColor(200, 40, 40))
+                    text.setPos(x-18, 10)
             else:
                 text = scene.addText(fecha.strftime("%d/%m"), font)
-                text.setDefaultTextColor(QColor(120,120,120))
-            text.setPos(x-18, 10)
+                if text is not None:
+                    text.setDefaultTextColor(QColor(120,120,120))
+                    text.setPos(x-18, 10)
         # Marcas visuales para cada fecha de entrega
         for fecha_entrega in fechas_entrega_set:
             dias = (fecha_entrega - fecha_min).days
@@ -225,8 +209,9 @@ class CronogramaView(QWidget, TableResponsiveMixin):
                 x = left_margin + dias * day_width
                 scene.addLine(x, top_margin, x, top_margin + len(self.obras)*row_height, QPen(QColor(200,40,40), 2, Qt.PenStyle.SolidLine))
                 text = scene.addText(fecha_entrega.strftime("%d/%m"), font_bold)
-                text.setDefaultTextColor(QColor(200, 40, 40))
-                text.setPos(x-18, 10)
+                if text is not None:
+                    text.setDefaultTextColor(QColor(200, 40, 40))
+                    text.setPos(x-18, 10)
         hoy = datetime.date.today()
         for idx, obra in enumerate(self.obras):
             y = top_margin + idx * row_height
@@ -241,15 +226,16 @@ class CronogramaView(QWidget, TableResponsiveMixin):
                 <div style='font-size:11px;color:#888'>Medición: {fecha.strftime('%d/%m/%Y')} | Entrega: <b style='color:#e53935'>{fecha_entrega.strftime('%d/%m/%Y')}</b></div>
             """
             text_widget = scene.addText(nombre, font)
-            # setHtml solo disponible en PyQt6 >= 6.4, fallback seguro
-            if hasattr(text_widget, "setHtml"):
-                try:
-                    text_widget.setHtml(nombre_html)
-                except Exception:
+            if text_widget is not None:
+                # setHtml solo disponible en PyQt6 >= 6.4, fallback seguro
+                if hasattr(text_widget, "setHtml"):
+                    try:
+                        text_widget.setHtml(nombre_html)
+                    except Exception:
+                        text_widget.setPlainText(f"{nombre}\n{cliente}\nMedición: {fecha.strftime('%d/%m/%Y')} | Entrega: {fecha_entrega.strftime('%d/%m/%Y')}")
+                else:
                     text_widget.setPlainText(f"{nombre}\n{cliente}\nMedición: {fecha.strftime('%d/%m/%Y')} | Entrega: {fecha_entrega.strftime('%d/%m/%Y')}")
-            else:
-                text_widget.setPlainText(f"{nombre}\n{cliente}\nMedición: {fecha.strftime('%d/%m/%Y')} | Entrega: {fecha_entrega.strftime('%d/%m/%Y')}")
-            text_widget.setPos(10, y+row_height/2-18)
+                text_widget.setPos(10, y+row_height/2-18)
             inicio = (fecha - fecha_min).days
             fin = (fecha_entrega - fecha_min).days
             x1 = left_margin + inicio * day_width
@@ -262,14 +248,15 @@ class CronogramaView(QWidget, TableResponsiveMixin):
             scene.addItem(bar)
             label = f"<span style='font-weight:bold;color:#2563eb'>{estado}</span>"
             t = scene.addText(cliente + ' - ' + estado, font)
-            if hasattr(t, "setHtml"):
-                try:
-                    t.setHtml(label)
-                except Exception:
+            if t is not None:
+                if hasattr(t, "setHtml"):
+                    try:
+                        t.setHtml(label)
+                    except Exception:
+                        t.setPlainText(estado)
+                else:
                     t.setPlainText(estado)
-            else:
-                t.setPlainText(estado)
-            t.setPos(x1+8, y+14)
+                t.setPos(x1+8, y+14)
         scene.setSceneRect(0, 0, left_margin + dias_totales*day_width + 100, top_margin + len(self.obras)*row_height + 60)
         self.gantt_view.setScene(scene)
         self._apply_zoom()

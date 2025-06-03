@@ -41,6 +41,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar vidrio")
+        self.boton_agregar.setObjectName("boton_agregar")
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
@@ -52,6 +53,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
         # Tabla para mostrar los vidrios
         self.tabla_vidrios = self.create_table()
         self.make_table_responsive(self.tabla_vidrios)
+        self.tabla_vidrios.setObjectName("tabla_vidrios")
         self.main_layout.addWidget(self.tabla_vidrios)
 
         # Configuración de columnas y headers dinámicos
@@ -115,6 +117,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
         # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
+        # [MIGRACIÓN QSS] Cumple: no hay setStyleSheet activos, todo el feedback y estilos visuales se gestionan por QSS global (ver docs/estandares_visuales.md)
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de vidrios")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")

@@ -38,15 +38,6 @@ class PermisoAuditoria:
                             detalle = f"{accion} - denegado (módulo)"
                             auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                         return None
-                if not usuario_model.tiene_permiso(usuario, self.modulo, accion):
-                    if hasattr(controller, 'view') and hasattr(controller.view, 'mostrar_mensaje'):
-                        controller.view.mostrar_mensaje(f"No tiene permiso para realizar la acción: {accion}", tipo='error')
-                    elif hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
-                    if auditoria_model:
-                        detalle = f"{accion} - denegado (permiso)"
-                        auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
-                    return None
                 try:
                     print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
                     resultado = func(controller, *args, **kwargs)

@@ -196,7 +196,7 @@ Documentar en el código y en este archivo cualquier excepción visual o lógica
 
 ## Estándar de logo en LoginView
 
-- El logo de la pantalla de inicio de sesión debe ser grande y visible (mínimo 320x320 px).
+- El logo de la pantalla de inicio de sesión debe ser grande y visible (mínimo 500x500 px).
 - Usar QLabel y QPixmap con escalado suave.
 - Justificación: mejora la accesibilidad, refuerza la identidad visual y cumple con los requisitos de contraste y foco visual.
 - Ejemplo de implementación:
@@ -204,7 +204,7 @@ Documentar en el código y en este archivo cualquier excepción visual o lógica
 ```python
 self.icono = QLabel()
 pixmap = QPixmap("img/MPS_inicio_sesion.png")
-self.icono.setPixmap(pixmap.scaled(320, 320, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+self.icono.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
 ```
 
 ---
@@ -421,5 +421,40 @@ Para más detalles sobre feedback visual y logging, ver también:
 ---
 
 # [2025-06-02] Migración completa de estilos embebidos en módulo Obras a QSS global (`theme_light.qss` y `theme_dark.qss`). Todas las líneas `setStyleSheet` han sido eliminadas o migradas a uso de property/objectName y QSS. No existen excepciones activas. Ver comentarios en `modules/obras/view.py` y `modules/obras/controller.py` para trazabilidad.
+
+---
+
+## Migración y cumplimiento de módulos (junio 2025)
+
+| Módulo           | setStyleSheet eliminado | Estilos migrados a QSS | objectNames/properties | Documentación/trazabilidad |
+|------------------|------------------------|------------------------|------------------------|----------------------------|
+| Mantenimiento    | Sí                     | Sí                     | Sí                     | Ver comentarios en código y QSS |
+| Notificaciones   | Sí                     | Sí                     | Sí                     | Ver comentarios en código y QSS |
+| Vidrios          | N/A (no activos)       | Sí                     | Sí                     | Ver comentarios en código y QSS |
+| Obras (cronograma, producción) | Sí | Sí | Sí | Ver comentarios en código y QSS |
+
+- Se agregaron los objectNames: `cronograma_view`, `cronograma_label`, `boton_produccion`, `tabla_produccion`, `tarjeta_kanban` para centralizar estilos de los módulos de Obras.
+- Todos los estilos visuales de estos módulos están ahora centralizados en los archivos QSS globales.
+
+---
+
+## Advertencia y buenas prácticas: robustez con objetos PyQt6
+
+- **Nunca asumas que métodos como `scene.addText`, `scene.addWidget`, o cualquier método de PyQt6 que crea objetos gráficos retornan siempre un objeto válido.**
+- Siempre valida que el objeto retornado no sea `None` antes de llamar a métodos como `setHtml`, `setPlainText`, `setPos`, `setDefaultTextColor`, etc.
+- Ejemplo correcto:
+
+```python
+text = scene.addText("Ejemplo", font)
+if text is not None:
+    text.setPlainText("Texto seguro")
+    text.setPos(10, 10)
+```
+
+- Lo mismo aplica para el uso de `painter` en métodos de dibujo: verifica que no sea `None` antes de llamar a métodos como `setBrush`, `setPen`, `drawRoundedRect`, etc.
+- Los eventos de tipo `QGraphicsSceneHoverEvent` no tienen métodos como `globalPos` o `screenPos` en PyQt6. No intentes mostrar tooltips usando estos métodos en ese contexto.
+- Si tienes dudas, revisa la documentación oficial de PyQt6 y consulta este archivo antes de implementar lógica gráfica.
+
+> Esta advertencia se agregó tras detectar errores recurrentes de atributos en módulos gráficos. Cumplirla es obligatorio para evitar bugs difíciles de depurar.
 
 ---

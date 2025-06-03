@@ -186,6 +186,68 @@ QPushButton#boton_agregar_usuarios {
 QTableWidget#tabla_usuarios {
     font-size: 13px;
 }
+QPushButton#boton_agregar {
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+QPushButton#boton_agregar:focus {
+    outline: 2px solid #2563eb;
+    border: 2px solid #2563eb;
+}
+QTableWidget#tabla_tareas,
+QTableWidget#tabla_notificaciones,
+QTableWidget#tabla_vidrios {
+    font-size: 13px;
+}
+QHeaderView#header_tareas,
+QHeaderView#header_notificaciones {
+    background-color: #e3f6fd;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+    font-weight: 400;
+}
+QWidget#cronograma_view {
+    background: #fff;
+    border-radius: 10px;
+}
+QLabel#cronograma_label {
+    color: #2563eb;
+    font-weight: bold;
+}
+QPushButton#boton_produccion {
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 14px;
+    font-weight: 600;
+}
+QPushButton#boton_produccion:focus {
+    outline: 2px solid #2563eb;
+    border: 2px solid #2563eb;
+}
+QTableWidget#tabla_produccion {
+    font-size: 13px;
+}
+QLabel#tarjeta_kanban {
+    background: #e0f2fe;
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid #2563eb;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #2563eb;
+}
 /* --- Herrajes feedback y error input --- */
 QLabel#label_feedback[feedback_tipo="info"] {
     background: #e3f6fd;

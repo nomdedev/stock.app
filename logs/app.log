@@ -4064,3 +4064,10 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-02 19:44:02,158 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
 2025-06-02 19:44:03,056 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
 2025-06-02 19:44:03,056 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-03 08:35:53,324 - INFO - Aplicación iniciada
+2025-06-03 08:35:55,489 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-03 08:35:55,489 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=inventario, tipo_evento=ver
+2025-06-03 08:35:56,527 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-03 08:35:56,527 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-03 08:42:39,735 - INFO - Aplicación iniciada
+2025-06-03 08:43:59,370 - INFO - Aplicación iniciada

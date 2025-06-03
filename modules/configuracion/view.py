@@ -210,6 +210,7 @@ class ConfiguracionView(QMainWindow):
         if h_header is not None:
             try:
                 # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                pass
             except Exception as e:
                 # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
                 pass

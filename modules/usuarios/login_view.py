@@ -101,9 +101,9 @@ class LoginView(QWidget):
         self.icono.setObjectName("icono")  # Para QSS global
         # Buscar imagen en resources/icons si no existe en img/
         pixmap = QPixmap("resources/icons/MPS_inicio_sesion.png")
-        # Mostrar la imagen aún más grande (por ejemplo, 380x380)
+        # Mostrar la imagen aún más grande (por ejemplo, 500x500)
         # Para cambiar el tamaño, edita el valor de scaled aquí:
-        self.icono.setPixmap(pixmap.scaled(380, 380, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        self.icono.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         self.icono.setAlignment(Qt.AlignmentFlag.AlignCenter)
         card_layout.addWidget(self.icono)
 

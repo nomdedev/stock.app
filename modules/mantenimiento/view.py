@@ -22,6 +22,7 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
         # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
+        # [MIGRACIÓN QSS] El estilo de feedback se gestiona ahora solo por QSS global (ver docs/estandares_visuales.md)
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de mantenimiento")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
@@ -45,6 +46,9 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar mantenimiento")
+        self.boton_agregar.setObjectName("boton_agregar")
+        # [MIGRACIÓN QSS] El estilo de focus y visual de boton_agregar se gestiona solo por QSS global
+        # self.boton_agregar.setStyleSheet(self.boton_agregar.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
@@ -52,6 +56,9 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         # Tabla de tareas
         self.tabla_tareas = QTableWidget()
         self.make_table_responsive(self.tabla_tareas)
+        self.tabla_tareas.setObjectName("tabla_tareas")
+        # [MIGRACIÓN QSS] El estilo de focus y visual de tabla_tareas se gestiona solo por QSS global
+        # self.tabla_tareas.setStyleSheet(self.tabla_tareas.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
         self.main_layout.addWidget(self.tabla_tareas)
 
         # Obtener headers de la tabla de forma segura
@@ -80,7 +87,8 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
 
         # Refuerzo de accesibilidad en botón principal
         self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.boton_agregar.setStyleSheet(self.boton_agregar.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        # [MIGRACIÓN QSS] El estilo de focus y visual de boton_agregar se gestiona solo por QSS global
+        # self.boton_agregar.setStyleSheet(self.boton_agregar.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
         font = self.boton_agregar.font()
         if font.pointSize() < 12:
             font.setPointSize(12)
@@ -89,7 +97,8 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
             self.boton_agregar.setToolTip("Agregar tarea de mantenimiento")
         # Refuerzo de accesibilidad en tabla principal
         self.tabla_tareas.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.tabla_tareas.setStyleSheet(self.tabla_tareas.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        # [MIGRACIÓN QSS] El estilo de focus y visual de tabla_tareas se gestiona solo por QSS global
+        # self.tabla_tareas.setStyleSheet(self.tabla_tareas.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
         # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
 
         self.setLayout(self.main_layout)
@@ -113,7 +122,8 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         }
         color = colores.get(tipo, "#2563eb")
         icono = iconos.get(tipo, "ℹ️ ")
-        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
+        # [MIGRACIÓN QSS] El estilo de feedback se gestiona solo por QSS global
+        # self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 13px; border-radius: 8px; padding: 8px; background: #f1f5f9;")
         self.label_feedback.setText(f"{icono}{mensaje}")
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
@@ -288,10 +298,10 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
         dialog.exec()
 
     def _reforzar_accesibilidad(self):
-        # Refuerzo de accesibilidad en botón principal
         btn = self.boton_agregar
-        btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        btn.setObjectName("boton_agregar")
+        # [MIGRACIÓN QSS] El estilo de focus y visual de boton_agregar se gestiona solo por QSS global
+        # btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
         font = btn.font()
         if font.pointSize() < 12:
             font.setPointSize(12)
@@ -302,15 +312,18 @@ class MantenimientoView(QWidget, TableResponsiveMixin):
             btn.setAccessibleName("Botón agregar tarea de mantenimiento")
         # Refuerzo de accesibilidad en tabla principal
         tabla = self.tabla_tareas
-        tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+        tabla.setObjectName("tabla_tareas")
+        # [MIGRACIÓN QSS] El estilo de focus y visual de tabla_tareas se gestiona solo por QSS global
+        # tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
         tabla.setToolTip("Tabla de tareas de mantenimiento")
         tabla.setAccessibleName("Tabla principal de mantenimiento")
         # Refuerzo visual y robustez en header de tabla principal
         header = self.tabla_tareas.horizontalHeader() if hasattr(self.tabla_tareas, 'horizontalHeader') else None
         if header is not None:
             try:
-                header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                header.setObjectName("header_tareas")
+                # [MIGRACIÓN QSS] El estilo visual de header_tareas se gestiona solo por QSS global
+                # header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
             except Exception:
                 pass
         else:

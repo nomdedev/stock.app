@@ -14,16 +14,16 @@ class NotificacionesView(QWidget):
         self.label_titulo = QLabel("Gestión de Notificaciones")
         self.main_layout.addWidget(self.label_titulo)
 
-        # Cargar el stylesheet visual moderno para Notificaciones según el tema activo
-        try:
-            with open("themes/config.json", "r", encoding="utf-8") as f:
-                config = json.load(f)
-            tema = config.get("theme", "theme_light")
-            archivo_qss = f"resources/qss/{tema}.qss"
-            with open(archivo_qss, "r", encoding="utf-8") as f:
-                self.setStyleSheet(f.read())
-        except Exception as e:
-            print(f"No se pudo cargar el archivo de estilos: {e}")
+        # [MIGRACIÓN QSS] El estilo visual se gestiona solo por QSS global y tema. No usar setStyleSheet embebido.
+        # try:
+        #     with open("themes/config.json", "r", encoding="utf-8") as f:
+        #         config = json.load(f)
+        #     tema = config.get("theme", "theme_light")
+        #     archivo_qss = f"resources/qss/{tema}.qss"
+        #     with open(archivo_qss, "r", encoding="utf-8") as f:
+        #         self.setStyleSheet(f.read())
+        # except Exception as e:
+        #     print(f"No se pudo cargar el archivo de estilos: {e}")
 
         # Botón principal de acción (Agregar notificación)
         botones_layout = QHBoxLayout()
@@ -33,6 +33,7 @@ class NotificacionesView(QWidget):
         self.boton_agregar.setToolTip("Agregar notificación")
         self.boton_agregar.setText("")
         estilizar_boton_icono(self.boton_agregar, tam_icono=20, tam_boton=48)
+        self.boton_agregar.setObjectName("boton_agregar")
         botones_layout.addWidget(self.boton_agregar)
 
         # Botón principal de acción (Marcar como leído)
@@ -42,12 +43,14 @@ class NotificacionesView(QWidget):
         self.boton_marcar_leido.setToolTip("Marcar como leído")
         self.boton_marcar_leido.setText("")
         estilizar_boton_icono(self.boton_marcar_leido, tam_icono=20, tam_boton=48)
+        self.boton_marcar_leido.setObjectName("boton_marcar_leido")
         botones_layout.addWidget(self.boton_marcar_leido)
         botones_layout.addStretch()
         self.main_layout.addLayout(botones_layout)
 
         # Tabla de notificaciones (placeholder)
         self.tabla_notificaciones = QTableWidget()
+        self.tabla_notificaciones.setObjectName("tabla_notificaciones")
         self.main_layout.addWidget(self.tabla_notificaciones)
 
         # Refuerzo de accesibilidad en botones principales
@@ -71,7 +74,9 @@ class NotificacionesView(QWidget):
         h_header = self.tabla_notificaciones.horizontalHeader() if hasattr(self.tabla_notificaciones, 'horizontalHeader') else None
         if h_header is not None:
             try:
-                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+                h_header.setObjectName("header_notificaciones")
+                # [MIGRACIÓN QSS] El estilo visual de header_notificaciones se gestiona solo por QSS global
+                # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
             except Exception:
                 pass
         else:

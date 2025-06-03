@@ -460,7 +460,10 @@ class MainWindow(QMainWindow):
         usuario_str = usuario['usuario'] if isinstance(usuario, dict) and 'usuario' in usuario else str(usuario)
         self.inventario_view = InventarioView(db_connection=self.db_connection_inventario, usuario_actual=usuario_str)
         self.inventario_controller = InventarioController(
-            model=self.inventario_model, view=self.inventario_view, db_connection=self.db_connection_inventario
+            model=self.inventario_model,
+            view=self.inventario_view,
+            db_connection=self.db_connection_inventario,
+            usuario_actual=usuario  # Asegura que usuario_actual se propague correctamente
         )
         self.obras_view = ObrasView()
         self.obras_controller = ObrasController(
