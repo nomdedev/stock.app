@@ -321,6 +321,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QPalette, QColor, QIcon
 from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal, QSize, QEvent
 from utils.icon_loader import get_icon
+from mps.ui.components.sidebar_moderno import Sidebar
 from utils.theme_manager import aplicar_tema, cargar_modo_tema, set_theme
 from core.config import DEFAULT_THEME
 from functools import partial
@@ -381,7 +382,6 @@ from modules.herrajes.model import HerrajesModel
 
 # Importar componentes
 from components.sidebar_button import SidebarButton
-from mps.ui.components.sidebar import Sidebar
 
 # Clase principal
 class MainWindow(QMainWindow):
@@ -567,16 +567,28 @@ class MainWindow(QMainWindow):
             ("Usuarios", os.path.join(svg_dir, 'users.svg')),
             ("Configuración", os.path.join(svg_dir, 'configuracion.svg'))
         ]
-        sidebar_sections_robustos = []
-        for nombre, icono in sidebar_sections:
-            # Robustez: si el icono no existe, usar placeholder
-            if not os.path.exists(icono):
-                icono = os.path.join(os.path.dirname(__file__), 'img', 'placeholder.svg')
-            sidebar_sections_robustos.append((nombre, icono))
-        # Cambiar el primer argumento de Sidebar de 'utils' a '' para que use las rutas absolutas de los íconos
-        self.sidebar = Sidebar("", sidebar_sections_robustos, mostrar_nombres=True)
-        self.sidebar.pageChanged.connect(self.module_stack.setCurrentIndex)
-        main_layout.addWidget(self.sidebar, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        # Mapeo explícito de nombres de módulo a nombre de icono (sin extensión)
+        icon_map = {
+            "Obras": "obras",
+            "Inventario": "inventario",
+            "Herrajes": "herrajes",
+            "Vidrios": "vidrios",
+            "Producción": "produccion",
+            "Logística": "logistica",
+            "Compras / Pedidos": "compras",
+            "Contabilidad": "contabilidad",
+            "Auditoría": "auditoria",
+            "Mantenimiento": "mantenimiento",
+            "Usuarios": "users",
+            "Configuración": "configuracion"
+        }
+        # sidebar_sections_robustos = []
+        # for nombre, _ in sidebar_sections:
+        #     icon_name = icon_map.get(nombre, nombre.lower().replace(" / ", "_").replace(" ", "_"))
+        #     icono_qicon = get_icon(icon_name)
+        #     sidebar_sections_robustos.append((nombre, icono_qicon))
+        # self.sidebar = Sidebar(sections=sidebar_sections_robustos, mostrar_nombres=True)
+        # main_layout.addWidget(self.sidebar, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         main_layout.addWidget(self.module_stack)
         self._ajustar_sidebar()
 
@@ -594,40 +606,35 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Error crítico", f"Error al cargar la interfaz: {e}")
             self.close()
         # 2. Filtrar secciones del sidebar y widgets del stack según permisos
+        # Validar que modulos_permitidos sea una lista antes de filtrar
+        if not isinstance(modulos_permitidos, list):
+            modulos_permitidos = []
         secciones_filtradas = []
         indices_permitidos = []
-        nombre_a_widget = {
-            "Obras": self.obras_view,
-            "Inventario": self.inventario_view,
-            "Herrajes": self.herrajes_view,
-            "Compras / Pedidos": self.compras_pedidos_view,
-            "Logística": self.logistica_view,
-            "Vidrios": self.vidrios_view,
-            "Mantenimiento": self.mantenimiento_view,
-            "Producción": self.produccion_view,
-            "Contabilidad": self.contabilidad_view,
-            "Auditoría": self.auditoria_view,
-            "Usuarios": self.usuarios_view,
-            "Configuración": self.configuracion_view
-        }
-        # 3. Filtrar secciones y sincronizar con el stack
-        for i, (nombre, icono) in enumerate(self.sidebar.sections):
+        modulos_sidebar = [nombre for nombre, _ in sidebar_sections]
+        for i, nombre in enumerate(modulos_sidebar):
             if nombre in modulos_permitidos:
-                secciones_filtradas.append((nombre, icono))
+                icon_name = icon_map.get(nombre, nombre.lower().replace(" / ", "_").replace(" ", "_"))
+                secciones_filtradas.append((nombre, get_icon(icon_name)))
+                indices_permitidos.append(i)
+        # 3. Filtrar secciones y sincronizar con el stack
+        modulos_sidebar = [nombre for nombre, _ in sidebar_sections]
+        for i, nombre in enumerate(modulos_sidebar):
+            if nombre in modulos_permitidos:
+                secciones_filtradas.append((nombre, get_icon(nombre.lower().replace(" / ", "_").replace(" ", "_"))))
                 indices_permitidos.append(i)
         # 4. Si no hay módulos permitidos, mostrar mensaje y fallback seguro
         if not secciones_filtradas:
             self.logger.warning(f"[PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.")
-            secciones_filtradas = [("Configuración", os.path.join(os.path.dirname(__file__), 'utils', 'configuracion.svg'))]
-            indices_permitidos = [list(nombre_a_widget.keys()).index("Configuración")]
-            # Mostrar mensaje visual claro en la UI
-            self.mostrar_mensaje(
-                "No tienes acceso a ningún módulo. Contacta al administrador para revisar tus permisos.",
-                tipo="advertencia", duracion=8000
-            )
-        self.sidebar.set_sections(secciones_filtradas)
-        # 5. Sincronizar el stack: solo mostrar widgets de módulos permitidos
-        # (Opcional: ocultar widgets no permitidos, si se requiere mayor seguridad visual)
+            secciones_filtradas = [("Configuración", get_icon(icon_map["Configuración"]))]
+            indices_permitidos = [0]
+        # 5. Recrear el sidebar con los módulos filtrados
+        # Eliminar sidebar anterior si existe antes de agregar el nuevo
+        if hasattr(self, "sidebar"):
+            self.sidebar.setParent(None)
+            del self.sidebar
+        self.sidebar = Sidebar(sections=secciones_filtradas, mostrar_nombres=True)
+        main_layout.insertWidget(0, self.sidebar)
         # 6. Seleccionar el primer módulo permitido como vista inicial (priorizando 'Obras' si está permitido)
         index_obras = None
         if modulos_permitidos and isinstance(modulos_permitidos, list) and "Obras" in modulos_permitidos:
@@ -678,8 +685,48 @@ class MainWindow(QMainWindow):
             self._ajustar_sidebar()
 
     def _ajustar_sidebar(self):
-        expanded = self.isMaximized() or self.isFullScreen() or self.width() > 1400
-        self.sidebar.set_expanded(expanded)
+        pass
+
+    def _setup_conexion_checker(self):
+        """
+        Inicializa un QTimer que verifica el estado de la conexión a la base de datos periódicamente
+        y actualiza el indicador visual del Sidebar.
+        """
+        self._estado_bd_online = True  # Estado inicial asumido
+        self._timer_conexion = QTimer(self)
+        self._timer_conexion.setInterval(15000)  # 15 segundos (ajustable)
+        self._timer_conexion.timeout.connect(self.verificar_estado_conexion_bd)
+        self._timer_conexion.start()
+        # Chequeo inicial inmediato
+        QTimer.singleShot(1000, self.verificar_estado_conexion_bd)
+
+    def verificar_estado_conexion_bd(self):
+        """
+        Intenta una conexión rápida a la base de datos y actualiza el Sidebar.
+        No bloquea la UI ni cierra la app si falla, solo actualiza el estado visual.
+        """
+        import pyodbc
+        from core.config import DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_DEFAULT_DATABASE
+        DB_DRIVER = 'ODBC Driver 17 for SQL Server'
+        try:
+            connection_string = (
+                f"DRIVER={{{DB_DRIVER}}};"
+                f"SERVER={DB_SERVER};"
+                f"DATABASE={DB_DEFAULT_DATABASE};"
+                f"UID={DB_USERNAME};"
+                f"PWD={DB_PASSWORD};"
+                f"TrustServerCertificate=yes;"
+            )
+            with pyodbc.connect(connection_string, timeout=3):
+                if not self._estado_bd_online:
+                    self.sidebar.set_estado_online(True)
+                    self._estado_bd_online = True
+                return
+        except Exception:
+            if self._estado_bd_online:
+                self.sidebar.set_estado_online(False)
+                self._estado_bd_online = False
+        # No mostrar mensajes ni cerrar la app aquí, solo actualizar el círculo visual
 
 def chequear_conexion_bd():
     import pyodbc

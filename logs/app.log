@@ -4154,3 +4154,12 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-03 20:10:35,221 - ERROR - Error en editar: 'InventarioView' object has no attribute 'label'
 2025-06-03 20:12:18,752 - INFO - Aplicación iniciada
 2025-06-03 20:12:22,097 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-04 08:19:46,989 - INFO - Aplicación iniciada
+2025-06-04 08:25:40,599 - INFO - Aplicación iniciada
+2025-06-04 08:28:54,228 - INFO - Aplicación iniciada
+2025-06-04 08:28:57,754 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-04 13:25:56,291 - INFO - Aplicación iniciada
+2025-06-04 13:25:59,719 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-04 13:59:16,861 - INFO - Aplicación iniciada
+2025-06-04 13:59:20,830 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración', 'Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-04 15:11:14,349 - INFO - Aplicación iniciada
