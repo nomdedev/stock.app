@@ -246,15 +246,19 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
 
     def mostrar_menu_columnas_header(self, idx):
+        from PyQt6.QtCore import QPoint
         try:
             header = self.tabla_herrajes.horizontalHeader()
-            if header is not None:
+            if header is not None and all(hasattr(header, m) for m in ['sectionPosition', 'mapToGlobal', 'sectionViewportPosition']):
+                if idx < 0 or idx >= self.tabla_herrajes.columnCount():
+                    self.mostrar_mensaje("Índice de columna fuera de rango", "error")
+                    return
                 pos = header.sectionPosition(idx)
                 global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
                 self.mostrar_menu_columnas(global_pos)
             else:
-                log_error("No se puede mostrar el menú de columnas: header no disponible")
-                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
+                log_error("No se puede mostrar el menú de columnas: header no disponible o incompleto")
+                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible o incompleto", "error")
         except Exception as e:
             log_error(f"Error al mostrar menú de columnas desde header: {e}")
             self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")

@@ -188,15 +188,20 @@ class VidriosView(QWidget, TableResponsiveMixin):
             menu.exec(pos)
 
     def mostrar_menu_columnas_header(self, idx):
+        from PyQt6.QtCore import QPoint
         header = self.tabla_vidrios.horizontalHeader()
-        # Chequeo robusto de existencia de header y métodos
-        if not header or not hasattr(header, 'sectionPosition') or not hasattr(header, 'mapToGlobal') or not hasattr(header, 'sectionViewportPosition'):
-            return
-        if idx < 0 or idx >= self.tabla_vidrios.columnCount():
-            return
-        pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-        self.mostrar_menu_columnas(global_pos)
+        try:
+            if header is not None and all(hasattr(header, m) for m in ['sectionPosition', 'mapToGlobal', 'sectionViewportPosition']):
+                if idx < 0 or idx >= self.tabla_vidrios.columnCount():
+                    self.mostrar_feedback("Índice de columna fuera de rango", "error")
+                    return
+                pos = header.sectionPosition(idx)
+                global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+                self.mostrar_menu_columnas(global_pos)
+            else:
+                self.mostrar_feedback("No se puede mostrar el menú de columnas: header no disponible o incompleto", "error")
+        except Exception as e:
+            self.mostrar_feedback(f"Error al mostrar menú de columnas: {e}", "error")
 
     def toggle_columna(self, idx, header, checked):
         self.columnas_visibles[header] = checked

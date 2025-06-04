@@ -39,15 +39,15 @@ class PermisoAuditoria:
                             auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                         return None
                 try:
-                    print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
+                    # print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
                     resultado = func(controller, *args, **kwargs)
-                    print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
+                    # print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
                     if auditoria_model:
                         detalle = f"{accion} - éxito"
                         auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return resultado
                 except Exception as e:
-                    print(f"[LOG ACCIÓN] Error en acción '{accion}' en módulo '{self.modulo}': {e}")
+                    # print(f"[LOG ACCIÓN] Error en acción '{accion}' en módulo '{self.modulo}': {e}")
                     if auditoria_model:
                         detalle = f"{accion} - error: {e}"
                         auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
@@ -508,7 +508,7 @@ class InventarioController:
                         self.view.tabla_inventario.item(row, col).setBackground(QtGui.QColor("red"))
             self._registrar_evento_auditoria('resaltar_items_bajo_stock', '', exito=True)
         except Exception as e:
-            print(f"Error al resaltar ítems bajo stock: {e}")
+            # print(f"Error al resaltar ítems bajo stock: {e}")
             self.view.label_estado.setText("Error al resaltar ítems con bajo stock.")
             self._registrar_evento_auditoria('resaltar_items_bajo_stock', f"error: {e}", exito=False)
 

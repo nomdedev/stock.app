@@ -4,6 +4,79 @@ QWidget {
     color: #f3f4f6;
     font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
+/* --- Sidebar visual redesign (dark) --- */
+QWidget#Sidebar {
+    background: #232b36;
+    border-right: 1px solid #2d3748;
+    min-width: 220px;
+    max-width: 240px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+QFrame#sidebar-header {
+    background: transparent;
+    margin-bottom: 28px;
+    margin-top: 0;
+}
+QFrame#sidebar-buttons {
+    background: transparent;
+    margin-bottom: 28px;
+    margin-top: 0;
+}
+QPushButton.sidebar-button, QPushButton#botonMenu {
+    background: #232b36;
+    color: #f3f4f6;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 0 14px;
+    min-width: 160px;
+    max-width: 210px;
+    min-height: 36px;
+    max-height: 40px;
+    margin-bottom: 80px;
+    text-align: left;
+}
+QPushButton.sidebar-button:hover, QPushButton#botonMenu:hover {
+    background: #334155;
+    color: #90cdf4;
+    border: 1.5px solid #90cdf4;
+}
+QPushButton.sidebar-button:checked, QPushButton#botonMenu:checked, QPushButton.sidebar-button[active="true"], QPushButton#botonMenu[active="true"] {
+    border: 2px solid #90cdf4;
+    border-left: 4px solid #90cdf4;
+    color: #90cdf4;
+    background: #232b36;
+}
+QFrame#sidebar-tools {
+    background: transparent;
+    margin-top: 32px;
+    margin-bottom: 24px;
+}
+QWidget#sidebar-footer {
+    background: transparent;
+    border-top: 1px solid #2d3748;
+    margin-top: 40px;
+    padding: 20px 0 0 0;
+}
+QLabel#estadoOnline {
+    background: #22543d;
+    color: #68d391;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 0 16px;
+}
+QLabel#estadoOffline {
+    background: #742a2a;
+    color: #feb2b2;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 0 16px;
+}
+/* --- Fin sidebar visual redesign (dark) --- */
 QLabel#label_feedback {
     background: #2d3748;
     color: #90cdf4;

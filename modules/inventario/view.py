@@ -228,15 +228,36 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.guardar_config_columnas()
 
     def mostrar_menu_header(self, pos):
+        """
+        Muestra el menú contextual del header de la tabla de inventario.
+        Corrige robustamente el error de tipo: siempre convierte a QPoint.
+        """
+        from PyQt6.QtCore import QPoint
         menu = QMenu(self)
         accion_autoajustar = QAction("Autoajustar todas las columnas", self)
         accion_autoajustar.triggered.connect(self.autoajustar_todas_columnas)
         menu.addAction(accion_autoajustar)
         h_header = self.tabla_inventario.horizontalHeader() if hasattr(self.tabla_inventario, 'horizontalHeader') else None
-        if h_header is not None and hasattr(h_header, 'mapToGlobal'):
-            menu.exec(h_header.mapToGlobal(pos))
-        else:
-            menu.exec(pos)
+        try:
+            if h_header is not None and hasattr(h_header, 'mapToGlobal'):
+                # Convertir siempre a QPoint
+                if isinstance(pos, QPoint):
+                    global_pos = pos
+                elif isinstance(pos, int):
+                    global_pos = QPoint(pos, 0)
+                elif isinstance(pos, tuple) and len(pos) == 2:
+                    global_pos = QPoint(pos[0], pos[1])
+                else:
+                    # Fallback: intentar construir QPoint si es posible
+                    try:
+                        global_pos = QPoint(*pos)
+                    except Exception:
+                        global_pos = QPoint(0, 0)
+                menu.exec(h_header.mapToGlobal(global_pos))
+            else:
+                menu.exec(pos)
+        except Exception as e:
+            self.mostrar_feedback(f"Error al mostrar menú de header: {e}", tipo="error")
 
     def autoajustar_columna(self, idx):
         self.tabla_inventario.resizeColumnToContents(idx)

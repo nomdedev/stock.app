@@ -24,21 +24,29 @@ class SidebarButton(QPushButton):
             QPushButton {{
                 background-color: {COLOR_BOTON_FONDO};
                 color: {COLOR_BOTON_TEXTO};
-                font-size: 12px;
+                font-size: 14px;
+                font-weight: 500;
                 border-radius: 8px;
-                border: 1.5px solid {COLOR_BOTON_BORDE};
-                padding: 0 12px;
+                border: none;
+                padding: 0 12px 0 16px;
                 text-align: left;
+                qproperty-iconSize: 20px 20px;
             }}
             QPushButton:focus {{
-                border: 2px solid #3B82F6; outline: none;
+                background-color: #e5e7eb;
+                outline: none;
             }}
             QPushButton:hover {{
-                background-color: {COLOR_BOTON_FONDO_HOVER};
+                background-color: #f3f4f6;
+            }}
+            QPushButton:checked, QPushButton[selected="true"] {{
+                background-color: #f1f5f9;
+                color: #2563eb;
+                font-weight: 600;
             }}
         """
         if self.selected:
-            return base_style + "QPushButton {font-weight: bold;}"
+            return base_style + "QPushButton {font-weight: 600; color: #2563eb; background-color: #f1f5f9;}"
         else:
             return base_style
 

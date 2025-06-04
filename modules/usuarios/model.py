@@ -489,3 +489,20 @@ class UsuariosModel:
     def usuario_actual_es_admin(self):
         """Por defecto, retorna False. Sobrescribir en mocks de test."""
         return False
+
+    def tiene_permiso(self, usuario, modulo, accion):
+        """
+        Verifica si el usuario tiene permiso para la acción ('ver', 'modificar', 'aprobar') en el módulo indicado.
+        El usuario con rol 'admin' siempre tiene todos los permisos, sin excepción.
+        """
+        # Si el usuario es admin, siempre tiene permiso
+        if isinstance(usuario, dict) and usuario.get('rol', '').lower() == 'admin':
+            return True
+        if isinstance(usuario, int):
+            # Buscar el rol del usuario por id
+            resultado = self.db.ejecutar_query("SELECT rol FROM usuarios WHERE id = ?", (usuario,))
+            if resultado and resultado[0][0].lower() == 'admin':
+                return True
+        usuario_id = usuario['id'] if isinstance(usuario, dict) and 'id' in usuario else usuario
+        permisos = self.obtener_permisos_por_usuario(usuario_id, modulo)
+        return permisos.get(accion, False)

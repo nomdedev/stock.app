@@ -4,7 +4,7 @@ from PyQt6.QtCore import QSize, Qt
 import os
 
 # Color crema global para botones
-COLOR_BOTON_FONDO = "#F5F5DC"  # Crema
+COLOR_BOTON_FONDO = "#fff"  # Blanco puro para fondo de botones del sidebar
 COLOR_BOTON_FONDO_HOVER = "#f3f4f6"  # Crema más claro
 COLOR_BOTON_FONDO_PRESSED = "#e0e7ef"  # Crema sutil
 COLOR_BOTON_TEXTO = "#1e293b"  # Azul gris oscuro

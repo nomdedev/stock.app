@@ -4021,3 +4021,86 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-03 08:35:56,527 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
 2025-06-03 08:42:39,735 - INFO - Aplicación iniciada
 2025-06-03 08:43:59,370 - INFO - Aplicación iniciada
+2025-06-03 08:46:15,040 - INFO - Aplicación iniciada
+2025-06-03 08:46:17,875 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'auditorias_sistema' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-03 08:46:17,875 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'auditorias_sistema' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-03 08:46:20,267 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-03 08:46:20,267 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-03 08:57:21,388 - INFO - Aplicación iniciada
+2025-06-03 08:57:23,565 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'modulo_afectado' no es válido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'tipo_evento' no es válido. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'detalle' no es válido. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'ip_origen' no es válido. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-03 08:57:23,565 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'modulo_afectado' no es válido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'tipo_evento' no es válido. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'detalle' no es válido. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de columna 'ip_origen' no es válido. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-03 08:57:45,038 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-03 08:57:45,038 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-03 09:11:50,026 - INFO - Aplicación iniciada
+2025-06-03 09:11:53,696 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-03 09:14:11,661 - INFO - Aplicación iniciada
+2025-06-03 09:14:15,594 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-03 16:17:38,064 - INFO - Aplicación iniciada
+2025-06-03 16:17:49,837 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-03 16:22:48,198 - INFO - Aplicación iniciada
+2025-06-03 16:22:51,648 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Compras / Pedidos', 'Logística', 'Vidrios', 'Mantenimiento', 'Producción', 'Contabilidad', 'Auditoría', 'Usuarios', 'Configuración']
+2025-06-03 16:26:21,459 - INFO - Aplicación iniciada
+2025-06-03 16:26:25,591 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Usuarios', 'Configuración']
+2025-06-03 16:34:02,314 - INFO - Aplicación iniciada
+2025-06-03 16:34:06,119 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Usuarios', 'Configuración']
+2025-06-03 16:37:31,020 - INFO - Aplicación iniciada
+2025-06-03 16:37:34,483 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Usuarios', 'Configuración']
+2025-06-03 16:40:30,454 - INFO - Aplicación iniciada
+2025-06-03 16:40:34,310 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Usuarios', 'Configuración']
+2025-06-03 17:17:30,901 - INFO - Aplicación iniciada
+2025-06-03 17:17:34,460 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Usuarios', 'Configuración']
+2025-06-03 17:19:09,423 - INFO - Aplicación iniciada
+2025-06-03 17:19:12,908 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Usuarios', 'Configuración']
+2025-06-03 18:49:48,500 - INFO - Aplicación iniciada
+2025-06-03 18:49:51,964 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 18:58:18,758 - INFO - Aplicación iniciada
+2025-06-03 18:58:22,791 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:01:15,442 - INFO - Aplicación iniciada
+2025-06-03 19:01:19,054 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:05:13,144 - INFO - Aplicación iniciada
+2025-06-03 19:05:16,830 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:09:42,699 - INFO - Aplicación iniciada
+2025-06-03 19:09:46,134 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:14:27,426 - INFO - Aplicación iniciada
+2025-06-03 19:14:31,018 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:17:19,951 - INFO - Aplicación iniciada
+2025-06-03 19:17:23,298 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:22:07,709 - INFO - Aplicación iniciada
+2025-06-03 19:22:11,222 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:25:26,914 - INFO - Aplicación iniciada
+2025-06-03 19:25:30,217 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:31:46,476 - INFO - Aplicación iniciada
+2025-06-03 19:31:50,779 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:34:19,871 - INFO - Aplicación iniciada
+2025-06-03 19:34:23,373 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:36:49,052 - INFO - Aplicación iniciada
+2025-06-03 19:36:53,336 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:41:19,754 - INFO - Aplicación iniciada
+2025-06-03 19:41:23,331 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:45:16,226 - INFO - Aplicación iniciada
+2025-06-03 19:45:21,637 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:50:52,493 - INFO - Aplicación iniciada
+2025-06-03 19:50:56,196 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 19:52:24,289 - INFO - Aplicación iniciada
+2025-06-03 19:52:27,685 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 20:05:36,354 - INFO - Aplicación iniciada
+2025-06-03 20:05:40,372 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-03 20:10:27,089 - ERROR - [ERROR][InventarioView] Error al consultar reservas: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-03 20:10:27,089 - ERROR - [ERROR][InventarioView] Error al consultar reservas: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-03 20:10:27,096 - ERROR - Error al expandir fila: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-03 20:10:27,096 - ERROR - Error al expandir fila: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-03 20:10:27,096 - ERROR - Error al expandir fila: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-03 20:10:35,221 - ERROR - Error en editar: 'InventarioView' object has no attribute 'label'
+2025-06-03 20:10:35,221 - ERROR - Error en editar: 'InventarioView' object has no attribute 'label'
+2025-06-03 20:10:35,221 - ERROR - Error en editar: 'InventarioView' object has no attribute 'label'
+2025-06-03 20:10:35,221 - ERROR - Error en editar: 'InventarioView' object has no attribute 'label'
+2025-06-03 20:12:18,752 - INFO - Aplicación iniciada
+2025-06-03 20:12:22,097 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']

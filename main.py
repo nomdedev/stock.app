@@ -538,18 +538,32 @@ class MainWindow(QMainWindow):
         self.module_stack.addWidget(self.auditoria_view)
         self.module_stack.addWidget(self.usuarios_view)
         self.module_stack.addWidget(self.configuracion_view)
-        svg_dir = os.path.join(os.path.dirname(__file__), 'utils')
+        svg_dir = os.path.join(os.path.dirname(__file__), 'resources', 'icons')
+        # --- ORDEN LÓGICO DE MÓDULOS SEGÚN FLUJO DE NEGOCIO ---
+        # Justificación técnica y lógica:
+        # El orden de los módulos refleja el ciclo real de trabajo en la empresa:
+        # 1. Obras: punto de partida, alta y gestión de proyectos.
+        # 2. Inventario: asignación y control de materiales para las obras.
+        # 3. Herrajes: selección y reserva de herrajes específicos para cada proyecto.
+        # 4. Vidrios: gestión de vidrios requeridos para cada obra.
+        # 5. Producción: seguimiento de la fabricación y armado de componentes.
+        # 6. Logística: organización de entregas, traslados y colocaciones.
+        # 7. Compras/Pedidos: gestión de pedidos de materiales faltantes.
+        # 8. Contabilidad: registro de costos, facturación y control financiero.
+        # 9. Usuarios: administración de usuarios y permisos.
+        # 10. Configuración: ajustes generales y técnicos del sistema.
+        # Este orden asegura que la navegación y el flujo de trabajo sean naturales y eficientes, acompañando el ciclo de vida del producto desde la planificación hasta la entrega y cierre administrativo.
         sidebar_sections = [
             ("Obras", os.path.join(svg_dir, 'obras.svg')),
             ("Inventario", os.path.join(svg_dir, 'inventario.svg')),
-            ("Herrajes", os.path.join(svg_dir, 'herrajes.svg')),
-            ("Compras / Pedidos", os.path.join(svg_dir, 'compras.svg')),
-            ("Logística", os.path.join(svg_dir, 'logistica.svg')),
+            ("Herrajes", os.path.join(svg_dir, 'herrajes.png')),
             ("Vidrios", os.path.join(svg_dir, 'vidrios.svg')),
-            ("Mantenimiento", os.path.join(svg_dir, 'mantenimiento.svg')),
             ("Producción", os.path.join(svg_dir, 'produccion.svg')),
+            ("Logística", os.path.join(svg_dir, 'logistica.png')),
+            ("Compras / Pedidos", os.path.join(svg_dir, 'compras.svg')),
             ("Contabilidad", os.path.join(svg_dir, 'contabilidad.svg')),
             ("Auditoría", os.path.join(svg_dir, 'auditoria.svg')),
+            ("Mantenimiento", os.path.join(svg_dir, 'mantenimiento.svg')),
             ("Usuarios", os.path.join(svg_dir, 'users.svg')),
             ("Configuración", os.path.join(svg_dir, 'configuracion.svg'))
         ]
@@ -559,9 +573,10 @@ class MainWindow(QMainWindow):
             if not os.path.exists(icono):
                 icono = os.path.join(os.path.dirname(__file__), 'img', 'placeholder.svg')
             sidebar_sections_robustos.append((nombre, icono))
-        self.sidebar = Sidebar("utils", sidebar_sections_robustos, mostrar_nombres=True)
+        # Cambiar el primer argumento de Sidebar de 'utils' a '' para que use las rutas absolutas de los íconos
+        self.sidebar = Sidebar("", sidebar_sections_robustos, mostrar_nombres=True)
         self.sidebar.pageChanged.connect(self.module_stack.setCurrentIndex)
-        main_layout.addWidget(self.sidebar)
+        main_layout.addWidget(self.sidebar, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         main_layout.addWidget(self.module_stack)
         self._ajustar_sidebar()
 
@@ -613,8 +628,17 @@ class MainWindow(QMainWindow):
         self.sidebar.set_sections(secciones_filtradas)
         # 5. Sincronizar el stack: solo mostrar widgets de módulos permitidos
         # (Opcional: ocultar widgets no permitidos, si se requiere mayor seguridad visual)
-        # 6. Seleccionar el primer módulo permitido como vista inicial
-        if indices_permitidos:
+        # 6. Seleccionar el primer módulo permitido como vista inicial (priorizando 'Obras' si está permitido)
+        index_obras = None
+        if modulos_permitidos and isinstance(modulos_permitidos, list) and "Obras" in modulos_permitidos:
+            # Buscar el índice de 'Obras' en el sidebar filtrado
+            for idx, (nombre, _) in enumerate(secciones_filtradas):
+                if nombre == "Obras":
+                    index_obras = idx
+                    break
+        if index_obras is not None:
+            self.module_stack.setCurrentIndex(index_obras)
+        elif indices_permitidos:
             self.module_stack.setCurrentIndex(indices_permitidos[0])
         else:
             self.module_stack.setCurrentIndex(0)
@@ -801,6 +825,7 @@ if __name__ == "__main__":
     login_controller = LoginController(login_view, usuarios_model)
 
     def on_login_success():
+        global main_window  # Mantener referencia global para evitar cierre inmediato
         user = login_controller.usuario_autenticado
         if not user:
             login_view.mostrar_error("Usuario o contraseña incorrectos.")

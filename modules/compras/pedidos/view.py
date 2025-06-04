@@ -171,11 +171,30 @@ class PedidosView(QWidget, TableResponsiveMixin):
             menu.addAction(accion)
         menu.exec(tabla.horizontalHeader().mapToGlobal(pos))
 
+    def mostrar_feedback(self, mensaje, tipo="info"):
+        from PyQt6.QtWidgets import QMessageBox
+        if tipo == "error":
+            QMessageBox.critical(self, "Error", mensaje)
+        elif tipo == "advertencia":
+            QMessageBox.warning(self, "Advertencia", mensaje)
+        else:
+            QMessageBox.information(self, "Información", mensaje)
+
     def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
-        header = tabla.horizontalHeader()
-        pos = header.sectionPosition(idx)
-        global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-        self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
+        from PyQt6.QtCore import QPoint
+        try:
+            header = tabla.horizontalHeader()
+            if header is not None and all(hasattr(header, m) for m in ['sectionPosition', 'mapToGlobal', 'sectionViewportPosition']):
+                if idx < 0 or idx >= tabla.columnCount():
+                    self.mostrar_feedback("Índice de columna fuera de rango", "error")
+                    return
+                pos = header.sectionPosition(idx)
+                global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+                self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
+            else:
+                self.mostrar_feedback("No se puede mostrar el menú de columnas: header no disponible o incompleto", "error")
+        except Exception as e:
+            self.mostrar_feedback(f"Error al mostrar menú de columnas: {e}", "error")
 
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):
         columnas_visibles[header] = checked

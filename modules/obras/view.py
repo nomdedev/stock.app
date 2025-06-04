@@ -225,17 +225,20 @@ class ObrasView(QWidget, TableResponsiveMixin):
             self.tabla_obras.resizeColumnToContents(idx)
 
     def mostrar_menu_columnas_header(self, idx):
-        """Muestra el menú contextual de columnas desde el header al hacer click."""
+        from PyQt6.QtCore import QPoint
         hh = self.tabla_obras.horizontalHeader()
-        if hh is not None:
-            try:
+        try:
+            if hh is not None and all(hasattr(hh, m) for m in ['sectionPosition', 'mapToGlobal', 'sectionViewportPosition']):
+                if idx < 0 or idx >= self.tabla_obras.columnCount():
+                    self.mostrar_mensaje("Índice de columna fuera de rango", "error")
+                    return
                 pos = hh.sectionPosition(idx)
                 global_pos = hh.mapToGlobal(QPoint(hh.sectionViewportPosition(idx), 0))
                 self.mostrar_menu_columnas(global_pos)
-            except Exception as e:
-                self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
-        else:
-            self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
+            else:
+                self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible o incompleto", "error")
+        except Exception as e:
+            self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
 
     def cargar_headers(self, headers):
         """Permite al controlador actualizar los headers dinámicamente."""

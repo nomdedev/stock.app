@@ -1,6 +1,6 @@
 /* theme_light.qss - Solo reglas para modo claro */
 QWidget {
-    background: #fff9f3;
+    background: #fff;
     color: #222;
     font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
@@ -316,3 +316,81 @@ QLabel#label_usuario_dialogo_obra {
     padding: 4px 8px;
 }
 /* --- Fin obras feedback visual y error input --- */
+/* --- Sidebar visual redesign --- */
+QWidget#Sidebar {
+    background: #fff;
+    border-right: 1px solid #e3e3e3;
+    min-width: 220px;
+    max-width: 240px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+QFrame#sidebar-header {
+    background: transparent;
+    margin-bottom: 28px;
+    margin-top: 0;
+}
+QLabel#sidebar-user {
+    /* Eliminado: ya no se muestra bloque de usuario en sidebar */
+    display: none;
+}
+QFrame#sidebar-buttons {
+    background: transparent;
+    margin-bottom: 28px;
+    margin-top: 0;
+    /* spacing de layout ajustado en Python a 24px */
+}
+QPushButton.sidebar-button, QPushButton#botonMenu {
+    background: #fff;
+    color: #1f2937;
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 0 14px;
+    min-width: 160px;
+    max-width: 210px;
+    min-height: 36px;
+    max-height: 40px;
+    margin-bottom: 160px;
+    text-align: left;
+}
+QPushButton.sidebar-button:hover, QPushButton#botonMenu:hover {
+    background: #f3f4f6;
+    color: #2563eb;
+    border: 1.5px solid #2563eb;
+}
+QPushButton.sidebar-button:checked, QPushButton#botonMenu:checked, QPushButton.sidebar-button[active="true"], QPushButton#botonMenu[active="true"] {
+    border: 2px solid #2563eb;
+    border-left: 4px solid #2563eb;
+    color: #2563eb;
+    background: #fff;
+}
+QFrame#sidebar-tools {
+    background: transparent;
+    margin-top: 32px;
+    margin-bottom: 24px;
+}
+QWidget#sidebar-footer {
+    background: transparent;
+    border-top: 1px solid #e3e3e3;
+    margin-top: 40px;
+    padding: 20px 0 0 0;
+}
+QLabel#estadoOnline {
+    background: #dcfce7;
+    color: #15803d;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 0 16px;
+}
+QLabel#estadoOffline {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 0 16px;
+}
+/* --- Fin sidebar visual redesign --- */

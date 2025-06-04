@@ -36,10 +36,10 @@ class InventarioModel:
             # Si los resultados son lista de diccionarios, conviértelos a tuplas/listas
             if resultados and hasattr(resultados[0], 'keys'):
                 resultados = [list(row.values()) for row in resultados]
-            print(f"Resultados obtenidos: {resultados}")  # Registro de depuración
+            # print(f"Resultados obtenidos: {resultados}")  # Registro de depuración
             return resultados
         except Exception as e:
-            print(f"Error al obtener ítems: {e}")
+            # print(f"Error al obtener ítems: {e}")
             raise
 
     def obtener_items_por_lotes(self, offset=0, limite=1000):
@@ -54,7 +54,7 @@ class InventarioModel:
             """
             self.db.ejecutar_query(query, datos)
         except Exception as e:
-            print(f"Error al agregar ítem: {e}")
+            # print(f"Error al agregar ítem: {e}")
             raise
 
     def registrar_movimiento(self, id_item, cantidad, tipo, referencia):
@@ -84,7 +84,7 @@ class InventarioModel:
             query = "SELECT id, codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr, imagen_referencia FROM inventario_perfiles WHERE codigo = ?"
             return self.db.ejecutar_query(query, (codigo,))
         except Exception as e:
-            print(f"Error al obtener ítem por código: {e}")
+            # print(f"Error al obtener ítem por código: {e}")
             return None
 
     def actualizar_stock(self, id_item, cantidad):
@@ -96,7 +96,7 @@ class InventarioModel:
             query = "SELECT * FROM inventario_perfiles WHERE stock_actual < stock_minimo"
             return self.db.ejecutar_query(query)
         except Exception as e:
-            print(f"Error al obtener ítems bajo stock: {e}")
+            # print(f"Error al obtener ítems bajo stock: {e}")
             return []
 
     def generar_qr(self, id_item):
@@ -105,10 +105,10 @@ class InventarioModel:
         if (codigo and len(codigo[0]) > 0):  # Asegurarse de que el resultado no esté vacío
             qr = f"QR-{codigo[0][0]}"
             update_query = "UPDATE inventario_perfiles SET qr = ? WHERE id = ?"
-            print(f"DEBUG: Ejecutando actualización con qr={qr} y id_item={id_item}")
+            # print(f"DEBUG: Ejecutando actualización con qr={qr} y id_item={id_item}")
             self.db.ejecutar_query(update_query, (qr, id_item))
             return qr
-        print("DEBUG: Código no encontrado o vacío para id_item={id_item}")
+        # print("DEBUG: Código no encontrado o vacío para id_item={id_item}")
         return None
 
     def actualizar_qr_code(self, id_item, qr):
@@ -346,9 +346,11 @@ class InventarioModel:
     def exportar_perfiles(self, perfiles):
         if perfiles:
             for perfil in perfiles:
-                print(perfil)
+                # print(perfil)
+                pass
         else:
-            print("No hay perfiles para exportar.")
+            # print("No hay perfiles para exportar.")
+            pass
     # NOTA: Si se detectan errores en los tests relacionados con la cantidad de columnas, tipos de retorno o mensajes,
     # revisar los mocks y la estructura de datos simulados. Los tests automáticos pueden requerir workarounds específicos
     # para compatibilidad con los datos de prueba.
