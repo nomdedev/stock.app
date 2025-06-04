@@ -54,7 +54,7 @@ class ConfiguracionView(QMainWindow):
         self.boton_activar_offline.setIcon(QIcon("resources/icons/offline_icon.svg"))
         self.boton_activar_offline.setToolTip("Activa el modo offline de la app")
         self.boton_activar_offline.setAccessibleName("Botón activar modo offline")
-        # self.boton_activar_offline.setStyleSheet("border-radius: 8px; background: #f1f5f9; font-size: 14px; padding: 8px 24px;")
+        self.boton_activar_offline.setObjectName("boton_activar_offline")
         layout_general.addWidget(self.boton_activar_offline)
         # --- Dropdown de tema visual ---
         theme_row = QHBoxLayout()

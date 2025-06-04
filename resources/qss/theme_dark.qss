@@ -272,6 +272,15 @@ QHeaderView#header_notificaciones {
     border: 1px solid #2d3748;
     font-weight: 400;
 }
+QHeaderView#header_vidrios, QHeaderView#header_produccion {
+    background-color: #232b36;
+    color: #90cdf4;
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 8px 12px;
+    border: 1px solid #2d3748;
+    font-weight: 400;
+}
 QWidget#cronograma_view {
     background: #232b36;
     border-radius: 10px;

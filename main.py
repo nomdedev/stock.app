@@ -606,7 +606,6 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Error crítico", f"Error al cargar la interfaz: {e}")
             self.close()
         # 2. Filtrar secciones del sidebar y widgets del stack según permisos
-        # Validar que modulos_permitidos sea una lista antes de filtrar
         if not isinstance(modulos_permitidos, list):
             modulos_permitidos = []
         secciones_filtradas = []
@@ -618,11 +617,6 @@ class MainWindow(QMainWindow):
                 secciones_filtradas.append((nombre, get_icon(icon_name)))
                 indices_permitidos.append(i)
         # 3. Filtrar secciones y sincronizar con el stack
-        modulos_sidebar = [nombre for nombre, _ in sidebar_sections]
-        for i, nombre in enumerate(modulos_sidebar):
-            if nombre in modulos_permitidos:
-                secciones_filtradas.append((nombre, get_icon(nombre.lower().replace(" / ", "_").replace(" ", "_"))))
-                indices_permitidos.append(i)
         # 4. Si no hay módulos permitidos, mostrar mensaje y fallback seguro
         if not secciones_filtradas:
             self.logger.warning(f"[PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.")
@@ -674,6 +668,12 @@ class MainWindow(QMainWindow):
                 self.obras_view.obra_agregada.connect(self.inventario_controller.actualizar_por_obra)
             if hasattr(self.vidrios_controller, 'actualizar_por_obra'):
                 self.obras_view.obra_agregada.connect(self.vidrios_controller.actualizar_por_obra)
+
+        # Conectar la señal pageChanged del sidebar al cambio de vista en el stack
+        self.sidebar.pageChanged.connect(self._on_sidebar_page_changed)
+
+    def _on_sidebar_page_changed(self, idx):
+        self.module_stack.setCurrentIndex(idx)
 
     def showEvent(self, event):
         super().showEvent(event)

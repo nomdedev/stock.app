@@ -54,6 +54,9 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.tabla_vidrios = self.create_table()
         self.make_table_responsive(self.tabla_vidrios)
         self.tabla_vidrios.setObjectName("tabla_vidrios")
+        header = self.tabla_vidrios.horizontalHeader()
+        if header is not None:
+            header.setObjectName("header_vidrios")
         self.main_layout.addWidget(self.tabla_vidrios)
 
         # Configuración de columnas y headers dinámicos

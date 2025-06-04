@@ -8,6 +8,7 @@ from utils.icon_loader import get_icon
 
 class Sidebar(QWidget):
     estado_cambiado = pyqtSignal(bool)  # True=online, False=offline
+    pageChanged = pyqtSignal(int)  # Nueva señal para cambiar de página
     def __init__(self, sections, mostrar_nombres=False, online=True, modo_oscuro=False):
         super().__init__()
         self.setObjectName("sidebar")
@@ -29,13 +30,16 @@ class Sidebar(QWidget):
         layout.addSpacing(8)
 
         # --- BLOQUE 1: módulos principales ---
-        for title, icon in sections:
+        self._sidebar_buttons = []
+        for idx, (title, icon) in enumerate(sections):
             btn = SidebarButton(icon=icon, text=title if mostrar_nombres else "")
             btn.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
             btn.setFixedHeight(40)
             btn.setIconSize(QSize(24, 24))
             btn.setObjectName("sidebarButton")
+            btn.clicked.connect(lambda checked, ix=idx: self._on_sidebar_button_clicked(ix))
             layout.addWidget(btn)
+            self._sidebar_buttons.append(btn)
 
         layout.addStretch()
 
@@ -83,10 +87,10 @@ class Sidebar(QWidget):
         self.btn_tema.setFixedSize(28, 28)
         self.btn_tema.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_tema.setObjectName("sidebarThemeSwitch")
-        icon_tema = get_icon("moon") if modo_oscuro else get_icon("sun_custom")
-        self.btn_tema.setIcon(icon_tema)
-        self.btn_tema.setIconSize(QSize(18, 18))
-        self.btn_tema.setToolTip("Cambiar modo claro/oscuro")
+        self._modo_oscuro = modo_oscuro
+        self._animando = False
+        self._set_icono_tema()
+        self.btn_tema.clicked.connect(self._toggle_tema)
         switch_layout.addStretch()
         switch_layout.addWidget(self.btn_tema)
         switch_layout.addStretch()
@@ -108,3 +112,39 @@ class Sidebar(QWidget):
             self.estado_label.setStyleSheet("background:#ef4444; border-radius:7px;")
             self.estado_label.setObjectName("estadoOffline")
             self.estado_label.setToolTip("Sin conexión a la base de datos")
+
+    def _on_sidebar_button_clicked(self, idx):
+        # Emitir señal para que MainWindow cambie el stack
+        if hasattr(self, 'pageChanged'):
+            self.pageChanged.emit(idx)
+
+    def _set_icono_tema(self):
+        icon_tema = get_icon("moon") if self._modo_oscuro else get_icon("sun_custom")
+        self.btn_tema.setIcon(icon_tema)
+        self.btn_tema.setIconSize(QSize(18, 18))
+
+    def _toggle_tema(self):
+        if self._animando:
+            return
+        self._modo_oscuro = not self._modo_oscuro
+        self._animando = True
+        from PyQt6.QtCore import QPropertyAnimation, QRect
+        start_rect = self.btn_tema.geometry()
+        end_rect = QRect(3, 3, 26, 26) if not self._modo_oscuro else QRect(27, 3, 26, 26)
+        anim = QPropertyAnimation(self.btn_tema, b"geometry")
+        anim.setDuration(180)
+        anim.setStartValue(start_rect)
+        anim.setEndValue(end_rect)
+        def on_anim_finished():
+            self._set_icono_tema()
+            self._animando = False
+            # Cambiar el tema real de la app
+            from utils.theme_manager import set_theme, guardar_modo_tema
+            app = self.parentWidget()
+            while app and not hasattr(app, 'setStyleSheet'):
+                app = app.parentWidget()
+            if app:
+                set_theme(app, "dark" if self._modo_oscuro else "light")
+                guardar_modo_tema("dark" if self._modo_oscuro else "light")
+        anim.finished.connect(on_anim_finished)
+        anim.start()

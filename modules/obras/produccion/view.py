@@ -68,6 +68,9 @@ class ProduccionView(QWidget):
         self.tabla_aberturas = QTableWidget()
         self.tabla_aberturas.setColumnCount(5)
         self.tabla_aberturas.setHorizontalHeaderLabels(["ID", "Código", "Tipo", "Estado", "Fecha Inicio"])
+        header_aberturas = self.tabla_aberturas.horizontalHeader()
+        if header_aberturas is not None:
+            header_aberturas.setObjectName("header_produccion")
         self.main_layout.addWidget(self.tabla_aberturas)
         self.aberturas_headers = ["ID", "Código", "Tipo", "Estado", "Fecha Inicio"]
         self.config_path_aberturas = f"config_produccion_aberturas_columns.json"
@@ -84,6 +87,9 @@ class ProduccionView(QWidget):
         self.tabla_etapas = QTableWidget()
         self.tabla_etapas.setColumnCount(5)
         self.tabla_etapas.setHorizontalHeaderLabels(["ID", "Etapa", "Estado", "Fecha Inicio", "Fecha Fin"])
+        header_etapas = self.tabla_etapas.horizontalHeader()
+        if header_etapas is not None:
+            header_etapas.setObjectName("header_produccion")
         self.main_layout.addWidget(self.tabla_etapas)
         header_etapas = self.tabla_etapas.horizontalHeader() if hasattr(self.tabla_etapas, 'horizontalHeader') else None
         if header_etapas is not None:
