@@ -1,26 +1,26 @@
 # --- CHECKLIST DETALLADO PARA PASAR A PRODUCCIÓN (actualizado 2025-06-04) ---
 
 ## 1. UI/UX, SIDEBAR Y CONSISTENCIA VISUAL
-- [ ] Corregir el test del sidebar: asegurar que los botones extra (Configuración, Logs, Ayuda) usen exactamente el mismo QIcon que en los tests y no se dupliquen.
-- [ ] Validar que todos los botones del sidebar tengan icono válido y accesible (incluyendo Usuarios, Configuración, Logs, Ayuda, etc.).
-- [ ] Sidebar: el indicador online/offline debe cambiar dinámicamente según el estado real de la DB (test automatizado y validación manual).
-- [ ] Sidebar: el switch de tema debe funcionar, animar y persistir la preferencia (test automatizado y validación manual).
-- [ ] Sidebar: no debe haber módulos duplicados ni botones sin icono.
-- [ ] Sidebar: cumplir espaciado, padding, tamaño y estilos según QSS global (verificar con test visual y checklist de estándares).
-- [ ] Sidebar: accesibilidad, todos los botones deben tener accessibleName y/o toolTip descriptivo.
-- [ ] Todas las tablas (Vidrios, Producción, Obras, Inventario, etc.) deben tener headers y celdas visualmente consistentes, usando solo QSS global (test visual automatizado).
-- [ ] Validar que no quedan estilos embebidos en ningún módulo (solo QSS global y helpers).
-- [ ] Validar que todos los headers de tablas tienen el objectName correcto y el QSS esperado.
-- [ ] Validar que los cambios de columnas visibles en tablas persisten y no rompen el layout.
-- [ ] Validar que el feedback visual (mensajes de error, éxito, advertencia, info) usa color y emoji correcto en todos los módulos.
-- [ ] Validar que todos los botones principales sean solo ícono, salvo justificación documentada.
-- [ ] Validar que todos los layouts principales usan QVBoxLayout/QHBoxLayout con setContentsMargins y setSpacing según estándar.
+- [x] Corregir el test del sidebar: asegurar que los botones extra (Configuración, Logs, Ayuda) usen exactamente el mismo QIcon que en los tests y no se dupliquen.
+- [x] Validar que todos los botones del sidebar tengan icono válido y accesible (incluyendo Usuarios, Configuración, Logs, Ayuda, etc.).
+- [x] Sidebar: el indicador online/offline debe cambiar dinámicamente según el estado real de la DB (test automatizado y validación manual).
+- [x] Sidebar: el switch de tema debe funcionar, animar y persistir la preferencia (test automatizado y validación manual).
+- [x] Sidebar: no debe haber módulos duplicados ni botones sin icono.
+- [x] Sidebar: cumplir espaciado, padding, tamaño y estilos según QSS global (verificar con test visual y checklist de estándares).
+- [x] Sidebar: accesibilidad, todos los botones deben tener accessibleName y/o toolTip descriptivo.
+- [x] Todas las tablas (Vidrios, Producción, Obras, Inventario, etc.) deben tener headers y celdas visualmente consistentes, usando solo QSS global (test visual automatizado).
+- [x] Validar que no quedan estilos embebidos en ningún módulo (solo QSS global y helpers).
+- [x] Validar que todos los headers de tablas tienen el objectName correcto y el QSS esperado.
+- [x] Validar que los cambios de columnas visibles en tablas persisten y no rompen el layout.
+- [x] Validar que el feedback visual (mensajes de error, éxito, advertencia, info) usa color y emoji correcto en todos los módulos.
+- [x] Validar que todos los botones principales sean solo ícono, salvo justificación documentada.
+- [x] Validar que todos los layouts principales usan QVBoxLayout/QHBoxLayout con setContentsMargins y setSpacing según estándar.
 
 ## 2. PERMISOS Y SEGURIDAD
 - [ ] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
 - [ ] Validar que la función crear_usuarios_iniciales asigne permisos completos a admin y mínimos a prueba.
-- [ ] Validar integración de permisos en el sidebar y main_window (solo módulos permitidos).
-- [ ] Revisar y corregir la lógica de obtención de módulos permitidos para cada usuario (admin debe ver todos).
+- [x] Validar integración de permisos en el sidebar y main_window (solo módulos permitidos).
+- [x] Revisar y corregir la lógica de obtención de módulos permitidos para cada usuario (admin debe ver todos).
 - [ ] Listar todos los módulos disponibles y mostrar qué permisos tiene cada usuario (especialmente admin).
 - [ ] Validar que Sidebar y controladores solo permiten acciones si permisos[modulo][accion] == True.
 - [ ] Validar en cada controlador que se rechace la acción si falta permiso (decoradores y lógica robusta).
@@ -37,13 +37,13 @@
 ## 4. TABLAS, DATOS Y PERSONALIZACIÓN
 - [ ] Optimizar carga y paginación de tablas para grandes volúmenes de datos.
 - [ ] Permitir personalización de columnas y filtros en tablas de obras, pedidos y vidrios según usuario.
-- [ ] Validar que los cambios de columnas visibles persisten correctamente.
+- [x] Validar que los cambios de columnas visibles persisten correctamente.
 - [ ] Visualizar el estado de cada ítem de pedido: entregado, pendiente, en espera de compra, etc.
 - [ ] Validaciones visuales (colores, íconos) para advertir si el stock es insuficiente antes de guardar el pedido.
 - [ ] Mostrar en la tabla de pedido de material: cantidad solicitada, stock disponible y cantidad faltante de cada ítem.
 
 ## 5. TESTS CRÍTICOS Y AUTOMATIZACIÓN
-- [ ] Ejecutar y validar todos los tests críticos listados en este checklist (sidebar, permisos, feedback, headers, accesibilidad, modo offline, etc.).
+- [x] Ejecutar y validar todos los tests críticos listados en este checklist (sidebar, permisos, feedback, headers, accesibilidad, modo offline, etc.).
 - [ ] Agregar tests automáticos para edge cases: obra sin stock, pedido parcial, error de conexión, permisos insuficientes, etc.
 - [ ] Validar cobertura de tests en todos los módulos críticos (UI, controladores, modelos, integración).
 - [ ] Validar que los tests de integración y UI cubren los flujos principales y alternativos.
@@ -79,25 +79,25 @@
 # COSAS POR HACER PARA PRODUCCIÓN (actualizado 2025-06-04)
 
 ## CRÍTICO: UI, SIDEBAR, ICONOS, CONSISTENCIA VISUAL Y TESTS
-- [ ] Sidebar moderno: solo muestra módulos permitidos según permisos del usuario.
-- [ ] Sidebar: todos los íconos se muestran correctamente (sin faltantes ni duplicados).
-- [ ] Sidebar: el indicador online/offline cambia dinámicamente según el estado real de la DB.
-- [ ] Sidebar: el switch de tema funciona y persiste la preferencia.
-- [ ] Consistencia visual: test visual automatizado para verificar que todas las tablas usan el mismo estilo de header y celdas.
-- [ ] Consistencia visual: test que no hay headers con color incorrecto (azul/celeste antiguo) en ningún módulo.
-- [ ] Vidrios/Producción: test de integración que verifica que los headers de las tablas tienen el objectName correcto y el QSS esperado.
-- [ ] Vidrios/Producción: test de que los cambios de columnas visibles persisten y no rompen el layout.
-- [ ] Modo offline: test de que activar/desactivar modo offline no cierra la app y realmente cambia el estado en la base/configuración.
-- [ ] Modo offline: test de que la app funciona correctamente en modo offline (sin DB).
-- [ ] Accesibilidad: test de que todos los botones y labels tienen accessibleName y accessibleDescription donde corresponde.
-- [ ] Feedback visual: test de que los mensajes de error, éxito, advertencia e info se muestran con el color y emoji correcto.
-- [ ] Permisos: test de que un usuario sin permisos no puede ver ni acceder a módulos restringidos desde el sidebar.
+- [x] Sidebar moderno: solo muestra módulos permitidos según permisos del usuario.
+- [x] Sidebar: todos los íconos se muestran correctamente (sin faltantes ni duplicados).
+- [x] Sidebar: el indicador online/offline cambia dinámicamente según el estado real de la DB.
+- [x] Sidebar: el switch de tema funciona y persiste la preferencia.
+- [x] Consistencia visual: test visual automatizado para verificar que todas las tablas usan el mismo estilo de header y celdas.
+- [x] Consistencia visual: test que no hay headers con color incorrecto (azul/celeste antiguo) en ningún módulo.
+- [x] Vidrios/Producción: test de integración que verifica que los headers de las tablas tienen el objectName correcto y el QSS esperado.
+- [x] Vidrios/Producción: test de que los cambios de columnas visibles persisten y no rompen el layout.
+- [x] Modo offline: test de que activar/desactivar modo offline no cierra la app y realmente cambia el estado en la base/configuración.
+- [x] Modo offline: test de que la app funciona correctamente en modo offline (sin DB).
+- [x] Accesibilidad: test de que todos los botones y labels tienen accessibleName y accessibleDescription donde corresponde.
+- [x] Feedback visual: test de que los mensajes de error, éxito, advertencia e info se muestran con el color y emoji correcto.
+- [x] Permisos: test de que un usuario sin permisos no puede ver ni acceder a módulos restringidos desde el sidebar.
 
 ## INTEGRACIÓN Y FLUJOS CRÍTICOS
 - [ ] Validar integración en tiempo real entre módulos (Obras, Inventario, Vidrios): que toda obra/pedido se refleje sin recargar la app.
 - [ ] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
-- [ ] Validar integración de permisos en el sidebar y main_window.
-- [ ] Revisar y corregir la lógica de obtención de módulos permitidos para cada usuario (admin debe ver todos).
+- [x] Validar integración de permisos en el sidebar y main_window.
+- [x] Revisar y corregir la lógica de obtención de módulos permitidos para cada usuario (admin debe ver todos).
 - [ ] Validar modelo y vista de Inventario, Obras, Vidrios: feedback visual, robustez de queries y manejo de errores.
 - [ ] Integración con pedidos y obras: reflejar cambios en tiempo real.
 - [ ] Permitir edición y cancelación de pedidos antes de ser procesados, con registro de cambios en la auditoría.
@@ -123,13 +123,13 @@
 - [ ] Corregir los tests de estándares y validación listados en el bloque anterior.
 
 ## MEJORAS DE LAYOUT Y ACCESIBILIDAD
-- [ ] Unificar todos los botones de acción en cada módulo en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
-- [ ] Sidebar: verificar que los botones cumplen el estándar visual y de espaciado (8px vertical entre botones, padding 10px horizontal).
-- [ ] Todos los botones principales deben ser solo ícono, sin texto visible, salvo justificación documentada.
-- [ ] Usar siempre el helper estilizar_boton_icono para tamaño, color y sombra uniforme.
-- [ ] El espaciado entre botones debe ser de 16px (o el definido en el estándar).
-- [ ] Si algún módulo requiere una excepción (botón con texto, disposición vertical, etc.), debe documentarse en el código y en docs/estandares_visuales.md.
-- [ ] Verificar que todos los layouts principales usen QVBoxLayout con setContentsMargins(24, 20, 24, 20) y setSpacing(16).
+- [x] Unificar todos los botones de acción en cada módulo en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
+- [x] Sidebar: verificar que los botones cumplen el estándar visual y de espaciado (8px vertical entre botones, padding 10px horizontal).
+- [x] Todos los botones principales deben ser solo ícono, sin texto visible, salvo justificación documentada.
+- [x] Usar siempre el helper estilizar_boton_icono para tamaño, color y sombra uniforme.
+- [x] El espaciado entre botones debe ser de 16px (o el definido en el estándar).
+- [x] Si algún módulo requiere una excepción (botón con texto, disposición vertical, etc.), debe documentarse en el código y en docs/estandares_visuales.md.
+- [x] Verificar que todos los layouts principales usen QVBoxLayout con setContentsMargins(24, 20, 24, 20) y setSpacing(16).
 
 ## TESTS AUTOMÁTICOS Y COBERTURA
 - [ ] Crear tests unitarios y de integración para cada módulo.

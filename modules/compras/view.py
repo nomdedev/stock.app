@@ -45,9 +45,9 @@ class ComprasView(QWidget, TableResponsiveMixin):
         # --- FEEDBACK VISUAL GLOBAL (accesible, visible siempre arriba del QTabWidget) ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")  # Para QSS global
-        # self.label_feedback.setStyleSheet("font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; background: #f1f5f9;")  # Migrado a QSS global
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Feedback visual de Compras")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario en Compras")
         self.main_layout.addWidget(self.label_feedback)
         # --- FIN FEEDBACK VISUAL GLOBAL ---
 
@@ -57,6 +57,11 @@ class ComprasView(QWidget, TableResponsiveMixin):
 
         self._feedback_timer = None  # Temporizador para feedback visual
 
+        # Refuerzo de accesibilidad en todos los QLabel
+        for widget in self.findChildren(QLabel):
+            if not widget.accessibleDescription():
+                widget.setAccessibleDescription("Label informativo o de feedback en Compras")
+
     def inicializar_botones(self):
         # Botón principal de acción (Nuevo pedido)
         botones_layout = QHBoxLayout()
@@ -65,6 +70,7 @@ class ComprasView(QWidget, TableResponsiveMixin):
         self.boton_nuevo.setIcon(QIcon("resources/icons/add-entrega.svg"))
         self.boton_nuevo.setIconSize(QSize(24, 24))
         self.boton_nuevo.setToolTip("Nuevo pedido")
+        self.boton_nuevo.setAccessibleName("Botón nuevo pedido de compras")
         self.boton_nuevo.setText("")
         self.boton_nuevo.setFixedSize(48, 48)
         # self.boton_nuevo.setStyleSheet("")  # Migrado a QSS global
@@ -99,6 +105,8 @@ class ComprasView(QWidget, TableResponsiveMixin):
         self.tabla_comparacion.setColumnCount(3)
         self.tabla_comparacion.setHorizontalHeaderLabels(self.comparacion_headers)
         self.make_table_responsive(self.tabla_comparacion)
+        self.tabla_comparacion.setToolTip("Tabla de comparación de presupuestos")
+        self.tabla_comparacion.setAccessibleName("Tabla de comparación de presupuestos de compras")
 
         for row_idx, presupuesto in enumerate(presupuestos):
             self.tabla_comparacion.setItem(row_idx, 0, QTableWidgetItem(presupuesto[0]))

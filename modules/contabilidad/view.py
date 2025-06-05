@@ -45,12 +45,14 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Contabilidad")
+        self.label_titulo.setAccessibleDescription("Título principal de la vista de Contabilidad")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar registro)
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar registro")
+        self.boton_agregar.setAccessibleName("Botón agregar registro de contabilidad")
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
@@ -190,10 +192,9 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
-        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
-        self.label_feedback.setAccessibleName("Mensaje de feedback de contabilidad")
-        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
+        self.label_feedback.setAccessibleName("Feedback visual de Contabilidad")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario en Contabilidad")
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None
         # --- FIN FEEDBACK VISUAL GLOBAL ---
@@ -255,25 +256,31 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.boton_agregar_recibo.clicked.connect(self.abrir_dialogo_nuevo_recibo)
 
         # Refuerzo de accesibilidad en botones principales
-        for btn in [self.boton_agregar_balance, self.boton_agregar_recibo]:
+        for btn in [self.boton_agregar_balance, self.boton_agregar_recibo, self.boton_actualizar_grafico, self.boton_estadistica_personalizada]:
             btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            # QSS global: el outline y tamaño de fuente se gestiona en themes/light.qss y dark.qss
-            # btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
             font = btn.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
             btn.setFont(font)
             if not btn.toolTip():
                 btn.setToolTip("Botón de acción")
-            if not btn.accessibleName():
+            # Nombres accesibles más descriptivos
+            if btn is self.boton_agregar_balance:
+                btn.setAccessibleName("Botón agregar movimiento contable")
+            elif btn is self.boton_agregar_recibo:
+                btn.setAccessibleName("Botón agregar recibo de contabilidad")
+            elif btn is self.boton_actualizar_grafico:
+                btn.setAccessibleName("Botón actualizar gráfico de estadísticas")
+            elif btn is self.boton_estadistica_personalizada:
+                btn.setAccessibleName("Botón estadística personalizada de contabilidad")
+            else:
                 btn.setAccessibleName("Botón de acción de contabilidad")
         # Refuerzo de accesibilidad en tablas principales
-        for tabla in [self.tabla_balance, self.tabla_pagos, self.tabla_recibos]:
+        for tabla, nombre in zip([self.tabla_balance, self.tabla_pagos, self.tabla_recibos],
+                                 ["Tabla de balance contable", "Tabla de pagos contables", "Tabla de recibos contables"]):
             tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            # QSS global: el tamaño de fuente y outline se gestiona en themes/light.qss y dark.qss
-            # tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
-            tabla.setToolTip("Tabla de datos contables")
-            tabla.setAccessibleName("Tabla principal de contabilidad")
+            tabla.setToolTip(nombre)
+            tabla.setAccessibleName(nombre)
             h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
             if h_header is not None:
                 # QSS global: el estilo de header se define en themes/light.qss y dark.qss
@@ -296,6 +303,8 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             if font.pointSize() < 12:
                 font.setPointSize(12)
             widget.setFont(font)
+            if not widget.accessibleDescription():
+                widget.setAccessibleDescription("Label informativo o de feedback en Contabilidad")
         # Márgenes y padding en layouts según estándar
         self.main_layout.setContentsMargins(24, 20, 24, 20)
         self.main_layout.setSpacing(16)
@@ -318,14 +327,23 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             btn.setFont(font)
             if not btn.toolTip():
                 btn.setToolTip("Botón de acción")
-            if not btn.accessibleName():
+            # Nombres accesibles más descriptivos
+            if btn is self.boton_agregar_balance:
+                btn.setAccessibleName("Botón agregar movimiento contable")
+            elif btn is self.boton_agregar_recibo:
+                btn.setAccessibleName("Botón agregar recibo de contabilidad")
+            elif btn is self.boton_actualizar_grafico:
+                btn.setAccessibleName("Botón actualizar gráfico de estadísticas")
+            elif btn is self.boton_estadistica_personalizada:
+                btn.setAccessibleName("Botón estadística personalizada de contabilidad")
+            else:
                 btn.setAccessibleName("Botón de acción de contabilidad")
         # Refuerzo de accesibilidad en tablas principales
-        for tabla in [self.tabla_balance, self.tabla_pagos, self.tabla_recibos]:
+        for tabla, nombre in zip([self.tabla_balance, self.tabla_pagos, self.tabla_recibos],
+                                 ["Tabla de balance contable", "Tabla de pagos contables", "Tabla de recibos contables"]):
             tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            # QSS global: el tamaño de fuente y outline se gestiona en themes/light.qss y dark.qss
-            tabla.setToolTip("Tabla de datos contables")
-            tabla.setAccessibleName("Tabla principal de contabilidad")
+            tabla.setToolTip(nombre)
+            tabla.setAccessibleName(nombre)
             h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
             if h_header is not None:
                 # QSS global: el estilo de header se define en themes/light.qss y dark.qss
@@ -347,6 +365,8 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             if font.pointSize() < 12:
                 font.setPointSize(12)
             widget.setFont(font)
+            if not widget.accessibleDescription():
+                widget.setAccessibleDescription("Label informativo o de feedback en Contabilidad")
         # Márgenes y padding en layouts según estándar
         self.main_layout.setContentsMargins(24, 20, 24, 20)
         self.main_layout.setSpacing(16)

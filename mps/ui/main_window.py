@@ -9,7 +9,7 @@ from PyQt6.QtCore import Qt
 # Importar componentes UI
 # from mps.ui.components.topbar import TopBar  # ERROR: No existe el archivo topbar.py en mps/ui/components/
 # TODO: Crear o restaurar el componente TopBar, o reemplazarlo por un header alternativo.
-from mps.ui.components.sidebar import Sidebar
+from mps.ui.components.sidebar_moderno import Sidebar
 from modules.inventario.view import InventarioView
 from modules.obras.view import ObrasView
 from modules.logistica.view import LogisticaView
@@ -55,7 +55,8 @@ class MainWindow(QMainWindow):
             ("Usuarios", os.path.join("utils", "users.svg")),
             ("Configuración", os.path.join("utils", "configuracion.svg")),
         ]
-        self.sidebar = Sidebar(icons_path="utils", sections=sidebar_sections, mostrar_nombres=True)
+        # Sidebar moderno no requiere icons_path, solo sections y mostrar_nombres
+        self.sidebar = Sidebar(sections=sidebar_sections, mostrar_nombres=True)
         self.sidebar.setFixedWidth(200)
         content_layout.addWidget(self.sidebar)
 

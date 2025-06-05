@@ -28,10 +28,9 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
-        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
-        self.label_feedback.setAccessibleName("Mensaje de feedback de herrajes")
-        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
+        self.label_feedback.setAccessibleName("Feedback visual de Herrajes")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario en Herrajes")
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None
         # --- FIN FEEDBACK VISUAL CENTRALIZADO ---
@@ -47,12 +46,14 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Herrajes")
+        self.label_titulo.setAccessibleDescription("Título principal de la vista de Herrajes")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar herraje)
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar herraje")
+        self.boton_agregar.setAccessibleName("Botón agregar herraje")
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
@@ -141,6 +142,11 @@ class HerrajesView(QWidget, TableResponsiveMixin):
                 pass
 
         # --- FIN refuerzo estándar feedback/accesibilidad ---
+
+        # Refuerzo de accesibilidad en todos los QLabel
+        for widget in self.findChildren(QLabel):
+            if not widget.accessibleDescription():
+                widget.setAccessibleDescription("Label informativo o de feedback en Herrajes")
 
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=3500):
         """

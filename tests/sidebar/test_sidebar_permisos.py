@@ -57,7 +57,7 @@ def test_sidebar_muestra_modulos_permitidos_admin(app):
     ]
     for extra_nombre, extra_icon in extras:
         btns = [w for w in sidebar.findChildren(type(sidebar._sidebar_buttons[0])) if w.text() == extra_nombre]
-        assert btns, f"No se encontró el botón extra '{extra_nombre}'"
+        assert btns, f"No se encontró el botón '{extra_nombre}'"
         for btn in btns:
             assert _icon_cache_key(btn.icon()) == _icon_cache_key(extra_icon), f"El ícono de '{extra_nombre}' no es el esperado"
     # 9. No hay íconos duplicados

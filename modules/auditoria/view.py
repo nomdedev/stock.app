@@ -23,6 +23,7 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
         self.label_feedback.setProperty("feedback", True)
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Feedback visual de Auditoría")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario en Auditoría")
         # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         # Si se requiere refuerzo visual, hacerlo solo vía QSS global (resources/qss/theme_light.qss o theme_dark.qss)
         # Eliminado setStyleSheet directo en header para unificar estilo visual global y evitar doble fondo/conflictos
@@ -45,12 +46,14 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Auditoría")
+        self.label_titulo.setAccessibleDescription("Título principal de la vista de Auditoría")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar registro)
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar registro")
+        self.boton_agregar.setAccessibleName("Botón agregar registro de auditoría")
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
@@ -146,6 +149,8 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
             if font.pointSize() < 12:
                 font.setPointSize(12)
             widget.setFont(font)
+            if not widget.accessibleDescription():
+                widget.setAccessibleDescription("Label informativo o de feedback en Auditoría")
         # Márgenes y padding en layouts según estándar
         self.main_layout.setContentsMargins(24, 20, 24, 20)
         self.main_layout.setSpacing(16)

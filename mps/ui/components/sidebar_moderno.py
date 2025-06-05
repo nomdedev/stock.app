@@ -9,8 +9,9 @@ from utils.icon_loader import get_icon
 class Sidebar(QWidget):
     estado_cambiado = pyqtSignal(bool)  # True=online, False=offline
     pageChanged = pyqtSignal(int)  # Nueva señal para cambiar de página
-    def __init__(self, sections, mostrar_nombres=False, online=True, modo_oscuro=False):
+    def __init__(self, sections, mostrar_nombres=False, online=True, modo_oscuro=False, widget_tema_target=None):
         super().__init__()
+        self._widget_tema_target = widget_tema_target  # Widget donde se aplicará el QSS
         self.setObjectName("sidebar")
         layout = QVBoxLayout()
         layout.setContentsMargins(8, 8, 8, 8)
@@ -54,28 +55,22 @@ class Sidebar(QWidget):
         layout.addSpacing(16)
 
         # --- BLOQUE 2: Configuración, Logs, Ayuda ---
-        nombres_modulos = [title.lower() for title, _ in sections]
-        if "configuración".lower() not in nombres_modulos:
-            btn_conf = SidebarButton(icon=get_icon("configuracion"), text="Configuración")
-            btn_conf.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-            btn_conf.setFixedHeight(40)
-            btn_conf.setIconSize(QSize(24, 24))
-            btn_conf.setObjectName("sidebarButton")
-            layout.addWidget(btn_conf)
-        if "logs" not in nombres_modulos:
-            btn_logs = SidebarButton(icon=get_icon("logs"), text="Logs")
-            btn_logs.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-            btn_logs.setFixedHeight(40)
-            btn_logs.setIconSize(QSize(24, 24))
-            btn_logs.setObjectName("sidebarButton")
-            layout.addWidget(btn_logs)
-        if "ayuda" not in nombres_modulos:
-            btn_ayuda = SidebarButton(icon=get_icon("ayuda"), text="Ayuda")
-            btn_ayuda.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-            btn_ayuda.setFixedHeight(40)
-            btn_ayuda.setIconSize(QSize(24, 24))
-            btn_ayuda.setObjectName("sidebarButton")
-            layout.addWidget(btn_ayuda)
+        # Solo agregar extras si hay módulos principales
+        if self._sidebar_buttons:
+            extras = ["Configuración", "Logs", "Ayuda"]
+            titulos_existentes = [btn.text() for btn in self._sidebar_buttons]
+            iconos_secciones = {title: icon for (title, icon) in sections}
+            for extra_nombre in extras:
+                # Solo agregar si NO está ya en las secciones principales
+                if extra_nombre not in titulos_existentes:
+                    icon_extra = iconos_secciones.get(extra_nombre, get_icon(extra_nombre.lower()))
+                    btn_extra = SidebarButton(icon=icon_extra, text=extra_nombre)
+                    btn_extra.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+                    btn_extra.setFixedHeight(40)
+                    btn_extra.setIconSize(QSize(24, 24))
+                    btn_extra.setObjectName("sidebarButton")
+                    layout.addWidget(btn_extra)
+                    self._sidebar_buttons.append(btn_extra)
 
         layout.addSpacing(12)
 
@@ -98,6 +93,16 @@ class Sidebar(QWidget):
         layout.addSpacing(8)
 
         self.setLayout(layout)
+
+        # Refuerzo de accesibilidad: todos los QLabel hijos reciben accessibleDescription y accessibleName si no lo tienen
+        self._reforzar_accesibilidad_labels()
+
+    def _reforzar_accesibilidad_labels(self):
+        for widget in self.findChildren(QLabel):
+            if not widget.accessibleDescription():
+                widget.setAccessibleDescription("Label informativo o decorativo en Sidebar")
+            if not widget.accessibleName():
+                widget.setAccessibleName("Label de Sidebar")
 
     def set_estado_online(self, online: bool):
         self._set_estado_online(online)
@@ -140,9 +145,9 @@ class Sidebar(QWidget):
             self._animando = False
             # Cambiar el tema real de la app
             from utils.theme_manager import set_theme, guardar_modo_tema
-            app = self.parentWidget()
+            app = self._widget_tema_target or self.parentWidget()
             while app and not hasattr(app, 'setStyleSheet'):
-                app = app.parentWidget()
+                app = app.parentWidget() if hasattr(app, 'parentWidget') else None
             if app:
                 set_theme(app, "dark" if self._modo_oscuro else "light")
                 guardar_modo_tema("dark" if self._modo_oscuro else "light")

@@ -17,7 +17,8 @@ class ConfiguracionView(QMainWindow):
         # label_feedback inicializado una sola vez y siempre visible (oculto por defecto)
         self.label_feedback = QLabel()
         self.label_feedback.setVisible(False)
-        self.label_feedback.setAccessibleDescription("Mensaje de feedback global")
+        self.label_feedback.setAccessibleName("Feedback visual de Configuración")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario en Configuración")
         self.main_layout.addWidget(self.label_feedback)
         self.setup_ui()
         self._cargar_configuracion_conexion()
@@ -28,12 +29,14 @@ class ConfiguracionView(QMainWindow):
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Configuración")
+        self.label_titulo.setAccessibleDescription("Título principal de la vista de Configuración")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar configuración)
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar configuración")
+        self.boton_agregar.setAccessibleName("Botón agregar configuración")
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
@@ -198,26 +201,7 @@ class ConfiguracionView(QMainWindow):
             btn.setFont(font)
             if not btn.toolTip():
                 btn.setToolTip("Botón de acción")
-            if not btn.accessibleName():
-                btn.setAccessibleName("Botón de acción de configuración")
-        # Refuerzo de accesibilidad en tabla de preview
-        self.preview_table.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        # self.preview_table.setStyleSheet(self.preview_table.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
-        self.preview_table.setToolTip("Tabla de previsualización de inventario")
-        self.preview_table.setAccessibleName("Tabla de preview de configuración")
-        # Refuerzo visual y robustez en header de tabla de preview
-        h_header = self.preview_table.horizontalHeader() if hasattr(self.preview_table, 'horizontalHeader') else None
-        if h_header is not None:
-            try:
-                # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
-                pass
-            except Exception as e:
-                # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
-                pass
-        else:
-            # EXCEPCIÓN VISUAL: No se puede aplicar refuerzo visual porque el header es None
-            pass
-        # Refuerzo de accesibilidad en QLabel (incluye label_feedback y mensaje_label)
+            # Refuerzo de accesibilidad en QLabel (incluye label_feedback y mensaje_label)
         for widget in self.findChildren(QLabel):
             font = widget.font()
             if font.pointSize() < 12:
@@ -225,7 +209,13 @@ class ConfiguracionView(QMainWindow):
             widget.setFont(font)
             # Refuerzo de accesibilidad descriptiva
             if not widget.accessibleDescription():
-                widget.setAccessibleDescription("Label informativo o de feedback")
+                widget.setAccessibleDescription("Label informativo o de feedback en Configuración")
+        # Asignar nombres accesibles específicos a los botones de acción después del refuerzo
+        self.boton_seleccionar_csv.setAccessibleName("Botón seleccionar archivo CSV/Excel para importar inventario")
+        self.boton_importar_csv.setAccessibleName("Botón importar inventario a la base de datos")
+        # Asignar toolTip y accessibleName a preview_table después del refuerzo
+        self.preview_table.setToolTip("Tabla de previsualización de inventario")
+        self.preview_table.setAccessibleName("Tabla de preview de configuración")
         # Márgenes y padding en layouts según estándar
         main_widget = self.centralWidget()
         layout = main_widget.layout() if main_widget is not None and hasattr(main_widget, 'layout') else None

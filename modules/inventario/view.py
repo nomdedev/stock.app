@@ -43,24 +43,23 @@ class InventarioView(QWidget, TableResponsiveMixin):
         # --- FEEDBACK VISUAL Y ACCESIBILIDAD ---
         self.label_feedback = QLabel("")
         self.label_feedback.setObjectName("label_feedback")
-        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
-        self.label_feedback.setAccessibleName("Mensaje de feedback de inventario")
-        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
+        self.label_feedback.setAccessibleName("Feedback visual de Inventario")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario en Inventario")
         self.main_layout.addWidget(self.label_feedback)
-        self._feedback_timer = None
-
         # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Inventario")
+        self.label_titulo.setAccessibleDescription("Título principal de la vista de Inventario")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar item)
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar item")
+        self.boton_agregar.setAccessibleName("Botón agregar ítem de inventario")
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
@@ -71,6 +70,9 @@ class InventarioView(QWidget, TableResponsiveMixin):
             error_label = QLabel("❌ Error: No se pudo conectar a la base de datos de inventario.\nVerifique la configuración o contacte al administrador.")
             # QSS global: el color y formato de error se define en themes/light.qss y dark.qss
             error_label.setProperty("feedback", "error")  # Para que el QSS global lo seleccione
+            # Refuerzo de accesibilidad explícito para tests
+            error_label.setAccessibleDescription("Mensaje de error crítico de conexión en Inventario")
+            error_label.setAccessibleName("Label de error de conexión en Inventario")
             self.main_layout.addWidget(error_label)
             self.setLayout(self.main_layout)
             return
@@ -81,19 +83,20 @@ class InventarioView(QWidget, TableResponsiveMixin):
         top_btns_layout = QHBoxLayout()
         top_btns_layout.addStretch()
         iconos = [
-            ("add-material.svg", "Agregar nuevo ítem", self.nuevo_item_signal),
-            ("excel_icon.svg", "Exportar a Excel", self.exportar_excel_signal),
-            ("pdf_icon.svg", "Exportar a PDF", self.exportar_pdf_signal),
-            ("search_icon.svg", "Buscar ítem", self.buscar_signal),
-            ("qr_icon.svg", "Generar código QR", self.generar_qr_signal),
-            ("viewdetails.svg", "", self.ver_obras_pendientes_material),
-            ("reserve-stock.svg", "", self.abrir_reserva_lote_perfiles),
+            ("add-material.svg", "Agregar nuevo ítem", self.nuevo_item_signal, "Botón agregar nuevo ítem de inventario"),
+            ("excel_icon.svg", "Exportar a Excel", self.exportar_excel_signal, "Botón exportar inventario a Excel"),
+            ("pdf_icon.svg", "Exportar a PDF", self.exportar_pdf_signal, "Botón exportar inventario a PDF"),
+            ("search_icon.svg", "Buscar ítem", self.buscar_signal, "Botón buscar ítem de inventario"),
+            ("qr_icon.svg", "Generar código QR", self.generar_qr_signal, "Botón generar código QR de inventario"),
+            ("viewdetails.svg", "", self.ver_obras_pendientes_material, "Botón ver obras pendientes de material"),
+            ("reserve-stock.svg", "", self.abrir_reserva_lote_perfiles, "Botón reservar lote de perfiles"),
         ]
-        for icono, tooltip, signal in iconos:
+        for icono, tooltip, signal, accesible in iconos:
             btn = QPushButton()
             btn.setIcon(QIcon(f"resources/icons/{icono}"))
             btn.setIconSize(QSize(24, 24))
             btn.setToolTip(tooltip)
+            btn.setAccessibleName(accesible)
             btn.setText("")
             btn.clicked.connect(signal.emit if hasattr(signal, 'emit') else signal)
             estilizar_boton_icono(btn)
@@ -109,6 +112,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.tabla_inventario.setAlternatingRowColors(True)
         self.tabla_inventario.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabla_inventario.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.tabla_inventario.setToolTip("Tabla principal de inventario")
+        self.tabla_inventario.setAccessibleName("Tabla de inventario")
         v_header = self.tabla_inventario.verticalHeader()
         if v_header is not None:
             v_header.setVisible(False)
@@ -169,6 +174,13 @@ class InventarioView(QWidget, TableResponsiveMixin):
 
         # Conectar la señal exportar_excel_signal al método exportar_tabla_a_excel
         self.exportar_excel_signal.connect(self.exportar_tabla_a_excel)
+
+        # Refuerzo de accesibilidad en todos los QLabel
+        for widget in self.findChildren(QLabel):
+            if not widget.accessibleDescription():
+                widget.setAccessibleDescription("Label informativo o de feedback en Inventario")
+            if not widget.accessibleName():
+                widget.setAccessibleName("Label de Inventario")
 
     def obtener_headers_desde_db(self, tabla):
         # --- POLÍTICA DE SEGURIDAD: No hardcodear cadenas de conexión. Usar variables de entorno o config segura ---
