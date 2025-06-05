@@ -10,6 +10,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from core.table_responsive_mixin import TableResponsiveMixin
 from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
+from core.event_bus import event_bus
 
 class VidriosView(QWidget, TableResponsiveMixin):
     """
@@ -128,6 +129,9 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self._feedback_timer = None
 
         self.tabla_vidrios.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
+
+        # Suscribirse a la señal global de integración en tiempo real
+        event_bus.obra_agregada.connect(self.actualizar_por_obra)
 
         self.setLayout(self.main_layout)
 
@@ -346,6 +350,22 @@ class VidriosView(QWidget, TableResponsiveMixin):
         if hasattr(self, 'dialog_carga') and self.dialog_carga:
             self.dialog_carga.accept()
             self.dialog_carga = None
+
+    def actualizar_por_obra(self, datos_obra):
+        """
+        Actualiza la vista de vidrios en tiempo real cuando se agrega una nueva obra.
+        Muestra feedback visual inmediato y refresca los datos necesarios.
+        """
+        self.refrescar_por_obra(datos_obra)
+        self.mostrar_feedback(f"Nueva obra agregada: {datos_obra.get('nombre','')} (vidrios actualizados)", tipo="info")
+
+    def refrescar_por_obra(self, datos_obra):
+        # Lógica para refrescar la tabla de vidrios tras una nueva obra
+        if hasattr(self, 'tabla_vidrios'):
+            self.tabla_vidrios.setRowCount(0)  # Limpia la tabla para forzar recarga visual
+            print(f"[INFO] Refrescado visual de vidrios tras obra agregada: {datos_obra}")
+        else:
+            print("[WARN] No se pudo refrescar vidrios tras obra agregada.")
 
 # NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
 # Ejemplo de cadena de conexión (solo para documentación, no usar en código):

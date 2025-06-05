@@ -19,6 +19,7 @@ from modules.auditoria.model import AuditoriaModel
 from functools import wraps
 from core.ui_components import estilizar_boton_icono
 from modules.obras.model import OptimisticLockError
+from core.event_bus import event_bus
 
 class PermisoAuditoria:
     def __init__(self, modulo):
@@ -419,15 +420,13 @@ class ObrasController:
                     "fecha": fecha_compra,
                     "fecha_entrega": fecha_entrega
                 }
-                # Emitir señal para integración en tiempo real (robustecida)
-                if hasattr(self.view, 'obra_agregada'):
-                    self.view.obra_agregada.emit(datos_obra)
-                    if hasattr(self.view, 'mostrar_mensaje'):
-                        self.view.mostrar_mensaje(
-                            "Notificación enviada a Inventario y Vidrios para actualización en tiempo real.",
-                            tipo='info', duracion=3500
-                        )
-                # Feedback visual adicional en consola para auditoría
+                # Emitir señal global para integración en tiempo real
+                event_bus.obra_agregada.emit(datos_obra)
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(
+                        "Notificación enviada a Inventario y Vidrios para actualización en tiempo real.",
+                        tipo='info', duracion=3500
+                    )
                 print(f"[INTEGRACIÓN] Señal obra_agregada emitida con datos: {datos_obra}")
                 # Feedback visual
                 mensaje = (
@@ -745,15 +744,13 @@ class ObrasController:
                     "fecha": fecha_compra,
                     "fecha_entrega": fecha_entrega
                 }
-                # Emitir señal para integración en tiempo real (robustecida)
-                if hasattr(self.view, 'obra_agregada'):
-                    self.view.obra_agregada.emit(datos_obra)
-                    if hasattr(self.view, 'mostrar_mensaje'):
-                        self.view.mostrar_mensaje(
-                            "Notificación enviada a Inventario y Vidrios para actualización en tiempo real.",
-                            tipo='info', duracion=3500
-                        )
-                # Feedback visual adicional en consola para auditoría
+                # Emitir señal global para integración en tiempo real
+                event_bus.obra_agregada.emit(datos_obra)
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(
+                        "Notificación enviada a Inventario y Vidrios para actualización en tiempo real.",
+                        tipo='info', duracion=3500
+                    )
                 print(f"[INTEGRACIÓN] Señal obra_agregada emitida con datos: {datos_obra}")
                 # Feedback visual
                 mensaje = (

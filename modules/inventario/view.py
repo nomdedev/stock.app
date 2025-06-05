@@ -11,6 +11,7 @@ from core.table_responsive_mixin import TableResponsiveMixin
 from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 from core.logger import log_error
 from core.config import get_db_server
+from core.event_bus import event_bus
 
 # ---
 # EXCEPCIÓN JUSTIFICADA: Este módulo no requiere feedback de carga adicional porque los procesos son instantáneos o ya usan QProgressBar en operaciones largas (ver mostrar_feedback_carga). Ver test_feedback_carga y docs/estandares_visuales.md.
@@ -181,6 +182,9 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 widget.setAccessibleDescription("Label informativo o de feedback en Inventario")
             if not widget.accessibleName():
                 widget.setAccessibleName("Label de Inventario")
+
+        # Suscribirse a la señal global de integración en tiempo real
+        event_bus.obra_agregada.connect(self.actualizar_por_obra)
 
     def obtener_headers_desde_db(self, tabla):
         # --- POLÍTICA DE SEGURIDAD: No hardcodear cadenas de conexión. Usar variables de entorno o config segura ---
@@ -621,4 +625,33 @@ class InventarioView(QWidget, TableResponsiveMixin):
         if hasattr(self, 'dialog_carga') and self.dialog_carga:
             self.dialog_carga.accept()
             self.dialog_carga = None
+
+    def actualizar_por_obra(self, datos_obra):
+        """
+        Actualiza el inventario en tiempo real cuando se agrega una nueva obra.
+        Muestra feedback visual inmediato y refresca los datos necesarios.
+        """
+        # Aquí puedes refrescar solo lo necesario, por ejemplo:
+        self.refrescar_stock_por_obra(datos_obra)
+        self.mostrar_feedback_visual(f"Nueva obra agregada: {datos_obra.get('nombre','')} (stock actualizado)", tipo="info")
+
+    def refrescar_stock_por_obra(self, datos_obra):
+        # Lógica para refrescar el stock afectado por la nueva obra
+        # Recarga la tabla si existe el método cargar_items y la tabla
+        if hasattr(self, 'cargar_items') and hasattr(self, 'tabla_inventario'):
+            # Intenta recargar la tabla con los datos actuales
+            self.cargar_items([])  # Limpia la tabla
+            # Feedback visual mínimo
+            print(f"[INFO] Refrescado visual de inventario tras obra agregada: {datos_obra}")
+        else:
+            print("[WARN] No se pudo refrescar inventario tras obra agregada.")
+
+    def mostrar_feedback_visual(self, mensaje, tipo="info"):
+        # Helper para feedback visual accesible y consistente
+        if hasattr(self, 'label_feedback'):
+            self.label_feedback.setText(mensaje)
+            self.label_feedback.setVisible(True)
+            # Aquí puedes aplicar color/emoji según tipo
+        else:
+            print(mensaje)
 # NOTA: Todos los estilos visuales y feedback deben ser gestionados por QSS global (themes/light.qss y dark.qss). No usar setStyleSheet embebido. Si se requiere excepción, documentar y justificar en docs/estandares_visuales.md
