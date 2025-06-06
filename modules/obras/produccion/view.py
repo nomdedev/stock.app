@@ -17,7 +17,15 @@ class ProduccionView(QWidget):
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(20)
-        
+        # Feedback visual accesible
+        self.label_feedback = QLabel()
+        self.label_feedback.setObjectName("label_feedback")
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Mensaje de feedback de producción")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario en Producción")
+        self.main_layout.addWidget(self.label_feedback)
+        self._feedback_timer = None
+
         # Cargar y aplicar QSS global y tema visual (solo desde resources/qss/)
         from utils.theme_manager import cargar_modo_tema
         tema = cargar_modo_tema()
@@ -262,6 +270,44 @@ class ProduccionView(QWidget):
         btn_guardar.clicked.connect(guardar)
         btn_pdf.clicked.connect(exportar_pdf)
         dialog.exec()
+
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000, titulo_personalizado=None):
+        """
+        Muestra feedback visual crítico (QMessageBox) y en label_feedback.
+        Usar para errores, advertencias o confirmaciones importantes.
+        Para feedback informativo/accesible, usar mostrar_feedback.
+        """
+        colores = {
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "advertencia": "#fbbf24",
+            "error": "#ef4444"
+        }
+        color = colores.get(tipo, "#2563eb")
+        self.label_feedback.setText(mensaje)
+        self.label_feedback.setVisible(True)
+        self.label_feedback.setAccessibleDescription(mensaje)
+        self.label_feedback.setAccessibleName(f"Mensaje de feedback de producción ({tipo})")
+        from PyQt6.QtWidgets import QMessageBox
+        if tipo == "error":
+            titulo = titulo_personalizado if titulo_personalizado else "Error"
+            QMessageBox.critical(self, titulo, mensaje)
+        elif tipo == "advertencia":
+            titulo = titulo_personalizado if titulo_personalizado else "Advertencia"
+            QMessageBox.warning(self, titulo, mensaje)
+        elif tipo == "exito":
+            titulo = titulo_personalizado if titulo_personalizado else "Éxito"
+            QMessageBox.information(self, titulo, mensaje)
+        elif tipo == "info":
+            titulo = titulo_personalizado if titulo_personalizado else "Información"
+            QMessageBox.information(self, titulo, mensaje)
+        from PyQt6.QtCore import QTimer
+        if self._feedback_timer:
+            self._feedback_timer.stop()
+        self._feedback_timer = QTimer(self)
+        self._feedback_timer.setSingleShot(True)
+        self._feedback_timer.timeout.connect(lambda: self.label_feedback.setVisible(False))
+        self._feedback_timer.start(duracion)
 
     def accion_agregar_produccion(self):
         from PyQt6.QtWidgets import QMessageBox

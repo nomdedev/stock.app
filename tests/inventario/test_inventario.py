@@ -32,22 +32,28 @@ class TestInventarioModel(unittest.TestCase):
 
     def setUp(self):
         self.mock_db = Mock()
+        # Soporte para context manager en transacciones
+        self.mock_db.transaction = Mock()
+        self.mock_db.transaction.return_value.__enter__ = lambda s: s
+        self.mock_db.transaction.return_value.__exit__ = lambda s, exc_type, exc_val, tb: None
         self.inventario_model = InventarioModel(self.mock_db)
 
     def test_generar_qr(self):
-        # Simular generación de QR
         id_item = 1
         self.mock_db.ejecutar_query.side_effect = [
             [("123456.789",)],  # Resultado de la primera consulta (SELECT)
             None  # Resultado de la segunda consulta (UPDATE)
         ]
-
         qr_code = self.inventario_model.generar_qr(id_item)
-
-        # Verificar que ambas consultas se realizaron correctamente
         self.mock_db.ejecutar_query.assert_any_call("SELECT codigo FROM inventario_perfiles WHERE id = ?", (id_item,))
         self.mock_db.ejecutar_query.assert_any_call("UPDATE inventario_perfiles SET qr = ? WHERE id = ?", ("QR-123456.789", id_item))
         self.assertEqual(qr_code, "QR-123456.789")
+
+    def test_generar_qr_codigo_vacio(self):
+        id_item = 99
+        self.mock_db.ejecutar_query.side_effect = [[], None]
+        qr_code = self.inventario_model.generar_qr(id_item)
+        self.assertIsNone(qr_code)
 
     def test_exportar_inventario_excel(self):
         """Probar exportación a Excel usando solo datos simulados y mock de DB."""
@@ -70,6 +76,14 @@ class TestInventarioModel(unittest.TestCase):
         resultado = self.inventario_model.exportar_inventario("pdf")
 
         self.assertEqual(resultado, "Inventario exportado a PDF.")
+
+    def test_exportar_inventario_vacio(self):
+        """Probar exportación de inventario vacío, asegurando robustez y feedback adecuado."""
+        self.mock_db.ejecutar_query.return_value = []
+        resultado = self.inventario_model.exportar_inventario("excel")
+        self.assertEqual(resultado, "Inventario exportado a Excel.")
+        resultado_pdf = self.inventario_model.exportar_inventario("pdf")
+        self.assertEqual(resultado_pdf, "Inventario exportado a PDF.")
 
     def test_actualizar_inventario(self):
         mock_model = Mock()
@@ -269,20 +283,6 @@ class TestInventarioModel(unittest.TestCase):
         args, _ = mock_view.mostrar_mensaje.call_args
         assert "completar" in args[0].lower() or "obligatorio" in args[0].lower()
 
-    def test_exportar_inventario_vacio(self):
-        """Probar exportación de inventario vacío, asegurando robustez y feedback adecuado."""
-        self.mock_db.ejecutar_query.return_value = []
-        resultado = self.inventario_model.exportar_inventario("excel")
-        self.assertEqual(resultado, "Inventario exportado a Excel.")
-        resultado_pdf = self.inventario_model.exportar_inventario("pdf")
-        self.assertEqual(resultado_pdf, "Inventario exportado a PDF.")
-
-    def test_generar_qr_codigo_vacio(self):
-        id_item = 99
-        self.mock_db.ejecutar_query.side_effect = [[], None]
-        qr_code = self.inventario_model.generar_qr(id_item)
-        self.assertIsNone(qr_code)
-
     def test_usuario_sin_permiso_exportar(self):
         mock_model = Mock()
         mock_model.obtener_items.return_value = []
@@ -307,6 +307,131 @@ class TestInventarioModel(unittest.TestCase):
         # Simular mensaje de éxito
         controller.view.mostrar_mensaje("Operación realizada con éxito.")
         mock_view.mostrar_mensaje.assert_called_with("Operación realizada con éxito.")
+
+    def test_reservar_perfil_ok(self):
+        self.mock_db.ejecutar_query.side_effect = [
+            [(10,)],  # stock_actual = 10
+            None,     # UPDATE stock
+            [],       # No reserva previa
+            None,     # INSERT reserva
+            None,     # INSERT movimiento
+            None      # INSERT auditoría
+        ]
+        result = self.inventario_model.reservar_perfil(1, 2, 5, usuario="admin")
+        self.assertTrue(result)
+        self.mock_db.ejecutar_query.assert_any_call("UPDATE inventario_perfiles SET stock_actual = stock_actual - ? WHERE id = ?", (5, 2))
+        self.mock_db.ejecutar_query.assert_any_call("INSERT INTO perfiles_por_obra (id_obra, id_perfil, cantidad_reservada, estado) VALUES (?, ?, ?, 'Reservado')", (1, 2, 5))
+        self.mock_db.ejecutar_query.assert_any_call("INSERT INTO movimientos_stock (id_perfil, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Egreso', ?, CURRENT_TIMESTAMP, ?)", (2, 5, "admin"))
+        self.mock_db.ejecutar_query.assert_any_call("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", ("admin", "Inventario", "Reservó 5 del perfil 2 para obra 1"))
+
+    def test_reservar_perfil_stock_insuficiente(self):
+        self.mock_db.ejecutar_query.side_effect = [[(3,)] ]  # stock_actual = 3
+        with self.assertRaises(ValueError) as cm:
+            self.inventario_model.reservar_perfil(1, 2, 5, usuario="admin")
+        self.assertIn("Stock insuficiente", str(cm.exception))
+
+    def test_reservar_perfil_perfil_no_encontrado(self):
+        self.mock_db.ejecutar_query.side_effect = [[]]  # No existe perfil
+        with self.assertRaises(ValueError) as cm:
+            self.inventario_model.reservar_perfil(1, 2, 1, usuario="admin")
+        self.assertIn("Perfil no encontrado", str(cm.exception))
+
+    def test_devolver_perfil_ok(self):
+        self.mock_db.ejecutar_query.side_effect = [
+            None,      # UPDATE stock
+            [(5,)],   # cantidad_reservada previa
+            None,     # UPDATE cantidad_reservada
+            None,     # INSERT movimiento
+            None      # INSERT auditoría
+        ]
+        result = self.inventario_model.devolver_perfil(1, 2, 3, usuario="admin")
+        self.assertTrue(result)
+        self.mock_db.ejecutar_query.assert_any_call("UPDATE inventario_perfiles SET stock_actual = stock_actual + ? WHERE id = ?", (3, 2))
+        self.mock_db.ejecutar_query.assert_any_call("UPDATE perfiles_por_obra SET cantidad_reservada=?, estado='Reservado' WHERE id_obra=? AND id_perfil=?", (2, 1, 2))
+        self.mock_db.ejecutar_query.assert_any_call("INSERT INTO movimientos_stock (id_perfil, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Ingreso', ?, CURRENT_TIMESTAMP, ?)", (2, 3, "admin"))
+        self.mock_db.ejecutar_query.assert_any_call("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", ("admin", "Inventario", "Devolvió 3 del perfil 2 de la obra 1"))
+
+    def test_devolver_perfil_cantidad_mayor_reservada(self):
+        self.mock_db.ejecutar_query.side_effect = [
+            None, [(2,)], None, None, None
+        ]
+        with self.assertRaises(ValueError) as e:
+            self.inventario_model.devolver_perfil(1, 2, 5, usuario="admin")
+        self.assertIn("No se puede devolver más de lo reservado", str(e.exception))
+
+    def test_devolver_perfil_sin_reserva(self):
+        self.mock_db.ejecutar_query.side_effect = [
+            None, [], None, None, None
+        ]
+        with self.assertRaises(ValueError) as e:
+            self.inventario_model.devolver_perfil(1, 2, 1, usuario="admin")
+        self.assertIn("No hay reserva previa", str(e.exception))
+
+    def test_ajustar_stock_perfil_ok(self):
+        self.mock_db.ejecutar_query.side_effect = [
+            [(7,)],   # stock_actual anterior
+            None,     # UPDATE stock
+            None,     # INSERT movimiento
+            None      # INSERT auditoría
+        ]
+        result = self.inventario_model.ajustar_stock_perfil(2, 10, usuario="admin")
+        self.assertTrue(result)
+        self.mock_db.ejecutar_query.assert_any_call("UPDATE inventario_perfiles SET stock_actual = ? WHERE id = ?", (10, 2))
+        self.mock_db.ejecutar_query.assert_any_call("INSERT INTO movimientos_stock (id_perfil, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Ajuste', ?, CURRENT_TIMESTAMP, ?)", (2, 3, "admin"))
+        self.mock_db.ejecutar_query.assert_any_call("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", ("admin", "Inventario", "Ajustó stock del perfil 2 de 7 a 10"))
+
+    def test_ajustar_stock_perfil_perfil_no_encontrado(self):
+        self.mock_db.ejecutar_query.side_effect = [[]]
+        with self.assertRaises(ValueError) as cm:
+            self.inventario_model.ajustar_stock_perfil(2, 10, usuario="admin")
+        self.assertIn("Perfil no encontrado", str(cm.exception))
+
+    def test_ajustar_stock_perfil_cantidad_invalida_valida_primero(self):
+        # Debe lanzar ValueError por cantidad inválida antes de consultar stock
+        with self.assertRaises(ValueError) as cm:
+            self.inventario_model.ajustar_stock_perfil(2, -5, usuario="admin")
+        self.assertIn("Cantidad inválida", str(cm.exception))
+        self.assertFalse(self.mock_db.ejecutar_query.called)
+
+    def test_reservar_perfil_cantidad_negativa_valida_primero(self):
+        # Debe lanzar ValueError por cantidad negativa antes de consultar stock
+        with self.assertRaises(ValueError) as cm:
+            self.inventario_model.reservar_perfil(1, 2, -3, usuario="admin")
+        self.assertIn("Cantidad inválida", str(cm.exception))
+        # No debe consultar stock en la base de datos
+        self.assertFalse(self.mock_db.ejecutar_query.called)
+
+    def test_reservar_perfil_stock_insuficiente_valida_orden(self):
+        # Debe lanzar ValueError por stock insuficiente solo si la cantidad es válida
+        self.mock_db.ejecutar_query.side_effect = [[(3,)]]  # stock_actual = 3
+        with self.assertRaises(ValueError) as cm:
+            self.inventario_model.reservar_perfil(1, 2, 5, usuario="admin")
+        self.assertIn("Stock insuficiente", str(cm.exception))
+
+    def test_reservar_perfil_perfil_no_encontrado_valida_orden(self):
+        # Debe lanzar ValueError si el perfil no existe
+        self.mock_db.ejecutar_query.side_effect = [[]]  # No existe perfil
+        with self.assertRaises(ValueError) as cm:
+            self.inventario_model.reservar_perfil(1, 2, 1, usuario="admin")
+        self.assertIn("Perfil no encontrado", str(cm.exception))
+
+    def test_devolver_perfil_cantidad_mayor_reservada_valida_primero(self):
+        # No debe permitir devolver más de lo reservado
+        self.mock_db.ejecutar_query.side_effect = [
+            None, [(2,)], None, None, None
+        ]
+        with self.assertRaises(ValueError) as cm:
+            self.inventario_model.devolver_perfil(1, 2, 5, usuario="admin")
+        self.assertIn("No se puede devolver más de lo reservado", str(cm.exception))
+
+    def test_devolver_perfil_sin_reserva_valida_primero(self):
+        # No debe permitir devolver si no hay reserva
+        self.mock_db.ejecutar_query.side_effect = [
+            None, [], None, None, None
+        ]
+        with self.assertRaises(ValueError) as cm:
+            self.inventario_model.devolver_perfil(1, 2, 1, usuario="admin")
+        self.assertIn("No hay reserva previa", str(cm.exception))
 
 class TestInventarioController(InventarioController):
     def __init__(self, *args, **kwargs):

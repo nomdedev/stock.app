@@ -113,11 +113,14 @@ class ObrasController:
         self.logistica_controller = logistica_controller  # Referencia cruzada opcional
         self.pedidos_controller = pedidos_controller  # Nuevo: para gestión de pedidos
         self.produccion_controller = produccion_controller  # Nuevo: para gestión de producción
-        self.view.boton_agregar.clicked.connect(self.agregar_obra_dialog)
-        self.view.gantt_on_bar_clicked = self.editar_fecha_entrega_dialog
-        # Conexión del botón de verificación manual (si existe en la vista)
-        if hasattr(self.view, 'boton_verificar_obra'):
-            self.view.boton_verificar_obra.clicked.connect(self.verificar_obra_en_sql_dialog_base)
+        # Robustez: solo conectar señales si hay vista
+        if self.view is not None:
+            if hasattr(self.view, 'boton_agregar'):
+                self.view.boton_agregar.clicked.connect(self.agregar_obra_dialog)
+            if hasattr(self.view, 'gantt_on_bar_clicked'):
+                self.view.gantt_on_bar_clicked = self.editar_fecha_entrega_dialog
+            if hasattr(self.view, 'boton_verificar_obra'):
+                self.view.boton_verificar_obra.clicked.connect(self.verificar_obra_en_sql_dialog_base)
         self._insertar_obras_ejemplo_si_vacio()
         self.cargar_headers_obras()
         self.cargar_datos_obras_tabla()
@@ -143,7 +146,23 @@ class ObrasController:
                 ("Residencial Sur", "Grupo Delta", "Entrega", (hoy-timedelta(days=40)).strftime("%Y-%m-%d"), (hoy+timedelta(days=5)).strftime("%Y-%m-%d")),
             ]
             for nombre, cliente, estado, fecha, fecha_entrega in ejemplos:
-                self.model.agregar_obra((nombre, cliente, estado, fecha, fecha_entrega))
+                # Rellenar todos los campos requeridos por la tabla y el método agregar_obra
+                datos_obra = (
+                    nombre,                # nombre
+                    cliente,               # cliente
+                    estado,                # estado
+                    fecha,                 # fecha_compra
+                    0,                     # cantidad_aberturas
+                    0,                     # pago_completo
+                    0.0,                   # pago_porcentaje
+                    0.0,                   # monto_usd
+                    0.0,                   # monto_ars
+                    fecha,                 # fecha_medicion
+                    30,                    # dias_entrega
+                    fecha_entrega,         # fecha_entrega
+                    "admin"               # usuario_creador
+                )
+                self.model.agregar_obra(datos_obra)
 
     @permiso_auditoria_obras('cambiar_estado')
     def cambiar_estado_obra(self, id_obra, nuevo_estado):
@@ -461,6 +480,38 @@ class ObrasController:
             # Registrar error en auditoría con formato unificado
             self._registrar_evento_auditoria("alta_obra", f"Error alta obra: {e}", exito=False)
 
+    def alta_obra(self, datos):
+        """Alta de obra robusta para integración y tests. Recibe un dict con los campos clave."""
+        campos = [
+            'nombre', 'cliente', 'estado', 'fecha_compra', 'cantidad_aberturas', 'pago_completo',
+            'pago_porcentaje', 'monto_usd', 'monto_ars', 'fecha_medicion', 'dias_entrega', 'fecha_entrega', 'usuario_creador'
+        ]
+        cliente_val = datos.get('cliente')
+        if not cliente_val and 'cliente_id' in datos:
+            cliente_val = str(datos['cliente_id'])
+        datos_obra = []
+        for k in campos:
+            if k == 'cliente':
+                datos_obra.append(cliente_val or "")
+            else:
+                v = datos.get(k)
+                if v is not None:
+                    datos_obra.append(v)
+                else:
+                    datos_obra.append(0 if 'cantidad' in k or 'pago' in k or 'monto' in k or 'dias' in k else "")
+        self.model.agregar_obra(tuple(datos_obra))
+        # Obtener el id y rowversion de la última obra insertada
+        res = self.model.db_connection.ejecutar_query("SELECT id, rowversion FROM obras ORDER BY id DESC LIMIT 1")
+        if res:
+            id_obra, rowversion = res[0]
+            # Registrar auditoría con formato esperado (modulo='Obras', campo accion)
+            self.model.db_connection.ejecutar_query(
+                "INSERT INTO auditorias_sistema (usuario_id, modulo, accion, detalle, ip) VALUES (?, ?, ?, ?, ?)",
+                (self.usuario_actual['id'] if self.usuario_actual else None, 'Obras', f'Creó obra {id_obra}', f'Creó obra {id_obra}', self.usuario_actual.get('ip', '') if self.usuario_actual else '')
+            )
+            return id_obra
+        return None
+
     def editar_fecha_entrega_dialog(self, id_obra, fecha_actual):
         from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton
         dialog = QDialog(self.view)
@@ -495,8 +546,14 @@ class ObrasController:
         """
         try:
             self.model.editar_obra(id_obra, datos, rowversion_orig)
+            # Obtener el nuevo rowversion tras la edición
+            res = self.model.db_connection.ejecutar_query("SELECT rowversion FROM obras WHERE id=?", (id_obra,))
+            nuevo_rowversion = res[0][0] if res else None
+            # Registrar auditoría con formato esperado
+            self._registrar_evento_auditoria("Editó obra {}".format(id_obra), f"Editó obra {id_obra}")
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje("Obra actualizada correctamente.", tipo="exito")
+            return nuevo_rowversion
         except OptimisticLockError:
             # OPTIMISTIC LOCK: prevenir sobrescritura concurrente
             QMessageBox.warning(self.view, "Conflicto", "Obra modificada por otro usuario.")
@@ -507,8 +564,8 @@ class ObrasController:
             log_error(f"Error al editar obra: {e}")
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje(f"Error al editar obra: {e}", tipo="error")
-            # Registrar error en auditoría con formato unificado
             self._registrar_evento_auditoria("editar_obra", f"Error editar obra: {e}", exito=False)
+            raise
 
     def cargar_datos_obras(self):
         try:
@@ -817,23 +874,35 @@ class ObrasController:
         """
         Edita una obra usando bloqueo optimista (rowversion).
         Si ocurre un conflicto, muestra advertencia visual.
+        Retorna el nuevo rowversion si la edición fue exitosa.
         """
         try:
             self.model.editar_obra(id_obra, datos, rowversion_orig)
+            # Obtener el nuevo rowversion tras la edición
+            res = self.model.db_connection.ejecutar_query("SELECT rowversion FROM obras WHERE id=?", (id_obra,))
+            nuevo_rowversion = res[0][0] if res else None
+            # Registrar auditoría con formato esperado (modulo='Obras', campo accion)
+            self.model.db_connection.ejecutar_query(
+                "INSERT INTO auditorias_sistema (usuario_id, modulo, accion, detalle, ip) VALUES (?, ?, ?, ?, ?)",
+                (self.usuario_actual['id'] if self.usuario_actual else None, 'Obras', f'Editó obra {id_obra}', f'Editó obra {id_obra}', self.usuario_actual.get('ip', '') if self.usuario_actual else '')
+            )
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje("Obra actualizada correctamente.", tipo="exito")
+            return nuevo_rowversion
         except OptimisticLockError:
-            # OPTIMISTIC LOCK: prevenir sobrescritura concurrente
-            QMessageBox.warning(self.view, "Conflicto", "Obra modificada por otro usuario.")
+            from PyQt6.QtWidgets import QMessageBox
+            if self.view:
+                QMessageBox.warning(self.view, "Conflicto", "Obra modificada por otro usuario.")
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje("Conflicto: la obra fue modificada por otro usuario.", tipo="advertencia")
+            raise
         except Exception as e:
             from core.logger import log_error
             log_error(f"Error al editar obra: {e}")
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje(f"Error al editar obra: {e}", tipo="error")
-            # Registrar error en auditoría con formato unificado
             self._registrar_evento_auditoria("editar_obra", f"Error editar obra: {e}", exito=False)
+            raise
 
     def mostrar_gantt(self):
         datos = self.model.obtener_datos_obras()

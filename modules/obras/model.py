@@ -297,6 +297,8 @@ class ObrasModel:
         # datos: dict con los campos a actualizar (ej: nombre, cliente, estado, fecha_entrega...)
         set_clause = ', '.join([f"{k} = ?" for k in datos.keys()])
         valores = list(datos.values())
+        # Forzar actualización de rowversion en SQLite (simular SQL Server):
+        set_clause += ', rowversion = randomblob(8)'
         query = f"UPDATE obras SET {set_clause} WHERE id = ? AND rowversion = ?"
         valores.extend([id_obra, rowversion_orig])
         rows_affected = self.db_connection.ejecutar_query_return_rowcount(query, valores)

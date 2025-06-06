@@ -1,162 +1,3 @@
-# --- CHECKLIST DETALLADO PARA PASAR A PRODUCCIÓN (actualizado 2025-06-04) ---
-
-## 1. UI/UX, SIDEBAR Y CONSISTENCIA VISUAL
-- [x] Corregir el test del sidebar: asegurar que los botones extra (Configuración, Logs, Ayuda) usen exactamente el mismo QIcon que en los tests y no se dupliquen.
-- [x] Validar que todos los botones del sidebar tengan icono válido y accesible (incluyendo Usuarios, Configuración, Logs, Ayuda, etc.).
-- [x] Sidebar: el indicador online/offline debe cambiar dinámicamente según el estado real de la DB (test automatizado y validación manual).
-- [x] Sidebar: el switch de tema debe funcionar, animar y persistir la preferencia (test automatizado y validación manual).
-- [x] Sidebar: no debe haber módulos duplicados ni botones sin icono.
-- [x] Sidebar: cumplir espaciado, padding, tamaño y estilos según QSS global (verificar con test visual y checklist de estándares).
-- [x] Sidebar: accesibilidad, todos los botones deben tener accessibleName y/o toolTip descriptivo.
-- [x] Todas las tablas (Vidrios, Producción, Obras, Inventario, etc.) deben tener headers y celdas visualmente consistentes, usando solo QSS global (test visual automatizado).
-- [x] Validar que no quedan estilos embebidos en ningún módulo (solo QSS global y helpers).
-- [x] Validar que todos los headers de tablas tienen el objectName correcto y el QSS esperado.
-- [x] Validar que los cambios de columnas visibles en tablas persisten y no rompen el layout.
-- [x] Validar que el feedback visual (mensajes de error, éxito, advertencia, info) usa color y emoji correcto en todos los módulos.
-- [x] Validar que todos los botones principales sean solo ícono, salvo justificación documentada.
-- [x] Validar que todos los layouts principales usan QVBoxLayout/QHBoxLayout con setContentsMargins y setSpacing según estándar.
-
-## 2. PERMISOS Y SEGURIDAD
-- [x] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
-- [x] Validar que la función crear_usuarios_iniciales asigne permisos completos a admin y mínimos a prueba.
-- [x] Validar integración de permisos en el sidebar y main_window (solo módulos permitidos).
-- [x] Revisar y corregir la lógica de obtención de módulos permitidos para cada usuario (admin debe ver todos).
-- [x] Listar todos los módulos disponibles y mostrar qué permisos tiene cada usuario (especialmente admin).
-- [x] Validar que Sidebar y controladores solo permiten acciones si permisos[modulo][accion] == True.
-- [x] Validar en cada controlador que se rechace la acción si falta permiso (decoradores y lógica robusta).
-- [x] Escribir y ejecutar tests unitarios de permisos (tests/test_permissions.py):
-    - Sidebar no muestra módulos sin permiso_ver.
-    - Controladores arrogan error si no hay permiso (p. ej. permiso_eliminar).
-
-## 3. INTEGRACIÓN Y FLUJOS ENTRE MÓDULOS
-- [x] Validar integración en tiempo real entre módulos (Obras, Inventario, Vidrios): que toda obra/pedido se refleje sin recargar la app.
-- [x] Validar que la señal obra_agregada actualiza Inventario y Vidrios en tiempo real.
-- [x] Validar feedback visual y consistencia de datos en todos los módulos tras operaciones cruzadas.
-- [x] Documentar y soportar flujos alternativos (devolución de material, reasignación de vidrios, cierre anticipado de obra).
-
-## 4. TABLAS, DATOS Y PERSONALIZACIÓN
-- [x] Optimizar carga y paginación de tablas para grandes volúmenes de datos.
-- [x] Permitir personalización de columnas y filtros en tablas de obras, pedidos y vidrios según usuario.
-- [x] Validar que los cambios de columnas visibles persisten correctamente.
-- [x] Visualizar el estado de cada ítem de pedido: entregado, pendiente, en espera de compra, etc.
-- [x] Validaciones visuales (colores, íconos) para advertir si el stock es insuficiente antes de guardar el pedido.
-- [x] Mostrar en la tabla de pedido de material: cantidad solicitada, stock disponible y cantidad faltante de cada ítem.
-
-## 5. TESTS CRÍTICOS Y AUTOMATIZACIÓN
-- [x] Ejecutar y validar todos los tests críticos listados en este checklist (sidebar, permisos, feedback, headers, accesibilidad, modo offline, etc.).
-- [x] Agregar tests automáticos para edge cases: obra sin stock, pedido parcial, error de conexión, permisos insuficientes, etc.
-- [x] Validar cobertura de tests en todos los módulos críticos (UI, controladores, modelos, integración).
-- [x] Validar que los tests de integración y UI cubren los flujos principales y alternativos.
-
-## 6. BACKEND, MODELOS Y AUDITORÍA
-- [x] Validar que todos los scripts SQL de scripts/db/ cubren la creación y migración de tablas principales.
-- [x] Validar que core/database.py soporta timeout y retries en transacciones.
-- [x] Validar que los modelos usan begin_transaction(), commit(), rollback() donde corresponde.
-- [x] Validar que la auditoría registra todas las acciones relevantes (alta, edición, entrega, cancelación) con fecha, usuario y detalle.
-- [x] Validar unicidad de email y seguridad de contraseña en Usuarios.
-- [x] Permitir desactivar usuarios y cambiar contraseñas.
-- [x] Integrar pestaña de permisos por rol en la UI de Usuarios.
-
-## 7. INFRAESTRUCTURA Y DEPENDENCIAS
-- [x] Limpiar y validar requirements.txt (eliminar dependencias no usadas, fijar versiones, solo PyQt6).
-- [x] Validar que el archivo .env.example incluye todas las claves necesarias y que .env está en .gitignore.
-- [x] Validar que core/config.py carga correctamente las variables de entorno.
-- [x] Probar en un entorno limpio: pip install -r requirements.txt y validar imports.
-- [x] Validar que los scripts SQL funcionan en un servidor limpio.
-- [x] Añadir endpoint /metrics con prometheus_client en main.py y documentar su uso.
-
-## 8. DOCUMENTACIÓN Y ORGANIZACIÓN
-- [x] Actualizar README y docs para reflejar la estructura, flujos y estándares actuales.
-- [x] Centralizar documentación y crear índice en docs/README.md.
-- [ ] Convertir este checklist en issues de GitHub o tareas formales.
-- [x] Organizar tests y fixtures en carpetas por módulo.
-- [x] Documentar cualquier excepción visual o de permisos en docs/estandares_visuales.md y estandares_seguridad.md.
-
-# --- FIN DEL CHECKLIST DETALLADO PARA PRODUCCIÓN ---
-
-# (Mantener este bloque al inicio del archivo y marcar cada punto a medida que se completa)
-
-# COSAS POR HACER PARA PRODUCCIÓN (actualizado 2025-06-04)
-
-## CRÍTICO: UI, SIDEBAR, ICONOS, CONSISTENCIA VISUAL Y TESTS
-- [x] Sidebar moderno: solo muestra módulos permitidos según permisos del usuario.
-- [x] Sidebar: todos los íconos se muestran correctamente (sin faltantes ni duplicados).
-- [x] Sidebar: el indicador online/offline cambia dinámicamente según el estado real de la DB.
-- [x] Sidebar: el switch de tema funciona y persiste la preferencia.
-- [x] Consistencia visual: test visual automatizado para verificar que todas las tablas usan el mismo estilo de header y celdas.
-- [x] Consistencia visual: test que no hay headers con color incorrecto (azul/celeste antiguo) en ningún módulo.
-- [x] Vidrios/Producción: test de integración que verifica que los headers de las tablas tienen el objectName correcto y el QSS esperado.
-- [x] Vidrios/Producción: test de que los cambios de columnas visibles persisten y no rompen el layout.
-- [x] Modo offline: test de que activar/desactivar modo offline no cierra la app y realmente cambia el estado en la base/configuración.
-- [x] Modo offline: test de que la app funciona correctamente en modo offline (sin DB).
-- [x] Accesibilidad: test de que todos los botones y labels tienen accessibleName y accessibleDescription donde corresponde.
-- [x] Feedback visual: test de que los mensajes de error, éxito, advertencia e info se muestran con el color y emoji correcto.
-- [x] Permisos: test de que un usuario sin permisos no puede ver ni acceder a módulos restringidos desde el sidebar.
-
-## INTEGRACIÓN Y FLUJOS CRÍTICOS
-- [x] Validar integración en tiempo real entre módulos (Obras, Inventario, Vidrios): que toda obra/pedido se refleje sin recargar la app.
-- [x] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
-- [x] Validar integración de permisos en el sidebar y main_window.
-- [x] Revisar y corregir la lógica de obtención de módulos permitidos para cada usuario (admin debe ver todos).
-- [x] Validar modelo y vista de Inventario, Obras, Vidrios: feedback visual, robustez de queries y manejo de errores.
-- [x] Integración con pedidos y obras: reflejar cambios en tiempo real.
-- [x] Permitir edición y cancelación de pedidos antes de ser procesados, con registro de cambios en la auditoría.
-- [ ] Mejorar el SplashScreen: que desaparezca solo cuando la interfaz principal esté completamente cargada y lista.
-- [ ] Validar visualmente que todos los módulos usan solo los QSS globales (themes/light.qss y themes/dark.qss) y que no quedan estilos embebidos.
-- [ ] Ajustar los QSS globales si se detectan inconsistencias visuales tras la migración.
-- [ ] Migrar cualquier estilo embebido o credencial que aún quede en otros módulos no revisados.
-- [ ] Validar que el feedback visual y logging funcionen según los estándares en todos los módulos.
-
-## USUARIOS Y PERMISOS
-- [ ] Validar que la función `crear_usuarios_iniciales` asigne permisos completos a admin y permisos mínimos a prueba.
-- [x] Listar todos los módulos disponibles y mostrar qué permisos tiene cada usuario (especialmente admin).
-- [ ] Mejorar feedback visual y accesibilidad en login_view.
-- [ ] Tests: robustecer tests de login, permisos y feedback visual.
-
-## INVENTARIO, OBRAS, PEDIDOS, VIDRIOS
-- [ ] Validar modelo y vista: feedback visual, robustez de queries y manejo de errores.
-- [ ] Integración con pedidos y obras: reflejar cambios en tiempo real.
-- [ ] Mostrar en la tabla de pedido de material: cantidad solicitada, stock disponible y cantidad faltante de cada ítem.
-- [ ] Visualizar el estado de cada ítem de pedido: entregado, pendiente, en espera de compra, etc.
-- [ ] Tests: robustecer tests de integración y UI.
-- [ ] Corregir los tests de estándares y validación listados en el bloque anterior.
-
-## MEJORAS DE LAYOUT Y ACCESIBILIDAD
-- [x] Unificar todos los botones de acción en cada módulo en un QHBoxLayout, alineados horizontalmente, con espaciado 16px y addStretch() a la izquierda.
-- [x] Sidebar: verificar que los botones cumplen el estándar visual y de espaciado (8px vertical entre botones, padding 10px horizontal).
-- [x] Todos los botones principales deben ser solo ícono, sin texto visible, salvo justificación documentada.
-- [x] Usar siempre el helper estilizar_boton_icono para tamaño, color y sombra uniforme.
-- [x] El espaciado entre botones debe ser de 16px (o el definido en el estándar).
-- [x] Si algún módulo requiere una excepción (botón con texto, disposición vertical, etc.), debe documentarse en el código y en docs/estandares_visuales.md.
-- [x] Verificar que todos los layouts principales usen QVBoxLayout con setContentsMargins(24, 20, 24, 20) y setSpacing(16).
-
-## TESTS AUTOMÁTICOS Y COBERTURA
-- [ ] Crear tests unitarios y de integración para cada módulo.
-- [ ] Usar mocks para la base de datos en local.
-- [ ] Integrar pytest en CI.
-- [ ] Mover datos de prueba a tests/fixtures/.
-
-## SEGURIDAD Y CONFIGURACIÓN
-- [ ] Implementar core/config.py que lea variables desde .env usando python-dotenv.
-- [ ] Eliminar credenciales hard-coded.
-- [ ] Documentar en el README la necesidad de .env local.
-- [ ] Confirmar que core/config.py carga correctamente las variables de entorno.
-- [ ] Limpiar y validar requirements.txt: eliminar dependencias no usadas, incluir versiones fijas, probar en entorno limpio.
-
-## OTROS PENDIENTES Y MEJORAS
-- [ ] Proveer dashboard/resumen visual con KPIs: obras activas, pedidos pendientes, stock crítico, etc.
-- [ ] Automatizar reportes periódicos (por email o descarga) para responsables de obra, compras y stock.
-- [ ] Agregar opción de exportar historial de pedidos a Excel/PDF.
-- [ ] Permitir comentarios u observaciones en cada pedido para trazabilidad.
-- [ ] Notificar al usuario (visual o por email) cuando el material esté disponible o el pedido haya sido procesado.
-- [ ] Validaciones visuales (colores, íconos) para advertir si el stock es insuficiente antes de guardar el pedido.
-- [ ] Mejorar navegación entre obras y pedidos: ir de un pedido a la obra asociada y viceversa con un clic.
-- [ ] Registrar en la auditoría cada acción relevante (alta, edición, entrega, cancelación) con fecha, usuario y detalle.
-- [ ] Revisar periódicamente la experiencia de usuario y el rendimiento en flujos con muchas obras o pedidos simultáneos.
-
-# Mantener este checklist actualizado y marcar los tests implementados y validados.
-
-
 1. Módulo “Obras”
 1.1. Alta de obra con validaciones y auditoría
 markdown
@@ -1282,3 +1123,1473 @@ Migración de datos legacy.
 Empaquetado multiplataforma.
 
 Documentación final de migración legacy.
+
+yaml
+Copiar
+Editar
+
+---
+
+Cada uno de estos prompts está diseñado para que Copilot genere el código o los tests en el archivo y ubicación adecuados. Simplemente pégalos uno a uno en tu editor con Copilot habilitado, revisa la salida, ajusta nombres de variables según tu convención y repite hasta cubrir todos los puntos. Con eso tendrás la base lista para llevar la aplicación a producción. ¡Éxitos!
+
+
+
+
+Tú dijiste:
+dame los prompts para todas estas cosas
+
+
+ChatGPT Plus
+
+Pensó durante un par de segundos
+1. Módulo “Obras”
+1.1. Alta de obra con validaciones y auditoría
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/obras/controller.py, dentro de la clase ObrasController, implementa el método:
+
+def alta_obra(self, datos):
+    """
+    1. Reciba un dict con llaves: 'nombre', 'cliente_id', 'fecha_medicion' (YYYY-MM-DD), 'fecha_entrega' (YYYY-MM-DD).
+    2. Valide:
+       - 'nombre' y 'cliente_id' no estén vacíos.
+       - fecha_entrega > fecha_medicion. Si falla, lance ValueError("Fecha de entrega debe ser posterior a la fecha de medición").
+    3. Inserte la nueva obra en la tabla 'obras' dentro de una transacción con timeout=30 y retries=2. La tabla 'obras' debe tener columna 'rowversion' autoactualizada.
+       - Recupere id_obra y rowversion recién generados.
+    4. Genere automáticamente la primera etapa (por ejemplo, 'Fabricación') con fecha = fecha_medicion + 90 días y guárdela en la tabla 'etapas_obras'.
+    5. Registre en auditorías_sistema: _registrar_evento_auditoria(usuario, "Obras", f"Creó obra {id_obra}").
+    6. Retorne id_obra.
+    """
+    # (Copilot debe generar el código completo TLSQL, transacción, consultas parametrizadas, captura de errores y auditoría.)
+1.2. Edición de obra con rowversion y manejo de conflictos
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/obras/controller.py, dentro de la clase ObrasController, agrega:
+
+def editar_obra(self, id_obra, datos, rowversion_orig):
+    """
+    1. Valide:
+       - 'nombre' y 'cliente_id' no estén vacíos.
+       - fecha_entrega > fecha_medicion. Si falla, lance ValueError("Fecha de entrega inválida").
+    2. Dentro de una transacción (timeout=30, retries=2), ejecute:
+       UPDATE obras
+         SET nombre=?, cliente_id=?, fecha_medicion=?, fecha_entrega=?
+         WHERE id_obra=? AND rowversion=?
+       usando valores de datos y rowversion_orig.
+    3. Si filas afectadas = 0, lance OptimisticLockError("Otro usuario modificó esta obra previamente").
+    4. Si actualización exitosa, recupere nuevo rowversion y registre auditoría: _registrar_evento_auditoria(usuario, "Obras", f"Editó obra {id_obra}").
+    5. Retorne el nuevo rowversion.
+    """
+    # (Copilot debe escribir la transacción, la consulta parametrizada, el chequeo de filas afectadas, la excepción OptimisticLockError y la auditoría.)
+1.3. Test unitario para ObrasModel
+csharp
+Copiar
+Editar
+# Prompt para Copilot:
+Crea el archivo tests/obras/test_obras_model.py con pytest y haz que:
+1. Declare un fixture que inicialice una base SQLite en memoria con la tabla 'obras' (incluyendo 'rowversion' como BLOB o ROWVERSION).
+2. Implemente test_listar_obras_vacia():
+   - Llame a ObrasModel.listar_obras() y afirme que retorna lista vacía.
+3. Implemente test_insertar_y_listar_obra():
+   - Inserte manualmente vía SQL una fila en 'obras' con nombre='Prueba', cliente_id=1, fecha_medicion='2025-06-01', fecha_entrega='2025-07-01'.
+   - Llame a listar_obras(), tome la fila devuelta y afirme que id_obra, nombre, cliente_id, fecha_medicion, fecha_entrega y rowversion no sean None ni vacíos.
+4. Implemente test_editar_obra_conflicto_rowversion():
+   - Inserte una obra vía SQL; obtenga id_obra y rowversion_orig.
+   - Ejecute un UPDATE directo en la tabla para cambiar el rowversion (simulando edición concurrente).
+   - Llame a ObrasModel.editar_obra(id_obra, nuevos_datos, rowversion_orig) y espere que lance OptimisticLockError.
+5. Use asserts de pytest y cierre la conexión en cada prueba.
+1.4. Test de integración para ObrasController
+csharp
+Copiar
+Editar
+# Prompt para Copilot:
+Crea el archivo tests/obras/test_obras_controller_integracion.py con pytest y haz que:
+1. Declare un fixture que inicialice SQLite en memoria con tablas 'obras' y 'auditorias_sistema'.
+2. En test_alta_obra_exitoso():
+   - Cree un dict datos = {'nombre':'Obra1','cliente_id':2,'fecha_medicion':'2025-06-01','fecha_entrega':'2025-07-01'}.
+   - Instancie ObrasController con la conexión en memoria.
+   - Llame a ctrl.alta_obra(datos) y capture id_obra.
+   - Verifique que ObrasModel.listar_obras() retorne exactamente una fila con id_obra y nombre='Obra1'.
+   - Verifique que en auditorias_sistema exista un registro con modulo='Obras' y accion="Creó obra {id_obra}".
+3. En test_editar_obra_exitoso():
+   - Inserte manualmente vía SQL una obra; obtenga id_obra y rowversion_orig.
+   - Llame a ctrl.editar_obra(id_obra, datos_modificados, rowversion_orig) y obtenga nuevo_rowversion.
+   - Verifique que listar_obras() retorne el nuevo nombre y que rowversion ≠ rowversion_orig.
+   - Verifique que en auditorias_sistema exista un registro con accion="Editó obra {id_obra}".
+4. En test_editar_obra_conflicto():
+   - Inserte manualmente una obra; obtenga id_obra y rowversion_orig.
+   - Haga un UPDATE directo para cambiar rowversion.
+   - Llame a ctrl.editar_obra(id_obra, datos_modificados, rowversion_orig) y espere OptimisticLockError.
+5. Use asserts de pytest y asegúrese de cerrar la conexión.
+2. Módulo “Pedidos de Material”
+2.1. Método generar_pedido_por_obra en PedidosModel
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/pedidos/model.py, dentro de la clase PedidosModel, implementa:
+
+def generar_pedido_por_obra(self, id_obra):
+    """
+    1. Consulte todas las reservas de perfiles, herrajes y vidrios asociadas a id_obra:
+       - SELECT id_perfil, cantidad_reservada, p.stock_actual, p.precio_unitario
+         FROM inventario_perfiles p
+         JOIN perfiles_por_obra pp ON p.id_perfil = pp.id_perfil
+         WHERE pp.id_obra = ?
+       - SELECT id_herraje, cantidad_reservada, h.stock_actual, h.precio_unitario
+         FROM herrajes h
+         JOIN herrajes_por_obra hh ON h.id_herraje = hh.id_herraje
+         WHERE hh.id_obra = ?
+       - SELECT id_vidrio, cantidad_reservada, v.stock_actual, v.precio_unitario
+         FROM vidrios v
+         JOIN vidrios_por_obra vv ON v.id_vidrio = vv.id_vidrio
+         WHERE vv.id_obra = ?
+    2. Calcule faltante = cantidad_reservada – stock_actual; si faltante > 0, agrégalo a la lista de ítems a pedir.
+    3. Calcule total_estimado = SUM(faltante * precio_unitario) sobre todos los ítems faltantes.
+    4. Dentro de una transacción (timeout=30, retries=2), inserte en 'pedidos' (id_obra, fecha_emision=NOW(), estado='Pendiente', total_estimado).
+       - Obtenga id_pedido recién insertado.
+    5. Para cada ítem faltante, inserte en 'pedidos_por_obra':
+       - Si es perfil: (id_pedido, id_obra, id_item=id_perfil, tipo='perfil', cantidad_requerida=faltante).
+       - Análogo para herrajes y vidrios (use un campo 'tipo_item' o tabla separada según esquema existente).
+    6. Registrar auditoría: _registrar_evento_auditoria(usuario, "Pedidos", f"Generó pedido {id_pedido} para obra {id_obra}").
+    7. Retornar id_pedido.
+    """
+# Copilot debe generar la lógica completa de consultas, transacciones y auditoría.
+2.2. Método recibir_pedido en PedidosModel
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/pedidos/model.py, agrega:
+
+def recibir_pedido(self, id_pedido):
+    """
+    1. Obtenga el registro de 'pedidos' donde id_pedido=?; si no existe o estado=='Recibido', lance ValueError("Pedido ya recibido o no existe").
+    2. Si estado es 'Pendiente' o 'En Camino':
+       a. Cambie estado a 'Recibido' en 'pedidos'.
+    3. Para cada fila en 'pedidos_por_obra' con ese id_pedido:
+       - Dependiendo de tipo_item ('perfil','herraje','vidrio'), aumente stock_actual en la tabla correspondiente:
+         - UPDATE inventario_perfiles SET stock_actual = stock_actual + cantidad_recibida WHERE id_perfil = ?;
+           INSERT INTO movimientos_stock(id_perfil, tipo_movimiento='Ingreso', cantidad=cantidad_recibida, fecha=NOW(), usuario).
+         - Análogo para herrajes y vidrios (movimientos_herrajes, movimientos_vidrios).
+    4. Registrar auditoría: _registrar_evento_auditoria(usuario, "Pedidos", f"Recibió pedido {id_pedido}").
+    5. Retornar True.
+    """
+# Copilot debe escribir la lógica con transacción, consultas parametrizadas y auditoría.
+2.3. Test unitario para PedidosModel
+scss
+Copiar
+Editar
+# Prompt para Copilot:
+Crea tests/compras/test_pedidos_model.py con pytest que:
+1. Declare un fixture que inicialice SQLite en memoria con tablas:
+   - 'obras' (id_obra).
+   - 'inventario_perfiles' (id_perfil, stock_actual, precio_unitario).
+   - 'perfiles_por_obra' (id_obra, id_perfil, cantidad_reservada).
+   - 'pedidos' (id_pedido, id_obra, estado, total_estimado).
+   - 'pedidos_por_obra' (id_pedido, id_obra, id_item, tipo_item, cantidad_requerida).
+   - 'movimientos_stock' (id_mov, id_perfil, tipo_movimiento, cantidad, fecha, usuario).
+   - 'auditorias_sistema' (usuario, modulo, accion, fecha).
+2. En test_generar_pedido():
+   - Inserte:
+     - Obra con id_obra=1.
+     - Perfil con id_perfil=1, stock_actual=5, precio_unitario=100.
+     - En perfiles_por_obra para obra=1 y perfil=1: cantidad_reservada=10.
+   - Llame a generar_pedido_por_obra(1) y capture id_pedido.
+   - Verifique que en 'pedidos' exista fila con id_pedido, estado='Pendiente', total_estimado=500.
+   - Verifique que en 'pedidos_por_obra' exista fila con id_item=1, tipo_item='perfil', cantidad_requerida=5.
+   - Verifique auditoría “Generó pedido {id_pedido} para obra 1”.
+3. En test_recibir_pedido_exitoso():
+   - Llame a recibir_pedido(id_pedido) y verifique:
+     - 'pedidos.estado' pasó a 'Recibido'.
+     - 'inventario_perfiles.stock_actual' pasó de 5 a 10.
+     - En 'movimientos_stock' existe un registro con tipo_movimiento='Ingreso' y cantidad=5.
+     - Auditoría “Recibió pedido {id_pedido}”.
+4. En test_recibir_pedido_repetido():
+   - Llame a recibir_pedido(id_pedido) dos veces y espere ValueError("Pedido ya recibido").
+2.4. Test de integración para PedidosController
+scss
+Copiar
+Editar
+# Prompt para Copilot:
+Crea tests/compras/test_pedidos_controller.py con pytest que:
+1. Declare un fixture usando MockDBConnection o SQLite en memoria con mismas tablas que el modelo.
+2. Cree un usuario “Admin” con permiso “crear” y “editar” en Pedidos.
+3. En test_crear_pedido_con_permisos():
+   - Llame a PedidosController.crear_pedido(obra_id=1) y verifique:
+     - Que PedidosModel.generar_pedido_por_obra(1) haya sido invocado (mock o spy).
+     - Que en auditorías exista “Generó pedido {id_pedido} para obra 1”.
+4. En test_crear_pedido_sin_permisos():
+   - Use un usuario con rol sin “crear” en Pedidos.
+   - Llame a crear_pedido(1) y espere ValueError("Permisos insuficientes").
+5. En test_recibir_pedido_con_permisos():
+   - Inserte un pedido 'Pendiente' con id_pedido=1.
+   - Llame a PedidosController.recibir_pedido(1) y verifique:
+     - Que PedidosModel.recibir_pedido(1) haya incrementado stock y haya auditoría “Recibió pedido 1”.
+6. En test_recibir_pedido_sin_permisos():
+   - Use usuario sin permiso “editar” y espere ValueError("Permisos insuficientes").
+3. Inventario de Perfiles
+3.1. Métodos pendientes en InventarioModel
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/inventario/model.py, dentro de la clase InventarioModel, agrega:
+
+def reservar_perfil(self, usuario, id_obra, id_perfil, cantidad):
+    """
+    1. Obtenga stock_actual de inventario_perfiles WHERE id_perfil=?.
+    2. Si cantidad > stock_actual, lance ValueError("Stock insuficiente").
+    3. Reste stock_actual -= cantidad y actualice la fila en inventario_perfiles.
+    4. Inserte o actualice en perfiles_por_obra(id_obra, id_perfil, cantidad_reservada, estado='Reservado').
+    5. Inserte en movimientos_stock(id_perfil=id_perfil, tipo_movimiento='Egreso', cantidad=cantidad, fecha=NOW(), usuario=usuario).
+    6. Registrar auditoría: _registrar_evento_auditoria(usuario, "Inventario", f"Reservó {cantidad} del perfil {id_perfil} para obra {id_obra}").
+    7. Retorne True.
+    """
+    # Incluir transacción con timeout=30, retries=2 y consultas parametrizadas.
+
+def devolver_perfil(self, usuario, id_obra, id_perfil, cantidad):
+    """
+    1. Obtenga stock_actual de inventario_perfiles WHERE id_perfil=?.
+    2. Aumente stock_actual += cantidad y actualice inventario_perfiles.
+    3. Actualice o elimine la fila en perfiles_por_obra para disminuir cantidad_reservada o cambiar estado.
+    4. Inserte en movimientos_stock(tipo_movimiento='Ingreso', cantidad=cantidad, fecha=NOW(), usuario=usuario).
+    5. Registrar auditoría: _registrar_evento_auditoria(usuario, "Inventario", f"Devolvió {cantidad} del perfil {id_perfil} de la obra {id_obra}").
+    6. Retorne True.
+    """
+    # Con transacción y consultas parametrizadas.
+
+def ajustar_stock_perfil(self, usuario, id_perfil, nueva_cantidad):
+    """
+    1. Si nueva_cantidad < 0, lance ValueError("Cantidad inválida").
+    2. Obtenga stock_anterior de inventario_perfiles.
+    3. Actualice inventario_perfiles.stock_actual = nueva_cantidad.
+    4. Inserte en movimientos_stock(tipo_movimiento='Ajuste', cantidad=abs(nueva_cantidad - stock_anterior), fecha=NOW(), usuario=usuario).
+    5. Registrar auditoría: _registrar_evento_auditoria(usuario, "Inventario", f"Ajustó stock del perfil {id_perfil} de {stock_anterior} a {nueva_cantidad}").
+    6. Retorne True.
+    """
+    # Con transacción.
+3.2. UI de Inventario (Perfiles) en View/Controller
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/inventario/view.py y modules/inventario/controller.py, crea o completa:
+
+# En InventarioController:
+- Señales:
+    reservar_perfil_signal = pyqtSignal(int, int, int)  # usuario, id_obra, id_perfil, cantidad
+    devolver_perfil_signal = pyqtSignal(int, int, int)  # usuario, id_obra, id_perfil, cantidad
+- Slots:
+    def reservar_perfil(self, usuario, id_obra, id_perfil, cantidad):
+        try:
+            self.model.reservar_perfil(usuario, id_obra, id_perfil, cantidad)
+            vista.mostrar_mensaje("Reserva exitosa")
+        except ValueError as e:
+            vista.mostrar_error(str(e))
+
+    def devolver_perfil(self, usuario, id_obra, id_perfil, cantidad):
+        try:
+            self.model.devolver_perfil(usuario, id_obra, id_perfil, cantidad)
+            vista.mostrar_mensaje("Devolución exitosa")
+        except ValueError as e:
+            vista.mostrar_error(str(e))
+
+    def cargar_perfiles_por_obra(self, id_obra):
+        filas = self.model.obtener_perfiles_por_obra(id_obra)
+        vista.llenar_tabla_perfiles_por_obra(filas)
+
+# En InventarioView:
+- Cree un QComboBox cmb_obras para seleccionar la obra actual.
+- Cree un QComboBox cmb_perfiles con autocompletar (datos de perfiles).
+- Cree un QSpinBox spin_cantidad con rango 1 a stock_actual del perfil seleccionado.
+- Cree dos QPushButton:
+    btn_reservar = QPushButton("Reservar perfil")
+    btn_reservar.clicked.connect(lambda: controller.reservar_perfil(current_user, cmb_obras.currentData(), cmb_perfiles.currentData(), spin_cantidad.value()))
+
+    btn_devolver = QPushButton("Devolver perfil")
+    btn_devolver.clicked.connect(lambda: controller.devolver_perfil(current_user, cmb_obras.currentData(), cmb_perfiles.currentData(), spin_cantidad.value()))
+
+- Cree un QTableWidget tbl_perfiles_por_obra con columnas ["Perfil", "Cantidad Reservada", "Estado", "Fecha"].
+- Al cambiar de obra en cmb_obras, llame a controller.cargar_perfiles_por_obra(id_obra).
+- Cree una sección “Alertas de Stock” (QTableWidget) que liste perfiles donde stock_actual ≤ stock_minimo; coloree filas en rojo.
+3.3. Test unitario para InventarioModel (Perfiles)
+css
+Copiar
+Editar
+# Prompt para Copilot:
+Crea tests/inventario/test_inventario_perfiles_model.py con pytest que:
+1. Declare un fixture que inicialice SQLite en memoria con tablas:
+   - inventario_perfiles(id_perfil PK, nombre_perfil, stock_actual, stock_minimo, precio_unitario).
+   - perfiles_por_obra(id_obra, id_perfil, cantidad_reservada, estado, fecha).
+   - movimientos_stock(id_mov PK, id_perfil, tipo_movimiento, cantidad, fecha, usuario).
+   - auditorias_sistema(usuario, modulo, accion, fecha).
+2. Inserte manualmente:
+   - Perfil con id_perfil=1, stock_actual=10, stock_minimo=3, precio_unitario=50.
+   - Obra con id_obra=1.
+3. Test test_reservar_perfil_exitoso():
+   - Llame a InventarioModel.reservar_perfil("test", 1, 1, 5).
+   - Verifique que inventario_perfiles.stock_actual = 5.
+   - Verifique que perfiles_por_obra contenga fila (obra=1, perfil=1, cantidad_reservada=5, estado='Reservado').
+   - Verifique movimientos_stock con tipo='Egreso', cantidad=5, usuario="test".
+   - Verifique una auditoría “test reservó 5 del perfil 1 para obra 1”.
+4. Test test_reservar_perfil_insuficiente():
+   - Llame a reservar_perfil("test", 1, 1, 20) y espere ValueError("Stock insuficiente").
+5. Test test_devolver_perfil_exitoso():
+   - Primero llame a reservar_perfil("test", 1, 1, 5).
+   - Luego llamar a InventarioModel.devolver_perfil("test", 1, 1, 3).
+   - Verifique stock_actual = 8.
+   - Verifique que perfiles_por_obra haya actualizado o eliminado la reserva.
+   - Verifique movimientos_stock con tipo='Ingreso', cantidad=3.
+   - Verifique auditoría “test devolvió 3 del perfil 1 de la obra 1”.
+6. Test test_ajustar_stock_invalido():
+   - Llame a InventarioModel.ajustar_stock_perfil("test", 1, -2) y espere ValueError("Cantidad inválida").
+3.4. Test de integración para InventarioController (Perfiles)
+css
+Copiar
+Editar
+# Prompt para Copilot:
+Crea tests/inventario/test_inventario_perfiles_controller.py con pytest que:
+1. Declare un fixture usando MockDBConnection (SQLite en memoria) con tablas que el modelo usa.
+2. Cree un usuario “admin” con permiso “crear” e “inventario” y déle el contexto al controller.
+3. Test test_reservar_con_permisos():
+   - Llame a controller.reservar_perfil("admin", obra_id=1, id_perfil=1, cantidad=5).
+   - Verifique que inventario_perfiles.stock_actual haya disminuido en 5.
+   - Verifique auditoría “admin reservó 5 del perfil 1 para obra 1”.
+4. Test test_reservar_sin_permisos():
+   - Cree un usuario “operario” sin permiso “crear” en inventario.
+   - Llame a reservar_perfil y espere ValueError("Permisos insuficientes").
+5. Test test_devolver_con_permisos():
+   - Simule que ya existe una reserva de 5 unidades.
+   - Llame a controller.devolver_perfil("admin", obra_id=1, id_perfil=1, cantidad=3).
+   - Verifique que stock_actual aumentó en 3.
+   - Verifique auditoría “admin devolvió 3 del perfil 1 de la obra 1”.
+6. Test test_devolver_sin_permisos():
+   - Usuario sin permiso “editar” en inventario; al llamar a devolver_perfil, espere ValueError("Permisos insuficientes").
+4. Herrajes y Vidrios
+4.1. Métodos en HerrajesModel
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/herrajes/model.py, dentro de la clase HerrajesModel, agrega:
+
+def reservar_herraje(self, usuario, id_obra, id_herraje, cantidad):
+    """
+    1. Obtenga stock_actual de 'herrajes' WHERE id_herraje=?.
+    2. Si cantidad > stock_actual, lance ValueError("Stock insuficiente").
+    3. Reste stock_actual -= cantidad y actualice 'herrajes'.
+    4. Inserte/actualice en 'herrajes_por_obra'(id_obra, id_herraje, cantidad_reservada, estado='Reservado').
+    5. Inserte en 'movimientos_herrajes'(id_herraje, tipo_movimiento='Egreso', cantidad, fecha=NOW(), usuario).
+    6. Registrar auditoría: _registrar_evento_auditoria(usuario, "Herrajes", f"Reservó {cantidad} del herraje {id_herraje} para obra {id_obra}").
+    7. Retorne True.
+    """
+    # Transacción con timeout=30 y retries=2.
+
+def devolver_herraje(self, usuario, id_obra, id_herraje, cantidad):
+    """
+    1. Obtenga stock_actual de 'herrajes'.
+    2. Aumente stock_actual += cantidad y actualice.
+    3. Actualice o elimine fila en 'herrajes_por_obra'.
+    4. Inserte en 'movimientos_herrajes'(tipo_movimiento='Ingreso', cantidad, fecha=NOW(), usuario).
+    5. Registrar auditoría: _registrar_evento_auditoria(usuario, "Herrajes", f"Devolvió {cantidad} del herraje {id_herraje} de obra {id_obra}").
+    6. Retorne True.
+    """
+
+def ajustar_stock_herraje(self, usuario, id_herraje, nueva_cantidad):
+    """
+    1. Si nueva_cantidad < 0, lance ValueError("Cantidad inválida").
+    2. Obtenga stock_anterior de 'herrajes'.
+    3. Actualice stock_actual = nueva_cantidad.
+    4. Inserte en 'movimientos_herrajes'(tipo_movimiento='Ajuste', cantidad=abs(nueva_cantidad - stock_anterior), fecha=NOW(), usuario).
+    5. Registrar auditoría: _registrar_evento_auditoria(usuario, "Herrajes", f"Ajustó stock del herraje {id_herraje} de {stock_anterior} a {nueva_cantidad}").
+    6. Retorne True.
+    """
+    # Con transacciones.
+4.2. Métodos en VidriosModel
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/vidrios/model.py, dentro de la clase VidriosModel, agrega:
+
+def reservar_vidrio(self, usuario, id_obra, id_vidrio, cantidad):
+    """
+    1. Obtenga stock_actual de 'vidrios'.
+    2. Si cantidad > stock_actual, lance ValueError("Stock insuficiente").
+    3. Reste stock_actual -= cantidad y actualice.
+    4. Inserte/actualice en 'vidrios_por_obra'(id_obra, id_vidrio, cantidad_reservada, estado='Reservado').
+    5. Inserte en 'movimientos_vidrios'(id_vidrio, tipo_movimiento='Egreso', cantidad, fecha=NOW(), usuario).
+    6. Registrar auditoría: _registrar_evento_auditoria(usuario, "Vidrios", f"Reservó {cantidad} del vidrio {id_vidrio} para obra {id_obra}").
+    7. Retorne True.
+    """
+    # Transacción con timeout=30, retries=2.
+
+def devolver_vidrio(self, usuario, id_obra, id_vidrio, cantidad):
+    """
+    1. Aumente stock_actual += cantidad y actualice 'vidrios'.
+    2. Actualice o elimine fila en 'vidrios_por_obra'.
+    3. Inserte en 'movimientos_vidrios'(tipo_movimiento='Ingreso', cantidad, fecha=NOW(), usuario).
+    4. Registrar auditoría: _registrar_evento_auditoria(usuario, "Vidrios", f"Devolvió {cantidad} del vidrio {id_vidrio} de obra {id_obra}").
+    5. Retorne True.
+    """
+
+def ajustar_stock_vidrio(self, usuario, id_vidrio, nueva_cantidad):
+    """
+    1. Si nueva_cantidad < 0, lance ValueError("Cantidad inválida").
+    2. Obtenga stock_anterior.
+    3. Actualice stock_actual = nueva_cantidad.
+    4. Inserte en 'movimientos_vidrios'(tipo_movimiento='Ajuste', cantidad=abs(nueva_cantidad - stock_anterior), fecha=NOW(), usuario).
+    5. Registrar auditoría: _registrar_evento_auditoria(usuario, "Vidrios", f"Ajustó stock del vidrio {id_vidrio} de {stock_anterior} a {nueva_cantidad}").
+    6. Retorne True.
+    """
+    # Con transacciones.
+4.3. UI de Herrajes y Vidrios en View/Controller
+css
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/herrajes/view.py y modules/herrajes/controller.py:
+1. En HerrajesController:
+   - Señales:
+       reservar_herraje_signal = pyqtSignal(int, int, int, int)  # usuario, id_obra, id_herraje, cantidad
+       devolver_herraje_signal = pyqtSignal(int, int, int, int)
+   - Slots:
+       def reservar_herraje(self, usuario, id_obra, id_herraje, cantidad):
+           try:
+               self.model.reservar_herraje(usuario, id_obra, id_herraje, cantidad)
+               view.mostrar_mensaje("Reserva de herraje exitosa")
+           except ValueError as e:
+               view.mostrar_error(str(e))
+
+       def devolver_herraje(self, usuario, id_obra, id_herraje, cantidad):
+           try:
+               self.model.devolver_herraje(usuario, id_obra, id_herraje, cantidad)
+               view.mostrar_mensaje("Devolución de herraje exitosa")
+           except ValueError as e:
+               view.mostrar_error(str(e))
+
+       def cargar_herrajes_por_obra(self, id_obra):
+           filas = self.model.obtener_herrajes_por_obra(id_obra)
+           view.llenar_tabla_herrajes_por_obra(filas)
+
+2. En HerrajesView:
+   - QComboBox cmb_obras para seleccionar obra (id_obra).
+   - QComboBox cmb_herrajes con autocompletar (id_herraje + nombre + stock_actual).
+   - QSpinBox spin_cantidad con rango 1 a stock_actual.
+   - QPushButton btn_reservar = QPushButton("Reservar herraje")
+       btn_reservar.clicked.connect(lambda: controller.reservar_herraje(current_user, cmb_obras.currentData(), cmb_herrajes.currentData(), spin_cantidad.value()))
+   - QPushButton btn_devolver = QPushButton("Devolver herraje")
+       btn_devolver.clicked.connect(lambda: controller.devolver_herraje(current_user, cmb_obras.currentData(), cmb_herrajes.currentData(), spin_cantidad.value()))
+   - QTableWidget tbl_herrajes_por_obra con columnas ["Herraje","Cantidad Reservada","Estado","Fecha"].
+   - Cada vez que cmb_obras cambie, llamar a controller.cargar_herrajes_por_obra(id_obra).
+   - Colorear en rojo filas si stock_actual ≤ stock_minimo.
+
+En modules/vidrios/view.py y modules/vidrios/controller.py, haz lo mismo adaptado a vidrios.
+4.4. Test unitario para HerrajesModel y VidriosModel
+css
+Copiar
+Editar
+# Prompt para Copilot:
+Crea tests/herrajes/test_herrajes_model.py:
+1. Fixture SQLite en memoria con tablas:
+   - herrajes(id_herraje PK, nombre, stock_actual, stock_minimo, precio_unitario).
+   - herrajes_por_obra(id_obra, id_herraje, cantidad_reservada, estado, fecha).
+   - movimientos_herrajes(id_mov PK, id_herraje, tipo_movimiento, cantidad, fecha, usuario).
+   - auditorias_sistema(usuario, modulo, accion, fecha).
+2. Inserte manualmente:
+   - Herraje con id_herraje=1, stock_actual=20, stock_minimo=5, precio_unitario=200.
+   - Obra con id_obra=1.
+3. Pruebas:
+   test_reservar_herraje_exitoso():
+     - Llame a reservar_herraje("test", 1, 1, 10).
+     - Verifique stock_actual=10, herrajes_por_obra con cantidad_reservada=10, movimiento “Egreso”, auditoría “test reservó 10 del herraje 1 para obra 1”.
+   test_reservar_herraje_insuficiente():
+     - Llame a reservar_herraje("test", 1, 1, 30) y espere ValueError("Stock insuficiente").
+   test_devolver_herraje_exitoso():
+     - Primero reservar 10, luego llamar devolver_herraje("test",1,1,5).
+     - Verifique stock_actual=15, movimiento “Ingreso”, auditoría “test devolvió 5 del herraje 1 de obra 1”.
+   test_ajustar_stock_herraje_invalido():
+     - Llame a ajustar_stock_herraje("test", 1, -3) y espere ValueError("Cantidad inválida").
+
+Crea tests/vidrios/test_vidrios_model.py análogo, pero con tablas:
+   - vidrios(id_vidrio PK, nombre, stock_actual, stock_minimo, precio_m2).
+   - vidrios_por_obra, movimientos_vidrios, auditorias_sistema.
+   - Usar id_vidrio=1, stock_actual=50, stock_minimo=10, precio_m2=300.
+   - Pruebas de reservar, insuficiente, devolver y ajustar inválido.
+4.5. Test de integración para HerrajesController y VidriosController
+css
+Copiar
+Editar
+# Prompt para Copilot:
+Crea tests/herrajes/test_herrajes_controller.py:
+1. Fixture usando MockDBConnection o SQLite en memoria con tablas de herrajes, reservas, movimientos y auditorías.
+2. Cree un usuario “admin” con permiso “crear” y “editar” en herrajes.
+3. test_reservar_herraje_con_permisos():
+   - Llame a controller.asociar_herraje("admin", obra_id=1, id_herraje=1, cantidad=5).
+   - Verifique que herrajes.stock_actual disminuyó en 5.
+   - Verifique auditoría “admin reservó 5 del herraje 1 para obra 1”.
+4. test_reservar_herraje_sin_permisos():
+   - Usuario sin permiso “crear”; al llamar a asociar_herraje, espere ValueError("Permisos insuficientes").
+5. test_devolver_herraje_con_permisos():
+   - Simule reserva previa e invoque devolver_herraje("admin",1,1,3).
+   - Verifique stock_actual aumentó en 3 y auditoría “admin devolvió 3 del herraje 1 de obra 1”.
+6. test_devolver_herraje_sin_permisos():
+   - Usuario sin permiso “editar”; espere ValueError("Permisos insuficientes").
+
+Crea tests/vidrios/test_vidrios_controller.py con el mismo esquema para vidrios.
+5. “Perfiles por obra” y “Lista de Precios”
+5.1. Consultar perfiles por obra en InventarioModel
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/inventario/model.py, dentro de InventarioModel, implementa:
+
+def obtener_perfiles_por_obra(self, id_obra):
+    """
+    Retorna lista de tuplas (nombre_perfil, cantidad_reservada, estado, fecha)
+    para todos los perfiles asociados a id_obra.
+    SQL: 
+      SELECT p.nombre_perfil, pp.cantidad_reservada, pp.estado, pp.fecha
+      FROM perfiles_por_obra pp
+      JOIN inventario_perfiles p ON pp.id_perfil = p.id_perfil
+      WHERE pp.id_obra = ?
+    """
+    # Copilot genere la consulta parametrizada y retorne los resultados.
+5.2. UI para “Perfiles por Obra” en InventarioView
+ruby
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/inventario/view.py y modules/inventario/controller.py:
+
+# En InventarioController:
+def cargar_perfiles_por_obra(self, id_obra):
+    filas = self.model.obtener_perfiles_por_obra(id_obra)
+    self.view.llenar_tabla_perfiles_por_obra(filas)
+
+# En InventarioView:
+- Cree una nueva pestaña o sección “Perfiles por Obra” con:
+    QTableWidget tbl_perfiles_por_obra con columnas ["Perfil","Cantidad Reservada","Estado","Fecha"].
+- Cuando el usuario seleccione una obra en cmb_obras, llame a controller.cargar_perfiles_por_obra(id_obra).
+- Implemente llenar_tabla_perfiles_por_obra(filas) para poblar tbl_perfiles_por_obra con cada tupla.
+5.3. Lista de precios de perfiles
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/inventario/controller.py y modules/inventario/view.py:
+
+# En InventarioController:
+def obtener_lista_precios(self):
+    """
+    SQL:
+      SELECT id_perfil, nombre_perfil, precio_unitario, stock_actual, stock_minimo
+      FROM inventario_perfiles
+    Retorna lista de tuplas.
+    """
+def actualizar_precio_perfil(self, usuario, id_perfil, nuevo_precio):
+    """
+    1. Si nuevo_precio < 0, lance ValueError("Precio inválido").
+    2. Obtenga precio_anterior de inventario_perfiles WHERE id_perfil=?.
+    3. Actualice inventario_perfiles SET precio_unitario=? WHERE id_perfil=?.
+    4. Insertar auditoría: _registrar_evento_auditoria(usuario, "Inventario", f"Actualizó precio del perfil {id_perfil} de {precio_anterior} a {nuevo_precio}").
+    5. Retorne True.
+    """
+# En InventarioView:
+- Cree una pestaña “Precios” con QTableWidget tbl_precios con columnas ["Perfil","Precio unitario","Stock Actual","Stock Mínimo"].
+- Cree botón “Editar precio” que, al hacer clic en una fila seleccionada, abra un QInputDialog para ingresar nuevo precio.
+- Al confirmar, llame a controller.actualizar_precio_perfil(current_user, id_perfil, nuevo_precio) y luego recargue tbl_precios con obtener_lista_precios().
+5.4. Tests para “Perfiles por Obra” y “Precios”
+css
+Copiar
+Editar
+# Prompt para Copilot:
+Crea tests/inventario/test_perfiles_por_obra_model.py:
+1. Fixture SQLite en memoria con tablas:
+   - inventario_perfiles(id_perfil, nombre_perfil, precio_unitario, stock_actual, stock_minimo).
+   - perfiles_por_obra(id_obra, id_perfil, cantidad_reservada, estado, fecha).
+2. Inserte:
+   - Perfil con id_perfil=1, nombre='P1', stock_actual=10, stock_minimo=3, precio_unitario=50.
+   - Reserva en perfiles_por_obra para obra=1, id_perfil=1, cantidad_reservada=5, estado='Reservado', fecha=NOW().
+3. Llame a InventarioModel.obtener_perfiles_por_obra(1) y verifique que retorne [('P1', 5, 'Reservado', <fecha>)].
+
+Crea tests/inventario/test_precios_perfiles_controller.py:
+1. Fixture MockDBConnection en memoria con inventario_perfiles y auditorias_sistema.
+2. Test test_actualizar_precio_con_permisos():
+   - Cree perfil con precio_unitario=100.
+   - Llame a controller.actualizar_precio_perfil("admin", 1, 200) y verifique:
+     - inventario_perfiles.precio_unitario = 200.
+     - Auditoría “admin actualizó precio del perfil 1 de 100 a 200”.
+3. Test test_actualizar_precio_sin_permisos():
+   - Usuario sin permiso “editar” en inventario; al llamar a actualizar_precio_perfil, espere ValueError("Permisos insuficientes").
+6. Módulo “Configuración” y “Usuarios/Roles”
+6.1. Probar conexión en ConfiguraciónController
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/configuracion/controller.py, agrega:
+
+def probar_conexion_db(self, server, database, user, password, port):
+    """
+    1. Intente conectar usando pyodbc.connect con:
+       DRIVER={SQL Server};SERVER={server},{port};DATABASE={database};UID={user};PWD={password}, timeout=5
+    2. Si la conexión es exitosa, cierre la conexión y retorne True.
+    3. Si falla, capture la excepción y lance ValueError(f"No se pudo conectar: {e}").
+    """
+    try:
+        conn_str = f"DRIVER={{SQL Server}};SERVER={server},{port};DATABASE={database};UID={user};PWD={password}"
+        conn = pyodbc.connect(conn_str, timeout=5)
+        conn.close()
+        return True
+    except Exception as e:
+        raise ValueError(f"No se pudo conectar: {e}")
+
+# En modules/configuracion/view.py:
+- Conecte el botón "Probar conexión" a un slot que llame a controller.probar_conexion_db(...) con los valores de los campos.
+- Si retorna True, muestre QMessageBox.information("Conexión exitosa"); si lanza ValueError, muestre QMessageBox.critical("No se pudo conectar: <error>").
+6.2. Guardar y leer configuración desde BD
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/configuracion/model.py, implementa:
+
+def guardar_config(self, datos_config):
+    """
+    1. Verifique si existe alguna fila en 'configuraciones' (SELECT COUNT(1)).
+    2. Si count == 0, ejecute:
+         INSERT INTO configuraciones(theme, idioma, timezone) VALUES (?, ?, ?)
+       con valores de datos_config['theme'], datos_config['idioma'], datos_config['timezone'].
+    3. Si count > 0, ejecute:
+         UPDATE configuraciones SET theme=?, idioma=?, timezone=?
+    4. Retorne True.
+    """
+def obtener_config(self):
+    """
+    1. SELECT theme, idioma, timezone FROM configuraciones LIMIT 1.
+    2. Retorne un dict {'theme':..., 'idioma':..., 'timezone':...} o valores por defecto si no hay filas.
+    """
+6.3. Gestión de usuarios y permisos
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/usuarios/controller.py, dentro de la clase UsuariosController, implementa:
+
+def crear_usuario(self, username, password, rol_id):
+    """
+    1. Valide que username no exista (SELECT COUNT(*) FROM usuarios WHERE username=?); si existe, lance ValueError("Usuario ya existe").
+    2. Hashee la contraseña con bcrypt y guárdela en password_hash.
+    3. Inserte en usuarios(username, password_hash, rol_id).
+    4. Llame a asignar_permisos_por_rol(rol_id, nuevo_user_id) para llenar permisos_por_usuario.
+    5. Registrar auditoría: _registrar_evento_auditoria(current_user, "Usuarios", f"Creó usuario {username} con rol {rol_id}").
+    6. Retorne nuevo_user_id.
+    """
+
+def editar_permisos_usuario(self, user_id, nuevos_permisos_dict):
+    """
+    1. Actualice la tabla permisos_por_usuario según nuevos_permisos_dict (modulo: {ver, crear, editar, eliminar, aprobar}).
+    2. Registrar auditoría: _registrar_evento_auditoria(current_user, "Usuarios", f"Actualizó permisos de usuario {user_id}").
+    3. Publique evento EventBus.publish("PermisosActualizados", user_id).
+    4. Retorne True.
+    """
+
+# En modules/usuarios/view.py:
+- Al guardar permisos para un usuario, llame a controller.editar_permisos_usuario(user_id, nuevos_permisos).
+- Configure EventBus.subscribe("PermisosActualizados", lambda uid: sidebar.recargar(uid)) para que el Sidebar se refresque dinámicamente.
+6.4. Tests para Configuración y Usuarios
+csharp
+Copiar
+Editar
+# Prompt para Copilot:
+Crea tests/usuarios/test_usuarios_model.py con pytest que:
+1. Fixture SQLite en memoria con tablas: 'usuarios', 'roles', 'permisos_por_rol', 'permisos_por_usuario', 'auditorias_sistema'.
+2. Test test_crear_usuario_exitoso():
+   - Llame a UsuariosController.crear_usuario("user1","P@ssw0rd", rol_id=2) y capture user_id.
+   - Verifique en 'usuarios' que exista fila con username="user1" y password_hash no vacío.
+   - Verifique en 'permisos_por_usuario' que existan filas heredadas de permisos_por_rol donde rol_id=2.
+   - Verifique auditoría “Creó usuario user1 con rol 2”.
+3. Test test_crear_usuario_duplicado():
+   - Inserte manualmente usuario con username="user2".
+   - Llame a crear_usuario("user2","abc",1) y espere ValueError("Usuario ya existe").
+4. Test test_editar_permisos():
+   - Cree usuario con rol 2.
+   - Llame a editar_permisos_usuario(user_id, {'obras':{'ver':False,'crear':False,'editar':False,'eliminar':False,'aprobar':False}, ...}).
+   - Verifique que en permisos_por_usuario las columnas para modulo 'obras' se hayan actualizado.
+   - Verifique auditoría “Actualizó permisos de usuario {user_id}”.
+
+Crea tests/configuracion/test_configuracion_controller.py con pytest que:
+1. Fixture SQLite en memoria con tabla 'configuraciones'.
+2. Test test_probar_conexion_correcta():
+   - Mockee pyodbc.connect para simular conexión exitosa.
+   - Llame a controller.probar_conexion_db("srv","db","user","pass","1433") y espere True.
+3. Test test_probar_conexion_incorrecta():
+   - Mockee pyodbc.connect para lanzar Exception("timeout").
+   - Llame a probar_conexion_db y espere ValueError("No se pudo conectar: timeout").
+4. Test test_guardar_y_obtener_config():
+   - Llame a ConfiguracionController.guardar_config({'theme':'light','idioma':'es','timezone':'America/Argentina/Buenos_Aires'}).
+   - Llame a ConfiguracionModel.obtener_config() y verifique que retorne el mismo dict.
+7. Módulo “Contabilidad” (Facturas y Pagos)
+7.1. Generar factura en ContabilidadModel
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/contabilidad/model.py, dentro de la clase ContabilidadModel, agrega:
+
+def generar_factura_por_pedido(self, usuario, id_pedido):
+    """
+    1. Consulte pedidos_por_obra para id_pedido, únalas a precios unitarios de perfiles, herrajes y vidrios:
+       SELECT cantidad_recibida, precio_unitario FROM pedidos_por_obra ppo
+       JOIN inventario_perfiles ip ON ppo.id_item = ip.id_perfil AND ppo.tipo_item='perfil'
+       WHERE ppo.id_pedido = ?
+       (y análogos para herrajes y vidrios).
+    2. Calcule total = SUM(cantidad_recibida * precio_unitario) sobre todos los ítems.
+    3. Dentro de una transacción (timeout=30, retries=2), inserte en facturas(id_pedido, fecha_emision=NOW(), total, estado='Pendiente').
+       - Obtenga id_factura recién generado.
+    4. Registrar auditoría: _registrar_evento_auditoria(usuario, "Contabilidad", f"Generó factura {id_factura} para pedido {id_pedido}").
+    5. Retorne id_factura.
+    """
+    # Transacción y consultas parametrizadas.
+7.2. Registrar pago en ContabilidadModel
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/contabilidad/model.py, agrega:
+
+def registrar_pago(self, usuario, id_factura, monto, forma_pago):
+    """
+    1. Consulte factura en facturas WHERE id_factura=?; retorne total y estado.
+    2. Si estado != 'Pendiente', lance ValueError("Factura ya pagada").
+    3. Si monto > total, lance ValueError("Monto excede total de la factura").
+    4. Inserte en pagos(id_factura, monto, fecha_pago=NOW(), forma_pago).
+    5. Si monto == total: UPDATE facturas SET estado='Pagada' WHERE id_factura=?.
+       Si monto < total: UPDATE facturas SET saldo_restante = total - monto WHERE id_factura=?.
+    6. Registrar auditoría: _registrar_evento_auditoria(usuario, "Contabilidad", f"Registró pago de {monto} a factura {id_factura}").
+    7. Retorne True.
+    """
+    # Transacción con timeout=30, retries=2.
+7.3. UI y Controller de Contabilidad
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/contabilidad/controller.py y modules/contabilidad/view.py:
+
+# En ContabilidadController:
+- Señales:
+    generar_factura_signal = pyqtSignal(int)  # id_pedido
+    registrar_pago_signal = pyqtSignal(int, float, str)  # id_factura, monto, forma_pago
+    ver_balance_signal = pyqtSignal()
+
+- Slots:
+    def crear_factura(self, usuario, id_pedido):
+        try:
+            id_factura = self.model.generar_factura_por_pedido(usuario, id_pedido)
+            self.view.mostrar_mensaje(f"Factura {id_factura} creada exitosamente")
+        except ValueError as e:
+            self.view.mostrar_error(str(e))
+
+    def registrar_pago(self, usuario, id_factura, monto, forma_pago):
+        try:
+            self.model.registrar_pago(usuario, id_factura, monto, forma_pago)
+            self.view.mostrar_mensaje("Pago registrado exitosamente")
+        except ValueError as e:
+            self.view.mostrar_error(str(e))
+
+    def cargar_balance(self):
+        balance = self.model.obtener_balance()
+        self.view.mostrar_balance(balance)
+
+# En ContabilidadView:
+- Pestaña “Facturas Pendientes”:
+    QTableWidget tbl_facturas_pendientes con columnas ["ID","Pedido","Total","FechaEmisión"].
+    QPushButton btn_generar_factura, al clic:
+// abre QDialog con QComboBox pedidos_recibidos (solo pedidos con estado='Recibido' y sin factura)
+    // al confirmar, emite generar_factura_signal(id_pedido).
+
+- Pestaña “Registrar Pago”:
+    QComboBox cmb_facturas_pendientes (id_factura + total).
+    QDoubleSpinBox spin_monto (rango 0.01 a total).
+    QComboBox cmb_forma_pago (["Efectivo","Transferencia","Cheque"]).
+    QPushButton btn_registrar_pago que emite registrar_pago_signal(id_factura, spin_monto.value(), cmb_forma_pago.currentText()).
+
+- Pestaña “Balance General”:
+    QLabel lbl_total_pendiente, lbl_total_pagado, lbl_facturas_pendientes, lbl_facturas_pagadas.
+    (Opcional) FigureCanvas con gráfico de barras mensual.
+    Al cargar o al clic en un botón “Actualizar”, llamar a controller.cargar_balance() e invocar view.mostrar_balance(balance).
+7.4. Tests para ContabilidadModel y Controller
+csharp
+Copiar
+Editar
+# Prompt para Copilot:
+Crea tests/contabilidad/test_contabilidad_model.py con pytest que:
+1. Fixture SQLite en memoria con tablas:
+   - pedidos(id_pedido, id_obra, estado, total_estimado)
+   - pedidos_por_obra(id_pedido, id_obra, id_item, tipo_item, cantidad_recibida)
+   - inventario_perfiles(id_perfil, precio_unitario)
+   - herrajes(id_herraje, precio_unitario)
+   - vidrios(id_vidrio, precio_unitario)
+   - facturas(id_factura, id_pedido, fecha_emision, total, estado, saldo_restante)
+   - pagos(id_pago, id_factura, monto, fecha_pago, forma_pago)
+   - auditorias_sistema(usuario, modulo, accion, fecha)
+
+2. Inserte:
+   - Pedido con id_pedido=1 y dos filas en pedidos_por_obra:
+       (1,1,1,'perfil',5), (1,1,2,'vidrio',10)
+   - En inventario_perfiles, id_perfil=1 con precio_unitario=100.
+   - En vidrios, id_vidrio=2 con precio_unitario=200.
+3. Test test_generar_factura():
+   - Llame a generar_factura_por_pedido("test",1); capture id_factura.
+   - Verifique que en 'facturas' exista fila con id_factura, total=5*100 + 10*200 = 2500, estado='Pendiente'.
+   - Verifique auditoría “test generó factura {id_factura} para pedido 1”.
+
+4. Test test_registrar_pago_parcial():
+   - Inserte factura con id_factura=1, total=2500, estado='Pendiente'.
+   - Llame a registrar_pago("test",1, 500, "Efectivo").
+   - Verifique en 'pagos' registro con id_factura=1, monto=500.
+   - Verifique en 'facturas' saldo_restante = 2000, estado sigue 'Pendiente'.
+   - Verifique auditoría “test registró pago de 500 a factura 1”.
+
+5. Test test_registrar_pago_total():
+   - Inserte factura con id_factura=2, total=1000, estado='Pendiente'.
+   - Llame a registrar_pago("test",2,1000,"Transferencia").
+   - Verifique en 'pagos' y que factura 2 cambió a estado 'Pagada'.
+   - Verifique auditoría “test registró pago de 1000 a factura 2”.
+
+Crea tests/contabilidad/test_contabilidad_controller.py con pytest que:
+1. Fixture MockDBConnection en memoria con las mismas tablas.
+2. Test test_generar_factura_con_permisos():
+   - Llame a ContabilidadController.crear_factura("admin",1) con pedido id_pedido=1 ya configurado en la DB.
+   - Verifique que ContabilidadModel.generar_factura_por_pedido haya sido invocado y que auditoría “generó factura” exista.
+3. Test test_generar_factura_sin_permisos():
+   - Usuario sin permiso “crear” en Contabilidad; al llamar a crear_factura, espere ValueError("Permisos insuficientes").
+4. Test test_registrar_pago_con_permisos():
+   - Cree factura id_factura=1 con estado 'Pendiente'.
+   - Llame a ContabilidadController.registrar_pago("admin",1,100,"Efectivo") y verifique cambio en DB y auditoría.
+5. Test test_registrar_pago_sin_permisos():
+   - Usuario sin permiso “crear”; al llamar a registrar_pago, espere ValueError("Permisos insuficientes").
+8. Módulo “Auditoría” (Historial y Exportación)
+8.1. Filtrar auditorías en AuditoriaModel
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/auditoria/model.py, dentro de la clase AuditoriaModel, implementa:
+
+def contar_auditorias(self, fecha_desde=None, fecha_hasta=None, modulo=None, usuario=None):
+    """
+    1. Construya SQL dinámico:
+       SELECT COUNT(*) FROM auditorias_sistema WHERE 1=1
+       - si fecha_desde dado: AND fecha >= ?
+       - si fecha_hasta dado: AND fecha <= ?
+       - si modulo dado: AND modulo = ?
+       - si usuario dado: AND usuario = ?
+    2. Ejecute con parámetros en el orden correcto y retorne el número.
+    """
+
+def listar_auditorias(self, fecha_desde=None, fecha_hasta=None, modulo=None, usuario=None, offset=0, limit=50):
+    """
+    1. Mismo WHERE que contar_auditorias.
+    2. Append: ORDER BY fecha DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    3. Ejecute con todos los parámetros (filtros + offset + limit) y retorne lista de tuplas (usuario, modulo, accion, fecha).
+    """
+    # Copilot debe generar la construcción condicional del WHERE y la consulta parametrizada.
+8.2. Exportar auditorías a Excel en AuditoriaController
+ruby
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/auditoria/controller.py, dentro de la clase AuditoriaController, implementa:
+
+def exportar_excel(self, usuario, filtros):
+    """
+    1. Llame a model.contar_auditorias(**filtros) para obtener total.
+    2. Llame a model.listar_auditorias(**filtros, offset=0, limit=total) para obtener todas las filas.
+    3. Convierta los resultados a pandas.DataFrame con columnas ["Usuario","Módulo","Acción","Fecha"].
+    4. Genere nombre: f"exports/auditorias_{datetime.now():%Y%m%d_%H%M%S}.xlsx".
+    5. Use df.to_excel(ruta, index=False).
+    6. Registrar auditoría: _registrar_evento_auditoria(usuario, "Auditoría", f"Exportó auditoría a {ruta}").
+    7. Retorne la ruta del archivo.
+    """
+    # Copilot debe importar pandas y datetime, construir DataFrame y guardar el archivo.
+8.3. UI de Auditoría en View y Controller
+python
+Copiar
+Editar
+# Prompt para Copilot:
+En modules/auditoria/view.py y modules/auditoria/controller.py:
+
+# En AuditoriaController:
+- Señales:
+    filtrar_auditorias_signal = pyqtSignal(dict, int)  # filtros, pagina
+    exportar_excel_signal = pyqtSignal(dict)          # filtros
+
+- Slots:
+    def filtrar_auditorias(self, usuario, filtros, pagina):
+        limit = 50
+        offset = (pagina - 1) * limit
+        total = self.model.contar_auditorias(**filtros)
+        registros = self.model.listar_auditorias(**filtros, offset=offset, limit=limit)
+        self.view.actualizar_tabla(registros, total, pagina)
+
+    def exportar_excel(self, usuario, filtros):
+        ruta = self.model.exportar_excel(usuario, filtros)
+        self.view.mostrar_mensaje(f"Exportado a: {ruta}")
+
+# En AuditoriaView:
+- Cree:
+    QDateEdit date_desde, date_hasta.
+    QComboBox cmb_modulo con opciones ["Todos","Obras","Inventario",...].
+    QLineEdit edit_usuario.
+    QPushButton btn_filtrar que emita filtrar_auditorias_signal(filtros_dict, pagina=1).
+    QTableWidget tbl_auditoria con columnas ["Usuario","Módulo","Acción","Fecha"].
+    QPushButton btn_anterior, btn_siguiente con un QLabel lbl_pagina = "Página 1 de X".
+    QPushButton btn_exportar_excel que emita exportar_excel_signal(filtros_dict).
+- En view.actualizar_tabla(registros, total, pagina):
+    - Llene tbl_auditoria con la lista de registros.
+    - Calcule total_paginas = ceil(total/50) y actualice lbl_pagina a f"Página {pagina} de {total_paginas}".
+    - Habilite/deshabilite btn_anterior si pagina == 1; btn_siguiente si pagina >= total_paginas.
+8.4. Tests para AuditoríaModel y Controller
+csharp
+Copiar
+Editar
+# Prompt para Copilot:
+Crea tests/auditoria/test_auditoria_model.py con pytest que:
+1. Fixture SQLite en memoria con tabla 'auditorias_sistema(usuario, modulo, accion, fecha)'.
+2. Inserte varias filas con:
+   - usuario='admin', modulo='Obras', accion='Creó obra 1', fechas escalonadas.
+   - usuario='user1', modulo='Inventario', accion='Reservó perfil 1', otras fechas.
+3. Pruebas:
+   test_contar_sin_filtros():
+     - Llame a contar_auditorias() y verifique que retorne el número total de filas.
+   test_contar_con_filtros():
+     - Llame a contar_auditorias(fecha_desde, fecha_hasta, modulo='Obras', usuario='admin') y verifique que retorne la cuenta adecuada.
+   test_listar_offset_limit():
+     - Llame a listar_auditorias(offset=0, limit=5) y verifique que retorne las primeras 5 filas ordenadas por fecha DESC.
+   test_listar_con_filtro_usuario():
+     - Llame a listar_auditorias(usuario='user1', offset=0, limit=10) y verifique que retorne sólo las filas de user1.
+
+Crea tests/auditoria/test_auditoria_controller.py con pytest que:
+1. Fixture MockDBConnection en memoria con datos idénticos.
+2. Test test_filtrar_auditorias():
+   - Llame a controlador.filtrar_auditorias("admin", filtros={'modulo':'Obras','usuario':'admin','fecha_desde':None,'fecha_hasta':None}, pagina=2).
+   - Mockee view.actualizar_tabla para capturar (registros, total, pagina).
+   - Verifique que pagina==2 y registros × total correspondan a offset = (2-1)*50.
+3. Test test_exportar_excel():
+   - Llame a controlador.exportar_excel("admin", mismas restricciones).
+   - Verifique que retorna una ruta que existe en exports/ y que view.mostrar_mensaje haya sido invocado con "Exportado a: <ruta>".
+9. Integración E2E “Obras → Inventario → Pedidos → Contabilidad”
+9.1. Test E2E de flujo completo
+css
+Copiar
+Editar
+# Prompt para Copilot:
+Crea tests/e2e/test_flujo_completo.py usando pytest-qt que:
+1. Inicie la aplicación:
+    app = QApplication([])
+    main = MainWindow()  # importa desde main.py o módulo principal
+    qtbot.addWidget(main)
+    main.show()
+2. Login como Admin:
+    main.login_view.fixtures_crear_usuario("admin","P@ssw0rd", rol="Admin")
+    main.login_view.txt_usuario.setText("admin")
+    main.login_view.txt_contrasena.setText("P@ssw0rd")
+    qtbot.mouseClick(main.login_view.btn_ingresar, Qt.LeftButton)
+    qtbot.wait(200)
+3. Crear obra “ObraPrueba”:
+    qtbot.mouseClick(main.sidebar.btn_obras, Qt.LeftButton)
+    qtbot.wait(200)
+    qtbot.mouseClick(main.obras_view.btn_agregar_obra, Qt.LeftButton)
+    main.obras_view.edit_nombre.setText("ObraPrueba")
+    main.obras_view.cmb_cliente.setCurrentIndex(1)  # asume que hay al menos un cliente
+    main.obras_view.date_medicion.setDate(QDate(2025,6,1))
+    main.obras_view.date_entrega.setDate(QDate(2025,7,1))
+    qtbot.mouseClick(main.obras_view.btn_guardar, Qt.LeftButton)
+    qtbot.wait(200)
+    # Verificar que en la grilla aparezca “ObraPrueba”
+    assert any(item.text() == "ObraPrueba" for item in main.obras_view.tbl_obras.findItems("ObraPrueba", Qt.MatchExactly))
+
+4. Reservar perfil para la obra:
+    qtbot.mouseClick(main.sidebar.btn_inventario, Qt.LeftButton)
+    qtbot.wait(200)
+    main.inventario_view.cmb_obras.setCurrentIndex(main.inventario_view.cmb_obras.findData(obraid))
+    qtbot.wait(100)
+    main.inventario_view.cmb_perfiles.setCurrentIndex(1)  # asume perfil existente con stock ≥10
+    main.inventario_view.spin_cantidad.setValue(5)
+    qtbot.mouseClick(main.inventario_view.btn_reservar, Qt.LeftButton)
+    qtbot.wait(200)
+    # Verificar tbl_perfiles_por_obra contiene fila con perfil reservado
+    assert any(item.text() == "Perfil1" for item in main.inventario_view.tbl_perfiles_por_obra.findItems("Perfil1", Qt.MatchExactly))
+
+5. Generar y recibir pedido:
+    qtbot.mouseClick(main.sidebar.btn_pedidos, Qt.LeftButton)
+    qtbot.wait(200)
+    main.pedidos_view.cmb_obras.setCurrentIndex(main.pedidos_view.cmb_obras.findData(obraid))
+    qtbot.mouseClick(main.pedidos_view.btn_generar_pedido, Qt.LeftButton)
+    qtbot.wait(200)
+    # En el diálogo, verificar listado y confirmar
+    qtbot.mouseClick(main.pedidos_view.dialog.cmb_perfiles.findText("Perfil1"), Qt.LeftButton)
+    qtbot.mouseClick(main.pedidos_view.dialog.btn_confirmar, Qt.LeftButton)
+    qtbot.wait(200)
+    # Verificar tbl_pedidos contiene fila con estado "Pendiente"
+    assert any(item.text() == "Pendiente" for item in main.pedidos_view.tbl_pedidos.findItems("Pendiente", Qt.MatchExactly))
+    # Recibir pedido
+    main.pedidos_view.tbl_pedidos.selectRow(0)
+    qtbot.mouseClick(main.pedidos_view.btn_recibir, Qt.LeftButton)
+    qtbot.wait(200)
+    # Verificar que el estado cambió a "Recibido"
+    assert any(item.text() == "Recibido" for item in main.pedidos_view.tbl_pedidos.findItems("Recibido", Qt.MatchExactly))
+    # Verificar stock en Inventario aumentó
+    qtbot.mouseClick(main.sidebar.btn_inventario, Qt.LeftButton)
+    qtbot.wait(200)
+    main.inventario_view.cmb_perfiles.setCurrentIndex(main.inventario_view.cmb_perfiles.findText("Perfil1"))
+    qtbot.wait(100)
+    # asume que main.inventario_view.lbl_stock muestra stock actual
+    assert int(main.inventario_view.lbl_stock.text()) == stock_inicial + 5
+
+6. Generar factura y registrar pago:
+    qtbot.mouseClick(main.sidebar.btn_contabilidad, Qt.LeftButton)
+    qtbot.wait(200)
+    main.contabilidad_view.cmb_pedidos.setCurrentIndex(0)  # pedido recién recibido
+    qtbot.mouseClick(main.contabilidad_view.btn_generar_factura, Qt.LeftButton)
+    qtbot.wait(200)
+    # Verificar tbl_facturas_pendientes contiene la nueva factura
+    assert any(item.text() == str(pedido_id) for item in main.contabilidad_view.tbl_facturas_pendientes.findItems(str(pedido_id), Qt.MatchExactly))
+    # Registrar pago total
+    main.contabilidad_view.cmb_facturas.setCurrentIndex(0)
+    main.contabilidad_view.spin_monto.setValue(total_factura)
+    main.contabilidad_view.cmb_forma_pago.setCurrentText("Efectivo")
+    qtbot.mouseClick(main.contabilidad_view.btn_registrar_pago, Qt.LeftButton)
+    qtbot.wait(200)
+    # Verificar factura desaparece de pendientes
+    assert not any(item.text() == str(pedido_id) for item in main.contabilidad_view.tbl_facturas_pendientes.findItems(str(pedido_id), Qt.MatchExactly))
+
+7. Verificar auditoría y exportación:
+    qtbot.mouseClick(main.sidebar.btn_auditoria, Qt.LeftButton)
+    qtbot.wait(200)
+    main.auditoria_view.date_desde.setDate(QDate(2025,1,1))
+    main.auditoria_view.date_hasta.setDate(QDate.currentDate())
+    main.auditoria_view.cmb_modulo.setCurrentText("Obras")
+    main.auditoria_view.edit_usuario.setText("admin")
+    qtbot.mouseClick(main.auditoria_view.btn_filtrar, Qt.LeftButton)
+    qtbot.wait(200)
+    # Verifique que haya al menos un registro en la grilla
+    assert main.auditoria_view.tbl_auditoria.rowCount() >= 1
+    # Exportar a Excel
+    qtbot.mouseClick(main.auditoria_view.btn_exportar_excel, Qt.LeftButton)
+    qtbot.wait(200)
+    # Check de que exista archivo en exports/ y mensaje emergente
+    # (copilot puede usar os.listdir("exports") y QMessageBox spy)
+8. Cierre la app al final:
+    main.close()
+    qtbot.wait(100)
+10. UI/UX, Accesibilidad y Estilos
+10.1. Agregar tooltips y sombras
+css
+Copiar
+Editar
+# Prompt para Copilot:
+En cada módulo de vistas (por ejemplo, modules/obras/view.py, modules/inventario/view.py, etc.), recorra todos los widgets QLineEdit, QComboBox y QPushButton y haga:
+widget.setToolTip("Breve descripción de la función del widget").
+
+En los diálogos principales y botones clave, aplique QGraphicsDropShadowEffect:
+from PyQt6.QtWidgets import QGraphicsDropShadowEffect
+from PyQt6.QtGui import QColor
+
+sombra = QGraphicsDropShadowEffect(widget)
+sombra.setBlurRadius(16)
+sombra.setColor(QColor(37, 99, 235, 60))
+sombra.setOffset(0, 4)
+widget.setGraphicsEffect(sombra)
+
+Asegúrese de eliminar todo setStyleSheet embebido en el código y que todos los estilos residan en resources/qss/theme_light.qss y theme_dark.qss.
+10.2. Ajustar márgenes y separación en Sidebar vía QSS
+css
+Copiar
+Editar
+# Prompt para Copilot:
+En resources/qss/theme_light.qss y resources/qss/theme_dark.qss, agregue o verifique:
+
+QWidget#sidebar {
+    background-color: #FFFFFF;
+}
+
+QPushButton#sidebarBoton {
+    margin: 4px 0;
+    padding: 4px 8px;
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    font-size: 12px;
+    text-align: left;
+}
+QPushButton#sidebarBoton:hover {
+    background-color: #e3f6fd;
+}
+QPushButton#sidebarBoton:pressed {
+    background-color: #d1f7e7;
+}
+
+QPushButton#sidebarBotonLogs,
+QPushButton#sidebarBotonAyuda {
+    margin: 8px 0 4px 0;
+}
+QPushButton#sidebarThemeToggle {
+    margin: 8px 0;
+}
+QLabel#sidebarUserLabel {
+    margin: 8px 0 4px 0;
+    font-size: 11px;
+    color: #222;
+}
+
+Asegúrese de que cada SidebarButton en widgets/sidebar.py tenga setObjectName("sidebarBoton").
+11. Scripts de Base de Datos y Migraciones
+11.1. Consolidación en estructura_tablas_mps.sql
+scss
+Copiar
+Editar
+# Prompt para Copilot:
+Abre scripts/estructura_tablas_mps.sql y asegúrate de incluir en orden cronológico:
+
+-- Usuarios y Seguridad
+CREATE TABLE roles (
+    id_rol INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(50) NOT NULL
+);
+CREATE TABLE usuarios (
+    id_usuario INT PRIMARY KEY IDENTITY(1,1),
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(256) NOT NULL,
+    rol_id INT NOT NULL,
+    FOREIGN KEY (rol_id) REFERENCES roles(id_rol)
+);
+CREATE TABLE permisos_por_rol (
+    id_permiso INT PRIMARY KEY IDENTITY(1,1),
+    rol_id INT NOT NULL,
+    modulo VARCHAR(50) NOT NULL,
+    ver BIT NOT NULL,
+    crear BIT NOT NULL,
+    editar BIT NOT NULL,
+    eliminar BIT NOT NULL,
+    aprobar BIT NOT NULL,
+    FOREIGN KEY (rol_id) REFERENCES roles(id_rol)
+);
+CREATE TABLE permisos_por_usuario (
+    id_usuario INT NOT NULL,
+    modulo VARCHAR(50) NOT NULL,
+    ver BIT NOT NULL,
+    crear BIT NOT NULL,
+    editar BIT NOT NULL,
+    eliminar BIT NOT NULL,
+    aprobar BIT NOT NULL,
+    PRIMARY KEY (id_usuario, modulo),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+);
+
+-- Obras con rowversion
+CREATE TABLE obras (
+    id_obra INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(100) NOT NULL,
+    cliente_id INT NOT NULL,
+    fecha_medicion DATE NOT NULL,
+    fecha_entrega DATE NOT NULL,
+    rowversion ROWVERSION NOT NULL
+);
+CREATE TABLE etapas_obras (
+    id_etapa INT PRIMARY KEY IDENTITY(1,1),
+    id_obra INT NOT NULL,
+    nombre_etapa VARCHAR(50) NOT NULL,
+    fecha_programada DATE NOT NULL,
+    FOREIGN KEY (id_obra) REFERENCES obras(id_obra)
+);
+
+-- Inventario Perfiles
+CREATE TABLE inventario_perfiles (
+    id_perfil INT PRIMARY KEY IDENTITY(1,1),
+    nombre_perfil VARCHAR(100) NOT NULL,
+    stock_actual INT NOT NULL,
+    stock_minimo INT NOT NULL,
+    precio_unitario DECIMAL(10,2) NOT NULL
+);
+CREATE TABLE perfiles_por_obra (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    id_obra INT NOT NULL,
+    id_perfil INT NOT NULL,
+    cantidad_reservada INT NOT NULL,
+    estado VARCHAR(20) NOT NULL,
+    fecha DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (id_obra) REFERENCES obras(id_obra),
+    FOREIGN KEY (id_perfil) REFERENCES inventario_perfiles(id_perfil)
+);
+CREATE TABLE movimientos_stock (
+    id_mov INT PRIMARY KEY IDENTITY(1,1),
+    id_perfil INT NOT NULL,
+    tipo_movimiento VARCHAR(20) NOT NULL,
+    cantidad INT NOT NULL,
+    fecha DATETIME DEFAULT GETDATE(),
+    usuario VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_perfil) REFERENCES inventario_perfiles(id_perfil)
+);
+
+-- Inventario Herrajes
+CREATE TABLE herrajes (
+    id_herraje INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(100) NOT NULL,
+    stock_actual INT NOT NULL,
+    stock_minimo INT NOT NULL,
+    precio_unitario DECIMAL(10,2) NOT NULL
+);
+CREATE TABLE herrajes_por_obra (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    id_obra INT NOT NULL,
+    id_herraje INT NOT NULL,
+    cantidad_reservada INT NOT NULL,
+    estado VARCHAR(20) NOT NULL,
+    fecha DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (id_obra) REFERENCES obras(id_obra),
+    FOREIGN KEY (id_herraje) REFERENCES herrajes(id_herraje)
+);
+CREATE TABLE movimientos_herrajes (
+    id_mov INT PRIMARY KEY IDENTITY(1,1),
+    id_herraje INT NOT NULL,
+    tipo_movimiento VARCHAR(20) NOT NULL,
+    cantidad INT NOT NULL,
+    fecha DATETIME DEFAULT GETDATE(),
+    usuario VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_herraje) REFERENCES herrajes(id_herraje)
+);
+
+-- Inventario Vidrios
+CREATE TABLE vidrios (
+    id_vidrio INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(100) NOT NULL,
+    stock_actual INT NOT NULL,
+    stock_minimo INT NOT NULL,
+    precio_m2 DECIMAL(10,2) NOT NULL
+);
+CREATE TABLE vidrios_por_obra (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    id_obra INT NOT NULL,
+    id_vidrio INT NOT NULL,
+    cantidad_reservada INT NOT NULL,
+    estado VARCHAR(20) NOT NULL,
+    fecha DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (id_obra) REFERENCES obras(id_obra),
+    FOREIGN KEY (id_vidrio) REFERENCES vidrios(id_vidrio)
+);
+CREATE TABLE movimientos_vidrios (
+    id_mov INT PRIMARY KEY IDENTITY(1,1),
+    id_vidrio INT NOT NULL,
+    tipo_movimiento VARCHAR(20) NOT NULL,
+    cantidad INT NOT NULL,
+    fecha DATETIME DEFAULT GETDATE(),
+    usuario VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_vidrio) REFERENCES vidrios(id_vidrio)
+);
+
+-- Pedidos y Compras
+CREATE TABLE pedidos (
+    id_pedido INT PRIMARY KEY IDENTITY(1,1),
+    id_obra INT NOT NULL,
+    fecha_emision DATETIME DEFAULT GETDATE(),
+    estado VARCHAR(20) NOT NULL,
+    total_estimado DECIMAL(12,2) NOT NULL,
+    FOREIGN KEY (id_obra) REFERENCES obras(id_obra)
+);
+CREATE TABLE pedidos_por_obra (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    id_pedido INT NOT NULL,
+    id_obra INT NOT NULL,
+    id_item INT NOT NULL,
+    tipo_item VARCHAR(20) NOT NULL,
+    cantidad_requerida INT NOT NULL,
+    FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido),
+    FOREIGN KEY (id_obra) REFERENCES obras(id_obra)
+);
+
+-- Contabilidad
+CREATE TABLE facturas (
+    id_factura INT PRIMARY KEY IDENTITY(1,1),
+    id_pedido INT NOT NULL,
+    fecha_emision DATETIME DEFAULT GETDATE(),
+    total DECIMAL(12,2) NOT NULL,
+    estado VARCHAR(20) NOT NULL,
+    saldo_restante DECIMAL(12,2) NULL,
+    FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido)
+);
+CREATE TABLE pagos (
+    id_pago INT PRIMARY KEY IDENTITY(1,1),
+    id_factura INT NOT NULL,
+    monto DECIMAL(12,2) NOT NULL,
+    fecha_pago DATETIME DEFAULT GETDATE(),
+    forma_pago VARCHAR(20) NOT NULL,
+    FOREIGN KEY (id_factura) REFERENCES facturas(id_factura)
+);
+
+-- Auditoría
+CREATE TABLE auditorias_sistema (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    usuario VARCHAR(50) NOT NULL,
+    modulo VARCHAR(50) NOT NULL,
+    accion VARCHAR(200) NOT NULL,
+    fecha DATETIME DEFAULT GETDATE()
+);
+
+-- Indices y FK adicionales según convención
+-- (Agrega índices en columnas utilizadas en WHERE y JOIN según necesidad)
+11.2. Script de bootstrap de roles y permisos
+sql
+Copiar
+Editar
+# Prompt para Copilot:
+En scripts/bootstrap_roles_permisos.sql, asegúrate de que incluya:
+
+-- Insertar roles base
+INSERT INTO roles(nombre) VALUES ('Admin'), ('Operario'), ('Contador'), ('Auditor');
+
+-- Insertar permisos_por_rol para Admin (todos los módulos con ver=1, crear=1, editar=1, eliminar=1, aprobar=1)
+DECLARE @modulos TABLE (nombre_modulo VARCHAR(50));
+INSERT INTO @modulos VALUES 
+  ('Obras'),('Inventario'),('Herrajes'),('Vidrios'),('Pedidos'),('Contabilidad'),
+  ('Auditoría'),('Mantenimiento'),('Usuarios'),('Configuración');
+
+INSERT INTO permisos_por_rol(rol_id, modulo, ver, crear, editar, eliminar, aprobar)
+SELECT 1, nombre_modulo, 1, 1, 1, 1, 1 FROM @modulos;
+
+-- Insertar permisos_por_rol para Operario (solo Inventario y Pedidos: ver=1, crear=1; Obras: ver=1; resto ver=0)
+INSERT INTO permisos_por_rol(rol_id, modulo, ver, crear, editar, eliminar, aprobar) VALUES
+(2,'Obras',1,0,0,0,0),
+(2,'Inventario',1,1,0,0,0),
+(2,'Herrajes',0,0,0,0,0),
+(2,'Vidrios',0,0,0,0,0),
+(2,'Pedidos',1,1,0,0,0),
+(2,'Contabilidad',0,0,0,0,0),
+(2,'Auditoría',0,0,0,0,0),
+(2,'Mantenimiento',0,0,0,0,0),
+(2,'Usuarios',0,0,0,0,0),
+(2,'Configuración',0,0,0,0,0);
+
+-- Insertar permisos_por_rol para Contador (Contabilidad: ver=1, crear=1; Pedidos y Obras: ver=1; resto 0)
+INSERT INTO permisos_por_rol(rol_id, modulo, ver, crear, editar, eliminar, aprobar) VALUES
+(3,'Obras',1,0,0,0,0),
+(3,'Inventario',0,0,0,0,0),
+(3,'Herrajes',0,0,0,0,0),
+(3,'Vidrios',0,0,0,0,0),
+(3,'Pedidos',1,0,0,0,0),
+(3,'Contabilidad',1,1,0,0,0),
+(3,'Auditoría',0,0,0,0,0),
+(3,'Mantenimiento',0,0,0,0,0),
+(3,'Usuarios',0,0,0,0,0),
+(3,'Configuración',0,0,0,0,0);
+
+-- Insertar permisos_por_rol para Auditor (solo Auditoría: ver=1)
+INSERT INTO permisos_por_rol(rol_id, modulo, ver, crear, editar, eliminar, aprobar) VALUES
+(4,'Obras',0,0,0,0,0),
+(4,'Inventario',0,0,0,0,0),
+(4,'Herrajes',0,0,0,0,0),
+(4,'Vidrios',0,0,0,0,0),
+(4,'Pedidos',0,0,0,0,0),
+(4,'Contabilidad',0,0,0,0,0),
+(4,'Auditoría',1,0,0,0,0),
+(4,'Mantenimiento',0,0,0,0,0),
+(4,'Usuarios',0,0,0,0,0),
+(4,'Configuración',0,0,0,0,0);
+
+-- Crear usuario admin con contraseña hasheada (ej: 'admin123')
+INSERT INTO usuarios(username, password_hash, rol_id)
+VALUES ('admin', '<HASH_BCRYPT_DE_ADMIN123>', 1);
+
+-- Crear usuario demo con rol Operario
+INSERT INTO usuarios(username, password_hash, rol_id)
+VALUES ('demo', '<HASH_BCRYPT_DE_DEMO>', 2);
+12. Documentación y Checklist de Release
+12.1. Actualizar README.md
+makefile
+Copiar
+Editar
+# Prompt para Copilot:
+Abre README.md y modifica o añade las siguientes secciones:
+
+## Instalación
+1. Clonar el repositorio:
+   git clone https://github.com/nomdedev/stock.app.git
+   cd stock.app
+2. Crear y activar un entorno virtual:
+   python -m venv venv
+   source venv/bin/activate  # Linux/Mac
+   venv\Scripts\activate     # Windows
+3. Instalar dependencias:
+   pip install -r requirements.txt
+
+## Variables de Entorno
+Copie .env.example a .env y complete:
+DB_SERVER=<tu_servidor>
+DB_PORT=<puerto>
+DB_DATABASE=<nombre_bd>
+DB_USER=<usuario>
+DB_PASSWORD=<contraseña>
+DEFAULT_THEME=light
+DEBUG_MODE=False
+LOG_LEVEL=INFO
+
+## Migraciones y Estructura de BD
+1. Ejecute en SQL Server (o su motor):
+   cd scripts
+   sqlcmd -S <server> -i estructura_tablas_mps.sql
+2. Ejecute bootstrap de roles y permisos:
+   sqlcmd -S <server> -i bootstrap_roles_permisos.sql
+
+## Cómo usar la aplicación
+Ejecute:
+python main.py
+
+## Tests
+Para correr la suite completa:
+pytest --maxfail=1 --disable-warnings --cov=modules
+
+## Empaquetado (opcional)
+Para generar ejecutable con PyInstaller:
+pyinstaller --onefile main.py
+12.2. Crear CHANGELOG.md
+markdown
+Copiar
+Editar
+# Prompt para Copilot:
+Crea el archivo CHANGELOG.md con esta estructura:
+
+## [1.1.0] - YYYY-MM-DD
+### Añadido
+- Alta, edición y bloqueo optimista (rowversion) en Obras.
+- Generación automática de la primera etapa de cada obra.
+- Funcionalidad completa de Pedidos (generar, recibir, actualizar stock en inventario).
+- Inventario de Perfiles con métodos de reserva, devolución y ajustes.
+- Nuevo módulo de Herrajes y módulo de Vidrios con reserva y devolución.
+- UI de “Lista de Precios” de Perfiles editable.
+- Gestión de Usuarios y Permisos con recarga dinámica del Sidebar.
+- Módulo Contabilidad (generar factura, registrar pago, balance general).
+- Módulo Auditoría con filtrado, paginación y exportación a Excel.
+- Flujo E2E completo: Obras → Inventario → Pedidos → Contabilidad.
+- Tests unitarios, de integración y E2E (pytest-qt) para todos los módulos.
+- Interfaz mejorada con tooltips, sombras (QGraphicsDropShadowEffect) y accesibilidad.
+- Scripts SQL unificados en scripts/estructura_tablas_mps.sql.
+- Bootstrap de usuarios/roles en scripts/bootstrap_roles_permisos.sql.
+
+### Corregido
+- Eliminación de duplicados en el Sidebar y ajustes de QSS para márgenes y separación.
+- Habilitación de tests de UI (pytest-qt) en pipeline de CI.
+- Validaciones de fechas, stock insuficiente y errores silenciosos en varios módulos.
+
+### Pendiente
+- Reportes automáticos vía email (implementación futura).
+- Herramienta de migración de datos legacy.
+- Empaquetado multiplataforma (Windows, Mac, Linux).
+- Documentación final de migración legacy y plan de rollback.

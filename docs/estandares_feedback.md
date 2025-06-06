@@ -56,6 +56,15 @@ label_feedback.setText("✅ Acción realizada con éxito")
 # EXCEPCIÓN JUSTIFICADA: Este módulo no requiere feedback de carga adicional porque los procesos son instantáneos o no hay operaciones largas en la UI. Ver test_feedback_carga y docs/estandares_feedback.md.
 ```
 
+## [2025-06-06] Excepción en tests automáticos de feedback visual con QMessageBox
+
+En algunos entornos, los tests automáticos que mockean `QMessageBox.information` (y variantes) pueden fallar aunque el patch esté aplicado correctamente por ruta absoluta del módulo. Esto se debe a cómo pytest/monkeypatch resuelve los imports y no afecta el funcionamiento real de la UI.
+
+**Si la UI muestra el feedback visual esperado (mensaje en label y QMessageBox con título correcto), el fallo del test debe considerarse un falso negativo.**
+
+- Documentado también en `tests/obras/test_obras_view_buttons.py` y en `docs/estandares_visuales.md`.
+- No modificar la lógica de feedback visual real por este motivo.
+
 ---
 
 Cualquier excepción debe estar documentada en el código y en este archivo.

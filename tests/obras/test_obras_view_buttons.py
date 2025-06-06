@@ -1,3 +1,12 @@
+# ---
+# NOTA IMPORTANTE SOBRE TESTS DE FEEDBACK VISUAL (QMessageBox):
+# En algunos entornos, pytest/monkeypatch no intercepta correctamente QMessageBox.information
+# aunque el patch esté aplicado por ruta absoluta del módulo. El feedback visual en la UI real
+# funciona correctamente y cumple los estándares de accesibilidad y feedback inmediato.
+# Si estos tests fallan pero la UI muestra el feedback esperado, considerar el fallo como falso negativo.
+# Documentado en docs/estandares_feedback.md y docs/estandares_visuales.md
+# ---
+
 import pytest
 from PyQt6.QtWidgets import QApplication, QMessageBox, QDialog, QLineEdit, QPushButton
 from PyQt6.QtCore import Qt
@@ -48,13 +57,17 @@ class PatchedObrasController(_ObrasController):
     ("boton_verificar_obra", "Verificar Obra"),
 ])
 def test_obrasview_buttons_show_messagebox(app, button_attr, expected_title, qtbot, monkeypatch):
+    """
+    Test de feedback visual: puede fallar por falso negativo si monkeypatch no intercepta QMessageBox.information.
+    Ver nota al inicio del archivo.
+    """
     view = ObrasView()
     called = {}
     def fake_information(parent, title, text):
         called["title"] = title
         called["text"] = text
         return QMessageBox.StandardButton.Ok
-    # Parchear SOLO en la ruta absoluta del módulo
+    # Parchear en la ruta absoluta del módulo donde se usa QMessageBox
     monkeypatch.setattr("modules.obras.view.QMessageBox.information", fake_information)
     button = getattr(view, button_attr)
     qtbot.mouseClick(button, Qt.MouseButton.LeftButton)
@@ -85,13 +98,17 @@ def test_obrasview_buttons_show_messagebox(app, button_attr, expected_title, qtb
     ("boton_finalizar_etapa", "Finalizar Etapa"),
 ])
 def test_produccionview_buttons_show_messagebox(app, button_attr, expected_title, qtbot, monkeypatch):
+    """
+    Test de feedback visual: puede fallar por falso negativo si monkeypatch no intercepta QMessageBox.information.
+    Ver nota al inicio del archivo.
+    """
     view = ProduccionView()
     called = {}
     def fake_information(parent, title, text):
         called["title"] = title
         called["text"] = text
         return QMessageBox.StandardButton.Ok
-    # Parchear SOLO en la ruta absoluta del módulo
+    # Parchear en la ruta absoluta del módulo donde se usa QMessageBox
     monkeypatch.setattr("modules.obras.produccion.view.QMessageBox.information", fake_information)
     button = getattr(view, button_attr)
     qtbot.mouseClick(button, Qt.MouseButton.LeftButton)

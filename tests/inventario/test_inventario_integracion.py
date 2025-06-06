@@ -97,5 +97,49 @@ class TestInventarioIntegracion(unittest.TestCase):
         stock_despues = items_despues[-1][4] if len(items_despues[-1]) > 4 else 0
         self.assertEqual(stock_antes, stock_despues, "El stock no debe cambiar si la reserva falla")
 
+    def _get_items_safe(self):
+        items = self.mock_db.ejecutar_query("SELECT * FROM inventario_perfiles")
+        if not items:
+            return []
+        return [i for i in items if i is not None]
+
+    def test_reservar_perfil_integracion(self):
+        # Agregar perfil y reservar
+        datos = ("C-010", "Perfil Test", "PVC", "unidad", 15, 2, "Depósito", "desc", "QR-C-010", "img.jpg")
+        self.model.agregar_item(datos)
+        items = self._get_items_safe()
+        id_perfil = items[-1][0]
+        # Reserva exitosa
+        result = self.model.reservar_perfil(obra_id := 1, id_perfil, 5, usuario="tester")
+        self.assertTrue(result)
+        # Stock actualizado
+        items = self._get_items_safe()
+        self.assertEqual(items[-1][4], 10)  # stock_actual = 15 - 5
+
+    def test_devolver_perfil_integracion(self):
+        datos = ("C-011", "Perfil Dev", "PVC", "unidad", 8, 1, "Depósito", "desc", "QR-C-011", "img.jpg")
+        self.model.agregar_item(datos)
+        items = self._get_items_safe()
+        id_perfil = items[-1][0]
+        # Reservar primero
+        self.model.reservar_perfil(1, id_perfil, 3, usuario="tester")
+        # Devolver parte
+        result = self.model.devolver_perfil(1, id_perfil, 2, usuario="tester")
+        self.assertTrue(result)
+        # Stock actualizado
+        items = self._get_items_safe()
+        self.assertEqual(items[-1][4], 7)  # 8 - 3 + 2
+
+    def test_ajustar_stock_perfil_integracion(self):
+        datos = ("C-012", "Perfil Ajuste", "PVC", "unidad", 20, 2, "Depósito", "desc", "QR-C-012", "img.jpg")
+        self.model.agregar_item(datos)
+        items = self._get_items_safe()
+        id_perfil = items[-1][0]
+        # Ajustar stock
+        result = self.model.ajustar_stock_perfil(id_perfil, 30, usuario="tester")
+        self.assertTrue(result)
+        items = self._get_items_safe()
+        self.assertEqual(items[-1][4], 30)
+
 if __name__ == "__main__":
     unittest.main()

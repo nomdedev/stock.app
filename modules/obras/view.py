@@ -265,18 +265,23 @@ class ObrasView(QWidget, TableResponsiveMixin):
         # Robustez: si label_feedback no existe, evitar excepción en tests
         if hasattr(self, 'label_feedback') and self.label_feedback is not None:
             self.label_feedback.setText(mensaje)
+            self.label_feedback.setVisible(True)
+            self.label_feedback.setAccessibleDescription(mensaje)
+            self.label_feedback.setAccessibleName(f"Mensaje de feedback de obras ({tipo})")
         else:
             print(f"[FEEDBACK] {tipo.upper()}: {mensaje}")
         from PyQt6.QtWidgets import QMessageBox
-        # --- Cambios para test: usar título personalizado si se provee ---
+        # --- Cambios para feedback visual robusto y accesible ---
         if tipo == "error":
             from core.logger import log_error
             log_error(f"[ObrasView] {mensaje}")
-            QMessageBox.critical(self, "Error", mensaje)
+            titulo = titulo_personalizado if titulo_personalizado else "Error"
+            QMessageBox.critical(self, titulo, mensaje)
         elif tipo == "advertencia":
             from core.logger import log_error
             log_error(f"[ObrasView][Advertencia] {mensaje}")
-            QMessageBox.warning(self, "Advertencia", mensaje)
+            titulo = titulo_personalizado if titulo_personalizado else "Advertencia"
+            QMessageBox.warning(self, titulo, mensaje)
         elif tipo == "exito":
             titulo = titulo_personalizado if titulo_personalizado else "Éxito"
             QMessageBox.information(self, titulo, mensaje)

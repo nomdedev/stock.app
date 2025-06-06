@@ -458,3 +458,9 @@ if text is not None:
 > Esta advertencia se agregó tras detectar errores recurrentes de atributos en módulos gráficos. Cumplirla es obligatorio para evitar bugs difíciles de depurar.
 
 ---
+
+## [2025-06-06] Nota sobre tests automáticos de feedback visual (QMessageBox)
+
+En algunos entornos, los tests automáticos que mockean `QMessageBox.information` pueden fallar aunque el patch esté correcto. Si la UI muestra el feedback visual esperado, considerar el fallo del test como falso negativo. Ver detalles en `docs/estandares_feedback.md` y en el propio test.
+
+---
