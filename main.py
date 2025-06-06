@@ -67,6 +67,7 @@ import subprocess
 import os
 import platform
 import importlib.metadata as importlib_metadata  # Sustituye pkg_resources (deprecado)
+from core.event_bus import event_bus
 
 # --- UTILIDAD PARA COMPARAR VERSIONES ---
 def version_mayor_igual(version_actual, version_requerida):
@@ -661,14 +662,23 @@ class MainWindow(QMainWindow):
         self.configuracion_controller.usuario_actual = usuario
         self.herrajes_controller.usuario_actual = usuario
 
-        # INTEGRACIÓN EN TIEMPO REAL ENTRE MÓDULOS (Obras, Inventario, Vidrios)
-        # Conectar la señal obra_agregada de ObrasView a los controladores de Inventario y Vidrios        # INTEGRACIÓN EN TIEMPO REAL ENTRE MÓDULOS (Obras, Inventario, Vidrios)
+        # INTEGRACIÓN EN TIEMPO REAL ENTRE MÓDULOS (Obras, Inventario, Vidrios, Pedidos)
+        # Conectar la señal obra_agregada de ObrasView a los controladores de Inventario y Vidrios
         if hasattr(self.obras_view, 'obra_agregada'):
             if hasattr(self.inventario_controller, 'actualizar_por_obra'):
                 self.obras_view.obra_agregada.connect(self.inventario_controller.actualizar_por_obra)
             if hasattr(self.vidrios_controller, 'actualizar_por_obra'):
                 self.obras_view.obra_agregada.connect(self.vidrios_controller.actualizar_por_obra)
-
+        # Conectar la señal pedido_actualizado del event_bus a los controladores de Obras e Inventario
+        if hasattr(self.inventario_controller, 'actualizar_por_pedido'):
+            event_bus.pedido_actualizado.connect(self.inventario_controller.actualizar_por_pedido)
+        if hasattr(self.obras_controller, 'actualizar_por_pedido'):
+            event_bus.pedido_actualizado.connect(self.obras_controller.actualizar_por_pedido)
+        # Conectar la señal pedido_cancelado del event_bus a los controladores de Obras e Inventario
+        if hasattr(self.inventario_controller, 'actualizar_por_pedido_cancelado'):
+            event_bus.pedido_cancelado.connect(self.inventario_controller.actualizar_por_pedido_cancelado)
+        if hasattr(self.obras_controller, 'actualizar_por_pedido_cancelado'):
+            event_bus.pedido_cancelado.connect(self.obras_controller.actualizar_por_pedido_cancelado)
         # Conectar la señal pageChanged del sidebar al cambio de vista en el stack
         self.sidebar.pageChanged.connect(self._on_sidebar_page_changed)
 

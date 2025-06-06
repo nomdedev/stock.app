@@ -7,6 +7,7 @@ class EventBus(QObject):
     """
     obra_agregada = pyqtSignal(dict)  # dict con datos de la obra/pedido
     pedido_actualizado = pyqtSignal(dict)
+    pedido_cancelado = pyqtSignal(dict)  # <--- SEÑAL PARA CANCELACIÓN EN TIEMPO REAL
     stock_modificado = pyqtSignal(dict)
     vidrio_asignado = pyqtSignal(dict)
     # Agregar aquí otras señales relevantes para integración cruzada

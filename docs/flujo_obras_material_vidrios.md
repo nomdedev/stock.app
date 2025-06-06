@@ -121,4 +121,15 @@ Describir paso a paso el proceso completo para garantizar que:
 
 ---
 
+## 10. Integración en tiempo real: edición y cancelación de pedidos
+
+- Cuando un pedido es editado o cancelado desde el módulo de Pedidos/Compras:
+    - Se emite una señal centralizada (`pedido_actualizado` o `pedido_cancelado`) desde el event_bus.
+    - Los controladores de Inventario y Obras están suscritos a estas señales y refrescan automáticamente la vista, mostrando feedback visual inmediato (info o advertencia).
+    - En caso de cancelación, el inventario se actualiza y se muestra un mensaje visual de advertencia en ambos módulos.
+    - Todas las acciones quedan registradas en la auditoría con usuario, fecha y detalle.
+- Este flujo asegura que los cambios de estado de los pedidos se reflejan en tiempo real en los módulos relevantes, sin necesidad de recargar la app.
+
+---
+
 > Actualiza este documento cada vez que se ajuste el flujo o se detecte un caso especial.

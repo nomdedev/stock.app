@@ -4131,3 +4131,64 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-05 11:10:29,876 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
 2025-06-05 11:10:29,876 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
 2025-06-05 11:10:29,876 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-06-06 13:03:03,546 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-06-06 13:03:03,546 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-06-06 13:03:05,450 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible o incompleto
+2025-06-06 13:03:05,450 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible o incompleto
+2025-06-06 13:03:05,450 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible o incompleto
+2025-06-06 13:03:06,448 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:03:06,448 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:03:06,448 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:03:06,448 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:03:17,804 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-06-06 13:03:17,804 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-06-06 13:03:26,086 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible o incompleto
+2025-06-06 13:03:26,086 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible o incompleto
+2025-06-06 13:03:26,086 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible o incompleto
+2025-06-06 13:03:27,730 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:03:27,730 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:03:27,730 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:03:27,730 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:05:18,571 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-06-06 13:05:18,571 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible
+2025-06-06 13:05:19,785 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible o incompleto
+2025-06-06 13:05:19,785 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible o incompleto
+2025-06-06 13:05:19,785 - ERROR - [ObrasView] No se puede mostrar el menú de columnas: header no disponible o incompleto
+2025-06-06 13:05:20,996 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:05:20,996 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:05:20,996 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:05:20,996 - ERROR - [ObrasView] Error de prueba
+2025-06-06 13:18:25,808 - ERROR - [ObrasView] Error al actualizar calendario: 'DummyModel' object has no attribute 'obtener_todas_las_fechas'
+2025-06-06 13:19:40,558 - ERROR - Error en agregar: ObrasController.agregar_obra_dialog() takes 1 positional argument but 2 were given
+2025-06-06 13:19:40,558 - ERROR - Error en agregar: ObrasController.agregar_obra_dialog() takes 1 positional argument but 2 were given
+2025-06-06 13:33:13,408 - ERROR - [ObrasView] Error al actualizar calendario: 'DummyModel' object has no attribute 'obtener_todas_las_fechas'
+2025-06-06 13:33:55,865 - ERROR - Error en registrar_evento: 'NoneType' object has no attribute 'ejecutar_query'
+2025-06-06 13:33:55,865 - ERROR - Error en registrar_evento: 'NoneType' object has no attribute 'ejecutar_query'
+2025-06-06 13:33:55,875 - ERROR - Error en agregar: ObrasController.agregar_obra_dialog() takes 1 positional argument but 2 were given
+2025-06-06 13:33:55,875 - ERROR - Error en agregar: ObrasController.agregar_obra_dialog() takes 1 positional argument but 2 were given
+2025-06-06 13:33:55,875 - ERROR - Error en agregar: ObrasController.agregar_obra_dialog() takes 1 positional argument but 2 were given
+2025-06-06 13:33:56,398 - ERROR - [ObrasView] Error al actualizar calendario: 'DummyModel' object has no attribute 'obtener_todas_las_fechas'
+2025-06-06 13:33:56,398 - ERROR - [ObrasView] Error al actualizar calendario: 'DummyModel' object has no attribute 'obtener_todas_las_fechas'
+2025-06-06 13:33:56,398 - ERROR - [ObrasView] Error al actualizar calendario: 'DummyModel' object has no attribute 'obtener_todas_las_fechas'
+2025-06-06 13:33:56,398 - ERROR - [ObrasView] Error al actualizar calendario: 'DummyModel' object has no attribute 'obtener_todas_las_fechas'
+2025-06-06 13:34:29,952 - ERROR - Error en registrar_evento: 'NoneType' object has no attribute 'ejecutar_query'
+2025-06-06 13:34:29,952 - ERROR - Error en registrar_evento: 'NoneType' object has no attribute 'ejecutar_query'
+2025-06-06 13:34:29,952 - ERROR - Error en registrar_evento: 'NoneType' object has no attribute 'ejecutar_query'
+2025-06-06 13:34:29,952 - ERROR - Error en registrar_evento: 'NoneType' object has no attribute 'ejecutar_query'
+2025-06-06 13:34:29,952 - ERROR - Error en registrar_evento: 'NoneType' object has no attribute 'ejecutar_query'
+2025-06-06 13:39:34,479 - ERROR - Error al agregar obra: 'DummyModel' object has no attribute 'agregar_obra'
+2025-06-06 13:39:34,482 - ERROR - [ObrasView] Error al agregar la obra: 'DummyModel' object has no attribute 'agregar_obra'
+2025-06-06 13:39:34,482 - ERROR - [ObrasView] Error al agregar la obra: 'DummyModel' object has no attribute 'agregar_obra'
+2025-06-06 13:39:47,648 - ERROR - [ObrasView] Error al verificar obra en SQL: 'DummyModel' object has no attribute 'obtener_obra_por_nombre_cliente'
+2025-06-06 13:39:47,648 - ERROR - [ObrasView] Error al verificar obra en SQL: 'DummyModel' object has no attribute 'obtener_obra_por_nombre_cliente'
+2025-06-06 13:39:47,648 - ERROR - [ObrasView] Error al verificar obra en SQL: 'DummyModel' object has no attribute 'obtener_obra_por_nombre_cliente'
+2025-06-06 13:43:44,358 - ERROR - [ObrasView] Nombre y cliente no pueden estar vacíos.
+2025-06-06 13:47:42,695 - ERROR - Error al agregar obra: 'DummyModel' object has no attribute 'db_connection'
+2025-06-06 13:47:42,698 - ERROR - [ObrasView] Error al agregar la obra: 'DummyModel' object has no attribute 'db_connection'
+2025-06-06 13:47:42,698 - ERROR - [ObrasView] Error al agregar la obra: 'DummyModel' object has no attribute 'db_connection'
+2025-06-06 13:50:01,388 - ERROR - Error al agregar obra: 'DummyModel' object has no attribute 'db_connection'
+2025-06-06 13:50:01,390 - ERROR - [ObrasView] Error al agregar la obra: 'DummyModel' object has no attribute 'db_connection'
+2025-06-06 13:50:01,390 - ERROR - [ObrasView] Error al agregar la obra: 'DummyModel' object has no attribute 'db_connection'
+2025-06-06 13:50:40,611 - ERROR - Error al agregar obra: 'DummyModel' object has no attribute 'db_connection'
+2025-06-06 13:50:40,613 - ERROR - [ObrasView] Error al agregar la obra: 'DummyModel' object has no attribute 'db_connection'
+2025-06-06 13:50:40,613 - ERROR - [ObrasView] Error al agregar la obra: 'DummyModel' object has no attribute 'db_connection'

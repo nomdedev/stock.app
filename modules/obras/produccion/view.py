@@ -46,9 +46,12 @@ class ProduccionView(QWidget):
             boton.setAccessibleName(tooltip)
             boton.setText("")
             boton.setFixedSize(48, 48)
-            # El estilo visual se gestiona por QSS global y helper estilizar_boton_icono
             estilizar_boton_icono(boton)
             header_layout.addWidget(boton, alignment=Qt.AlignmentFlag.AlignVCenter)
+        # --- CONEXIÓN DE ACCIONES A BOTONES PRINCIPALES ---
+        self.boton_agregar.clicked.connect(self.accion_agregar_produccion)
+        self.boton_ver_detalles.clicked.connect(self.accion_ver_detalles)
+        self.boton_finalizar_etapa.clicked.connect(self.accion_finalizar_etapa)
         self.main_layout.insertLayout(0, header_layout)
 
         self.buscar_input = None

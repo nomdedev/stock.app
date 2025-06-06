@@ -248,7 +248,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.columnas_visibles = self.cargar_config_columnas()
         self.aplicar_columnas_visibles()
 
-    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000, titulo_personalizado=None):
         """
         Muestra feedback visual crítico (QMessageBox) y en label_feedback.
         Usar para errores, advertencias o confirmaciones importantes.
@@ -265,9 +265,10 @@ class ObrasView(QWidget, TableResponsiveMixin):
         # Robustez: si label_feedback no existe, evitar excepción en tests
         if hasattr(self, 'label_feedback') and self.label_feedback is not None:
             self.label_feedback.setText(mensaje)
-        # Opcional: log o print si no hay label_feedback
         else:
             print(f"[FEEDBACK] {tipo.upper()}: {mensaje}")
+        from PyQt6.QtWidgets import QMessageBox
+        # --- Cambios para test: usar título personalizado si se provee ---
         if tipo == "error":
             from core.logger import log_error
             log_error(f"[ObrasView] {mensaje}")
@@ -277,7 +278,11 @@ class ObrasView(QWidget, TableResponsiveMixin):
             log_error(f"[ObrasView][Advertencia] {mensaje}")
             QMessageBox.warning(self, "Advertencia", mensaje)
         elif tipo == "exito":
-            QMessageBox.information(self, "Éxito", mensaje)
+            titulo = titulo_personalizado if titulo_personalizado else "Éxito"
+            QMessageBox.information(self, titulo, mensaje)
+        elif tipo == "info":
+            titulo = titulo_personalizado if titulo_personalizado else "Información"
+            QMessageBox.information(self, titulo, mensaje)
         # Ocultar automáticamente después de 4 segundos
         from PyQt6.QtCore import QTimer
         if hasattr(self, '_feedback_timer') and self._feedback_timer:

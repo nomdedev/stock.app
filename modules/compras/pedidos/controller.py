@@ -5,6 +5,7 @@ from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
 from core.logger import log_error
+from core.event_bus import event_bus
 
 class PermisoAuditoria:
     def __init__(self, modulo):
@@ -88,6 +89,12 @@ class ComprasPedidosController:
             self.model.crear_pedido(tuple(campos.values()))
             self.view.label.setText("Pedido creado exitosamente.")
             self._registrar_evento_auditoria('crear', 'pedido creado', 'éxito')
+            # INTEGRACIÓN EN TIEMPO REAL: emitir señal de pedido actualizado
+            event_bus.pedido_actualizado.emit({
+                'id': self.model.obtener_ultimo_id_pedido(),
+                'obra': campos.get('cliente', ''),
+                'accion': 'creado'
+            })
         except Exception as e:
             log_error(f"Error al crear pedido: {e}")
             self.view.label.setText("Error al crear el pedido.")
@@ -99,6 +106,12 @@ class ComprasPedidosController:
             self.dal.actualizar_registro("pedidos", id_pedido, datos, fecha_actualizacion)
             self.view.label.setText("Pedido actualizado exitosamente.")
             self._registrar_evento_auditoria('actualizar', f"pedido {id_pedido} actualizado", 'éxito')
+            # INTEGRACIÓN EN TIEMPO REAL: emitir señal de pedido actualizado
+            event_bus.pedido_actualizado.emit({
+                'id': id_pedido,
+                'obra': datos.get('cliente', ''),
+                'accion': 'actualizado'
+            })
         except Exception as e:
             log_error(f"Error al actualizar pedido: {e}")
             self.view.label.setText(f"Error: {str(e)}")
@@ -107,7 +120,7 @@ class ComprasPedidosController:
     @permiso_auditoria_compras('ver_detalles')
     def ver_detalles_pedido(self):
         fila_seleccionada = self.view.tabla_pedidos.currentRow()
-        if fila_seleccionada == -1:
+       
             self.view.label.setText("Seleccione un pedido para ver detalles.")
             self._registrar_evento_auditoria('ver_detalles', 'sin selección', 'error')
             return
@@ -218,3 +231,19 @@ class ComprasPedidosController:
             log_error(f"Error al cargar pedidos: {e}")
             self.view.label.setText("Error al cargar los pedidos.")
             self._registrar_evento_auditoria('cargar_pedidos', f"error: {e}", 'error')
+
+    @permiso_auditoria_compras('cancelar')
+    def cancelar_pedido(self, id_pedido):
+        try:
+            self.model.cancelar_pedido(id_pedido)
+            self.view.label.setText(f"Pedido {id_pedido} cancelado correctamente.")
+            self._registrar_evento_auditoria('cancelar', f"pedido {id_pedido} cancelado", 'éxito')
+            # INTEGRACIÓN EN TIEMPO REAL: emitir señal de pedido cancelado
+            event_bus.pedido_cancelado.emit({
+                'id': id_pedido,
+                'accion': 'cancelado'
+            })
+        except Exception as e:
+            log_error(f"Error al cancelar pedido: {e}")
+            self.view.label.setText(f"Error al cancelar el pedido: {e}")
+            self._registrar_evento_auditoria('cancelar', f"error: {e}", 'error')

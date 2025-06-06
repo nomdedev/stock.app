@@ -216,18 +216,18 @@ class ObrasController:
             datos = self.model.obtener_obra_por_nombre_cliente(nombre, cliente)
             if datos:
                 if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(f"✔ Obra encontrada en SQL: {datos}", tipo='info')
+                    self.view.mostrar_mensaje(f"✔ Obra encontrada en SQL: {datos}", tipo='info', titulo_personalizado="Verificar Obra")
                 elif hasattr(self.view, 'label'):
                     self.view.label.setText(f"✔ Obra encontrada en SQL: {datos}")
             else:
                 if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje("✖ La obra NO se encuentra en la base de datos SQL.", tipo='warning')
+                    self.view.mostrar_mensaje("✖ La obra NO se encuentra en la base de datos SQL.", tipo='warning', titulo_personalizado="Verificar Obra")
                 elif hasattr(self.view, 'label'):
                     self.view.label.setText("✖ La obra NO se encuentra en la base de datos SQL.")
         except Exception as e:
             mensaje = f"Error al verificar obra en SQL: {e}"
             if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(mensaje, tipo='error')
+                self.view.mostrar_mensaje(mensaje, tipo='error', titulo_personalizado="Verificar Obra")
             elif hasattr(self.view, 'label'):
                 self.view.label.setText(mensaje)
             self._registrar_evento_auditoria("verificar_obra_sql", mensaje, exito=False)
@@ -425,7 +425,7 @@ class ObrasController:
                 if hasattr(self.view, 'mostrar_mensaje'):
                     self.view.mostrar_mensaje(
                         "Notificación enviada a Inventario y Vidrios para actualización en tiempo real.",
-                        tipo='info', duracion=3500
+                        tipo='info', duracion=3500, titulo_personalizado="Agregar Obra"
                     )
                 print(f"[INTEGRACIÓN] Señal obra_agregada emitida con datos: {datos_obra}")
                 # Feedback visual
@@ -439,13 +439,14 @@ class ObrasController:
                     f"<li><b>Fecha entrega:</b> {fecha_entrega}</li>"
                     f"</ul>"
                     f"<br>"
+                    f"<br>"
                     f"<span style='color:#2563eb'><b>¿Qué desea hacer ahora?</b></span><br>"
                     f"- <b>Asignar materiales</b> a la obra desde el menú de acciones.<br>"
                     f"- <b>Programar cronograma</b> en la pestaña Cronograma.<br>"
                     f"- <b>Ver la obra</b> en la tabla principal.<br>"
                 )
                 if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(mensaje, tipo='exito', duracion=9000)
+                    self.view.mostrar_mensaje(mensaje, tipo='exito', duracion=9000, titulo_personalizado="Agregar Obra")
                 else:
                     self.view.label.setText(mensaje)
                 self.cargar_datos_obras()
@@ -749,7 +750,7 @@ class ObrasController:
                 if hasattr(self.view, 'mostrar_mensaje'):
                     self.view.mostrar_mensaje(
                         "Notificación enviada a Inventario y Vidrios para actualización en tiempo real.",
-                        tipo='info', duracion=3500
+                        tipo='info', duracion=3500, titulo_personalizado="Agregar Obra"
                     )
                 print(f"[INTEGRACIÓN] Señal obra_agregada emitida con datos: {datos_obra}")
                 # Feedback visual
@@ -763,13 +764,14 @@ class ObrasController:
                     f"<li><b>Fecha entrega:</b> {fecha_entrega}</li>"
                     f"</ul>"
                     f"<br>"
+                    f"<br>"
                     f"<span style='color:#2563eb'><b>¿Qué desea hacer ahora?</b></span><br>"
                     f"- <b>Asignar materiales</b> a la obra desde el menú de acciones.<br>"
                     f"- <b>Programar cronograma</b> en la pestaña Cronograma.<br>"
                     f"- <b>Ver la obra</b> en la tabla principal.<br>"
                 )
                 if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(mensaje, tipo='exito', duracion=9000)
+                    self.view.mostrar_mensaje(mensaje, tipo='exito', duracion=9000, titulo_personalizado="Agregar Obra")
                 else:
                     self.view.label.setText(mensaje)
                 self.cargar_datos_obras()
@@ -957,6 +959,25 @@ class ObrasController:
                 self.view.mostrar_mensaje(mensaje, tipo='error')
             elif hasattr(self.view, 'label'):
                 self.view.label.setText(mensaje)
+
+    def actualizar_por_pedido(self, datos_pedido):
+        """
+        Método para refrescar la vista de obras cuando se actualiza un pedido.
+        Se puede usar para actualizar la lista de pedidos asociados a obras, etc.
+        """
+        if hasattr(self, 'cargar_datos_obras'):
+            self.cargar_datos_obras()
+        if hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(f"Obras actualizadas automáticamente por el pedido '{datos_pedido.get('id','')}'.", tipo='info')
+
+    def actualizar_por_pedido_cancelado(self, datos_pedido):
+        """
+        Refresca la vista y muestra feedback visual cuando se cancela un pedido asociado a una obra.
+        """
+        if hasattr(self, 'cargar_datos_obras'):
+            self.cargar_datos_obras()
+        if hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(f"Obras actualizadas por cancelación del pedido '{datos_pedido.get('id','')}'.", tipo='advertencia')
 
 # NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
 # Si necesitas una cadena de conexión, obténla de un archivo seguro o variable de entorno, nunca hardcodeada.

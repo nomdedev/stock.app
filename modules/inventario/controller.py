@@ -552,3 +552,22 @@ class InventarioController:
         self._feedback(f"Inventario actualizado por nueva obra: {datos_obra.get('nombre','')} (ID: {datos_obra.get('id','')})", tipo='info')
         if hasattr(self.view, 'mostrar_mensaje'):
             self.view.mostrar_mensaje(f"Inventario actualizado automáticamente por la obra '{datos_obra.get('nombre','')}'.", tipo='info')
+
+    def actualizar_por_pedido(self, datos_pedido):
+        """
+        Método para refrescar la vista de inventario cuando se actualiza un pedido.
+        Se puede usar para actualizar la lista de materiales, stock, etc.
+        """
+        self.actualizar_inventario()
+        self._feedback(f"Inventario actualizado por pedido: {datos_pedido.get('id','')} (Obra: {datos_pedido.get('obra','')})", tipo='info')
+        if hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(f"Inventario actualizado automáticamente por el pedido '{datos_pedido.get('id','')}'.", tipo='info')
+
+    def actualizar_por_pedido_cancelado(self, datos_pedido):
+        """
+        Refresca la vista y muestra feedback visual cuando se cancela un pedido.
+        """
+        self.actualizar_inventario()
+        self._feedback(f"Pedido cancelado: {datos_pedido.get('id','')} - Se actualizó el inventario.", tipo='advertencia')
+        if hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(f"Inventario actualizado por cancelación del pedido '{datos_pedido.get('id','')}'.", tipo='advertencia')
