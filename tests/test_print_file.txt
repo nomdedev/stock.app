@@ -1,1 +1,2 @@
 PRUEBA DE ESCRITURA EN ARCHIVO DESDE PYTHON
+Linea escrita por Python

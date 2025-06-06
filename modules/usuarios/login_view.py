@@ -167,10 +167,52 @@ class LoginView(QWidget):
         main_layout.addWidget(self.login_card, alignment=Qt.AlignmentFlag.AlignCenter)
         main_layout.addStretch()
 
+        self.set_tooltips_accesibilidad()
+
+    def mostrar_feedback(self, mensaje, tipo="info"):
+        """
+        Muestra feedback visual accesible y moderno en el label_feedback (o label_error para login).
+        tipo: 'info', 'exito', 'advertencia', 'error'.
+        """
+        iconos = {
+            "info": "ℹ️ ",
+            "exito": "✅ ",
+            "advertencia": "⚠️ ",
+            "error": "❌ "
+        }
+        colores = {
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "advertencia": "#fbbf24",
+            "error": "#ef4444"
+        }
+        icono = iconos.get(tipo, "ℹ️ ")
+        color = colores.get(tipo, "#2563eb")
+        self.label_error.setText(f"{icono}{mensaje}")
+        self.label_error.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 1rem; margin-top: 8px;")
+        self.label_error.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
+        self.label_error.setAccessibleName(f"Feedback {tipo}")
+        self.label_error.setToolTip(mensaje)
+        self.label_error.setVisible(True)
+
     def mostrar_error(self, mensaje):
-        self.label_error.setText(mensaje)
+        self.mostrar_feedback(mensaje, tipo="error")
 
     def limpiar_error(self):
         self.label_error.setText("")
+        self.label_error.setStyleSheet("")
+        self.label_error.setAccessibleDescription("")
+        self.label_error.setAccessibleName("")
+        self.label_error.setToolTip("")
+        self.label_error.setVisible(False)
 
-# Todas las líneas setStyleSheet comentadas corresponden a estilos migrados a QSS global. Ver docs/estandares_visuales.md
+    def set_tooltips_accesibilidad(self):
+        self.usuario_input.setToolTip("Ingrese su nombre de usuario")
+        self.usuario_input.setAccessibleName("Campo de usuario")
+        self.usuario_input.setAccessibleDescription("Campo para ingresar el nombre de usuario")
+        self.password_input.setToolTip("Ingrese su contraseña")
+        self.password_input.setAccessibleName("Campo de contraseña")
+        self.password_input.setAccessibleDescription("Campo para ingresar la contraseña")
+        self.boton_login.setToolTip("Ingresar al sistema")
+        self.boton_login.setAccessibleName("Botón de ingresar")
+        self.boton_login.setAccessibleDescription("Botón para iniciar sesión")

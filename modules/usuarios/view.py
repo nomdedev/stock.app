@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QHBoxLayout, QGraphicsDropShadowEffect, QTabWidget, QComboBox, QMenu, QHeaderView, QMessageBox, QDialog, QFileDialog
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QHBoxLayout, QGraphicsDropShadowEffect, QTabWidget, QComboBox, QMenu, QHeaderView, QMessageBox, QDialog, QFileDialog, QTableWidgetItem
 from PyQt6.QtGui import QIcon, QColor, QAction, QPixmap
 from PyQt6.QtCore import QSize, Qt, QPoint
 import json
@@ -146,9 +146,12 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.tabs = QTabWidget()
         self.tab_usuarios = QWidget()
         self.tab_permisos = QWidget()
+        self.tab_resumen_permisos = QWidget()  # Nueva pestaña
         self.tabs.addTab(self.tab_usuarios, "Usuarios")
         self.tabs.addTab(self.tab_permisos, "Permisos de módulos")
+        self.tabs.addTab(self.tab_resumen_permisos, "Resumen de permisos")
         self.main_layout.addWidget(self.tabs)
+        self._init_tab_resumen_permisos()
 
     def _init_tab_usuarios(self):
         tab_usuarios_layout = QVBoxLayout(self.tab_usuarios)
@@ -209,6 +212,19 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.boton_guardar_permisos = QPushButton("Guardar permisos")
         estilizar_boton_icono(self.boton_guardar_permisos)
         tab_permisos_layout.addWidget(self.boton_guardar_permisos)
+
+    def _init_tab_resumen_permisos(self):
+        layout = QVBoxLayout(self.tab_resumen_permisos)
+        self.boton_refrescar_resumen = QPushButton("Refrescar resumen de permisos")
+        self.boton_refrescar_resumen.setObjectName("boton_refrescar_resumen_permisos")
+        estilizar_boton_icono(self.boton_refrescar_resumen)
+        layout.addWidget(self.boton_refrescar_resumen)
+        self.tabla_resumen_permisos = QTableWidget()
+        self.tabla_resumen_permisos.setObjectName("tabla_resumen_permisos")
+        self.make_table_responsive(self.tabla_resumen_permisos)
+        layout.addWidget(self.tabla_resumen_permisos)
+        self.label_resumen_info = QLabel("Visualización de permisos por usuario y módulo. Solo lectura.")
+        layout.addWidget(self.label_resumen_info)
 
     def obtener_headers_desde_db(self, tabla):
         # Obtención dinámica de headers desde la base de datos (si hay controller y método disponible)
@@ -327,6 +343,36 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 btn_guardar.clicked.connect(guardar)
                 btn_pdf.clicked.connect(exportar_pdf)
                 dialog.exec()
+
+    def cargar_resumen_permisos(self, usuarios, modulos, permisos_dict):
+        """
+        Llena la tabla de resumen de permisos. Recibe:
+        - usuarios: lista de dicts o tuplas con al menos 'id', 'usuario', 'rol'
+        - modulos: lista de nombres de módulos
+        - permisos_dict: dict {(usuario_id, modulo): {'ver': bool, 'modificar': bool, 'aprobar': bool}}
+        """
+        self.tabla_resumen_permisos.clear()
+        headers = ["Usuario", "Rol", "Módulo", "Ver", "Modificar", "Aprobar"]
+        self.tabla_resumen_permisos.setColumnCount(len(headers))
+        self.tabla_resumen_permisos.setHorizontalHeaderLabels(headers)
+        rows = 0
+        for usuario in usuarios:
+            usuario_id = usuario['id'] if isinstance(usuario, dict) else usuario[0]
+            usuario_nombre = usuario['usuario'] if isinstance(usuario, dict) else usuario[4] if len(usuario) > 4 else str(usuario_id)
+            rol = usuario['rol'] if isinstance(usuario, dict) else usuario[6] if len(usuario) > 6 else ''
+            for modulo in modulos:
+                permisos = permisos_dict.get((usuario_id, modulo), {'ver': False, 'modificar': False, 'aprobar': False})
+                self.tabla_resumen_permisos.insertRow(rows)
+                self.tabla_resumen_permisos.setItem(rows, 0, QTableWidgetItem(str(usuario_nombre)))
+                self.tabla_resumen_permisos.setItem(rows, 1, QTableWidgetItem(str(rol)))
+                self.tabla_resumen_permisos.setItem(rows, 2, QTableWidgetItem(str(modulo)))
+                # Permisos como íconos o texto
+                for i, key in enumerate(['ver', 'modificar', 'aprobar']):
+                    item = QTableWidgetItem("✅" if permisos.get(key, False) else "❌")
+                    item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                    self.tabla_resumen_permisos.setItem(rows, 3 + i, item)
+                rows += 1
+        self.tabla_resumen_permisos.resizeColumnsToContents()
 
 # NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
 # Si necesitas una cadena de conexión, obténla de un archivo seguro o variable de entorno, nunca hardcodeada.

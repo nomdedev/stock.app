@@ -74,6 +74,7 @@ class UsuariosController(BaseController):
         self.mostrar_tab_permisos_si_admin()
         self.setup_view_signals()
         self.cargar_usuarios()
+        self.cargar_resumen_permisos()  # Mostrar resumen de permisos al iniciar
 
     def setup_view_signals(self):
         # Diccionario para mapear botones a métodos
@@ -103,6 +104,8 @@ class UsuariosController(BaseController):
         # Cargar usuarios solo si la vista está lista
         if hasattr(self.view, 'tabla_usuarios'):
             self.cargar_usuarios()
+        if hasattr(self.view, 'boton_refrescar_resumen'):
+            self.view.boton_refrescar_resumen.clicked.connect(self.cargar_resumen_permisos)
 
     @permiso_auditoria_usuarios('agregar')
     def agregar_usuario(self):
@@ -392,6 +395,22 @@ class UsuariosController(BaseController):
         # Guardar en la tabla permisos_usuario usando username
         self.model.actualizar_permisos_usuario(username, nuevos_permisos)
         QMessageBox.information(self.view, "Permisos actualizados", "Los permisos de módulos han sido actualizados para el usuario seleccionado.")
+
+    def cargar_resumen_permisos(self):
+        """
+        Carga la tabla de resumen de permisos en la vista, mostrando todos los usuarios, módulos y sus permisos.
+        """
+        usuarios = self.model.obtener_usuarios()
+        modulos = self.model.obtener_todos_los_modulos()
+        # Construir un dict {(usuario_id, modulo): {ver, modificar, aprobar}}
+        permisos_dict = {}
+        for usuario in usuarios:
+            usuario_id = usuario[0] if isinstance(usuario, (list, tuple)) else usuario['id']
+            for modulo in modulos:
+                permisos = self.model.obtener_permisos_por_usuario(usuario_id, modulo)
+                permisos_dict[(usuario_id, modulo)] = permisos
+        if hasattr(self.view, 'cargar_resumen_permisos'):
+            self.view.cargar_resumen_permisos(usuarios, modulos, permisos_dict)
 
     def _registrar_evento_auditoria(self, accion, detalle_extra="", estado=""):
         usuario = getattr(self, 'usuario_actual', None)

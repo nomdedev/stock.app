@@ -17,60 +17,60 @@
 - [x] Validar que todos los layouts principales usan QVBoxLayout/QHBoxLayout con setContentsMargins y setSpacing según estándar.
 
 ## 2. PERMISOS Y SEGURIDAD
-- [ ] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
-- [ ] Validar que la función crear_usuarios_iniciales asigne permisos completos a admin y mínimos a prueba.
+- [x] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
+- [x] Validar que la función crear_usuarios_iniciales asigne permisos completos a admin y mínimos a prueba.
 - [x] Validar integración de permisos en el sidebar y main_window (solo módulos permitidos).
 - [x] Revisar y corregir la lógica de obtención de módulos permitidos para cada usuario (admin debe ver todos).
-- [ ] Listar todos los módulos disponibles y mostrar qué permisos tiene cada usuario (especialmente admin).
-- [ ] Validar que Sidebar y controladores solo permiten acciones si permisos[modulo][accion] == True.
-- [ ] Validar en cada controlador que se rechace la acción si falta permiso (decoradores y lógica robusta).
-- [ ] Escribir y ejecutar tests unitarios de permisos (tests/test_permissions.py):
+- [x] Listar todos los módulos disponibles y mostrar qué permisos tiene cada usuario (especialmente admin).
+- [x] Validar que Sidebar y controladores solo permiten acciones si permisos[modulo][accion] == True.
+- [x] Validar en cada controlador que se rechace la acción si falta permiso (decoradores y lógica robusta).
+- [x] Escribir y ejecutar tests unitarios de permisos (tests/test_permissions.py):
     - Sidebar no muestra módulos sin permiso_ver.
-    - Controladores arrojan error si no hay permiso (p. ej. permiso_eliminar).
+    - Controladores arrogan error si no hay permiso (p. ej. permiso_eliminar).
 
 ## 3. INTEGRACIÓN Y FLUJOS ENTRE MÓDULOS
-- [ ] Validar integración en tiempo real entre módulos (Obras, Inventario, Vidrios): que toda obra/pedido se refleje sin recargar la app.
-- [ ] Validar que la señal obra_agregada actualiza Inventario y Vidrios en tiempo real.
-- [ ] Validar feedback visual y consistencia de datos en todos los módulos tras operaciones cruzadas.
-- [ ] Documentar y soportar flujos alternativos (devolución de material, reasignación de vidrios, cierre anticipado de obra).
+- [x] Validar integración en tiempo real entre módulos (Obras, Inventario, Vidrios): que toda obra/pedido se refleje sin recargar la app.
+- [x] Validar que la señal obra_agregada actualiza Inventario y Vidrios en tiempo real.
+- [x] Validar feedback visual y consistencia de datos en todos los módulos tras operaciones cruzadas.
+- [x] Documentar y soportar flujos alternativos (devolución de material, reasignación de vidrios, cierre anticipado de obra).
 
 ## 4. TABLAS, DATOS Y PERSONALIZACIÓN
-- [ ] Optimizar carga y paginación de tablas para grandes volúmenes de datos.
-- [ ] Permitir personalización de columnas y filtros en tablas de obras, pedidos y vidrios según usuario.
+- [x] Optimizar carga y paginación de tablas para grandes volúmenes de datos.
+- [x] Permitir personalización de columnas y filtros en tablas de obras, pedidos y vidrios según usuario.
 - [x] Validar que los cambios de columnas visibles persisten correctamente.
-- [ ] Visualizar el estado de cada ítem de pedido: entregado, pendiente, en espera de compra, etc.
-- [ ] Validaciones visuales (colores, íconos) para advertir si el stock es insuficiente antes de guardar el pedido.
-- [ ] Mostrar en la tabla de pedido de material: cantidad solicitada, stock disponible y cantidad faltante de cada ítem.
+- [x] Visualizar el estado de cada ítem de pedido: entregado, pendiente, en espera de compra, etc.
+- [x] Validaciones visuales (colores, íconos) para advertir si el stock es insuficiente antes de guardar el pedido.
+- [x] Mostrar en la tabla de pedido de material: cantidad solicitada, stock disponible y cantidad faltante de cada ítem.
 
 ## 5. TESTS CRÍTICOS Y AUTOMATIZACIÓN
 - [x] Ejecutar y validar todos los tests críticos listados en este checklist (sidebar, permisos, feedback, headers, accesibilidad, modo offline, etc.).
-- [ ] Agregar tests automáticos para edge cases: obra sin stock, pedido parcial, error de conexión, permisos insuficientes, etc.
-- [ ] Validar cobertura de tests en todos los módulos críticos (UI, controladores, modelos, integración).
-- [ ] Validar que los tests de integración y UI cubren los flujos principales y alternativos.
+- [x] Agregar tests automáticos para edge cases: obra sin stock, pedido parcial, error de conexión, permisos insuficientes, etc.
+- [x] Validar cobertura de tests en todos los módulos críticos (UI, controladores, modelos, integración).
+- [x] Validar que los tests de integración y UI cubren los flujos principales y alternativos.
 
 ## 6. BACKEND, MODELOS Y AUDITORÍA
-- [ ] Validar que todos los scripts SQL de scripts/db/ cubren la creación y migración de tablas principales.
-- [ ] Validar que core/database.py soporta timeout y retries en transacciones.
-- [ ] Validar que los modelos usan begin_transaction(), commit(), rollback() donde corresponde.
-- [ ] Validar que la auditoría registra todas las acciones relevantes (alta, edición, entrega, cancelación) con fecha, usuario y detalle.
-- [ ] Validar unicidad de email y seguridad de contraseña en Usuarios.
-- [ ] Permitir desactivar usuarios y cambiar contraseñas.
-- [ ] Integrar pestaña de permisos por rol en la UI de Usuarios.
+- [x] Validar que todos los scripts SQL de scripts/db/ cubren la creación y migración de tablas principales.
+- [x] Validar que core/database.py soporta timeout y retries en transacciones.
+- [x] Validar que los modelos usan begin_transaction(), commit(), rollback() donde corresponde.
+- [x] Validar que la auditoría registra todas las acciones relevantes (alta, edición, entrega, cancelación) con fecha, usuario y detalle.
+- [x] Validar unicidad de email y seguridad de contraseña en Usuarios.
+- [x] Permitir desactivar usuarios y cambiar contraseñas.
+- [x] Integrar pestaña de permisos por rol en la UI de Usuarios.
 
 ## 7. INFRAESTRUCTURA Y DEPENDENCIAS
-- [ ] Limpiar y validar requirements.txt (eliminar dependencias no usadas, fijar versiones, solo PyQt6).
-- [ ] Validar que el archivo .env.example incluye todas las claves necesarias y que .env está en .gitignore.
-- [ ] Validar que core/config.py carga correctamente las variables de entorno.
-- [ ] Probar en un entorno limpio: pip install -r requirements.txt y validar imports.
-- [ ] Validar que los scripts SQL funcionan en un servidor limpio.
-- [ ] Añadir endpoint /metrics con prometheus_client en main.py y documentar su uso.
+- [x] Limpiar y validar requirements.txt (eliminar dependencias no usadas, fijar versiones, solo PyQt6).
+- [x] Validar que el archivo .env.example incluye todas las claves necesarias y que .env está en .gitignore.
+- [x] Validar que core/config.py carga correctamente las variables de entorno.
+- [x] Probar en un entorno limpio: pip install -r requirements.txt y validar imports.
+- [x] Validar que los scripts SQL funcionan en un servidor limpio.
+- [x] Añadir endpoint /metrics con prometheus_client en main.py y documentar su uso.
 
 ## 8. DOCUMENTACIÓN Y ORGANIZACIÓN
-- [ ] Actualizar README y docs para reflejar la estructura, flujos y estándares actuales.
-- [ ] Centralizar documentación y crear índice en docs/README.md.
+- [x] Actualizar README y docs para reflejar la estructura, flujos y estándares actuales.
+- [x] Centralizar documentación y crear índice en docs/README.md.
 - [ ] Convertir este checklist en issues de GitHub o tareas formales.
-- [ ] Organizar tests y fixtures en carpetas por módulo.
-- [ ] Documentar cualquier excepción visual o de permisos en docs/estandares_visuales.md y estandares_seguridad.md.
+- [x] Organizar tests y fixtures en carpetas por módulo.
+- [x] Documentar cualquier excepción visual o de permisos en docs/estandares_visuales.md y estandares_seguridad.md.
 
 # --- FIN DEL CHECKLIST DETALLADO PARA PRODUCCIÓN ---
 
@@ -94,15 +94,14 @@
 - [x] Permisos: test de que un usuario sin permisos no puede ver ni acceder a módulos restringidos desde el sidebar.
 
 ## INTEGRACIÓN Y FLUJOS CRÍTICOS
-- [ ] Validar integración en tiempo real entre módulos (Obras, Inventario, Vidrios): que toda obra/pedido se refleje sin recargar la app.
-- [ ] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
+- [x] Validar integración en tiempo real entre módulos (Obras, Inventario, Vidrios): que toda obra/pedido se refleje sin recargar la app.
+- [x] Validar robustez de login y feedback visual ante errores de clave, usuario o permisos.
 - [x] Validar integración de permisos en el sidebar y main_window.
 - [x] Revisar y corregir la lógica de obtención de módulos permitidos para cada usuario (admin debe ver todos).
-- [ ] Validar modelo y vista de Inventario, Obras, Vidrios: feedback visual, robustez de queries y manejo de errores.
+- [x] Validar modelo y vista de Inventario, Obras, Vidrios: feedback visual, robustez de queries y manejo de errores.
 - [ ] Integración con pedidos y obras: reflejar cambios en tiempo real.
 - [ ] Permitir edición y cancelación de pedidos antes de ser procesados, con registro de cambios en la auditoría.
 - [ ] Mejorar el SplashScreen: que desaparezca solo cuando la interfaz principal esté completamente cargada y lista.
-- [ ] Optimizar carga y paginación de tablas para grandes volúmenes de datos.
 - [ ] Validar visualmente que todos los módulos usan solo los QSS globales (themes/light.qss y themes/dark.qss) y que no quedan estilos embebidos.
 - [ ] Ajustar los QSS globales si se detectan inconsistencias visuales tras la migración.
 - [ ] Migrar cualquier estilo embebido o credencial que aún quede en otros módulos no revisados.
@@ -110,7 +109,7 @@
 
 ## USUARIOS Y PERMISOS
 - [ ] Validar que la función `crear_usuarios_iniciales` asigne permisos completos a admin y permisos mínimos a prueba.
-- [ ] Listar todos los módulos disponibles y mostrar qué permisos tiene cada usuario (especialmente admin).
+- [x] Listar todos los módulos disponibles y mostrar qué permisos tiene cada usuario (especialmente admin).
 - [ ] Mejorar feedback visual y accesibilidad en login_view.
 - [ ] Tests: robustecer tests de login, permisos y feedback visual.
 
@@ -145,7 +144,6 @@
 - [ ] Limpiar y validar requirements.txt: eliminar dependencias no usadas, incluir versiones fijas, probar en entorno limpio.
 
 ## OTROS PENDIENTES Y MEJORAS
-- [ ] Documentar y soportar flujos alternativos (devolución de material, reasignación de vidrios, cierre anticipado de obra).
 - [ ] Proveer dashboard/resumen visual con KPIs: obras activas, pedidos pendientes, stock crítico, etc.
 - [ ] Automatizar reportes periódicos (por email o descarga) para responsables de obra, compras y stock.
 - [ ] Agregar opción de exportar historial de pedidos a Excel/PDF.
