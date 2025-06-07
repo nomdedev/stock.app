@@ -55,15 +55,85 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.label_titulo = QLabel("Gestión de Inventario")
         self.label_titulo.setAccessibleDescription("Título principal de la vista de Inventario")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
-        # Botón principal (Agregar item)
-        self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
-        self.boton_agregar.setIconSize(QSize(24, 24))
-        self.boton_agregar.setToolTip("Agregar item")
-        self.boton_agregar.setAccessibleName("Botón agregar ítem de inventario")
-        header_layout.addWidget(self.boton_agregar)
+        # [ELIMINADO] Botón principal (Agregar item) al lado del título
+        # self.boton_agregar = QPushButton()
+        # self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
+        # self.boton_agregar.setIconSize(QSize(24, 24))
+        # self.boton_agregar.setToolTip("Agregar item")
+        # self.boton_agregar.setAccessibleName("Botón agregar ítem de inventario")
+        # header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
+
+        # --- BOTONES PRINCIPALES COMO ICONOS (arriba a la derecha) ---
+        # Cada botón tiene su función, tooltip y SVG documentado para fácil mantenimiento.
+        # Puedes cambiar el SVG o el tooltip según la función que desees destacar.
+        top_btns_layout = QHBoxLayout()
+        top_btns_layout.addStretch()
+        # Botón: Agregar nuevo ítem de inventario
+        btn_nuevo_item = QPushButton()
+        btn_nuevo_item.setIcon(QIcon("resources/icons/add-material.svg"))  # SVG: add-material.svg
+        btn_nuevo_item.setIconSize(QSize(24, 24))
+        btn_nuevo_item.setToolTip("Agregar nuevo ítem de inventario")
+        btn_nuevo_item.setAccessibleName("Botón agregar nuevo ítem de inventario")
+        btn_nuevo_item.clicked.connect(self.nuevo_item_signal.emit)
+        estilizar_boton_icono(btn_nuevo_item)
+        top_btns_layout.addWidget(btn_nuevo_item)
+        # Botón: Exportar a Excel
+        btn_excel = QPushButton()
+        btn_excel.setIcon(QIcon("resources/icons/excel_icon.svg"))  # SVG: excel_icon.svg
+        btn_excel.setIconSize(QSize(24, 24))
+        btn_excel.setToolTip("Exportar inventario a Excel")
+        btn_excel.setAccessibleName("Botón exportar inventario a Excel")
+        btn_excel.clicked.connect(self.exportar_excel_signal.emit)
+        estilizar_boton_icono(btn_excel)
+        top_btns_layout.addWidget(btn_excel)
+        # Botón: Exportar a PDF
+        btn_pdf = QPushButton()
+        btn_pdf.setIcon(QIcon("resources/icons/pdf_icon.svg"))  # SVG: pdf_icon.svg
+        btn_pdf.setIconSize(QSize(24, 24))
+        btn_pdf.setToolTip("Exportar inventario a PDF")
+        btn_pdf.setAccessibleName("Botón exportar inventario a PDF")
+        btn_pdf.clicked.connect(self.exportar_pdf_signal.emit)
+        estilizar_boton_icono(btn_pdf)
+        top_btns_layout.addWidget(btn_pdf)
+        # Botón: Buscar ítem
+        btn_buscar = QPushButton()
+        btn_buscar.setIcon(QIcon("resources/icons/search_icon.svg"))  # SVG: search_icon.svg
+        btn_buscar.setIconSize(QSize(24, 24))
+        btn_buscar.setToolTip("Buscar ítem de inventario")
+        btn_buscar.setAccessibleName("Botón buscar ítem de inventario")
+        btn_buscar.clicked.connect(self.buscar_signal.emit)
+        estilizar_boton_icono(btn_buscar)
+        top_btns_layout.addWidget(btn_buscar)
+        # Botón: Generar código QR
+        btn_qr = QPushButton()
+        btn_qr.setIcon(QIcon("resources/icons/qr_icon.svg"))  # SVG: qr_icon.svg
+        btn_qr.setIconSize(QSize(24, 24))
+        btn_qr.setToolTip("Generar código QR de inventario")
+        btn_qr.setAccessibleName("Botón generar código QR de inventario")
+        btn_qr.clicked.connect(self.generar_qr_signal.emit)
+        estilizar_boton_icono(btn_qr)
+        top_btns_layout.addWidget(btn_qr)
+        # Botón: Ver obras pendientes de material
+        btn_obras_pendientes = QPushButton()
+        btn_obras_pendientes.setIcon(QIcon("resources/icons/viewdetails.svg"))  # SVG: viewdetails.svg
+        btn_obras_pendientes.setIconSize(QSize(24, 24))
+        btn_obras_pendientes.setToolTip("Ver obras pendientes de material")
+        btn_obras_pendientes.setAccessibleName("Botón ver obras pendientes de material")
+        btn_obras_pendientes.clicked.connect(self.ver_obras_pendientes_material)
+        estilizar_boton_icono(btn_obras_pendientes)
+        top_btns_layout.addWidget(btn_obras_pendientes)
+        # Botón: Reservar lote de perfiles
+        btn_reservar_lote = QPushButton()
+        btn_reservar_lote.setIcon(QIcon("resources/icons/reserve-stock.svg"))  # SVG: reserve-stock.svg
+        btn_reservar_lote.setIconSize(QSize(24, 24))
+        btn_reservar_lote.setToolTip("Reservar lote de perfiles")
+        btn_reservar_lote.setAccessibleName("Botón reservar lote de perfiles")
+        btn_reservar_lote.clicked.connect(self.abrir_reserva_lote_perfiles)
+        estilizar_boton_icono(btn_reservar_lote)
+        top_btns_layout.addWidget(btn_reservar_lote)
+        self.main_layout.addLayout(top_btns_layout)
 
         # Validar conexión
         conexion_valida = self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])
@@ -80,33 +150,11 @@ class InventarioView(QWidget, TableResponsiveMixin):
 
         self.main_layout.setSpacing(16)  # Cambiar a un valor mayor para mejor visibilidad
 
-        # Botones principales como iconos (arriba a la derecha)
-        top_btns_layout = QHBoxLayout()
-        top_btns_layout.addStretch()
-        iconos = [
-            ("add-material.svg", "Agregar nuevo ítem", self.nuevo_item_signal, "Botón agregar nuevo ítem de inventario"),
-            ("excel_icon.svg", "Exportar a Excel", self.exportar_excel_signal, "Botón exportar inventario a Excel"),
-            ("pdf_icon.svg", "Exportar a PDF", self.exportar_pdf_signal, "Botón exportar inventario a PDF"),
-            ("search_icon.svg", "Buscar ítem", self.buscar_signal, "Botón buscar ítem de inventario"),
-            ("qr_icon.svg", "Generar código QR", self.generar_qr_signal, "Botón generar código QR de inventario"),
-            ("viewdetails.svg", "", self.ver_obras_pendientes_material, "Botón ver obras pendientes de material"),
-            ("reserve-stock.svg", "", self.abrir_reserva_lote_perfiles, "Botón reservar lote de perfiles"),
-        ]
-        for icono, tooltip, signal, accesible in iconos:
-            btn = QPushButton()
-            btn.setIcon(QIcon(f"resources/icons/{icono}"))
-            btn.setIconSize(QSize(24, 24))
-            btn.setToolTip(tooltip)
-            btn.setAccessibleName(accesible)
-            btn.setText("")
-            btn.clicked.connect(signal.emit if hasattr(signal, 'emit') else signal)
-            estilizar_boton_icono(btn)
-            top_btns_layout.addWidget(btn)
-        self.main_layout.addLayout(top_btns_layout)
-
         # Obtener headers desde la base de datos
         self.inventario_headers = self.obtener_headers_desde_db("inventario_perfiles")
+        # --- TABLA PRINCIPAL DE INVENTARIO ---
         self.tabla_inventario = QTableWidget()
+        self.tabla_inventario.setObjectName("tabla_inventario")
         self.tabla_inventario.setColumnCount(len(self.inventario_headers))
         self.tabla_inventario.setHorizontalHeaderLabels(self.inventario_headers)
         self.make_table_responsive(self.tabla_inventario)
@@ -302,9 +350,16 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 self.tabla_inventario.setItem(fila, columna, qitem)
 
     def exportar_tabla_a_excel(self):
+        from PyQt6.QtWidgets import QMessageBox
+        # Diálogo de confirmación antes de exportar
+        confirm = QMessageBox.question(self, "Confirmar exportación", "¿Desea exportar el inventario a Excel?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if confirm != QMessageBox.StandardButton.Yes:
+            self.mostrar_feedback("Exportación cancelada por el usuario.", tipo="advertencia")
+            return
         # Abrir diálogo para elegir ubicación
         file_path, _ = QFileDialog.getSaveFileName(self, "Exportar a Excel", "inventario.xlsx", "Archivos Excel (*.xlsx)")
         if not file_path:
+            self.mostrar_feedback("Exportación cancelada.", tipo="advertencia")
             return
         # Obtener datos de la tabla
         data = []
@@ -317,9 +372,11 @@ class InventarioView(QWidget, TableResponsiveMixin):
         df = pd.DataFrame(data)
         try:
             df.to_excel(file_path, index=False)
+            QMessageBox.information(self, "Exportación exitosa", f"Inventario exportado correctamente a:\n{file_path}")
             self.mostrar_feedback(f"Inventario exportado correctamente a {file_path}", tipo="exito")
             log_error(f"Inventario exportado correctamente a {file_path}")
         except Exception as e:
+            QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
             self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
             log_error(f"Error al exportar inventario: {e}")
 
@@ -334,7 +391,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
             log_error("Error de conexión a la base de datos al consultar obras pendientes.")
             return
         try:
-            query = "SELECT referencia_obra, cantidad_reservada, estado, codigo_reserva FROM reservas_materiales WHERE id_item = ? AND estado IN ('activa', 'pendiente')"
+            query = "SELECT referencia_obra, cantidad_reservada, estado, codigo_reserva FROM reserva_materiales WHERE id_item = ? AND estado IN ('activa', 'pendiente')"
             server = get_db_server()
             connection_string = (
                 f"DRIVER={{{self.db_connection.driver}}};"
@@ -354,18 +411,25 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 self.mostrar_feedback("No hay obras pendientes para este material.", tipo="info")
                 log_error(f"Consulta de obras pendientes: sin reservas para material {id_item}")
                 return
-            # Mostrar en ventana modal
+            # --- ESTÁNDAR VISUAL ---
             dialog = QDialog(self)
             dialog.setWindowTitle("Obras pendientes de este material")
+            dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
             layout = QVBoxLayout(dialog)
+            layout.setContentsMargins(24, 20, 24, 20)
+            layout.setSpacing(16)
             for r in reservas:
                 obra = r.get("referencia_obra", "")
                 cantidad = r.get("cantidad_reservada", "")
                 estado = r.get("estado", "")
                 codigo = r.get("codigo_reserva", "")
                 label = QLabel(f"Obra: <b>{obra}</b> | Cantidad: <b>{cantidad}</b> | Estado: <b>{estado}</b> | Código: <b>{codigo}</b>")
+                label.setStyleSheet("font-size: 13px; color: #2563eb; background: #e3f6fd; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px;")
                 layout.addWidget(label)
-            btn_cerrar = QPushButton("Cerrar")
+            btn_cerrar = QPushButton()
+            btn_cerrar.setIcon(QIcon("resources/icons/close.svg"))  # SVG: close.svg
+            btn_cerrar.setToolTip("Cerrar ventana de reservas")
+            estilizar_boton_icono(btn_cerrar)
             btn_cerrar.clicked.connect(dialog.accept)
             layout.addWidget(btn_cerrar)
             dialog.setLayout(layout)
@@ -374,98 +438,49 @@ class InventarioView(QWidget, TableResponsiveMixin):
             self.mostrar_feedback(f"Error al consultar reservas: {e}", tipo="error")
             log_error(f"Error al consultar reservas: {e}")
 
-    def toggle_expandir_fila(self, row, col):
-        item = self.tabla_inventario.item(row, 0)
-        if item is None or not hasattr(item, 'text'):
-            return
-        id_item = item.text()
-        if (row, id_item) in self.filas_expandidas:
-            self.colapsar_fila(row)
-            self.filas_expandidas.remove((row, id_item))
-        else:
-            self.expandir_fila(row, id_item)
-            self.filas_expandidas.add((row, id_item))
-
-    def expandir_fila(self, row, id_item):
-        # Consultar reservas activas/pendientes para este material
-        if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
-            self.mostrar_feedback("No hay conexión válida a la base de datos.", tipo="error")
-            log_error("Error de conexión a la base de datos al expandir fila.")
-            return
-        try:
-            query = "SELECT referencia_obra, cantidad_reservada, estado, codigo_reserva FROM reservas_materiales WHERE id_item = ? AND estado IN ('activa', 'pendiente')"
-            server = get_db_server()
-            connection_string = (
-                f"DRIVER={{{self.db_connection.driver}}};"
-                f"SERVER={server};"
-                f"DATABASE={self.db_connection.database};"
-                f"UID={self.db_connection.username};"
-                f"PWD={self.db_connection.password};"
-                f"TrustServerCertificate=yes;"
-            )
-            with pyodbc.connect(connection_string, timeout=10) as conn:
-                cursor = conn.cursor()
-                cursor.execute(query, (id_item,))
-                reservas = cursor.fetchall()
-                columnas = [column[0] for column in cursor.description]
-                reservas = [dict(zip(columnas, row)) for row in reservas]
-            if not reservas:
-                return
-            # Insertar filas debajo de la seleccionada
-            insert_at = row + 1
-            for r in reservas:
-                if insert_at > self.tabla_inventario.rowCount():
-                    break
-                self.tabla_inventario.insertRow(insert_at)
-                self.tabla_inventario.setSpan(insert_at, 0, 1, self.tabla_inventario.columnCount())
-                obra = r.get("referencia_obra", "")
-                cantidad = r.get("cantidad_reservada", "")
-                estado = r.get("estado", "")
-                codigo = r.get("codigo_reserva", "")
-                label = QLabel(f"<b>Obra:</b> {obra} | <b>Cantidad:</b> {cantidad} | <b>Estado:</b> {estado} | <b>Código:</b> {codigo}")
-                # QSS global: el estilo de feedback y detalles se define en themes/light.qss y dark.qss
-                label.setProperty("detalle", True)
-                self.tabla_inventario.setCellWidget(insert_at, 0, label)
-                insert_at += 1
-        except Exception as e:
-            self.mostrar_feedback(f"Error al consultar reservas: {e}", tipo="error")
-            log_error(f"Error al expandir fila: {e}")
-
-    def colapsar_fila(self, row):
-        # Elimina todas las filas expandidas debajo de la fila seleccionada
-        while self.tabla_inventario.rowCount() > row + 1:
-            widget = self.tabla_inventario.cellWidget(row + 1, 0)
-            if widget is not None:
-                self.tabla_inventario.removeRow(row + 1)
-            else:
-                break
-
     def abrir_pedido_material_obra(self):
         dialog = QDialog(self)
         dialog.setWindowTitle("Pedido de material por obra")
         dialog.setMinimumSize(800, 600)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
         layout = QVBoxLayout()
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
         form_layout = QFormLayout()
+        form_layout.setContentsMargins(0, 0, 0, 0)
+        form_layout.setSpacing(12)
         codigo_proveedor_input = QLineEdit()
+        codigo_proveedor_input.setPlaceholderText("Código de proveedor")
+        codigo_proveedor_input.setToolTip("Ingrese el código del material a pedir")
         form_layout.addRow("Código de proveedor:", codigo_proveedor_input)
+        descripcion_label = QLabel("")
+        descripcion_label.setStyleSheet("color: #2563eb; font-weight: bold; font-size: 13px;")
+        descripcion_label.setToolTip("Descripción del material según código")
+        form_layout.addRow("Descripción:", descripcion_label)
         layout.addLayout(form_layout)
+        # --- TABLA DE PERFILES EN PEDIDO MATERIAL ---
         tabla_perfiles = QTableWidget()
+        tabla_perfiles.setObjectName("tabla_inventario")  # Unificación visual
         tabla_perfiles.setColumnCount(5)
         tabla_perfiles.setHorizontalHeaderLabels([
             "Código", "Descripción", "Stock", "Cantidad a pedir", "Faltan"
         ])
+        # El estilo visual de la tabla se gestiona solo por QSS global (ver resources/qss/theme_light.qss y theme_dark.qss)
+        tabla_perfiles.setAlternatingRowColors(True)
+        tabla_perfiles.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         layout.addWidget(tabla_perfiles)
+        # Botones de acción (solo ícono, documentados)
         btn_buscar = QPushButton()
-        btn_buscar.setIcon(QIcon("resources/icons/search_icon.svg"))
-        btn_buscar.setToolTip("Buscar perfiles")
+        btn_buscar.setIcon(QIcon("resources/icons/search_icon.svg"))  # SVG: search_icon.svg
+        btn_buscar.setToolTip("Buscar perfiles por código")
         estilizar_boton_icono(btn_buscar)
         btn_reservar = QPushButton()
-        btn_reservar.setIcon(QIcon("resources/icons/add-material.svg"))
+        btn_reservar.setIcon(QIcon("resources/icons/add-material.svg"))  # SVG: add-material.svg
         btn_reservar.setToolTip("Pedir material seleccionado")
         estilizar_boton_icono(btn_reservar)
         btn_cancelar = QPushButton()
-        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
-        btn_cancelar.setToolTip("Cancelar")
+        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))  # SVG: close.svg
+        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
         estilizar_boton_icono(btn_cancelar)
         btns = QHBoxLayout()
         btns.addStretch()
@@ -475,6 +490,43 @@ class InventarioView(QWidget, TableResponsiveMixin):
         layout.addLayout(btns)
         dialog.setLayout(layout)
         perfiles_encontrados = []
+        # --- NUEVO: Búsqueda en vivo y validación de código ---
+        def buscar_y_mostrar_descripcion():
+            codigo = codigo_proveedor_input.text().strip()
+            if not codigo:
+                descripcion_label.setText("")
+                return
+            if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
+                descripcion_label.setText("Sin conexión a BD")
+                return
+            query = "SELECT codigo, descripcion, stock FROM inventario_perfiles WHERE codigo = ?"
+            server = get_db_server()
+            connection_string = (
+                f"DRIVER={{{self.db_connection.driver}}};"
+                f"SERVER={server};"
+                f"DATABASE={self.db_connection.database};"
+                f"UID={self.db_connection.username};"
+                f"PWD={self.db_connection.password};"
+                f"TrustServerCertificate=yes;"
+            )
+            try:
+                with pyodbc.connect(connection_string, timeout=10) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(query, (codigo,))
+                    row = cursor.fetchone()
+                    if row:
+                        descripcion_label.setText(str(row[1]))
+                        descripcion_label.setStyleSheet("color: #0077b6; font-weight: bold;")
+                    else:
+                        descripcion_label.setText("Código no encontrado")
+                        descripcion_label.setStyleSheet("color: #d90429; font-weight: bold;")
+            except Exception as e:
+                descripcion_label.setText(f"Error: {e}")
+                descripcion_label.setStyleSheet("color: #d90429; font-weight: bold;")
+        # Conectar búsqueda en vivo y enter
+        codigo_proveedor_input.textChanged.connect(buscar_y_mostrar_descripcion)
+        codigo_proveedor_input.returnPressed.connect(buscar_y_mostrar_descripcion)
+        # --- FIN NUEVO ---
         def buscar_perfiles():
             if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
                 self.mostrar_feedback("No hay conexión válida a la base de datos.", tipo="error")
@@ -518,9 +570,13 @@ class InventarioView(QWidget, TableResponsiveMixin):
                                 val = int(perfiles_encontrados[idx]["input"].text())
                             except Exception:
                                 val = 0
-                            faltan = max(0, val - int(perfiles_encontrados[idx]["stock"]))
+                            try:
+                                stock_val = int(perfiles_encontrados[idx]["stock"])
+                            except Exception:
+                                stock_val = 0
+                            faltan = max(0, val - stock_val)
                             perfiles_encontrados[idx]["faltan"].setText(str(faltan))
-                        cantidad_pedir.textChanged.connect(actualizar_faltan)
+                        cantidad_pedir.textChanged.connect(lambda _, idx=i: actualizar_faltan(idx))
             except Exception as e:
                 self.mostrar_feedback(f"Error al buscar perfiles: {e}", tipo="error")
                 log_error(f"Error al buscar perfiles: {e}")
@@ -559,7 +615,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 with pyodbc.connect(connection_string, timeout=10) as conn:
                     cursor = conn.cursor()
                     for id_item, cantidad, estado in pedidos:
-                        cursor.execute("INSERT INTO reservas_materiales (id_item, cantidad_reservada, referencia_obra, estado) VALUES (?, ?, ?, ?)", (id_item, cantidad, "OBRA", estado))
+                        cursor.execute("INSERT INTO reserva_materiales (id_item, cantidad_reservada, referencia_obra, estado) VALUES (?, ?, ?, ?)", (id_item, cantidad, "OBRA", estado))
                     conn.commit()
                 self.mostrar_feedback("Pedido de material realizado correctamente.", tipo="exito")
                 log_error("Pedido de material realizado correctamente.")
@@ -575,6 +631,255 @@ class InventarioView(QWidget, TableResponsiveMixin):
 
     # Reemplazar la función antigua por la nueva
     abrir_reserva_lote_perfiles = abrir_pedido_material_obra
+
+    def abrir_formulario_nuevo_item(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Agregar nuevo ítem de inventario")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        form = QFormLayout()
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setSpacing(12)
+        campos = {
+            "codigo": QLineEdit(),
+            "nombre": QLineEdit(),
+            "tipo_material": QLineEdit(),
+            "unidad": QLineEdit(),
+            "stock_actual": QLineEdit(),
+            "stock_minimo": QLineEdit(),
+            "ubicacion": QLineEdit(),
+            "descripcion": QLineEdit(),
+        }
+        for key, widget in campos.items():
+            widget.setPlaceholderText(key.replace('_', ' ').capitalize())
+            widget.setToolTip(f"Ingrese {key.replace('_', ' ')}")
+            form.addRow(key.replace('_', ' ').capitalize() + ":", widget)
+        qr_input = QLineEdit()
+        qr_input.setPlaceholderText("Código QR (opcional)")
+        qr_input.setToolTip("Código QR opcional")
+        form.addRow("Código QR:", qr_input)
+        imagen_input = QLineEdit()
+        imagen_input.setPlaceholderText("Ruta imagen referencia (opcional)")
+        imagen_input.setToolTip("Ruta de imagen de referencia (opcional)")
+        form.addRow("Imagen referencia:", imagen_input)
+        layout.addLayout(form)
+        btns = QHBoxLayout()
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("resources/icons/finish-check.svg"))  # SVG: finish-check.svg
+        btn_guardar.setToolTip("Guardar ítem de inventario")
+        estilizar_boton_icono(btn_guardar)
+        btn_cancelar = QPushButton()
+        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))  # SVG: close.svg
+        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
+        estilizar_boton_icono(btn_cancelar)
+        btns.addStretch()
+        btns.addWidget(btn_guardar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        resultado = {}
+        def guardar():
+            for key, widget in campos.items():
+                valor = widget.text().strip()
+                if not valor:
+                    widget.setProperty("error", True)
+                    widget.setToolTip("Campo obligatorio")
+                    style = widget.style()
+                    if style is not None:
+                        style.unpolish(widget)
+                        style.polish(widget)
+                    self.mostrar_feedback(f"El campo '{key}' es obligatorio.", tipo="error")
+                    return
+                resultado[key] = valor
+            resultado["qr"] = qr_input.text().strip()
+            resultado["imagen_referencia"] = imagen_input.text().strip()
+            # Insertar en la base de datos
+            if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
+                self.mostrar_feedback("No hay conexión válida a la base de datos.", tipo="error")
+                return
+            server = get_db_server()
+            connection_string = (
+                f"DRIVER={{{self.db_connection.driver}}};"
+                f"SERVER={server};"
+                f"DATABASE={self.db_connection.database};"
+                f"UID={self.db_connection.username};"
+                f"PWD={self.db_connection.password};"
+                f"TrustServerCertificate=yes;"
+            )
+            try:
+                with pyodbc.connect(connection_string, timeout=10) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(
+                        """
+                        INSERT INTO inventario_perfiles (codigo, nombre, tipo_material, unidad, stock, stock_minimo, ubicacion, descripcion, qr, imagen_referencia)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            resultado["codigo"], resultado["nombre"], resultado["tipo_material"], resultado["unidad"],
+                            int(resultado["stock_actual"]), int(resultado["stock_minimo"]), resultado["ubicacion"], resultado["descripcion"],
+                            resultado["qr"], resultado["imagen_referencia"]
+                        )
+                    )
+                    conn.commit()
+                self.mostrar_feedback("Ítem agregado correctamente.", tipo="exito")
+                dialog.accept()
+                self.actualizar_signal.emit()
+            except Exception as e:
+                self.mostrar_feedback(f"Error al agregar ítem: {e}", tipo="error")
+        btn_guardar.clicked.connect(guardar)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
+
+    def abrir_ajuste_stock_dialog(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Ajuste de stock de inventario")
+        dialog.setMinimumSize(600, 400)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
+        layout = QVBoxLayout()
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        form_layout = QFormLayout()
+        form_layout.setContentsMargins(0, 0, 0, 0)
+        form_layout.setSpacing(12)
+        codigo_input = QLineEdit()
+        codigo_input.setPlaceholderText("Ingrese código de material")
+        codigo_input.setToolTip("Código del material a ajustar")
+        descripcion_label = QLabel("")
+        descripcion_label.setStyleSheet("color: #2563eb; font-style: italic; font-size: 13px;")
+        descripcion_label.setAccessibleName("Descripción del material")
+        descripcion_label.setAccessibleDescription("Descripción del material según código ingresado")
+        form_layout.addRow("Código:", codigo_input)
+        form_layout.addRow("Descripción:", descripcion_label)
+        layout.addLayout(form_layout)
+        # --- TABLA DE AJUSTES DE STOCK ---
+        tabla_ajustes = QTableWidget()
+        tabla_ajustes.setObjectName("tabla_inventario")  # Unificación visual
+        tabla_ajustes.setColumnCount(3)
+        tabla_ajustes.setHorizontalHeaderLabels(["Código", "Descripción", "Cantidad"])
+        # El estilo visual de la tabla se gestiona solo por QSS global (ver resources/qss/theme_light.qss y theme_dark.qss)
+        tabla_ajustes.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        layout.addWidget(tabla_ajustes)
+        cantidad_input = QLineEdit()
+        cantidad_input.setPlaceholderText("Cantidad a ajustar")
+        cantidad_input.setToolTip("Cantidad a ajustar para el material")
+        form_layout.addRow("Cantidad:", cantidad_input)
+        btn_agregar = QPushButton()
+        btn_agregar.setIcon(QIcon("resources/icons/add-material.svg"))  # SVG: add-material.svg
+        btn_agregar.setToolTip("Agregar material a la lista de ajuste")
+        estilizar_boton_icono(btn_agregar)
+        btn_agregar.setEnabled(False)
+        layout.addWidget(btn_agregar)
+        btns = QHBoxLayout()
+        btn_aceptar = QPushButton()
+        btn_aceptar.setIcon(QIcon("resources/icons/finish-check.svg"))  # SVG: finish-check.svg
+        btn_aceptar.setToolTip("Aceptar y guardar ajustes")
+        estilizar_boton_icono(btn_aceptar)
+        btn_cancelar = QPushButton()
+        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))  # SVG: close.svg
+        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
+        estilizar_boton_icono(btn_cancelar)
+        btns.addStretch()
+        btns.addWidget(btn_aceptar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        dialog.setLayout(layout)
+        # Estado interno
+        items_ajuste = []
+        # --- Lógica de búsqueda y validación en tiempo real ---
+        def buscar_codigo():
+            codigo = codigo_input.text().strip()
+            if not codigo:
+                descripcion_label.setText("")
+                btn_agregar.setEnabled(False)
+                return
+            # Buscar en la base de datos
+            if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
+                descripcion_label.setText("No hay conexión a la base de datos.")
+                btn_agregar.setEnabled(False)
+                return
+            query = "SELECT descripcion FROM inventario_perfiles WHERE codigo = ?"
+            server = get_db_server()
+            connection_string = (
+                f"DRIVER={{{self.db_connection.driver}}};"
+                f"SERVER={server};"
+                f"DATABASE={self.db_connection.database};"
+                f"UID={self.db_connection.username};"
+                f"PWD={self.db_connection.password};"
+                f"TrustServerCertificate=yes;"
+            )
+            try:
+                with pyodbc.connect(connection_string, timeout=10) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(query, (codigo,))
+                    row = cursor.fetchone()
+                    if row:
+                        descripcion_label.setText(str(row[0]))
+                        btn_agregar.setEnabled(True)
+                    else:
+                        descripcion_label.setText("Código no encontrado")
+                        btn_agregar.setEnabled(False)
+            except Exception as e:
+                descripcion_label.setText(f"Error: {e}")
+                btn_agregar.setEnabled(False)
+        # Conectar búsqueda en vivo y enter
+        codigo_input.textChanged.connect(buscar_codigo)
+        codigo_input.returnPressed.connect(buscar_codigo)
+        def agregar_a_lista():
+            codigo = codigo_input.text().strip()
+            if not codigo:
+                return
+            # Buscar en la base de datos
+            if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
+                self.mostrar_feedback("No hay conexión válida a la base de datos.", tipo="error")
+                log_error("Error de conexión a la base de datos al agregar ajuste.")
+                return
+            query = "SELECT id, codigo, descripcion, stock FROM inventario_perfiles WHERE codigo = ?"
+            server = get_db_server()
+            connection_string = (
+                f"DRIVER={{{self.db_connection.driver}}};"
+                f"SERVER={server};"
+                f"DATABASE={self.db_connection.database};"
+                f"UID={self.db_connection.username};"
+                f"PWD={self.db_connection.password};"
+                f"TrustServerCertificate=yes;"
+            )
+            try:
+                with pyodbc.connect(connection_string, timeout=10) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(query, (codigo,))
+                    row = cursor.fetchone()
+                    if row:
+                        # Agregar a la tabla de ajustes
+                        fila = tabla_ajustes.rowCount()
+                        tabla_ajustes.insertRow(fila)
+                        for col in range(3):
+                            item = QTableWidgetItem(str(row[col]))
+                            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)  # No editable
+                            tabla_ajustes.setItem(fila, col, item)
+                        cantidad_input.clear()
+                        # Actualizar estado interno
+                        items_ajuste.append({"codigo": row[0], "descripcion": row[1], "cantidad": 0})
+                        self.mostrar_feedback(f"Material '{row[1]}' agregado a la lista de ajuste.", tipo="exito")
+                    else:
+                        self.mostrar_feedback("Código no encontrado en inventario.", tipo="advertencia")
+            except Exception as e:
+                self.mostrar_feedback(f"Error al agregar material: {e}", tipo="error")
+                log_error(f"Error al agregar material a ajuste: {e}")
+        btn_agregar.clicked.connect(agregar_a_lista)
+        codigo_input.returnPressed.connect(lambda: btn_agregar.setEnabled(btn_agregar.isEnabled()) or agregar_a_lista())
+        # Botones aceptar/cancelar
+        def aceptar():
+            if not items_ajuste:
+                self.mostrar_feedback("No hay ajustes para guardar.", tipo="advertencia")
+                return
+            # Aquí puedes emitir una señal o procesar los ajustes
+            self.ajustes_stock_guardados.emit(items_ajuste)
+            dialog.accept()
+        btn_aceptar.clicked.connect(aceptar)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
 
     def mostrar_feedback(self, mensaje, tipo="info", icono="", duracion=4000):
         # QSS global: el color y formato de feedback se define en themes/light.qss y dark.qss
@@ -654,4 +959,25 @@ class InventarioView(QWidget, TableResponsiveMixin):
             # Aquí puedes aplicar color/emoji según tipo
         else:
             print(mensaje)
-# NOTA: Todos los estilos visuales y feedback deben ser gestionados por QSS global (themes/light.qss y dark.qss). No usar setStyleSheet embebido. Si se requiere excepción, documentar y justificar en docs/estandares_visuales.md
+
+    def toggle_expandir_fila(self, fila, columna):
+        """
+        Expande o colapsa visualmente la fila seleccionada en la tabla de inventario.
+        Proporciona feedback visual accesible y cumple con los estándares visuales.
+        """
+        if not hasattr(self, 'tabla_inventario') or self.tabla_inventario is None:
+            self.mostrar_feedback("No se puede expandir la fila: tabla no inicializada.", tipo="error")
+            return
+        alto_expandido = 80  # Alto expandido (puedes ajustar según diseño)
+        alto_normal = 32     # Alto normal (ajustar según QSS global)
+        if not hasattr(self, 'filas_expandidas'):
+            self.filas_expandidas = set()
+        if fila in self.filas_expandidas:
+            self.tabla_inventario.setRowHeight(fila, alto_normal)
+            self.filas_expandidas.remove(fila)
+            self.mostrar_feedback(f"Fila {fila+1} colapsada.", tipo="info")
+        else:
+            self.tabla_inventario.setRowHeight(fila, alto_expandido)
+            self.filas_expandidas.add(fila)
+            self.mostrar_feedback(f"Fila {fila+1} expandida.", tipo="info")
+# NOTA: Todos los estilos visuales y feedback deben ser gestionados por QSS global (themes/light.qss and dark.qss). No usar setStyleSheet embebido. Si se requiere excepción, documentar y justificar en docs/estandares_visuales.md

@@ -77,12 +77,19 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.tabla_balance.setObjectName("tabla_balance")
         self.make_table_responsive(self.tabla_balance)
         self.tab_balance_layout.addWidget(self.tabla_balance)
+        # Botones de acción para Balance
+        btn_balance_layout = QHBoxLayout()
+        btn_balance_layout.addStretch()
+        self.boton_exportar_excel_balance = QPushButton()
+        self.boton_exportar_excel_balance.setIcon(QIcon("resources/icons/excel_icon.svg"))
+        self.boton_exportar_excel_balance.setToolTip("Exportar balance a Excel")
+        self.boton_exportar_excel_balance.setAccessibleName("Botón exportar balance a Excel")
+        estilizar_boton_icono(self.boton_exportar_excel_balance)
+        btn_balance_layout.addWidget(self.boton_exportar_excel_balance)
         self.boton_agregar_balance = QPushButton()
         self.boton_agregar_balance.setIcon(QIcon("resources/icons/plus_icon.svg"))
         self.boton_agregar_balance.setToolTip("Agregar movimiento contable")
         estilizar_boton_icono(self.boton_agregar_balance)
-        btn_balance_layout = QHBoxLayout()
-        btn_balance_layout.addStretch()
         btn_balance_layout.addWidget(self.boton_agregar_balance)
         self.tab_balance_layout.addLayout(btn_balance_layout)
         self.tabs.addTab(self.tab_balance, "Balance")
@@ -100,6 +107,16 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.tabla_pagos.setObjectName("tabla_pagos")
         self.make_table_responsive(self.tabla_pagos)
         self.tab_pagos_layout.addWidget(self.tabla_pagos)
+        # Botones de acción para Pagos
+        btn_pagos_layout = QHBoxLayout()
+        btn_pagos_layout.addStretch()
+        self.boton_exportar_excel_pagos = QPushButton()
+        self.boton_exportar_excel_pagos.setIcon(QIcon("resources/icons/excel_icon.svg"))
+        self.boton_exportar_excel_pagos.setToolTip("Exportar pagos a Excel")
+        self.boton_exportar_excel_pagos.setAccessibleName("Botón exportar pagos a Excel")
+        estilizar_boton_icono(self.boton_exportar_excel_pagos)
+        btn_pagos_layout.addWidget(self.boton_exportar_excel_pagos)
+        self.tab_pagos_layout.addLayout(btn_pagos_layout)
         self.tabs.addTab(self.tab_pagos, "Seguimiento de Pagos")
 
         # --- Pestaña Recibos ---
@@ -125,6 +142,16 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.tabla_recibos.setObjectName("tabla_recibos")
         self.make_table_responsive(self.tabla_recibos)
         self.tab_recibos_layout.addWidget(self.tabla_recibos)
+        # Botones de acción para Recibos
+        btn_recibos_layout = QHBoxLayout()
+        btn_recibos_layout.addStretch()
+        self.boton_exportar_excel_recibos = QPushButton()
+        self.boton_exportar_excel_recibos.setIcon(QIcon("resources/icons/excel_icon.svg"))
+        self.boton_exportar_excel_recibos.setToolTip("Exportar recibos a Excel")
+        self.boton_exportar_excel_recibos.setAccessibleName("Botón exportar recibos a Excel")
+        estilizar_boton_icono(self.boton_exportar_excel_recibos)
+        btn_recibos_layout.addWidget(self.boton_exportar_excel_recibos)
+        self.tab_recibos_layout.addLayout(btn_recibos_layout)
         self.tabs.addTab(self.tab_recibos, "Recibos")
 
         # --- Pestaña Estadísticas ---
@@ -186,7 +213,6 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.combo_anio.currentIndexChanged.connect(self.actualizar_grafico_estadisticas)
         self.combo_mes.currentIndexChanged.connect(self.actualizar_grafico_estadisticas)
         self.input_dolar.editingFinished.connect(self.actualizar_grafico_estadisticas)
-
         self.setLayout(self.main_layout)
 
         # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
@@ -981,3 +1007,146 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             pass
         # EXCEPCIÓN JUSTIFICADA: Si algún proceso no tiene feedback de carga es porque no hay operaciones largas en la UI de contabilidad. Ver test_feedback_carga y docs/estandares_visuales.md.
         # JUSTIFICACIÓN: No hay credenciales hardcodeadas ni estilos embebidos activos; cualquier referencia es solo ejemplo o documentación.
+
+    # Conectar botón exportar a Excel (Balance)
+        self.boton_exportar_excel_balance.clicked.connect(self.exportar_tabla_balance_a_excel)
+
+    def exportar_tabla_balance_a_excel(self):
+        """
+        Exporta la tabla de balance a un archivo Excel, con confirmación y feedback modal robusto.
+        """
+        from PyQt6.QtWidgets import QFileDialog, QMessageBox
+        import pandas as pd
+        # Confirmación previa
+        confirm = QMessageBox.question(
+            self,
+            "Confirmar exportación",
+            "¿Desea exportar el balance a Excel?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if confirm != QMessageBox.StandardButton.Yes:
+            self.mostrar_feedback("Exportación cancelada por el usuario.", tipo="advertencia")
+            return
+        # Diálogo para elegir ubicación
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Exportar a Excel",
+            "balance.xlsx",
+            "Archivos Excel (*.xlsx)"
+        )
+        if not file_path:
+            self.mostrar_feedback("Exportación cancelada.", tipo="advertencia")
+            return
+        # Obtener datos de la tabla
+        data = []
+        # Usar headers robustos
+        if hasattr(self, 'balance_headers') and self.balance_headers:
+            headers = self.balance_headers
+        else:
+            headers = []
+            for i in range(self.tabla_balance.columnCount()):
+                header_item = self.tabla_balance.horizontalHeaderItem(i)
+                if header_item is not None:
+                    headers.append(header_item.text())
+                else:
+                    headers.append(f"Columna {i+1}")
+        for row in range(self.tabla_balance.rowCount()):
+            row_data = {}
+            for col, header in enumerate(headers):
+                item = self.tabla_balance.item(row, col)
+                row_data[header] = item.text() if item else ""
+            data.append(row_data)
+        try:
+            import pandas as pd
+            df = pd.DataFrame(data)
+            df.to_excel(file_path, index=False)
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.information(self, "Exportación exitosa", f"Balance exportado correctamente a:\n{file_path}")
+            self.mostrar_feedback(f"Balance exportado correctamente a {file_path}", tipo="exito")
+        except Exception as e:
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
+            self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
+
+    def exportar_tabla_pagos_a_excel(self):
+        """
+        Exporta la tabla de pagos a un archivo Excel, con confirmación y feedback modal robusto.
+        """
+        from PyQt6.QtWidgets import QFileDialog, QMessageBox
+        import pandas as pd
+        confirm = QMessageBox.question(
+            self,
+            "Confirmar exportación",
+            "¿Desea exportar los pagos a Excel?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if confirm != QMessageBox.StandardButton.Yes:
+            self.mostrar_feedback("Exportación cancelada por el usuario.", tipo="advertencia")
+            return
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Exportar a Excel",
+            "pagos.xlsx",
+            "Archivos Excel (*.xlsx)"
+        )
+        if not file_path:
+            self.mostrar_feedback("Exportación cancelada.", tipo="advertencia")
+            return
+        data = []
+        headers = self.pagos_headers if hasattr(self, 'pagos_headers') and self.pagos_headers else [self.tabla_pagos.horizontalHeaderItem(i).text() if self.tabla_pagos.horizontalHeaderItem(i) else f"Columna {i+1}" for i in range(self.tabla_pagos.columnCount())]
+        for row in range(self.tabla_pagos.rowCount()):
+            row_data = {}
+            for col, header in enumerate(headers):
+                item = self.tabla_pagos.item(row, col)
+                row_data[header] = item.text() if item else ""
+            data.append(row_data)
+        try:
+            df = pd.DataFrame(data)
+            df.to_excel(file_path, index=False)
+            QMessageBox.information(self, "Exportación exitosa", f"Pagos exportados correctamente a:\n{file_path}")
+            self.mostrar_feedback(f"Pagos exportados correctamente a {file_path}", tipo="exito")
+        except Exception as e:
+            QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
+            self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
+
+    def exportar_tabla_recibos_a_excel(self):
+        """
+        Exporta la tabla de recibos a un archivo Excel, con confirmación y feedback modal robusto.
+        """
+        from PyQt6.QtWidgets import QFileDialog, QMessageBox
+        import pandas as pd
+        confirm = QMessageBox.question(
+            self,
+            "Confirmar exportación",
+            "¿Desea exportar los recibos a Excel?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if confirm != QMessageBox.StandardButton.Yes:
+            self.mostrar_feedback("Exportación cancelada por el usuario.", tipo="advertencia")
+            return
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Exportar a Excel",
+            "recibos.xlsx",
+            "Archivos Excel (*.xlsx)"
+        )
+        if not file_path:
+            self.mostrar_feedback("Exportación cancelada.", tipo="advertencia")
+            return
+        data = []
+        headers = self.recibos_headers if hasattr(self, 'recibos_headers') and self.recibos_headers else [self.tabla_recibos.horizontalHeaderItem(i).text() if self.tabla_recibos.horizontalHeaderItem(i) else f"Columna {i+1}" for i in range(self.tabla_recibos.columnCount())]
+        for row in range(self.tabla_recibos.rowCount()):
+            row_data = {}
+            for col, header in enumerate(headers):
+                item = self.tabla_recibos.item(row, col)
+                row_data[header] = item.text() if item else ""
+            data.append(row_data)
+        try:
+            df = pd.DataFrame(data)
+            df.to_excel(file_path, index=False)
+            QMessageBox.information(self, "Exportación exitosa", f"Recibos exportados correctamente a:\n{file_path}")
+            self.mostrar_feedback(f"Recibos exportados correctamente a {file_path}", tipo="exito")
+        except Exception as e:
+            QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
+            self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
+

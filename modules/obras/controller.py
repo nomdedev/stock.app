@@ -169,7 +169,8 @@ class ObrasController:
         # Notificar a logística si corresponde
         if self.logistica_controller and nuevo_estado.lower() in ("entrega", "colocada", "finalizada"):
             self.logistica_controller.actualizar_por_cambio_estado_obra(id_obra, nuevo_estado)
-        self.cargar_datos_obras()
+        # FIX: cambiar self.cargar_datos_obras() por self.cargar_datos_obras_tabla() que es el método correcto
+        self.cargar_datos_obras_tabla()
         self.mostrar_gantt()
         self.actualizar_calendario()
         if hasattr(self.view, 'mostrar_mensaje'):
@@ -251,8 +252,10 @@ class ObrasController:
         cliente_input = QLineEdit()
         layout.addWidget(cliente_input)
         btn_verificar = QPushButton("Verificar")
+        btn_verificar.setIcon(QIcon("resources/icons/search_icon.svg"))
         estilizar_boton_icono(btn_verificar)
         btn_cancelar = QPushButton("Cancelar")
+        btn_cancelar.setIcon(QIcon("resources/icons/reject.svg"))
         estilizar_boton_icono(btn_cancelar)
         btn_verificar.clicked.connect(dialog.accept)
         btn_cancelar.clicked.connect(dialog.reject)
@@ -625,3 +628,29 @@ class ObrasController:
     def actualizar_calendario(self):
         """Stub visual para evitar errores si no está implementado en la vista/test."""
         pass
+
+    def actualizar_por_pedido(self, datos_pedido):
+        """
+        Slot para integración en tiempo real: refresca la vista y muestra feedback visual cuando se actualiza un pedido.
+        Cumple con los estándares de feedback visual y robustez de señales.
+        """
+        try:
+            if self.view and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje("Pedido actualizado para una obra asociada.", tipo="info")
+            self.cargar_datos_obras_tabla()
+        except Exception as e:
+            from core.logger import log_error
+            log_error(f"Error en actualizar_por_pedido (ObrasController): {e}")
+
+    def actualizar_por_pedido_cancelado(self, datos_pedido):
+        """
+        Slot para integración en tiempo real: refresca la vista y muestra feedback visual cuando se cancela un pedido.
+        Cumple con los estándares de feedback visual y robustez de señales.
+        """
+        try:
+            if self.view and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje("Pedido cancelado para una obra asociada.", tipo="advertencia")
+            self.cargar_datos_obras_tabla()
+        except Exception as e:
+            from core.logger import log_error
+            log_error(f"Error en actualizar_por_pedido_cancelado (ObrasController): {e}")

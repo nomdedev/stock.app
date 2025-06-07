@@ -7960,3 +7960,1032 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-07 10:57:37,224 - INFO - Obra creada correctamente (ID: 4).
 2025-06-07 10:57:37,224 - INFO - Obra creada correctamente (ID: 4).
 2025-06-07 10:57:37,224 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:41,860 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-07 12:17:43,381 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-07 12:17:43,381 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-07 12:17:44,375 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-06-07 12:17:44,375 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-06-07 12:17:44,375 - ERROR - [ERROR][InventarioView] No se pudo exportar: Cannot save file into a non-existent directory: '\tmp'
+2025-06-07 12:17:44,378 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-06-07 12:17:44,378 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-06-07 12:17:44,378 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-06-07 12:17:44,378 - ERROR - Error al exportar inventario: Cannot save file into a non-existent directory: '\tmp'
+2025-06-07 12:17:44,593 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,593 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,593 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,593 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,593 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,725 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,725 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,725 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,725 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,725 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,725 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,875 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,875 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,875 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,875 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,875 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,875 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,875 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,992 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,992 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,992 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,992 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,992 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,992 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,992 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:44,992 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,173 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,173 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,173 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,173 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,173 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,173 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,173 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,173 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,173 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,313 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,313 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,313 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,313 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,313 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,313 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,313 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,313 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,313 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,313 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,441 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,441 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,441 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,441 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,441 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,441 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,441 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,441 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,441 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,441 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,441 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,566 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,684 - ERROR - Error en cambiar_estado: 'ObrasController' object has no attribute 'cargar_datos_obras'
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:45,935 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,030 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,212 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,221 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,233 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,256 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,261 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,266 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,278 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,283 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,290 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,304 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,311 - WARNING - Alta obra fallida por validación: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,322 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,352 - ERROR - Error en alta: Errores en los datos: Ya existe una obra con ese nombre y cliente.
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,414 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,478 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,530 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,589 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,597 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,607 - ERROR - Error en alta: Errores en los datos: El campo 'nombre' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,617 - WARNING - Alta obra fallida por validación: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,626 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,639 - ERROR - Error en alta: Errores en los datos: El campo 'cliente' es obligatorio.
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,651 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,660 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,674 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,750 - INFO - Obra creada correctamente (ID: 4).
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,760 - INFO - Obra 4 eliminada correctamente.
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,830 - ERROR - Permiso denegado: baja [obras] usuario_id=2
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:46,852 - WARNING - Intento de eliminar obra inexistente 9999.
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,387 - ERROR - Error en registrar_evento: DB error
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:17:53,401 - ERROR - registrar_evento: Argumentos faltantes: usuario_id=None, modulo=usuarios, tipo_evento=inserción
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:18:27,700 - ERROR - Error en login: division by zero
+2025-06-07 12:40:43,441 - INFO - Aplicación iniciada
+2025-06-07 12:55:10,247 - INFO - Aplicación iniciada
+2025-06-07 13:00:04,354 - INFO - Aplicación iniciada
+2025-06-07 13:00:08,459 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-07 13:39:11,562 - INFO - Aplicación iniciada
+2025-06-07 13:39:15,590 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-07 13:41:09,829 - INFO - Aplicación iniciada
+2025-06-07 13:41:13,487 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-07 13:42:41,949 - ERROR - Error en editar: 'InventarioView' object has no attribute 'abrir_formulario_nuevo_item'
+2025-06-07 13:42:41,949 - ERROR - Error en editar: 'InventarioView' object has no attribute 'abrir_formulario_nuevo_item'
+2025-06-07 13:55:21,054 - INFO - Aplicación iniciada
+2025-06-07 13:55:24,854 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-07 13:57:40,989 - INFO - Aplicación iniciada
+2025-06-07 13:57:45,167 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-07 13:57:59,083 - ERROR - Error en ver: 'InventarioView' object has no attribute 'label'
+2025-06-07 13:57:59,083 - ERROR - Error en ver: 'InventarioView' object has no attribute 'label'
+2025-06-07 13:59:50,805 - INFO - Aplicación iniciada
+2025-06-07 13:59:54,568 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-07 14:00:03,788 - ERROR - [ADVERTENCIA][InventarioView] Seleccione un material en la tabla.
+2025-06-07 14:00:03,788 - ERROR - [ADVERTENCIA][InventarioView] Seleccione un material en la tabla.
+2025-06-07 14:00:03,790 - ERROR - Intento de ver obras pendientes sin selección de material.
+2025-06-07 14:00:03,790 - ERROR - Intento de ver obras pendientes sin selección de material.
+2025-06-07 14:00:03,790 - ERROR - Intento de ver obras pendientes sin selección de material.
+2025-06-07 14:00:05,950 - ERROR - [ERROR][InventarioView] Error al consultar reservas: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-07 14:00:05,950 - ERROR - [ERROR][InventarioView] Error al consultar reservas: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-07 14:00:05,950 - ERROR - [ERROR][InventarioView] Error al consultar reservas: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-07 14:00:05,950 - ERROR - [ERROR][InventarioView] Error al consultar reservas: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-07 14:00:05,955 - ERROR - Error al expandir fila: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-07 14:00:05,955 - ERROR - Error al expandir fila: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-07 14:00:05,955 - ERROR - Error al expandir fila: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-07 14:00:05,955 - ERROR - Error al expandir fila: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-07 14:00:05,955 - ERROR - Error al expandir fila: ('42S02', "[42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]El nombre de objeto 'reservas_materiales' no es válido. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]No se puede preparar la instrucción o instrucciones. (8180)")
+2025-06-07 14:09:49,877 - INFO - Aplicación iniciada
+2025-06-07 14:09:53,554 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-07 14:23:00,312 - INFO - Aplicación iniciada
+2025-06-07 14:26:42,403 - INFO - Aplicación iniciada
+2025-06-07 14:26:46,791 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-07 14:32:55,722 - INFO - Aplicación iniciada
+2025-06-07 14:33:00,070 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']

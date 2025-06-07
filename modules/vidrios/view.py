@@ -53,11 +53,11 @@ class VidriosView(QWidget, TableResponsiveMixin):
 
         # Tabla para mostrar los vidrios
         self.tabla_vidrios = self.create_table()
+        self.tabla_vidrios.setObjectName("tabla_vidrios")  # Unificación visual
         self.make_table_responsive(self.tabla_vidrios)
-        self.tabla_vidrios.setObjectName("tabla_vidrios")
         header = self.tabla_vidrios.horizontalHeader()
         if header is not None:
-            header.setObjectName("header_vidrios")
+            header.setObjectName("header_inventario")  # Unificación visual
         self.main_layout.addWidget(self.tabla_vidrios)
 
         # Configuración de columnas y headers dinámicos
@@ -116,6 +116,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
         botones_layout.addWidget(self.boton_exportar_excel)
         botones_layout.addStretch()
         self.main_layout.addLayout(botones_layout)
+        # Conectar botones principales a sus acciones (exportar, etc.)
+        self.conectar_botones_principales()
 
         # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
@@ -366,6 +368,56 @@ class VidriosView(QWidget, TableResponsiveMixin):
             print(f"[INFO] Refrescado visual de vidrios tras obra agregada: {datos_obra}")
         else:
             print("[WARN] No se pudo refrescar vidrios tras obra agregada.")
+
+    def exportar_tabla_a_excel(self):
+        """
+        Exporta la tabla de vidrios a un archivo Excel, con confirmación y feedback modal robusto.
+        """
+        from PyQt6.QtWidgets import QFileDialog, QMessageBox
+        import pandas as pd
+        # Confirmación previa
+        confirm = QMessageBox.question(
+            self,
+            "Confirmar exportación",
+            "¿Desea exportar la tabla de vidrios a Excel?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if confirm != QMessageBox.StandardButton.Yes:
+            self.mostrar_feedback("Exportación cancelada por el usuario.", tipo="advertencia")
+            return
+        # Diálogo para elegir ubicación
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Exportar a Excel",
+            "vidrios.xlsx",
+            "Archivos Excel (*.xlsx)"
+        )
+        if not file_path:
+            self.mostrar_feedback("Exportación cancelada.", tipo="advertencia")
+            return
+        # Obtener datos de la tabla
+        data = []
+        for row in range(self.tabla_vidrios.rowCount()):
+            row_data = {}
+            for col, header in enumerate(self.vidrios_headers):
+                item = self.tabla_vidrios.item(row, col)
+                row_data[header] = item.text() if item else ""
+            data.append(row_data)
+        df = pd.DataFrame(data)
+        try:
+            df.to_excel(file_path, index=False)
+            QMessageBox.information(self, "Exportación exitosa", f"Vidrios exportados correctamente a:\n{file_path}")
+            self.mostrar_feedback(f"Vidrios exportados correctamente a {file_path}", tipo="exito")
+        except Exception as e:
+            QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
+            self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
+
+    def conectar_botones_principales(self):
+        """
+        Conecta los botones principales a sus acciones correspondientes.
+        """
+        self.boton_exportar_excel.clicked.connect(self.exportar_tabla_a_excel)
+        # Puedes conectar otros botones aquí si es necesario
 
 # NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
 # Ejemplo de cadena de conexión (solo para documentación, no usar en código):

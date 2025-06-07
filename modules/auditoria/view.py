@@ -85,6 +85,7 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
         self.make_table_responsive(self.tabla_logs)
         # QSS global: el estilo de tabla y focus se define en themes/light.qss y dark.qss
         self.tabla_logs.setProperty("tabla_auditoria", True)
+        self.tabla_logs.setObjectName("tabla_auditoria")
         self.main_layout.addWidget(self.tabla_logs)
 
         # Corrección: obtener headers de forma segura

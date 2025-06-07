@@ -403,3 +403,33 @@ QLabel#estadoOffline {
     padding: 0 16px;
 }
 /* --- Fin sidebar visual redesign --- */
+/* --- UNIFICACIÓN DE ESTILO DE TABLAS PARA TODA LA APP --- */
+QTableWidget {
+    background: #fff9f3;
+    color: #2563eb;
+    border-radius: 10px;
+    font-size: 13px;
+    gridline-color: #e3e3e3;
+    alternate-background-color: #f1f5f9;
+    selection-background-color: #e3f6fd;
+    selection-color: #1e293b;
+    border: 1.5px solid #e3e3e3;
+}
+QTableWidget QHeaderView::section, QHeaderView::section {
+    background: #f8fafc;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+}
+QTableWidget::item {
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+QTableWidget::item:selected {
+    background: #e3f6fd;
+    color: #1e293b;
+}
+/* --- FIN UNIFICACIÓN --- */

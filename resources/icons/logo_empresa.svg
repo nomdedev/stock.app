@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="120" rx="24" fill="#2563eb"/>
+  <circle cx="60" cy="60" r="36" fill="#fff"/>
+  <text x="60" y="70" text-anchor="middle" font-size="36" font-family="Segoe UI, Roboto, Arial, sans-serif" fill="#2563eb" font-weight="bold">MPS</text>
+</svg>

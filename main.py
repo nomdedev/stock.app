@@ -802,26 +802,35 @@ def diagnostico_entorno_dependencias():
     log_path = os.path.join(os.getcwd(), 'logs', 'diagnostico_dependencias.txt')
     os.makedirs(os.path.dirname(log_path), exist_ok=True)
     def log(msg):
-        print(msg, flush=True)
         with open(log_path, 'a', encoding='utf-8') as f:
             f.write(f"{datetime.datetime.now().isoformat()} | {msg}\n")
-    log("[DIAG 0] === INICIO DIAGNÓSTICO DE ENTORNO Y DEPENDENCIAS ===")
-    log(f"[DIAG 1] sys.executable: {sys.executable}")
-    log(f"[DIAG 2] sys.version: {sys.version}")
-    log(f"[DIAG 3] sys.path: {sys.path}")
     try:
-        import pandas
-        log(f"[DIAG 4] pandas importado correctamente. Versión: {pandas.__version__}")
+        log("[DIAG 0] === INICIO DIAGNÓSTICO DE ENTORNO Y DEPENDENCIAS ===")
+        log(f"[DIAG 1] sys.executable: {sys.executable}")
+        log(f"[DIAG 2] sys.version: {sys.version}")
+        log(f"[DIAG 3] sys.path: {sys.path}")
+        try:
+            import pandas
+            log(f"[DIAG 4] pandas importado correctamente. Versión: {pandas.__version__}")
+        except Exception as e:
+            log(f"[DIAG 4] ❌ Error importando pandas: {e}\n{traceback.format_exc()}")
+        try:
+            import reportlab
+            log(f"[DIAG 5] reportlab importado correctamente. Versión: {reportlab.__version__}")
+        except Exception as e:
+            log(f"[DIAG 5] ❌ Error importando reportlab: {e}\n{traceback.format_exc()}")
+        log("[DIAG 6] === FIN DIAGNÓSTICO ===")
     except Exception as e:
-        log(f"[DIAG 4] ❌ Error importando pandas: {e}\n{traceback.format_exc()}")
-    try:
-        import reportlab
-        log(f"[DIAG 5] reportlab importado correctamente. Versión: {reportlab.__version__}")
-    except Exception as e:
-        log(f"[DIAG 5] ❌ Error importando reportlab: {e}\n{traceback.format_exc()}")
-    log("[DIAG 6] === FIN DIAGNÓSTICO ===")
+        print("Ocurrió un error crítico. Consulta logs/diagnostico_dependencias.txt para más detalles y pasos de diagnóstico.")
+        log(f"[DIAG 7] ❌ Error inesperado en diagnóstico: {e}\n{traceback.format_exc()}")
+        sys.exit(1)
 
-diagnostico_entorno_dependencias()
+# Solo ejecutar diagnóstico si falla la importación de dependencias críticas
+try:
+    import pandas
+    import reportlab
+except ImportError:
+    diagnostico_entorno_dependencias()
 
 # --- BASE DE MEJORES PRÁCTICAS DE DISEÑO PARA TODA LA APP ---
 # 1. Todos los diálogos y mensajes deben tener padding simétrico, bordes redondeados y fondo claro.
@@ -863,6 +872,20 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     print("[LOG 4.2] Mostrando SplashScreen...")
     splash = SplashScreen(message="Cargando módulos y base de datos...", duration=2200)
+    # --- APLICAR TEMA AL SPLASHSCREEN ---
+    # Detectar modo de tema desde config o theme_manager
+    from utils.theme_manager import cargar_modo_tema
+    modo_tema = cargar_modo_tema()  # 'light' o 'dark'
+    if modo_tema == 'dark':
+        splash.setStyleSheet(open('resources/qss/theme_dark.qss', encoding='utf-8').read())
+    else:
+        splash.setStyleSheet(open('resources/qss/theme_light.qss', encoding='utf-8').read())
+    # --- MOSTRAR IMAGEN PERSONALIZADA EN SPLASHSCREEN ---
+    # Si SplashScreen permite set_image, usarlo. Si no, modificar el widget para mostrar la imagen.
+    try:
+        splash.set_image('resources/icons/pantalla-carga.jpg')  # Imagen de carga actualizada
+    except Exception:
+        pass  # Si no existe el método, ignora
     splash.show()
     splash.fade_in.start()
     print("[LOG 4.3] Aplicando stylesheet global desde configuración...")

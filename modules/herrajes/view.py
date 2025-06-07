@@ -71,6 +71,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         # Tabla principal de herrajes
         self.herrajes_headers = ["Nombre", "Cantidad", "Proveedor"]
         self.tabla_herrajes = QTableWidget()
+        self.tabla_herrajes.setObjectName("tabla_herrajes")
         self.tabla_herrajes.setColumnCount(len(self.herrajes_headers))
         self.tabla_herrajes.setHorizontalHeaderLabels(self.herrajes_headers)
         self.make_table_responsive(self.tabla_herrajes)
@@ -111,6 +112,9 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             self.boton_agregar = self.barra_botones[0]
         self.main_layout.addLayout(barra_layout)
         # --- FIN BARRA DE BOTONES PRINCIPALES ---
+
+        # Conectar botones principales a sus acciones (exportar, etc.)
+        self.conectar_botones_principales()
 
         # Refuerzo de accesibilidad en inputs
         self.nombre_input.setToolTip("Nombre del herraje")
@@ -297,6 +301,59 @@ class HerrajesView(QWidget, TableResponsiveMixin):
                 celda = QTableWidgetItem(valor)
                 celda.setToolTip(f"{header}: {valor}")
                 self.tabla_herrajes.setItem(row, col, celda)
+
+    def exportar_tabla_a_excel(self):
+        """
+        Exporta la tabla de herrajes a un archivo Excel, con confirmación y feedback modal robusto.
+        """
+        from PyQt6.QtWidgets import QFileDialog, QMessageBox
+        import pandas as pd
+        # Confirmación previa
+        confirm = QMessageBox.question(
+            self,
+            "Confirmar exportación",
+            "¿Desea exportar la tabla de herrajes a Excel?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if confirm != QMessageBox.StandardButton.Yes:
+            self.mostrar_feedback("Exportación cancelada por el usuario.", tipo="advertencia")
+            return
+        # Diálogo para elegir ubicación
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Exportar a Excel",
+            "herrajes.xlsx",
+            "Archivos Excel (*.xlsx)"
+        )
+        if not file_path:
+            self.mostrar_feedback("Exportación cancelada.", tipo="advertencia")
+            return
+        # Obtener datos de la tabla
+        data = []
+        for row in range(self.tabla_herrajes.rowCount()):
+            row_data = {}
+            for col, header in enumerate(self.herrajes_headers):
+                item = self.tabla_herrajes.item(row, col)
+                row_data[header] = item.text() if item else ""
+            data.append(row_data)
+        df = pd.DataFrame(data)
+        try:
+            df.to_excel(file_path, index=False)
+            QMessageBox.information(self, "Exportación exitosa", f"Herrajes exportados correctamente a:\n{file_path}")
+            self.mostrar_feedback(f"Herrajes exportados correctamente a {file_path}", tipo="exito")
+            log_error(f"Herrajes exportados correctamente a {file_path}")
+        except Exception as e:
+            QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
+            self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
+            log_error(f"Error al exportar herrajes: {e}")
+
+    def conectar_botones_principales(self):
+        """
+        Conecta los botones principales a sus acciones correspondientes.
+        """
+        if len(self.barra_botones) > 1:
+            self.barra_botones[1].clicked.connect(self.exportar_tabla_a_excel)  # Exportar a Excel
+        # Puedes conectar otros botones aquí si es necesario
 
 # EXCEPCIÓN JUSTIFICADA: Este módulo no requiere feedback de carga adicional porque los procesos son instantáneos o ya usan QProgressBar en exportaciones masivas. Ver test_feedback_carga y docs/estandares_visuales.md.
 # JUSTIFICACIÓN: No hay estilos embebidos activos ni credenciales hardcodeadas; cualquier referencia es solo ejemplo o documentación.

@@ -74,24 +74,28 @@ class Sidebar(QWidget):
 
         layout.addSpacing(12)
 
-        # --- SWITCH DE TEMA MINIMALISTA ---
+        # --- SWITCH DE TEMA ANIMADO ---
         switch_layout = QHBoxLayout()
         switch_layout.setContentsMargins(0, 0, 0, 0)
         switch_layout.setSpacing(0)
-        self.btn_tema = QPushButton()
+        self.switch_container = QWidget()
+        self.switch_container.setFixedSize(56, 28)
+        self.switch_container.setObjectName("sidebarThemeSwitchContainer")
+        self.btn_tema = QPushButton(self.switch_container)
         self.btn_tema.setFixedSize(28, 28)
         self.btn_tema.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_tema.setObjectName("sidebarThemeSwitch")
         self._modo_oscuro = modo_oscuro
         self._animando = False
         self._set_icono_tema()
+        # Posición inicial
+        self.btn_tema.move(27 if self._modo_oscuro else 3, 0)
         self.btn_tema.clicked.connect(self._toggle_tema)
         switch_layout.addStretch()
-        switch_layout.addWidget(self.btn_tema)
+        switch_layout.addWidget(self.switch_container)
         switch_layout.addStretch()
         layout.addLayout(switch_layout)
         layout.addSpacing(8)
-
         self.setLayout(layout)
 
         # Refuerzo de accesibilidad: todos los QLabel hijos reciben accessibleDescription y accessibleName si no lo tienen
@@ -133,21 +137,20 @@ class Sidebar(QWidget):
             return
         self._modo_oscuro = not self._modo_oscuro
         self._animando = True
-        from PyQt6.QtCore import QPropertyAnimation, QRect
-        start_rect = self.btn_tema.geometry()
-        end_rect = QRect(3, 3, 26, 26) if not self._modo_oscuro else QRect(27, 3, 26, 26)
-        anim = QPropertyAnimation(self.btn_tema, b"geometry")
+        from PyQt6.QtCore import QPropertyAnimation, QPoint
+        start_pos = self.btn_tema.pos()
+        end_pos = QPoint(27, 0) if self._modo_oscuro else QPoint(3, 0)
+        anim = QPropertyAnimation(self.btn_tema, b"pos")
         anim.setDuration(180)
-        anim.setStartValue(start_rect)
-        anim.setEndValue(end_rect)
+        anim.setStartValue(start_pos)
+        anim.setEndValue(end_pos)
         def on_anim_finished():
             self._set_icono_tema()
             self._animando = False
-            # Cambiar el tema real de la app
+            # Cambiar el tema real de la app usando QApplication.instance()
             from utils.theme_manager import set_theme, guardar_modo_tema
-            app = self._widget_tema_target or self.parentWidget()
-            while app and not hasattr(app, 'setStyleSheet'):
-                app = app.parentWidget() if hasattr(app, 'parentWidget') else None
+            from PyQt6.QtWidgets import QApplication
+            app = QApplication.instance()
             if app:
                 set_theme(app, "dark" if self._modo_oscuro else "light")
                 guardar_modo_tema("dark" if self._modo_oscuro else "light")

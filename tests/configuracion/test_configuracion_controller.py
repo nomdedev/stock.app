@@ -38,7 +38,13 @@ def model(db_conn):
 def controller(model, db_conn):
     mock_view = Mock()
     mock_usuarios = Mock()
-    controller = ConfiguracionController(model, mock_view, db_conn, mock_usuarios, usuario_actual={'nombre': 'admin', 'rol': 'admin'})
+    controller = ConfiguracionController(
+        model,
+        mock_view,
+        db_conn,
+        mock_usuarios,
+        usuario_actual={'nombre': 'admin', 'rol': 'admin', 'id': 1}
+    )
     # Mockear registrar_evento para evitar error de argumentos
     controller.auditoria_model.registrar_evento = Mock()
     controller.usuarios_model.tiene_permiso = Mock(return_value=True)

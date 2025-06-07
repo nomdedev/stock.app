@@ -5,7 +5,7 @@ Permite inyectar conexión para tests y nunca interrumpe el flujo principal.
 """
 from core.logger import Logger
 from modules.auditoria.model import AuditoriaModel
-from core.database import get_default_db_connection
+from core.database import AuditoriaDatabaseConnection  # Importar la clase correcta
 
 def _registrar_evento_auditoria(usuario, modulo, accion, db_conn=None):
     """
@@ -20,7 +20,7 @@ def _registrar_evento_auditoria(usuario, modulo, accion, db_conn=None):
     """
     logger = Logger()
     try:
-        db = db_conn or (get_default_db_connection() if hasattr(get_default_db_connection, '__call__') else None)
+        db = db_conn or AuditoriaDatabaseConnection()
         auditoria = AuditoriaModel(db)
         usuario_id = usuario['id'] if isinstance(usuario, dict) and 'id' in usuario else usuario
         ip = usuario.get('ip', '') if isinstance(usuario, dict) else ''

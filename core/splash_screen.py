@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QSplashScreen, QLabel, QVBoxLayout, QWidget, QProgressBar
 from PyQt6.QtGui import QPixmap, QFont, QPainter, QColor, QGuiApplication, QBrush
 from PyQt6.QtCore import Qt, QTimer, QPropertyAnimation, pyqtSignal
+from PyQt6.QtSvg import QSvgRenderer
 
 from core.theme import PRIMARY_COLOR, SECONDARY_COLOR, ACCENT_COLOR, TEXT_COLOR, BORDER_COLOR
 
@@ -18,75 +19,52 @@ from core.theme import PRIMARY_COLOR, SECONDARY_COLOR, ACCENT_COLOR, TEXT_COLOR,
 class SplashScreen(QSplashScreen):
     splash_ready = pyqtSignal()  # Señal para indicar que la app está lista
 
-    def __init__(self, pixmap_path=None, message="Cargando...", duration=2000):
-        ancho, alto = 640, 400  # Más grande
-        custom_img_path = "img/pantalla-carga.jpg"
-        use_custom_img = QPixmap(custom_img_path).isNull() is False
-        # Fondo blanco con bordes redondeados (sin transparencia ni sombra)
+    def __init__(self, pixmap_path=None, message="Cargando...", duration=2000, theme=None, logo_path=None):
+        ancho, alto = 640, 400
+        self.logo_path = logo_path or pixmap_path or "resources/icons/pantalla-carga.jpg"
+        self.theme = theme
+        self._apply_theme_colors()
         pixmap = QPixmap(ancho, alto)
-        pixmap.fill(QColor(PRIMARY_COLOR))
+        pixmap.fill(QColor(self.bg_color))
         painter = QPainter(pixmap)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        painter.setBrush(QColor(PRIMARY_COLOR))
-        painter.setPen(QColor(BORDER_COLOR))
-        painter.drawRoundedRect(0, 0, ancho, alto, 12, 12)
-        # Imagen redondeada centrada
-        if use_custom_img:
-            img = QPixmap(custom_img_path).scaled(360, 200, Qt.AspectRatioMode.KeepAspectRatioByExpanding,
-                                                  Qt.TransformationMode.SmoothTransformation)
-            mask = QPixmap(360, 200)
-            mask.fill(Qt.GlobalColor.transparent)
-            mask_painter = QPainter(mask)
-            mask_painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-            mask_painter.setBrush(QBrush(Qt.GlobalColor.white))
-            mask_painter.setPen(Qt.PenStyle.NoPen)
-            mask_painter.drawRoundedRect(0, 0, 360, 200, 18, 18)
-            mask_painter.end()
-            img.setMask(mask.createMaskFromColor(Qt.GlobalColor.transparent, Qt.MaskMode.MaskInColor))
-            painter.drawPixmap((ancho - 360) // 2, 40, img)
-        painter.end()
+        try:
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+            painter.setBrush(QColor(self.bg_color))
+            painter.setPen(QColor(self.border_color))
+            painter.drawRoundedRect(0, 0, ancho, alto, 12, 12)
+            # Renderizar logo (SVG o imagen)
+            if self.logo_path.lower().endswith('.svg'):
+                renderer = QSvgRenderer(self.logo_path)
+                svg_pixmap = QPixmap(180, 180)
+                svg_pixmap.fill(Qt.GlobalColor.transparent)
+                svg_painter = QPainter(svg_pixmap)
+                try:
+                    renderer.render(svg_painter)
+                finally:
+                    svg_painter.end()
+                painter.drawPixmap((ancho-180)//2, 50, svg_pixmap)
+            else:
+                img = QPixmap(self.logo_path)
+                if not img.isNull():
+                    img = img.scaled(180, 180, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                    painter.drawPixmap((ancho-180)//2, 50, img)
+        finally:
+            painter.end()
         super().__init__(pixmap)
-        # self.setWindowFlag(Qt.WindowType.FramelessWindowHint)  # Desactivado para evitar errores en Windows
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
-        # self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)  # Desactivado para evitar errores
-        # Sombra elegante (desactivada por defecto)
-        # shadow = QGraphicsDropShadowEffect(self)
-        # shadow.setBlurRadius(40)
-        # shadow.setColor(QColor(0, 0, 0, 60))
-        # shadow.setOffset(0, 12)
-        # self.setGraphicsEffect(shadow)
-        # Logo central solo si no hay imagen personalizada
-        if not use_custom_img:
-            self.logo = QLabel(self)
-            self.logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            logo_pix = QPixmap("img/add-material.svg")
-            logo_bg = QPixmap(96, 96)
-            logo_bg.fill(Qt.GlobalColor.transparent)
-            p = QPainter(logo_bg)
-            p.setRenderHint(QPainter.RenderHint.Antialiasing)
-            p.setBrush(QColor(SECONDARY_COLOR))
-            p.setPen(Qt.PenStyle.NoPen)
-            p.drawEllipse(0, 0, 96, 96)
-            if not logo_pix.isNull():
-                p.drawPixmap(16, 16, 64, 64, logo_pix.scaled(64, 64, Qt.AspectRatioMode.KeepAspectRatio,
-                                                                Qt.TransformationMode.SmoothTransformation))
-            p.end()
-            self.logo.setPixmap(logo_bg)
-            self.logo.setGeometry((ancho - 96) // 2, 60, 96, 96)
-        # Mensaje y barra de carga minimalista
+        # Mensaje y barra de carga
         self.label = QLabel(message, self)
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setStyleSheet(
-            f"color: {TEXT_COLOR}; font-size: 22px; font-weight: bold; background: transparent; font-family: 'Segoe UI', 'Arial', sans-serif;")
+            f"color: {self.text_color}; font-size: 22px; font-weight: bold; background: transparent; font-family: 'Segoe UI', 'Arial', sans-serif;")
         self.label.setGeometry(0, alto - 110, ancho, 40)
         self.progress = QProgressBar(self)
         self.progress.setGeometry(ancho // 4, alto - 60, ancho // 2, 18)
-        self.progress.setRange(0, 0)  # Barra indeterminada
+        self.progress.setRange(0, 0)
         self.progress.setTextVisible(False)
         self.progress.setStyleSheet(
-            f"QProgressBar {{background: {SECONDARY_COLOR}; border-radius: 9px;}} QProgressBar::chunk {{background: {ACCENT_COLOR}; border-radius: 9px;}}")
+            f"QProgressBar {{background: {self.secondary_color}; border-radius: 9px;}} QProgressBar::chunk {{background: {self.accent_color}; border-radius: 9px;}}")
         self.duration = duration
-        # Animación de opacidad (opcional, no afecta a la ventana completa)
         self.setWindowOpacity(1.0)
         self.fade_in = QPropertyAnimation(self, b"windowOpacity")
         self.fade_in.setDuration(400)
@@ -96,6 +74,67 @@ class SplashScreen(QSplashScreen):
         self.fade_out.setDuration(350)
         self.fade_out.setStartValue(1.0)
         self.fade_out.setEndValue(1.0)
+
+    def _apply_theme_colors(self):
+        # Permite adaptar los colores al tema activo
+        # Si theme es None, usar los colores globales
+        if self.theme == 'dark':
+            self.bg_color = '#23272e'
+            self.text_color = '#f0f0f0'
+            self.border_color = '#444'
+            self.secondary_color = '#2d313a'
+            self.accent_color = '#4fc3f7'
+        elif self.theme == 'light':
+            self.bg_color = '#f8f8f8'
+            self.text_color = '#23272e'
+            self.border_color = '#bbb'
+            self.secondary_color = '#e0e0e0'
+            self.accent_color = '#1976d2'
+        else:
+            from core.theme import PRIMARY_COLOR, SECONDARY_COLOR, ACCENT_COLOR, TEXT_COLOR, BORDER_COLOR
+            self.bg_color = PRIMARY_COLOR
+            self.text_color = TEXT_COLOR
+            self.border_color = BORDER_COLOR
+            self.secondary_color = SECONDARY_COLOR
+            self.accent_color = ACCENT_COLOR
+
+    def set_image(self, logo_path):
+        """Permite cambiar la imagen/logo en tiempo de ejecución y refresca el fondo si es necesario."""
+        self.logo_path = logo_path
+        ancho, alto = 640, 400
+        pixmap = QPixmap(ancho, alto)
+        pixmap.fill(QColor(self.bg_color))
+        painter = QPainter(pixmap)
+        try:
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+            painter.setBrush(QColor(self.bg_color))
+            painter.setPen(QColor(self.border_color))
+            painter.drawRoundedRect(0, 0, ancho, alto, 12, 12)
+            if logo_path.lower().endswith('.svg'):
+                renderer = QSvgRenderer(logo_path)
+                svg_pixmap = QPixmap(180, 180)
+                svg_pixmap.fill(Qt.GlobalColor.transparent)
+                svg_painter = QPainter(svg_pixmap)
+                try:
+                    renderer.render(svg_painter)
+                finally:
+                    svg_painter.end()
+                painter.drawPixmap((ancho-180)//2, 50, svg_pixmap)
+            else:
+                img = QPixmap(logo_path)
+                if not img.isNull():
+                    img = img.scaled(180, 180, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                    painter.drawPixmap((ancho-180)//2, 50, img)
+        finally:
+            painter.end()
+        self.setPixmap(pixmap)
+        self.repaint()
+
+    def set_theme(self, theme):
+        """Permite cambiar el tema (oscuro/claro) en tiempo de ejecución y refresca colores e imagen."""
+        self.theme = theme
+        self._apply_theme_colors()
+        self.set_image(self.logo_path)
 
     def mousePressEvent(self, event):
         # Ignorar cualquier clic del usuario en el splash

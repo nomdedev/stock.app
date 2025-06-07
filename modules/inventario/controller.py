@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QTableWidgetItem, QDialog, QVBoxLayout, QTableWidget
 from PyQt6 import QtGui
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
+from modules.inventario.view import InventarioView
 from functools import wraps
 from core.logger import log_error
 
@@ -190,6 +191,7 @@ class InventarioController:
     def agregar_item(self):
         def ejecutar():
             try:
+                print(f"[DEBUG] Tipo de self.view: {type(self.view)}")
                 datos = self.view.abrir_formulario_nuevo_item()
                 campos_obligatorios = ["codigo", "nombre", "tipo_material", "unidad", "stock_actual", "stock_minimo", "ubicacion", "descripcion"]
                 if not datos or not all(datos.get(campo) for campo in campos_obligatorios):
@@ -224,6 +226,7 @@ class InventarioController:
                 log_error(f"Error general al agregar ítem: {e}")
                 self._feedback(f"Error al agregar ítem: {e}", tipo='error')
                 self._registrar_evento_auditoria('error', f"Error general al agregar ítem: {e}", exito=False)
+        print(f"[DEBUG] Tipo de self.view (fuera de ejecutar): {type(self.view)}")
         datos = self.view.abrir_formulario_nuevo_item()
         if not datos:
             return
@@ -440,24 +443,24 @@ class InventarioController:
     def exportar_inventario(self, formato):
         try:
             resultado = self.model.exportar_inventario(formato)
-            self.view.label.setText(resultado)
+            self.view.mostrar_feedback(resultado, tipo="exito" if "exportado" in resultado.lower() else "info")
         except Exception as e:
-            self.view.label.setText(f"Error al exportar inventario: {e}")
+            self.view.mostrar_feedback(f"Error al exportar inventario: {e}", tipo="error")
 
     @permiso_auditoria_inventario('editar')
     def generar_qr_para_item(self):
         try:
             id_item = self.view.id_item_input.text()
             if not id_item:
-                self.view.label.setText("Por favor, ingrese un ID de ítem válido.")
+                self.view.mostrar_feedback("Por favor, ingrese un ID de ítem válido.", tipo="advertencia")
                 return
             qr_code = self.model.generar_qr(id_item)
             if qr_code:
-                self.view.label.setText(f"Código QR generado: {qr_code}")
+                self.view.mostrar_feedback(f"Código QR generado: {qr_code}", tipo="exito")
             else:
-                self.view.label.setText("Error al generar el código QR.")
+                self.view.mostrar_feedback("Error al generar el código QR.", tipo="error")
         except Exception as e:
-            self.view.label.setText(f"Error al generar QR: {e}")
+            self.view.mostrar_feedback(f"Error al generar QR: {e}", tipo="error")
 
     @permiso_auditoria_inventario('editar')
     def asociar_qr_a_perfil(self):

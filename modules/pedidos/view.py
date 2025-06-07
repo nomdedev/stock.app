@@ -33,7 +33,7 @@ class PedidosView(QWidget):
 
         # Tabla de pedidos
         self.tabla_pedidos = QTableWidget()
-        self.tabla_pedidos.setObjectName("tabla_pedidos")  # Para QSS global
+        self.tabla_pedidos.setObjectName("tabla_inventario")  # Unificación visual
         self.tabla_pedidos.setColumnCount(5)
         self.pedidos_headers = ["id", "obra", "fecha", "estado", "observaciones"]
         self.tabla_pedidos.setHorizontalHeaderLabels(self.pedidos_headers)
@@ -49,7 +49,7 @@ class PedidosView(QWidget):
         self.aplicar_columnas_visibles()
         header = self.tabla_pedidos.horizontalHeader()
         if header is not None:
-            header.setObjectName("header_pedidos")  # Para QSS global
+            header.setObjectName("header_inventario")  # Unificación visual
             # header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")  # Migrado a QSS global
             header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             header.customContextMenuRequested.connect(self.mostrar_menu_columnas)

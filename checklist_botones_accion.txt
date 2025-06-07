@@ -1,0 +1,18 @@
+# Checklist de botones principales de acción (QPushButton) - ERP/Inventario
+
+| Módulo         | Botón/Acción                | Confirmación | Feedback modal | Estilo visual | Accesibilidad | Estado    | Notas |
+|---------------|-----------------------------|--------------|---------------|---------------|---------------|-----------|-------|
+| Inventario    | Exportar a Excel            | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Herrajes      | Exportar a Excel            | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Vidrios       | Exportar a Excel            | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Contabilidad  | Exportar a Excel (Balance)  | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Contabilidad  | Exportar a Excel (Pagos)    | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Contabilidad  | Exportar a Excel (Recibos)  | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Logística     | Exportar a Excel            |              |               |               |               | PENDIENTE |      |
+| Configuración | Importar/Exportar           |              |               |               |               | PENDIENTE |      |
+# ...agregar más según módulos y botones principales...
+
+Notas:
+- Marcar cada columna con ✔️ al cumplir el estándar (confirmación, feedback modal, estilo visual, accesibilidad).
+- Actualizar este checklist tras cada mejora o refactor.
+- Documentar cualquier excepción visual o de feedback en la columna Notas y en docs/estandares_visuales.md.

@@ -92,3 +92,46 @@ class PedidosController:
     def rechazar_pedido(self, pedido_id):
         self.model.actualizar_estado_pedido(pedido_id, "Rechazado")
         self.cargar_pedidos()
+
+    @permiso_auditoria_pedidos('crear')
+    def generar_pedido_por_obra(self, id_obra):
+        """
+        Genera un pedido por obra, alineado a estándares: validación, feedback visual, logging, auditoría y señales event_bus.
+        Propaga feedback visual a la vista y emite señal de actualización en tiempo real.
+        """
+        try:
+            usuario = self.usuario_actual.get('username', 'desconocido') if self.usuario_actual else None
+            id_pedido = self.model.generar_pedido_por_obra(id_obra, usuario=usuario, view=self.view)
+            if hasattr(self.view, 'mostrar_feedback'):
+                self.view.mostrar_feedback(f"Pedido generado correctamente (ID: {id_pedido})", tipo="exito")
+            self.cargar_pedidos()
+            return id_pedido
+        except Exception as e:
+            if hasattr(self.view, 'mostrar_feedback'):
+                self.view.mostrar_feedback(f"Error al generar pedido: {e}", tipo="error")
+            raise
+
+    @permiso_auditoria_pedidos('editar')
+    def recibir_pedido(self, id_pedido):
+        """
+        Recibe un pedido, actualiza stock, movimientos y auditoría. Feedback visual y logging robusto.
+        Emite señal event_bus y refresca la vista.
+        """
+        try:
+            usuario = self.usuario_actual.get('username', 'desconocido') if self.usuario_actual else None
+            ok = self.model.recibir_pedido(id_pedido, usuario=usuario, view=self.view)
+            if hasattr(self.view, 'mostrar_feedback'):
+                self.view.mostrar_feedback(f"Pedido recibido correctamente (ID: {id_pedido})", tipo="exito")
+            self.cargar_pedidos()
+            return ok
+        except Exception as e:
+            if hasattr(self.view, 'mostrar_feedback'):
+                self.view.mostrar_feedback(f"Error al recibir pedido: {e}", tipo="error")
+            raise
+
+    # Ejemplo de integración cruzada para desarrolladores de UI:
+    # Suscribirse a event_bus.pedido_actualizado en Inventario/Obras:
+    # from core.event_bus import event_bus
+    # event_bus.pedido_actualizado.connect(lambda datos: self.actualizar_por_pedido(datos))
+    # En el slot, refrescar la vista y mostrar feedback visual inmediato.
+    # Ver docs/flujo_obras_material_vidrios.md y docs/estandares_feedback.md

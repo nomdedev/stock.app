@@ -20,7 +20,7 @@ FILE_STORAGE_PATH = os.getenv("FILE_STORAGE_PATH", "./storage")
 DEFAULT_LANGUAGE = os.getenv("DEFAULT_LANGUAGE", "es")
 DEFAULT_TIMEZONE = os.getenv("DEFAULT_TIMEZONE", "UTC-3")
 NOTIFICATIONS_ENABLED = os.getenv("NOTIFICATIONS_ENABLED", "True") == "True"
-DEFAULT_THEME = "dark"
+DEFAULT_THEME = "light"
 
 # Solo imprimir diagnóstico si DEBUG_MODE está activo
 if DEBUG_MODE:

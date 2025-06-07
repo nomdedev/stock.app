@@ -70,7 +70,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
 
         # Refuerzo de accesibilidad en tabla principal
         self.tabla_usuarios.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.tabla_usuarios.setObjectName("tabla_usuarios")  # Para QSS global
+        self.tabla_usuarios.setObjectName("tabla_usuarios")
         # Refuerzo de accesibilidad en todos los QLineEdit de la vista principal
         for widget in self.findChildren(QComboBox):
             widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -168,6 +168,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         tab_usuarios_layout.addLayout(botones_layout)
         # Tabla de usuarios
         self.tabla_usuarios = QTableWidget()
+        self.tabla_usuarios.setObjectName("tabla_usuarios")
         self.make_table_responsive(self.tabla_usuarios)
         tab_usuarios_layout.addWidget(self.tabla_usuarios)
         # Configuración de columnas
@@ -176,8 +177,9 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.columnas_visibles = self.cargar_config_columnas()
         self.aplicar_columnas_visibles()
         # Menú contextual en el header
-        header = self.tabla_usuarios.horizontalHeader() if hasattr(self.tabla_usuarios, 'horizontalHeader') else None
+        header = self.tabla_usuarios.horizontalHeader()
         if header is not None:
+            header.setObjectName("header_inventario")  # Unificación visual
             header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             if hasattr(header, 'customContextMenuRequested'):
                 header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
@@ -210,8 +212,15 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.make_table_responsive(self.tabla_permisos_modulos)
         tab_permisos_layout.addWidget(self.tabla_permisos_modulos)
         self.boton_guardar_permisos = QPushButton("Guardar permisos")
+        self.boton_guardar_permisos.setIcon(QIcon("resources/icons/guardar.svg"))
+        self.boton_guardar_permisos.setIconSize(QSize(20, 20))
         estilizar_boton_icono(self.boton_guardar_permisos)
+        self.boton_refrescar_resumen = QPushButton("Refrescar resumen de permisos")
+        self.boton_refrescar_resumen.setIcon(QIcon("resources/icons/refresh.svg"))
+        self.boton_refrescar_resumen.setIconSize(QSize(20, 20))
+        estilizar_boton_icono(self.boton_refrescar_resumen)
         tab_permisos_layout.addWidget(self.boton_guardar_permisos)
+        tab_permisos_layout.addWidget(self.boton_refrescar_resumen)
 
     def _init_tab_resumen_permisos(self):
         layout = QVBoxLayout(self.tab_resumen_permisos)
