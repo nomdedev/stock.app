@@ -4392,3 +4392,1395 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-06 20:17:03,326 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
 2025-06-06 20:18:10,582 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
 2025-06-06 20:22:07,802 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-06 20:24:22,425 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-06 20:43:54,393 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-06 20:43:54,752 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-06 20:43:54,752 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-06 20:44:07,199 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-06 20:44:07,523 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-06 20:44:07,523 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-06 21:04:35,320 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,326 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,326 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,331 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,331 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,331 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,381 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,381 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,381 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,381 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,626 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,626 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,626 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,626 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:04:35,626 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:04,822 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:04,827 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:04,827 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:04,831 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:04,831 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:04,831 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:04,889 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:04,889 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:04,889 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:04,889 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:05,085 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:05,085 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:05,085 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:05,085 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:05,085 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,309 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,315 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,315 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,320 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,320 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,320 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,375 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,375 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,375 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,375 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,572 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,572 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,572 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,572 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:14:32,572 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:17:22,454 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:17:22,461 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:17:22,461 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:17:22,465 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:17:22,465 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:17:22,465 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:29,861 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,077 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,077 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,080 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,080 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,080 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,084 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,084 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,084 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,084 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,087 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,087 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,087 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,087 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,087 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:18:30,090 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:18:30,090 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:18:30,090 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:18:30,090 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:18:30,090 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:18:30,090 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:18:30,161 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:18:30,161 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:18:30,161 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:18:30,161 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:18:30,161 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:18:30,161 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:18:30,161 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:21:07,570 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,775 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,775 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,778 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,778 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,778 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,783 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,783 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,783 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,783 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,785 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,785 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,785 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,785 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,785 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:21:07,787 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:21:07,787 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:21:07,787 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:21:07,787 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:21:07,787 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:21:07,787 - ERROR - Error en editar: La obra fue modificada por otro usuario (conflicto de rowversion).
+2025-06-06 21:21:08,044 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:21:08,044 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:21:08,044 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:21:08,044 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:21:08,044 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:21:08,044 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:21:08,044 - ERROR - Permiso denegado: editar [obras] usuario_id=2
+2025-06-06 21:24:43,929 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:24:44,193 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:24:44,193 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:24:44,200 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:24:44,200 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:24:44,200 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,208 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,484 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,484 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,490 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,490 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,490 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,547 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,547 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,547 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,547 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,595 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,595 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,595 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,595 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:30:13,595 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:57,949 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,159 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,159 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,166 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,166 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,166 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,229 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,229 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,229 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,229 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,242 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,242 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,242 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,242 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,242 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,247 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,247 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,247 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,247 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,247 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:31:58,247 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,703 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,914 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,914 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,921 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,921 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,921 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,981 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,981 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,981 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,981 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,987 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,987 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,987 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,987 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,987 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,993 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,993 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,993 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,993 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,993 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:32:42,993 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,649 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,903 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,903 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,908 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,908 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,908 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,966 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,966 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,966 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,966 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,971 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,971 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,971 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,971 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,971 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,976 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,976 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,976 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,976 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,976 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:34:33,976 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,513 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,719 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,719 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,724 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,724 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,724 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,778 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,778 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,778 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,778 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,783 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,783 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,783 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,783 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,783 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,788 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,788 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,788 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,788 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,788 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:12,788 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,342 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,540 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,540 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,545 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,545 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,545 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,605 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,605 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,605 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,605 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,610 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,610 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,610 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,610 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,610 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,615 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,615 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,615 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,615 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,615 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:35:48,615 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,034 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,037 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,037 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,257 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,257 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,257 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,257 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,317 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,317 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,317 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,317 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,317 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,319 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:39:20,319 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:39:20,319 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:39:20,319 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:39:20,319 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:39:20,319 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:39:20,327 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,327 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,327 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,327 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,327 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,327 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,327 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,333 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,333 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,333 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,333 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,333 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,333 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,333 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:39:20,333 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,334 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,337 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,337 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,552 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,552 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,552 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,554 - ERROR - Error al editar obra: table auditorias_sistema has no column named modulo
+2025-06-06 21:40:26,554 - ERROR - Error al editar obra: table auditorias_sistema has no column named modulo
+2025-06-06 21:40:26,554 - ERROR - Error al editar obra: table auditorias_sistema has no column named modulo
+2025-06-06 21:40:26,554 - ERROR - Error al editar obra: table auditorias_sistema has no column named modulo
+2025-06-06 21:40:26,556 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,556 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,556 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,556 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,556 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,606 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,606 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,606 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,606 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,606 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,606 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,666 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,666 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,666 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,666 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,666 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,666 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,666 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,668 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:40:26,668 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:40:26,668 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:40:26,668 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:40:26,668 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:40:26,668 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:40:26,668 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:40:26,668 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:40:26,673 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,673 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,673 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,673 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,673 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,673 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,673 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,673 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,673 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,678 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,678 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,678 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,678 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,678 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,678 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,678 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,678 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,678 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:40:26,678 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,257 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,261 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,261 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,452 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,452 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,452 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,455 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,455 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,455 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,455 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,469 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,469 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,469 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,469 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,469 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,533 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,533 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,533 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,533 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,533 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,533 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,537 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:17,537 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:17,537 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:17,537 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:17,537 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:17,537 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:17,537 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:17,543 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,543 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,543 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,543 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,543 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,543 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,543 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,543 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,549 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,549 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,549 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,549 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,549 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,549 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,549 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,549 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:17,549 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,107 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,111 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,111 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,321 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,321 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,321 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,321 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,335 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,335 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,335 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,335 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,335 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,397 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,397 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,397 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,397 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,397 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,397 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,401 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:32,401 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:32,401 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:32,401 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:32,401 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:32,401 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:32,401 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:41:32,408 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,408 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,408 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,408 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,408 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,408 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,408 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,408 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,416 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,416 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,416 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,416 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,416 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,416 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,416 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,416 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:41:32,416 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,054 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,057 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,057 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,059 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,059 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,059 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,264 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,264 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,264 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,264 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,267 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,267 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,267 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,267 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,267 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,279 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,279 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,279 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,279 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,279 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,279 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,346 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:42:38,346 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:42:38,346 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:42:38,346 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:42:38,346 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:42:38,346 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:42:38,346 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:42:38,346 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:42:38,353 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,353 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,353 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,353 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,353 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,353 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,353 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,353 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,353 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,360 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,360 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,360 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,360 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,360 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,360 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,360 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,360 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,360 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:42:38,360 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,134 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,138 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,138 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,139 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,139 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,139 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,341 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,341 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,341 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,341 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,344 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,359 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,359 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,359 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,359 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,359 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,359 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,425 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,425 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,425 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,425 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,425 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,425 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,425 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,427 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:43:35,427 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:43:35,427 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:43:35,427 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:43:35,427 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:43:35,427 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:43:35,427 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:43:35,427 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:43:35,435 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,435 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,435 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,435 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,435 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,435 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,435 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,435 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,435 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,441 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,441 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,441 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,441 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,441 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,441 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,441 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,441 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,441 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:43:35,441 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:44:24,628 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:44:24,629 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:44:24,629 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:44:24,635 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:44:24,635 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:44:24,635 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:44:24,641 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:44:24,641 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:44:24,641 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:44:24,641 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:57,652 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:57,653 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:56:57,653 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 21:56:57,658 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:57,658 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:57,658 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:57,662 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:57,662 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:57,662 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:57,662 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:57,668 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,668 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,668 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,668 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,668 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 21:56:57,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 21:56:57,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 21:56:57,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 21:56:57,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 21:56:57,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 21:56:57,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 21:56:57,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 21:56:57,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 21:56:57,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 21:56:57,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 21:56:57,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 21:56:57,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 21:56:57,953 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,953 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,953 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,953 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,953 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,953 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,953 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:57,953 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 21:56:58,104 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:58,104 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:58,104 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:58,104 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:58,104 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:58,104 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:58,104 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:58,104 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 21:56:58,104 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:00:47,760 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:00:47,762 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:00:47,762 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:00:47,767 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:00:47,767 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:00:47,767 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:00:47,771 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:00:47,771 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:00:47,771 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:00:47,771 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:01:58,646 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:01:58,648 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:01:58,648 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:01:58,653 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:01:58,653 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:01:58,653 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:01:58,657 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:01:58,657 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:01:58,657 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:01:58,657 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:01:58,663 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:01:58,663 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:01:58,663 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:01:58,663 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:01:58,663 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:01:58,668 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:01:58,668 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:01:58,668 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:01:58,668 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:01:58,668 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:01:58,668 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:01:58,674 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:01:58,674 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:01:58,674 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:01:58,674 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:01:58,674 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:01:58,674 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:01:58,674 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:01:58,681 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:01:58,681 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:01:58,681 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:01:58,681 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:01:58,681 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:01:58,681 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:01:58,681 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:01:58,681 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:16,873 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:16,874 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:17:16,874 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:17:16,879 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:16,879 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:16,879 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:16,884 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:16,884 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:16,884 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:16,884 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:16,890 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:16,890 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:16,890 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:16,890 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:16,890 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:16,896 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:16,896 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:16,896 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:16,896 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:16,896 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:16,896 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:16,902 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:16,902 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:16,902 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:16,902 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:16,902 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:16,902 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:16,902 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:16,909 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:16,909 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:16,909 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:16,909 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:16,909 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:16,909 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:16,909 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:16,909 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:17,188 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:17,188 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:17,188 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:17,188 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:17,188 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:17,188 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:17,188 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:17,188 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:17,188 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,651 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:36,653 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:17:36,653 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:17:36,658 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:36,658 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:36,658 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:36,663 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:36,663 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:36,663 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:36,663 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:36,668 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,668 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,668 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,668 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,668 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:36,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:36,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:36,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:36,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:36,674 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:17:36,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:36,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:36,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:36,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:36,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:36,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:36,679 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:17:36,687 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:36,687 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:36,687 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:36,687 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:36,687 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:36,687 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:36,687 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:36,687 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:17:36,998 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,998 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,998 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,998 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,998 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,998 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,998 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,998 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:36,998 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:17:37,154 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:37,154 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:37,154 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:37,154 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:37,154 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:37,154 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:37,154 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:37,154 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:37,154 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:17:37,154 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,132 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,135 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:19:19,135 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:19:19,140 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,140 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,140 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,145 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,145 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,145 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,145 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,151 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,151 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,151 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,151 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,151 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,157 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:19:19,157 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:19:19,157 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:19:19,157 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:19:19,157 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:19:19,157 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:19:19,163 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:19:19,163 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:19:19,163 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:19:19,163 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:19:19,163 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:19:19,163 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:19:19,163 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:19:19,170 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:19:19,170 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:19:19,170 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:19:19,170 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:19:19,170 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:19:19,170 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:19:19,170 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:19:19,170 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:19:19,502 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,502 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,502 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,502 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,502 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,502 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,502 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,502 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,502 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:19:19,669 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,669 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,669 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,669 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,669 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,669 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,669 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,669 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,669 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,669 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:19:19,673 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:19:19,673 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:19:19,673 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:19:19,673 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:19:19,673 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:19:19,673 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:19:19,673 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:19:19,673 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:19:19,673 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:19:19,673 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:19:19,673 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:21:02,594 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:02,595 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:21:02,595 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:21:02,600 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:02,600 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:02,600 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:02,605 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:02,605 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:02,605 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:02,605 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:02,610 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,610 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,610 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,610 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,610 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,615 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:21:02,615 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:21:02,615 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:21:02,615 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:21:02,615 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:21:02,615 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:21:02,622 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:21:02,622 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:21:02,622 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:21:02,622 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:21:02,622 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:21:02,622 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:21:02,622 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:21:02,629 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:21:02,629 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:21:02,629 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:21:02,629 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:21:02,629 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:21:02,629 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:21:02,629 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:21:02,629 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:21:02,915 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,915 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,915 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,915 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,915 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,915 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,915 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,915 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:02,915 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:21:03,048 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:03,048 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:03,048 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:03,048 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:03,048 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:03,048 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:03,048 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:03,048 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:03,048 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:03,048 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:21:03,050 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:21:03,050 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:21:03,050 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:21:03,050 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:21:03,050 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:21:03,050 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:21:03,050 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:21:03,050 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:21:03,050 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:21:03,050 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:21:03,050 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:23,044 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,045 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:23:23,045 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:23:23,050 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,050 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,050 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,056 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,056 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,056 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,056 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,062 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,062 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,062 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,062 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,062 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,069 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:23,069 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:23,069 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:23,069 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:23,069 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:23,069 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:23,075 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:23,075 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:23,075 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:23,075 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:23,075 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:23,075 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:23,075 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:23,083 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:23,083 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:23,083 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:23,083 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:23,083 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:23,083 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:23,083 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:23,083 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:23,357 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,357 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,357 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,357 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,357 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,357 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,357 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,357 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,357 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:23,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:23,504 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:23,504 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:23,504 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:23,504 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:23,504 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:23,504 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:23,504 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:23,504 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:23,504 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:23,504 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:23,504 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:41,795 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:41,796 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:23:41,796 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:23:41,802 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:41,802 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:41,802 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:41,807 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:41,807 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:41,807 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:41,807 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:41,811 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:41,811 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:41,811 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:41,811 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:41,811 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:41,816 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:41,816 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:41,816 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:41,816 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:41,816 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:41,816 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:23:41,823 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:41,823 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:41,823 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:41,823 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:41,823 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:41,823 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:41,823 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:23:41,829 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:41,829 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:41,829 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:41,829 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:41,829 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:41,829 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:41,829 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:41,829 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:23:42,126 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:42,126 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:42,126 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:42,126 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:42,126 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:42,126 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:42,126 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:42,126 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:42,126 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:23:42,256 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:42,256 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:42,256 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:42,256 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:42,256 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:42,256 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:42,256 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:42,256 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:42,256 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:42,256 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:23:42,258 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:42,258 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:42,258 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:42,258 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:42,258 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:42,258 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:42,258 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:42,258 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:42,258 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:42,258 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:23:42,258 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:25:35,208 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,210 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:25:35,210 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 22:25:35,215 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,215 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,215 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,220 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,220 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,220 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,220 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,224 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,224 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,224 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,224 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,224 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,230 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:25:35,230 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:25:35,230 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:25:35,230 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:25:35,230 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:25:35,230 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 22:25:35,236 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:25:35,236 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:25:35,236 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:25:35,236 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:25:35,236 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:25:35,236 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:25:35,236 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 22:25:35,244 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:25:35,244 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:25:35,244 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:25:35,244 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:25:35,244 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:25:35,244 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:25:35,244 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:25:35,244 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 22:25:35,532 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,532 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,532 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,532 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,532 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,532 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,532 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,532 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,532 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 22:25:35,668 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,668 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,668 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,668 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,668 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,668 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,668 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,668 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,668 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,668 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 22:25:35,671 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:25:35,671 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:25:35,671 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:25:35,671 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:25:35,671 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:25:35,671 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:25:35,671 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:25:35,671 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:25:35,671 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:25:35,671 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 22:25:35,671 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:10:38,489 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,491 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 23:10:38,491 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 23:10:38,496 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,496 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,496 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,500 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,506 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,506 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,506 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,506 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,506 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,512 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:10:38,512 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:10:38,512 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:10:38,512 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:10:38,512 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:10:38,512 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:10:38,517 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:10:38,517 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:10:38,517 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:10:38,517 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:10:38,517 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:10:38,517 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:10:38,517 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:10:38,524 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:10:38,524 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:10:38,524 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:10:38,524 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:10:38,524 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:10:38,524 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:10:38,524 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:10:38,524 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:10:38,795 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,795 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,795 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,795 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,795 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,795 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,795 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,795 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,795 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:10:38,933 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,933 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,933 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,933 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,933 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,933 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,933 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,933 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,933 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,933 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:10:38,937 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:10:38,937 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:10:38,937 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:10:38,937 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:10:38,937 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:10:38,937 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:10:38,937 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:10:38,937 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:10:38,937 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:10:38,937 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:10:38,937 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:11:33,942 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:33,943 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 23:11:33,943 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 23:11:33,947 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:33,947 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:33,947 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:33,953 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:33,953 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:33,953 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:33,953 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:33,958 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:33,958 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:33,958 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:33,958 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:33,958 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:33,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:11:33,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:11:33,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:11:33,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:11:33,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:11:33,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:11:33,970 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:11:33,970 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:11:33,970 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:11:33,970 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:11:33,970 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:11:33,970 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:11:33,970 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:11:33,977 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:11:33,977 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:11:33,977 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:11:33,977 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:11:33,977 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:11:33,977 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:11:33,977 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:11:33,977 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:11:34,230 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:34,230 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:34,230 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:34,230 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:34,230 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:34,230 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:34,230 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:34,230 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:34,230 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:11:34,366 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:34,366 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:34,366 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:34,366 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:34,366 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:34,366 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:34,366 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:34,366 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:34,366 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:34,366 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:11:34,368 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:11:34,368 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:11:34,368 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:11:34,368 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:11:34,368 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:11:34,368 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:11:34,368 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:11:34,368 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:11:34,368 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:11:34,368 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:11:34,368 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:12:24,123 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,124 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 23:12:24,124 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 23:12:24,129 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,129 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,129 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,134 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,134 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,134 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,134 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,139 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,139 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,139 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,139 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,139 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,145 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:12:24,145 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:12:24,145 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:12:24,145 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:12:24,145 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:12:24,145 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:12:24,150 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:12:24,150 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:12:24,150 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:12:24,150 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:12:24,150 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:12:24,150 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:12:24,150 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:12:24,157 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:12:24,157 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:12:24,157 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:12:24,157 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:12:24,157 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:12:24,157 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:12:24,157 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:12:24,157 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:12:24,434 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,434 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,434 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,434 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,434 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,434 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,434 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,434 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,434 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:12:24,559 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,559 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,559 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,559 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,559 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,559 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,559 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,559 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,559 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,559 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:12:24,563 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:12:24,563 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:12:24,563 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:12:24,563 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:12:24,563 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:12:24,563 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:12:24,563 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:12:24,563 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:12:24,563 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:12:24,563 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:12:24,563 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:14:55,796 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:55,798 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 23:14:55,798 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 23:14:55,803 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:55,803 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:55,803 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:55,807 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:55,807 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:55,807 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:55,807 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:55,813 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:55,813 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:55,813 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:55,813 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:55,813 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:55,819 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:14:55,819 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:14:55,819 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:14:55,819 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:14:55,819 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:14:55,819 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:14:55,824 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:14:55,824 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:14:55,824 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:14:55,824 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:14:55,824 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:14:55,824 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:14:55,824 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:14:55,831 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:14:55,831 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:14:55,831 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:14:55,831 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:14:55,831 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:14:55,831 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:14:55,831 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:14:55,831 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:14:56,111 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:56,111 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:56,111 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:56,111 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:56,111 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:56,111 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:56,111 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:56,111 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:56,111 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:14:56,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:56,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:56,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:56,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:56,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:56,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:56,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:56,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:56,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:56,251 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:14:56,253 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:14:56,253 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:14:56,253 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:14:56,253 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:14:56,253 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:14:56,253 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:14:56,253 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:14:56,253 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:14:56,253 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:14:56,253 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:14:56,253 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:15:59,947 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:15:59,950 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 23:15:59,950 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-06 23:15:59,957 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:15:59,957 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:15:59,957 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:15:59,963 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:15:59,963 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:15:59,963 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:15:59,963 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:15:59,971 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:15:59,971 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:15:59,971 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:15:59,971 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:15:59,971 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:15:59,979 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:15:59,979 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:15:59,979 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:15:59,979 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:15:59,979 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:15:59,979 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-06 23:15:59,987 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:15:59,987 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:15:59,987 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:15:59,987 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:15:59,987 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:15:59,987 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:15:59,987 - ERROR - Error en agregar: Fechas inválidas
+2025-06-06 23:15:59,994 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:15:59,994 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:15:59,994 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:15:59,994 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:15:59,994 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:15:59,994 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:15:59,994 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:15:59,994 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-06 23:16:00,283 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:16:00,283 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:16:00,283 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:16:00,283 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:16:00,283 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:16:00,283 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:16:00,283 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:16:00,283 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:16:00,283 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-06 23:16:00,421 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:16:00,421 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:16:00,421 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:16:00,421 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:16:00,421 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:16:00,421 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:16:00,421 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:16:00,421 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:16:00,421 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:16:00,421 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2

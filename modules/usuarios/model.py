@@ -107,6 +107,12 @@ class UsuariosModel:
         return resultado if resultado else []
 
     def agregar_usuario(self, datos):
+        # Validar unicidad de usuario y email
+        email = datos[2]
+        username = datos[3]
+        existe = self.db.ejecutar_query("SELECT * FROM usuarios WHERE email = ? OR usuario = ?", (email, username))
+        if existe:
+            raise ValueError("Usuario o email ya existe")
         query = "INSERT INTO usuarios (nombre, apellido, email, usuario, password_hash, rol, estado) VALUES (?, ?, ?, ?, ?, ?, 'Activo')"
         self.db.ejecutar_query(query, datos)
 

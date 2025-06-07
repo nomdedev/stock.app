@@ -67,6 +67,12 @@ class TestUsuariosIntegracion(unittest.TestCase):
         self.assertTrue(any(u and len(u) > 6 and u[6] == "suspendido" for u in usuarios))
         self.view.actualizar_tabla(usuarios)
         self.assertEqual(self.view.tabla_data, usuarios)
+    def test_no_permite_usuario_duplicado(self):
+        datos = ("Juan", "Pérez", "juan.perez@example.com", "juan", "hash", "admin")
+        self.model.agregar_usuario(datos)
+        # Intentar agregar el mismo usuario otra vez
+        with self.assertRaises(Exception):
+            self.model.agregar_usuario(datos)
 
 if __name__ == "__main__":
     unittest.main()

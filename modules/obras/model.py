@@ -123,6 +123,9 @@ class ObrasModel:
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
             self.db_connection.ejecutar_query(query, datos)
+            # Recuperar el id de la obra recién insertada
+            res = self.db_connection.ejecutar_query("SELECT last_insert_rowid()")
+            return res[0][0] if res else None
         except Exception as e:
             print(f"Error al agregar obra: {e}")
             raise
@@ -294,10 +297,41 @@ class ObrasModel:
 
     def editar_obra(self, id_obra, datos, rowversion_orig):
         """Actualiza una obra usando bloqueo optimista con rowversion. Lanza OptimisticLockError si hay conflicto."""
-        # datos: dict con los campos a actualizar (ej: nombre, cliente, estado, fecha_entrega...)
+        # Validar datos igual que en alta
+        nombre = datos.get('nombre', '').strip() if isinstance(datos, dict) else ''
+        cliente = datos.get('cliente', '').strip() if isinstance(datos, dict) else ''
+        if not nombre:
+            raise ValueError("El campo 'nombre' es obligatorio.")
+        if not cliente:
+            raise ValueError("El campo 'cliente' es obligatorio.")
+        if len(nombre) > 100:
+            raise ValueError("Nombre muy largo (máx 100 caracteres)")
+        if len(cliente) > 100:
+            raise ValueError("Cliente muy largo (máx 100 caracteres)")
+        if not all(c.isalnum() or c.isspace() for c in nombre):
+            raise ValueError("Nombre solo puede contener letras, números y espacios")
+        if not all(c.isalnum() or c.isspace() for c in cliente):
+            raise ValueError("Cliente solo puede contener letras, números y espacios")
+        from datetime import datetime
+        fecha_medicion = datos.get('fecha_medicion', '') if isinstance(datos, dict) else ''
+        fecha_entrega = datos.get('fecha_entrega', '') if isinstance(datos, dict) else ''
+        if fecha_medicion and fecha_entrega:
+            try:
+                fecha_med = datetime.strptime(fecha_medicion, "%Y-%m-%d")
+                fecha_ent = datetime.strptime(fecha_entrega, "%Y-%m-%d")
+                if fecha_ent < fecha_med:
+                    raise ValueError("La fecha de entrega no puede ser anterior a la fecha de medición")
+            except Exception:
+                raise ValueError("Fechas inválidas")
+        # Prevenir duplicados en edición (si cambia nombre+cliente a uno ya existente)
+        if isinstance(datos, dict):
+            actual = self.db_connection.ejecutar_query("SELECT nombre, cliente FROM obras WHERE id = ?", (id_obra,))
+            if actual and (nombre != actual[0][0] or cliente != actual[0][1]):
+                if self.verificar_obra_existente(nombre, cliente):
+                    raise ValueError("Ya existe una obra con ese nombre y cliente.")
+        # ...lógica original...
         set_clause = ', '.join([f"{k} = ?" for k in datos.keys()])
         valores = list(datos.values())
-        # Forzar actualización de rowversion en SQLite (simular SQL Server):
         set_clause += ', rowversion = randomblob(8)'
         query = f"UPDATE obras SET {set_clause} WHERE id = ? AND rowversion = ?"
         valores.extend([id_obra, rowversion_orig])
@@ -305,3 +339,67 @@ class ObrasModel:
         if rows_affected == 0:
             raise OptimisticLockError("La obra fue modificada por otro usuario (conflicto de rowversion).")
         return rows_affected
+
+    def agregar_obra_dict(self, datos_dict):
+        """
+        Permite agregar una obra usando un diccionario de datos (para integración con controller y tests).
+        Devuelve el id de la obra creada.
+        """
+        # Validar duplicados antes de insertar
+        nombre = datos_dict.get('nombre', '').strip()
+        cliente = datos_dict.get('cliente', '').strip()
+        if self.verificar_obra_existente(nombre, cliente):
+            raise ValueError("Ya existe una obra con ese nombre y cliente.")
+        # Validar datos igual que en alta
+        if not nombre:
+            raise ValueError("El campo 'nombre' es obligatorio.")
+        if not cliente:
+            raise ValueError("El campo 'cliente' es obligatorio.")
+        if len(nombre) > 100:
+            raise ValueError("Nombre muy largo (máx 100 caracteres)")
+        if len(cliente) > 100:
+            raise ValueError("Cliente muy largo (máx 100 caracteres)")
+        if not all(c.isalnum() or c.isspace() for c in nombre):
+            raise ValueError("Nombre solo puede contener letras, números y espacios")
+        if not all(c.isalnum() or c.isspace() for c in cliente):
+            raise ValueError("Cliente solo puede contener letras, números y espacios")
+        # Validar fechas
+        from datetime import datetime
+        fecha_medicion = datos_dict.get('fecha_medicion', '')
+        fecha_entrega = datos_dict.get('fecha_entrega', '')
+        if fecha_medicion and fecha_entrega:
+            try:
+                fecha_med = datetime.strptime(fecha_medicion, "%Y-%m-%d")
+                fecha_ent = datetime.strptime(fecha_entrega, "%Y-%m-%d")
+                if fecha_ent < fecha_med:
+                    raise ValueError("La fecha de entrega no puede ser anterior a la fecha de medición")
+            except Exception:
+                raise ValueError("Fechas inválidas")
+        # Mapear dict a tupla en el orden esperado por agregar_obra
+        campos = [
+            'nombre', 'cliente', 'estado', 'fecha_compra', 'cantidad_aberturas', 'pago_completo', 'pago_porcentaje',
+            'monto_usd', 'monto_ars', 'fecha_medicion', 'dias_entrega', 'fecha_entrega', 'usuario_creador'
+        ]
+        datos = [
+            datos_dict.get('nombre', ''),
+            cliente,
+            datos_dict.get('estado', 'Medición'),
+            datos_dict.get('fecha_compra', datos_dict.get('fecha_medicion', '')),
+            datos_dict.get('cantidad_aberturas', 0),
+            datos_dict.get('pago_completo', 0),
+            datos_dict.get('pago_porcentaje', 0.0),
+            datos_dict.get('monto_usd', 0.0),
+            datos_dict.get('monto_ars', 0.0),
+            datos_dict.get('fecha_medicion', ''),
+            datos_dict.get('dias_entrega', 30),
+            datos_dict.get('fecha_entrega', ''),
+            datos_dict.get('usuario_creador', 'admin')
+        ]
+        id_obra = self.agregar_obra(datos)
+        return id_obra
+
+    def eliminar_obra(self, id_obra):
+        """Elimina la obra con el id dado. Retorna True si se eliminó, False si no existe."""
+        query = "DELETE FROM obras WHERE id = ?"
+        rows = self.db_connection.ejecutar_query_return_rowcount(query, (id_obra,))
+        return rows > 0

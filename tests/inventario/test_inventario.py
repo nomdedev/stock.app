@@ -180,17 +180,33 @@ class TestInventarioModel(unittest.TestCase):
         assert isinstance(args[0], tuple)
         mock_view.mostrar_mensaje.assert_called_with("Ítem '12345' agregado correctamente.", tipo='success')
 
-    def test_integracion_agregar_y_reflejar_en_ui_db(self):
+    def test_integracion_agregar_item_y_feedback(self):
         mock_model = Mock()
         mock_model.obtener_items.return_value = [
             (1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")
         ]
+        mock_model.obtener_item_por_codigo.side_effect = [None, [(1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")]]
+        mock_model.agregar_item = Mock()
+        mock_model.obtener_movimientos = Mock()
+        mock_model.registrar_movimiento = Mock()
         mock_view = Mock()
+        mock_view.abrir_formulario_nuevo_item.return_value = {
+            "codigo": "12345",
+            "nombre": "Material A",
+            "tipo_material": "PVC",
+            "unidad": "unidad",
+            "stock_actual": 10,
+            "stock_minimo": 5,
+            "ubicacion": "Almacén 1",
+            "descripcion": "Descripción del material"
+        }
+        mock_view.label = Mock()
         mock_view.tabla_inventario = Mock()
         mock_view.tabla_inventario.setRowCount = Mock()
         mock_view.tabla_inventario.setColumnCount = Mock()
         mock_view.tabla_inventario.setItem = Mock()
-        mock_view.actualizar_tabla = Mock()
+        mock_view.mostrar_mensaje = Mock()
+        mock_view.mostrar_movimientos = Mock()
         controller = TestInventarioController(mock_model, mock_view, Mock())
         controller.usuario_actual = {'nombre': 'test', 'rol': 'admin', 'ip': '127.0.0.1'}
         controller.usuarios_model = Mock()
@@ -198,35 +214,57 @@ class TestInventarioModel(unittest.TestCase):
         controller.usuarios_model.obtener_modulos_permitidos.return_value = ['inventario']
         controller.auditoria_model = Mock()
         controller.auditoria_model.registrar_evento = Mock()
-        # Simular agregar y reflejar en UI+DB
-        controller.actualizar_inventario()
-        mock_view.tabla_inventario.setRowCount.assert_called_with(1)
-        mock_view.tabla_inventario.setItem.assert_called()
+        controller.view.abrir_formulario_nuevo_item = mock_view.abrir_formulario_nuevo_item
+        controller.model.obtener_item_por_codigo = mock_model.obtener_item_por_codigo
+        controller.model.agregar_item = mock_model.agregar_item
+        controller.model.obtener_movimientos = mock_model.obtener_movimientos
+        controller.model.registrar_movimiento = mock_model.registrar_movimiento
+        controller.view.mostrar_mensaje = mock_view.mostrar_mensaje
+        controller.view.mostrar_movimientos = mock_view.mostrar_movimientos
+        controller.agregar_item()
+        mock_model.agregar_item.assert_called()
+        mock_view.mostrar_mensaje.assert_called_with("Ítem '12345' agregado correctamente.", tipo='success')
 
-    def test_integracion_reserva_reflejada_en_ui_db(self):
+    def test_integracion_reservar_y_feedback(self):
         mock_model = Mock()
         mock_model.obtener_items.return_value = [
             (1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")
         ]
-        mock_model.db = Mock()
-        mock_model.db.ejecutar_query.return_value = [(0,)]
+        mock_model.obtener_item_por_id.return_value = (1, "12345", "Material A", "PVC", "unidad", 10, 5, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg")
+        mock_model.reservar_perfil = Mock(return_value=True)
         mock_view = Mock()
         mock_view.tabla_inventario = Mock()
         mock_view.tabla_inventario.setRowCount = Mock()
         mock_view.tabla_inventario.setColumnCount = Mock()
         mock_view.tabla_inventario.setItem = Mock()
-        mock_view.actualizar_tabla = Mock()
+        mock_view.mostrar_mensaje = Mock()
         controller = TestInventarioController(mock_model, mock_view, Mock())
         controller.usuario_actual = {'nombre': 'test', 'rol': 'admin', 'ip': '127.0.0.1'}
         controller.usuarios_model = Mock()
         controller.usuarios_model.tiene_permiso.return_value = True
-        controller.usuarios_model.obtener_modulos_permitidos.return_value = ['inventario']
         controller.auditoria_model = Mock()
         controller.auditoria_model.registrar_evento = Mock()
-        # Simular reserva y reflejo en UI+DB
-        controller.actualizar_inventario()
-        mock_view.tabla_inventario.setRowCount.assert_called_with(1)
-        mock_view.tabla_inventario.setItem.assert_called()
+        # Simular reserva exitosa
+        result = mock_model.reservar_perfil(1, 1, 2, usuario='test')
+        self.assertTrue(result)
+        mock_model.reservar_perfil.assert_called_with(1, 1, 2, usuario='test')
+
+    def test_integracion_exportar_inventario_feedback(self):
+        self.mock_db.ejecutar_query.return_value = [
+            (1, "123456.789", "Material A", "PVC", "unidad", 100, 10, "Almacén 1", "Descripción A", "QR123", "imagen_a.jpg"),
+            (2, "987654.321", "Material B", "Aluminio", "kg", 50, 5, "Almacén 2", "Descripción B", "QR987", "imagen_b.jpg")
+        ]
+        resultado_excel = self.inventario_model.exportar_inventario("excel")
+        self.assertEqual(resultado_excel, "Inventario exportado a Excel.")
+        resultado_pdf = self.inventario_model.exportar_inventario("pdf")
+        self.assertEqual(resultado_pdf, "Inventario exportado a PDF.")
+
+    def test_integracion_exportar_inventario_vacio_feedback(self):
+        self.mock_db.ejecutar_query.return_value = []
+        resultado_excel = self.inventario_model.exportar_inventario("excel")
+        self.assertEqual(resultado_excel, "Inventario exportado a Excel.")
+        resultado_pdf = self.inventario_model.exportar_inventario("pdf")
+        self.assertEqual(resultado_pdf, "Inventario exportado a PDF.")
 
     def test_reservar_stock_cantidad_negativa(self):
         # Probar reserva con cantidad negativa

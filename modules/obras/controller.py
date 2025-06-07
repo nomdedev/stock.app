@@ -59,7 +59,7 @@ class PermisoAuditoria:
                     auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     from core.logger import log_error
                     log_error(f"Permiso denegado: {accion} [{self.modulo}] usuario_id={usuario_id}")
-                    return None
+                    return False  # <--- Cambiado de None a False
                 # --- Ejecución y registro de auditoría ---
                 try:
                     print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
@@ -104,12 +104,12 @@ class ObrasController:
         def cambiar_estado_obra(self, id_obra, nuevo_estado):
             ...
     """
-    def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None, logistica_controller=None, pedidos_controller=None, produccion_controller=None):
+    def __init__(self, model, view, db_connection, usuarios_model, usuario_actual=None, logistica_controller=None, pedidos_controller=None, produccion_controller=None, auditoria_model=None):
         self.model = model
         self.view = view
         self.usuario_actual = usuario_actual
         self.usuarios_model = usuarios_model
-        self.auditoria_model = AuditoriaModel(db_connection)
+        self.auditoria_model = auditoria_model if auditoria_model is not None else AuditoriaModel(db_connection)
         self.logistica_controller = logistica_controller  # Referencia cruzada opcional
         self.pedidos_controller = pedidos_controller  # Nuevo: para gestión de pedidos
         self.produccion_controller = produccion_controller  # Nuevo: para gestión de producción
@@ -480,37 +480,48 @@ class ObrasController:
             # Registrar error en auditoría con formato unificado
             self._registrar_evento_auditoria("alta_obra", f"Error alta obra: {e}", exito=False)
 
+    @permiso_auditoria_obras('agregar')
     def alta_obra(self, datos):
-        """Alta de obra robusta para integración y tests. Recibe un dict con los campos clave."""
-        campos = [
-            'nombre', 'cliente', 'estado', 'fecha_compra', 'cantidad_aberturas', 'pago_completo',
-            'pago_porcentaje', 'monto_usd', 'monto_ars', 'fecha_medicion', 'dias_entrega', 'fecha_entrega', 'usuario_creador'
-        ]
-        cliente_val = datos.get('cliente')
-        if not cliente_val and 'cliente_id' in datos:
-            cliente_val = str(datos['cliente_id'])
-        datos_obra = []
-        for k in campos:
-            if k == 'cliente':
-                datos_obra.append(cliente_val or "")
-            else:
-                v = datos.get(k)
-                if v is not None:
-                    datos_obra.append(v)
-                else:
-                    datos_obra.append(0 if 'cantidad' in k or 'pago' in k or 'monto' in k or 'dias' in k else "")
-        self.model.agregar_obra(tuple(datos_obra))
-        # Obtener el id y rowversion de la última obra insertada
-        res = self.model.db_connection.ejecutar_query("SELECT id, rowversion FROM obras ORDER BY id DESC LIMIT 1")
-        if res:
-            id_obra, rowversion = res[0]
-            # Registrar auditoría con formato esperado (modulo='Obras', campo accion)
-            self.model.db_connection.ejecutar_query(
-                "INSERT INTO auditorias_sistema (usuario_id, modulo, accion, detalle, ip) VALUES (?, ?, ?, ?, ?)",
-                (self.usuario_actual['id'] if self.usuario_actual else None, 'Obras', f'Creó obra {id_obra}', f'Creó obra {id_obra}', self.usuario_actual.get('ip', '') if self.usuario_actual else '')
-            )
+        """
+        Alta robusta de obra desde el controller (usado por tests y lógica backend):
+        - Valida campos requeridos y duplicados.
+        - Inserta la obra en la base solo si el usuario tiene permiso.
+        - Registra auditoría (decorador).
+        - Devuelve el id de la obra creada.
+        - Feedback visual robusto si hay error (si hay view).
+        """
+        # Validar permisos antes de modificar
+        if hasattr(self, 'usuarios_model') and hasattr(self, 'usuario_actual'):
+            usuarios_model = getattr(self, 'usuarios_model')
+            usuario = getattr(self, 'usuario_actual')
+            if not usuarios_model.tiene_permiso(usuario, 'Obras', 'agregar'):
+                if self.view and hasattr(self.view, 'label'):
+                    self.view.label.setText("Permiso denegado para crear obra.")
+                elif self.view and hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje("Permiso denegado para crear obra.", tipo="error")
+                return None
+        try:
+            id_obra = self.model.agregar_obra_dict(datos)
+            # Registrar auditoría usando el modelo correcto
+            if hasattr(self, 'auditoria_model') and self.auditoria_model:
+                self.auditoria_model.registrar_evento(
+                    self.usuario_actual['id'] if self.usuario_actual else None,
+                    'obras',
+                    'agregar',
+                    f"Creó obra {id_obra}",
+                    self.usuario_actual.get('ip', '') if self.usuario_actual else ''
+                )
+            if self.view and hasattr(self.view, 'label'):
+                self.view.label.setText(f"Obra '{datos['nombre']}' creada correctamente.")
             return id_obra
-        return None
+        except ValueError as e:
+            if self.view and hasattr(self.view, 'label'):
+                self.view.label.setText(str(e))
+            raise  # Relanzar para que los tests que esperan ValueError lo reciban
+        except Exception as e:
+            if self.view and hasattr(self.view, 'label'):
+                self.view.label.setText(f"Error al crear obra: {e}")
+            raise
 
     def editar_fecha_entrega_dialog(self, id_obra, fecha_actual):
         from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton
@@ -843,52 +854,44 @@ class ObrasController:
             # Registrar error en auditoría con formato unificado
             self._registrar_evento_auditoria("alta_obra", f"Error alta obra: {e}", exito=False)
 
-    def editar_fecha_entrega(self, id_obra, fecha_actual):
-        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton
-        dialog = QDialog(self.view)
-        dialog.setWindowTitle("Editar fecha de entrega")
-        layout = QVBoxLayout(dialog)
-        layout.addWidget(QLabel(f"Fecha actual: {fecha_actual}"))
-        fecha_input = QLineEdit(fecha_actual)
-        layout.addWidget(QLabel("Nueva fecha de entrega (YYYY-MM-DD):"))
-        layout.addWidget(fecha_input)
-        btn_guardar = QPushButton("Guardar")
-        estilizar_boton_icono(btn_guardar)
-        btn_cancelar = QPushButton("Cancelar")
-        estilizar_boton_icono(btn_cancelar)
-        btn_guardar.clicked.connect(dialog.accept)
-        btn_cancelar.clicked.connect(dialog.reject)
-        layout.addWidget(btn_guardar)
-        layout.addWidget(btn_cancelar)
-        dialog.setLayout(layout)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            nueva_fecha = fecha_input.text()
-            # Obtener datos actuales de la obra
-            datos = self.model.obtener_obra_por_id(id_obra)
-            if datos:
-                nombre, cliente, estado = datos[1], datos[2], datos[3]
-                self.model.actualizar_obra(id_obra, nombre, cliente, estado, nueva_fecha)
-                self.mostrar_gantt()
-
     def editar_obra(self, id_obra, datos, rowversion_orig):
         """
         Edita una obra usando bloqueo optimista (rowversion).
-        Si ocurre un conflicto, muestra advertencia visual.
+        Si el usuario no tiene permiso, no debe modificar nada ni auditar.
         Retorna el nuevo rowversion si la edición fue exitosa.
         """
+        # Validar permisos antes de modificar
+        if hasattr(self, 'usuarios_model') and hasattr(self, 'usuario_actual'):
+            usuarios_model = getattr(self, 'usuarios_model')
+            usuario = getattr(self, 'usuario_actual')
+            if not usuarios_model.tiene_permiso(usuario, 'Obras', 'editar'):
+                if self.view and hasattr(self.view, 'label'):
+                    self.view.label.setText("Permiso denegado para editar obra.")
+                elif self.view and hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje("Permiso denegado para editar obra.", tipo="error")
+                return None
         try:
+            # Validar datos igual que en alta (el modelo lanzará ValueError si hay error)
             self.model.editar_obra(id_obra, datos, rowversion_orig)
             # Obtener el nuevo rowversion tras la edición
             res = self.model.db_connection.ejecutar_query("SELECT rowversion FROM obras WHERE id=?", (id_obra,))
             nuevo_rowversion = res[0][0] if res else None
-            # Registrar auditoría con formato esperado (modulo='Obras', campo accion)
-            self.model.db_connection.ejecutar_query(
-                "INSERT INTO auditorias_sistema (usuario_id, modulo, accion, detalle, ip) VALUES (?, ?, ?, ?, ?)",
-                (self.usuario_actual['id'] if self.usuario_actual else None, 'Obras', f'Editó obra {id_obra}', f'Editó obra {id_obra}', self.usuario_actual.get('ip', '') if self.usuario_actual else '')
-            )
+            # Registrar auditoría usando el modelo correcto
+            if hasattr(self, 'auditoria_model') and self.auditoria_model:
+                self.auditoria_model.registrar_evento(
+                    self.usuario_actual['id'] if self.usuario_actual else None,
+                    'obras',
+                    'editar',
+                    f'Editó obra {id_obra}',
+                    self.usuario_actual.get('ip', '') if self.usuario_actual else ''
+                )
             if hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje("Obra actualizada correctamente.", tipo="exito")
             return nuevo_rowversion
+        except ValueError as e:
+            if self.view and hasattr(self.view, 'label'):
+                self.view.label.setText(str(e))
+            raise  # Relanzar para que los tests que esperan ValueError lo reciban
         except OptimisticLockError:
             from PyQt6.QtWidgets import QMessageBox
             if self.view:
@@ -1047,6 +1050,63 @@ class ObrasController:
             self.cargar_datos_obras()
         if hasattr(self.view, 'mostrar_mensaje'):
             self.view.mostrar_mensaje(f"Obras actualizadas por cancelación del pedido '{datos_pedido.get('id','')}'.", tipo='advertencia')
+
+    @permiso_auditoria_obras('eliminar')
+    def baja_obra(self, id_obra):
+        """Elimina una obra por id, siempre retorna True/False según éxito o permiso."""
+        resultado = self._baja_obra_interna(id_obra)
+        if resultado is None:
+            return False
+        return bool(resultado)
+
+    @permiso_auditoria_obras('eliminar')
+    def _baja_obra_interna(self, id_obra):
+        """Lógica real de baja de obra, decorada para auditoría/permisos."""
+        try:
+            if hasattr(self, 'usuarios_model') and hasattr(self, 'usuario_actual'):
+                usuarios_model = getattr(self, 'usuarios_model')
+                usuario = getattr(self, 'usuario_actual')
+                if not usuarios_model.tiene_permiso(usuario, 'Obras', 'eliminar'):
+                    if self.view and hasattr(self.view, 'label'):
+                        self.view.label.setText("Permiso denegado para eliminar obra.")
+                    elif self.view and hasattr(self.view, 'mostrar_mensaje'):
+                        self.view.mostrar_mensaje("Permiso denegado para eliminar obra.", tipo="error")
+                    return False
+            exito = self.model.eliminar_obra(id_obra)
+            if exito:
+                if hasattr(self, 'auditoria_model') and self.auditoria_model:
+                    self.auditoria_model.registrar_evento(
+                        self.usuario_actual['id'] if self.usuario_actual else None,
+                        'obras',
+                        'eliminar',
+                        f'Eliminó obra {id_obra}',
+                        self.usuario_actual.get('ip', '') if self.usuario_actual else ''
+                    )
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(f"Obra {id_obra} eliminada correctamente.", tipo="exito")
+                elif hasattr(self.view, 'label'):
+                    self.view.label.setText(f"Obra {id_obra} eliminada correctamente.")
+                return True
+            else:
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(f"No se encontró la obra a eliminar.", tipo="error")
+                elif hasattr(self.view, 'label'):
+                    self.view.label.setText("No se encontró la obra a eliminar.")
+                return False
+        except Exception as e:
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error al eliminar la obra: {e}", tipo="error")
+            elif hasattr(self.view, 'label'):
+                self.view.label.setText(f"Error al eliminar la obra: {e}")
+            if hasattr(self, 'auditoria_model') and self.auditoria_model:
+                self.auditoria_model.registrar_evento(
+                    self.usuario_actual['id'] if self.usuario_actual else None,
+                    'obras',
+                    'eliminar',
+                    f'Error al eliminar obra {id_obra}: {e}',
+                    self.usuario_actual.get('ip', '') if self.usuario_actual else '',
+                )
+            return False
 
 # NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
 # Si necesitas una cadena de conexión, obténla de un archivo seguro o variable de entorno, nunca hardcodeada.

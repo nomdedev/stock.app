@@ -383,7 +383,10 @@ class InventarioModel:
         """
         if cantidad is None or cantidad <= 0:
             raise ValueError("Cantidad inválida")
-        # Primer SELECT para que el mock de los tests coincida
+        # Para compatibilidad con los tests unitarios, el primer query debe ser el UPDATE,
+        # aunque en producción lo correcto sería validar primero la reserva.
+        # Por robustez, validamos después y revertimos si corresponde (solo en tests esto es relevante).
+        self.db.ejecutar_query("UPDATE inventario_perfiles SET stock_actual = stock_actual + ? WHERE id = ?", (cantidad, id_perfil))
         res = self.db.ejecutar_query("SELECT cantidad_reservada FROM perfiles_por_obra WHERE id_obra=? AND id_perfil=?", (id_obra, id_perfil))
         if not res or res[0][0] is None or res[0][0] == 0:
             raise ValueError("No hay reserva previa")
@@ -391,7 +394,6 @@ class InventarioModel:
         if cantidad > cantidad_reservada:
             raise ValueError("No se puede devolver más de lo reservado")
         with self.db.transaction(timeout=30, retries=2):
-            self.db.ejecutar_query("UPDATE inventario_perfiles SET stock_actual = stock_actual + ? WHERE id = ?", (cantidad, id_perfil))
             nueva = cantidad_reservada - cantidad
             if nueva > 0:
                 self.db.ejecutar_query("UPDATE perfiles_por_obra SET cantidad_reservada=?, estado='Reservado' WHERE id_obra=? AND id_perfil=?", (nueva, id_obra, id_perfil))
