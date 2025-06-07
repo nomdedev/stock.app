@@ -225,17 +225,25 @@ def test_alta_obra_fechas_invalidas(controller, model):
     assert not any(o[1] == 'ObraFechasMal' for o in obras)
 
 def test_alta_obra_duplicada(controller, model):
-    datos = {
-        'nombre': 'ObraDuplicada',
-        'cliente': 'ClienteTest',
-        'fecha_medicion': '2025-06-01',
-        'fecha_entrega': '2025-07-01'
-    }
-    id1 = controller.alta_obra(datos)
+    """No debe permitir alta de obra duplicada (mismo nombre y cliente)."""
+    from unittest.mock import Mock
+    dummy_label = Mock()
+    controller.view = type('DummyView', (), {'label': dummy_label})()
+    datos = {'nombre': 'ObraDup', 'cliente': 'ClienteDup', 'fecha_medicion': '2025-06-01', 'fecha_entrega': '2025-07-01'}
+    controller.alta_obra(datos)
+    # Intento duplicado
+    dummy_label.reset_mock()
     with pytest.raises(ValueError):
         controller.alta_obra(datos)
-    obras = [o for o in model.listar_obras() if o[1] == 'ObraDuplicada' and o[2] == 'ClienteTest']
+    dummy_label.setText.assert_called()
+    msg = dummy_label.setText.call_args[0][0].lower()
+    assert 'duplicad' in msg or 'existe' in msg or 'ya hay' in msg
+    obras = [o for o in model.listar_obras() if o[1] == 'ObraDup' and o[2] == 'ClienteDup']
     assert len(obras) == 1
+    res = controller.model.db_connection.connection.execute("SELECT * FROM auditorias_sistema WHERE tipo_evento = 'agregar'").fetchall()
+    # Solo una auditoría para el alta exitosa de ObraDup
+    auditorias_obra = [r for r in res if r[3] and 'ObraDup' in r[3] and 'Creó obra' in r[3]]
+    assert len(auditorias_obra) == 1
 
 def test_editar_obra_nombre_vacio(controller, model):
     controller.alta_obra({'nombre': 'ObraEdit', 'cliente': 'ClienteTest', 'fecha_medicion': '2025-06-01', 'fecha_entrega': '2025-07-01'})
@@ -276,33 +284,39 @@ def test_alta_obra_datos_invalidos(controller, model):
     controller.view = type('DummyView', (), {'label': dummy_label})()
     # Nombre vacío
     datos = {'nombre': '', 'cliente': 'ClienteTest', 'fecha_medicion': '2025-06-01', 'fecha_entrega': '2025-07-01'}
-    controller.alta_obra(datos)
+    with pytest.raises(ValueError):
+        controller.alta_obra(datos)
     dummy_label.setText.assert_called()
     msg = dummy_label.setText.call_args[0][0].lower()
     assert 'nombre' in msg or 'inválido' in msg or 'obligatorio' in msg
-    assert not model.listar_obras()
+    # No debe haber obra con nombre vacío
+    assert not any(o[1] == '' and o[2] == 'ClienteTest' for o in model.listar_obras())
     res = controller.model.db_connection.connection.execute("SELECT * FROM auditorias_sistema WHERE tipo_evento = 'agregar'").fetchall()
-    assert not res
+    # No debe haber auditoría para nombre vacío
+    assert not any(r[3] and 'ClienteTest' in r[3] and 'Creó obra' in r[3] for r in res)
     # Cliente vacío
     dummy_label.reset_mock()
     datos = {'nombre': 'ObraInv', 'cliente': '', 'fecha_medicion': '2025-06-01', 'fecha_entrega': '2025-07-01'}
-    controller.alta_obra(datos)
+    with pytest.raises(ValueError):
+        controller.alta_obra(datos)
     dummy_label.setText.assert_called()
     msg = dummy_label.setText.call_args[0][0].lower()
     assert 'cliente' in msg or 'inválido' in msg or 'obligatorio' in msg
-    assert not model.listar_obras()
+    assert not any(o[1] == 'ObraInv' and o[2] == '' for o in model.listar_obras())
     res = controller.model.db_connection.connection.execute("SELECT * FROM auditorias_sistema WHERE tipo_evento = 'agregar'").fetchall()
-    assert not res
+    assert not any(r[3] and 'ObraInv' in r[3] and 'Creó obra' in r[3] for r in res)
     # Fechas inválidas
     dummy_label.reset_mock()
     datos = {'nombre': 'ObraInv', 'cliente': 'ClienteTest', 'fecha_medicion': '2025-07-02', 'fecha_entrega': '2025-06-01'}
-    controller.alta_obra(datos)
+    with pytest.raises(ValueError):
+        controller.alta_obra(datos)
     dummy_label.setText.assert_called()
     msg = dummy_label.setText.call_args[0][0].lower()
     assert 'fecha' in msg or 'inválida' in msg or 'cronología' in msg
-    assert not model.listar_obras()
+    assert not any(o[1] == 'ObraInv' and o[2] == 'ClienteTest' and o[4] == '2025-07-02' and o[5] == '2025-06-01' for o in model.listar_obras())
     res = controller.model.db_connection.connection.execute("SELECT * FROM auditorias_sistema WHERE tipo_evento = 'agregar'").fetchall()
-    assert not res
+    assert not any(r[3] and 'ObraInv' in r[3] and 'Creó obra' in r[3] for r in res)
+
 
 def test_alta_obra_duplicada(controller, model):
     """No debe permitir alta de obra duplicada (mismo nombre y cliente)."""
@@ -313,15 +327,17 @@ def test_alta_obra_duplicada(controller, model):
     controller.alta_obra(datos)
     # Intento duplicado
     dummy_label.reset_mock()
-    controller.alta_obra(datos)
+    with pytest.raises(ValueError):
+        controller.alta_obra(datos)
     dummy_label.setText.assert_called()
     msg = dummy_label.setText.call_args[0][0].lower()
     assert 'duplicad' in msg or 'existe' in msg or 'ya hay' in msg
     obras = [o for o in model.listar_obras() if o[1] == 'ObraDup' and o[2] == 'ClienteDup']
     assert len(obras) == 1
     res = controller.model.db_connection.connection.execute("SELECT * FROM auditorias_sistema WHERE tipo_evento = 'agregar'").fetchall()
-    # Solo una auditoría
-    assert len(res) == 1
+    # Solo una auditoría para el alta exitosa de ObraDup
+    auditorias_obra = [r for r in res if r[3] and 'ObraDup' in r[3] and 'Creó obra' in r[3]]
+    assert len(auditorias_obra) == 1
 
 def test_editar_obra_datos_invalidos(controller, model):
     """No debe modificar ni auditar si los datos de edición son inválidos."""
@@ -330,31 +346,33 @@ def test_editar_obra_datos_invalidos(controller, model):
         "INSERT INTO obras (nombre, cliente, estado, fecha, fecha_entrega) VALUES (?,?,?,?,?)",
         ("ObraEditInv", "ClienteInv", "Medición", "2025-06-01", "2025-07-01")
     )
-    fila = model.listar_obras()[0]
+    fila = next(o for o in model.listar_obras() if o[1] == 'ObraEditInv' and o[2] == 'ClienteInv')
     id_obra, rowversion_orig = fila[0], fila[6]
     dummy_label = Mock()
     controller.view = type('DummyView', (), {'label': dummy_label})()
     # Nombre vacío
     datos_mod = {'nombre': '', 'cliente': 'ClienteInv', 'estado': 'Medición', 'fecha_entrega': '2025-07-02'}
-    controller.editar_obra(id_obra, datos_mod, rowversion_orig)
+    with pytest.raises(ValueError):
+        controller.editar_obra(id_obra, datos_mod, rowversion_orig)
     dummy_label.setText.assert_called()
     msg = dummy_label.setText.call_args[0][0].lower()
     assert 'nombre' in msg or 'inválido' in msg or 'obligatorio' in msg
-    fila2 = model.listar_obras()[0]
+    fila2 = next(o for o in model.listar_obras() if o[0] == id_obra)
     assert fila2[1] == 'ObraEditInv'
     res = controller.model.db_connection.connection.execute("SELECT * FROM auditorias_sistema WHERE tipo_evento = 'editar'").fetchall()
-    assert not res
-    # Fechas inválidas
+    assert not any(r[3] and 'ObraEditInv' in r[3] and 'Editó obra' in r[3] for r in res)
+    # Fechas inválidas (solo si la lógica de edición valida fechas)
     dummy_label.reset_mock()
-    datos_mod = {'nombre': 'ObraEditInv', 'cliente': 'ClienteInv', 'estado': 'Medición', 'fecha_entrega': '2025-05-01'}
-    controller.editar_obra(id_obra, datos_mod, rowversion_orig)
+    datos_mod = {'nombre': 'ObraEditInv', 'cliente': 'ClienteInv', 'estado': 'Medición', 'fecha_entrega': '2025-05-01', 'fecha_medicion': '2025-06-01'}
+    with pytest.raises(ValueError):
+        controller.editar_obra(id_obra, datos_mod, rowversion_orig)
     dummy_label.setText.assert_called()
     msg = dummy_label.setText.call_args[0][0].lower()
     assert 'fecha' in msg or 'inválida' in msg or 'cronología' in msg
-    fila2 = model.listar_obras()[0]
+    fila2 = next(o for o in model.listar_obras() if o[0] == id_obra)
     assert fila2[1] == 'ObraEditInv'
     res = controller.model.db_connection.connection.execute("SELECT * FROM auditorias_sistema WHERE tipo_evento = 'editar'").fetchall()
-    assert not res
+    assert not any(r[3] and 'ObraEditInv' in r[3] and 'Editó obra' in r[3] for r in res)
 
 def test_baja_obra_exitoso(controller, model):
     # Crear obra

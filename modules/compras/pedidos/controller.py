@@ -120,11 +120,10 @@ class ComprasPedidosController:
     @permiso_auditoria_compras('ver_detalles')
     def ver_detalles_pedido(self):
         fila_seleccionada = self.view.tabla_pedidos.currentRow()
-       
+        if fila_seleccionada < 0:
             self.view.label.setText("Seleccione un pedido para ver detalles.")
             self._registrar_evento_auditoria('ver_detalles', 'sin selección', 'error')
             return
-
         id_pedido = self.view.tabla_pedidos.item(fila_seleccionada, 0).text()
         detalles = self.model.obtener_detalle_pedido(id_pedido)
         headers = [
@@ -148,10 +147,8 @@ class ComprasPedidosController:
             for col, value in enumerate(detalle):
                 self.view.tabla_detalle_pedido.setItem(row, col, QTableWidgetItem(str(value)))
             item_stock = QTableWidgetItem(str(stock_actual))
-            self.view.tabla_detalle_pedido.setItem(row, 5, item_stock)
             item_faltante = QTableWidgetItem(str(faltante))
-            if faltante > 0:
-                item_faltante.setForeground(QtGui.QColor("red"))
+            self.view.tabla_detalle_pedido.setItem(row, 5, item_stock)
             self.view.tabla_detalle_pedido.setItem(row, 6, item_faltante)
         self.view.tabla_detalle_pedido.resizeColumnsToContents()
         self._registrar_evento_auditoria('ver_detalles', f"pedido {id_pedido} detalles mostrados", 'éxito')

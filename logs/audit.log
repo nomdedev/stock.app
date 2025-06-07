@@ -5734,3 +5734,333 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
 2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
 2025-06-06 23:16:00,424 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:26:58,940 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:58,942 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-07 09:26:58,942 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-07 09:26:58,947 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:58,947 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:58,947 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:58,951 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:58,951 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:58,951 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:58,951 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:58,958 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:58,958 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:58,958 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:58,958 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:58,958 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:58,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:26:58,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:26:58,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:26:58,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:26:58,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:26:58,963 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:26:58,968 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:26:58,968 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:26:58,968 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:26:58,968 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:26:58,968 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:26:58,968 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:26:58,968 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:26:58,975 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:26:58,975 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:26:58,975 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:26:58,975 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:26:58,975 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:26:58,975 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:26:58,975 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:26:58,975 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:26:59,271 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:59,271 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:59,271 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:59,271 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:59,271 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:59,271 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:59,271 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:59,271 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:59,271 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:26:59,413 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:59,413 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:59,413 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:59,413 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:59,413 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:59,413 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:59,413 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:59,413 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:59,413 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:59,413 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:26:59,416 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:26:59,416 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:26:59,416 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:26:59,416 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:26:59,416 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:26:59,416 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:26:59,416 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:26:59,416 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:26:59,416 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:26:59,416 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:26:59,416 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:28:13,330 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,331 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-07 09:28:13,331 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-07 09:28:13,336 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,336 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,336 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,341 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,341 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,341 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,341 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,346 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,346 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,346 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,346 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,346 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,352 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:28:13,352 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:28:13,352 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:28:13,352 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:28:13,352 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:28:13,352 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:28:13,358 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:28:13,358 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:28:13,358 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:28:13,358 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:28:13,358 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:28:13,358 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:28:13,358 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:28:13,363 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:28:13,363 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:28:13,363 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:28:13,363 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:28:13,363 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:28:13,363 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:28:13,363 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:28:13,363 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:28:13,639 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,639 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,639 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,639 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,639 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,639 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,639 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,639 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,639 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:28:13,772 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,772 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,772 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,772 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,772 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,772 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,772 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,772 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,772 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,772 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:28:13,775 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:28:13,775 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:28:13,775 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:28:13,775 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:28:13,775 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:28:13,775 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:28:13,775 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:28:13,775 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:28:13,775 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:28:13,775 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:28:13,775 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:29:25,600 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,601 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-07 09:29:25,601 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-07 09:29:25,606 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,606 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,606 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,611 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,611 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,611 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,611 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,617 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,617 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,617 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,617 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,617 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,623 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:29:25,623 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:29:25,623 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:29:25,623 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:29:25,623 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:29:25,623 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:29:25,628 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:29:25,628 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:29:25,628 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:29:25,628 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:29:25,628 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:29:25,628 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:29:25,628 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:29:25,635 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:29:25,635 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:29:25,635 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:29:25,635 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:29:25,635 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:29:25,635 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:29:25,635 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:29:25,635 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:29:25,858 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,858 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,858 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,858 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,858 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,858 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,858 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,858 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,858 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:29:25,898 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,898 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,898 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,898 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,898 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,898 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,898 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,898 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,898 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,898 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:29:25,901 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:29:25,901 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:29:25,901 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:29:25,901 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:29:25,901 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:29:25,901 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:29:25,901 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:29:25,901 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:29:25,901 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:29:25,901 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:29:25,901 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:30:16,015 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,016 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-07 09:30:16,016 - ERROR - Permiso denegado: agregar [obras] usuario_id=2
+2025-06-07 09:30:16,020 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,020 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,020 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,024 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,024 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,024 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,024 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,030 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,030 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,030 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,030 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,030 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,036 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:30:16,036 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:30:16,036 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:30:16,036 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:30:16,036 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:30:16,036 - ERROR - Error en agregar: El campo 'cliente' es obligatorio.
+2025-06-07 09:30:16,041 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:30:16,041 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:30:16,041 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:30:16,041 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:30:16,041 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:30:16,041 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:30:16,041 - ERROR - Error en agregar: Fechas inválidas
+2025-06-07 09:30:16,048 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:30:16,048 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:30:16,048 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:30:16,048 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:30:16,048 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:30:16,048 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:30:16,048 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:30:16,048 - ERROR - Error en agregar: Ya existe una obra con ese nombre y cliente.
+2025-06-07 09:30:16,268 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,268 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,268 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,268 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,268 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,268 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,268 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,268 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,268 - ERROR - Error en agregar: El campo 'nombre' es obligatorio.
+2025-06-07 09:30:16,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,318 - ERROR - Error en registrar_evento: 'sqlite3.Connection' object has no attribute 'ejecutar_query'
+2025-06-07 09:30:16,321 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:30:16,321 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:30:16,321 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:30:16,321 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:30:16,321 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:30:16,321 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:30:16,321 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:30:16,321 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:30:16,321 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:30:16,321 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:30:16,321 - ERROR - Permiso denegado: eliminar [obras] usuario_id=2
+2025-06-07 09:54:39,886 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,174 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 09:54:40,174 - ERROR - Permiso denegado: alta [obras] usuario_id=2
+2025-06-07 09:54:40,187 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,187 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,187 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,236 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,236 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,236 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,236 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,281 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,281 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,281 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,281 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,281 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,334 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,334 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,334 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,334 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,334 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,334 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,377 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,377 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,377 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,377 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,377 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,377 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,377 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,466 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,466 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,466 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,466 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,466 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,466 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,466 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,466 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,559 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,559 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,559 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,559 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,559 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,559 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,559 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,559 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,559 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,606 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,606 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,606 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,606 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,606 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,606 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,606 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,606 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,606 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,606 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,658 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,658 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,658 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,658 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,658 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,658 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,658 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,658 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,658 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,658 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
+2025-06-07 09:54:40,658 - ERROR - Error en alta: ObrasController.alta_obra() missing 1 required positional argument: 'usuario'
