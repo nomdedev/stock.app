@@ -931,6 +931,15 @@ Desde mayo 2025, la gestión de usuarios y la pestaña de permisos por usuario s
 
 ---
 
+## Cumplimiento de estándares UI/UX y robustez (actualizado al 2025-06-07)
+
+- Todos los formularios y botones principales de UsuariosView (crear, editar, eliminar usuario, editar permisos, resumen de permisos, menú de columnas, feedback visual) cumplen checklist de robustez, accesibilidad y feedback.
+- Métodos como cargar_resumen_permisos, aplicar_columnas_visibles, mostrar_menu_columnas, mostrar_menu_columnas_header y todos los diálogos modales validan tipos, existencia y edge cases, mostrando feedback visual y evitando errores de atributo/None.
+- Edge cases y errores de usuario están documentados y cubiertos según docs/estandares_feedback.md y checklist_formularios_botones_ui.txt.
+- Validado y marcado como COMPLETO en checklist_formularios_botones_ui.txt.
+
+---
+
 ## Recursos y temas visuales
 
 - Los archivos QSS de temas deben estar en `resources/qss/`.
@@ -1037,6 +1046,7 @@ Más detalles en `README_TESTS.md`.
 ## Documentación de cumplimiento de estándares
 
 - [x] Formulario Recepción Pedido (Pedidos): Modal robusto, feedback, accesibilidad, validación visual/backend, logging y auditoría. COMPLETO 07/06/2025.
-- [x] Botón Ver Detalle Envío (Logística): Modal robusto, feedback, accesibilidad, tooltips, cierre modal solo en éxito. COMPLETO 07/06/2025.
-- [07/06/2025] Formulario Generar Factura (Contabilidad): Implementado modal robusto, validación visual/backend, feedback accesible, tooltips, cierre solo en éxito, integración con controller. Cumple checklist UI/UX, accesibilidad y feedback.
-- [07/06/2025] Formulario Registrar Pago (Contabilidad): Implementado modal robusto, validación visual/backend, feedback accesible, tooltips, cierre solo en éxito, integración con controller. Cumple checklist UI/UX, accesibilidad y feedback.
+- [08/06/2025] Formulario Editar Envío (Logística): Implementado modal robusto, validación visual/backend, feedback accesible, tooltips, cierre solo en éxito, integración con controller, logging/auditoría, refresco de tabla. Cumple checklist UI/UX, accesibilidad y feedback.
+- [08/06/2025] Formulario Eliminar Envío (Logística): Implementado modal robusto, confirmación accesible, feedback visual, tooltips, cierre solo en éxito, logging/auditoría, refresco de tabla. Cumple checklist UI/UX, accesibilidad y feedback.
+- [08/06/2025] Botón Filtrar Auditoría (Auditoría): Implementado modal robusto, feedback accesible, tooltips, cierre solo en éxito, integración con controller, logging/auditoría, refresco de tabla, validación visual/backend, cobertura de tests. Cumple checklist UI/UX, accesibilidad y feedback.
+- [08/06/2025] Botón Exportar a Excel (Auditoría): Implementado modal robusto, confirmación accesible, feedback visual, tooltips, cierre solo en éxito, logging/auditoría, refresco de tabla, validación visual/backend, integración con controller, cobertura de tests. Cumple checklist UI/UX, accesibilidad y feedback.

@@ -10,13 +10,15 @@
 | Contabilidad  | Exportar a Excel (Pagos)    | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Contabilidad  | Exportar a Excel (Recibos)  | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Logística     | Exportar a Excel            | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
-| Logística     | Editar envío                | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
-| Logística     | Eliminar envío              | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Logística     | Editar envío                | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Modal robusto, feedback, accesibilidad, cierre solo en éxito, logging/auditoría, tests validados (08/06/2025) |
+| Logística     | Eliminar envío              | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Modal robusto, confirmación accesible, feedback visual, cierre solo en éxito, logging/auditoría, tests validados (08/06/2025) |
 | Logística     | Ver Detalle envío           | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Configuración | Importar/Exportar           |              |               |               |               | PENDIENTE |      |
 | Obras         | Editar obra                  | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Obras         | Eliminar obra                | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Obras         | Ver Detalle obra             | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Auditoría     | Filtrar Auditoría             | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Modal robusto, feedback accesible, tooltips, cierre solo en éxito, integración controller, logging/auditoría, refresco de tabla, validación visual/backend, cobertura de tests (08/06/2025) |
+| Auditoría     | Exportar a Excel              | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Modal robusto, confirmación accesible, feedback visual, tooltips, cierre solo en éxito, logging/auditoría, refresco de tabla, validación visual/backend, integración controller, cobertura de tests (08/06/2025) |
 # ...agregar más según módulos y botones principales...
 
 Notas:

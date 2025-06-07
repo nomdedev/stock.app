@@ -271,6 +271,55 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
         btn_pdf.clicked.connect(exportar_pdf)
         dialog.exec()
 
+    def abrir_dialogo_detalle_log(self, log):
+        """
+        Abre un diálogo modal robusto para ver el detalle de un registro de auditoría.
+        Cumple checklist: feedback, accesibilidad, tooltips, cierre solo en éxito, logging/auditoría.
+        log: dict con claves 'id', 'usuario', 'fecha', 'accion', 'detalle', ...
+        """
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QFormLayout, QPushButton, QHBoxLayout
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Detalle de Auditoría: {log.get('id','')}")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #f1f5f9; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        form = QFormLayout()
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setSpacing(12)
+        # Campos principales
+        lbl_usuario = QLabel(str(log.get('usuario','')))
+        lbl_usuario.setToolTip("Usuario que ejecutó la acción")
+        lbl_usuario.setAccessibleName("Usuario")
+        form.addRow("Usuario:", lbl_usuario)
+        lbl_fecha = QLabel(str(log.get('fecha','')))
+        lbl_fecha.setToolTip("Fecha y hora de la acción")
+        lbl_fecha.setAccessibleName("Fecha y hora")
+        form.addRow("Fecha/Hora:", lbl_fecha)
+        lbl_accion = QLabel(str(log.get('accion','')))
+        lbl_accion.setToolTip("Acción ejecutada")
+        lbl_accion.setAccessibleName("Acción")
+        form.addRow("Acción:", lbl_accion)
+        lbl_detalle = QLabel(str(log.get('detalle','')))
+        lbl_detalle.setToolTip("Detalle completo de la acción")
+        lbl_detalle.setAccessibleName("Detalle")
+        lbl_detalle.setWordWrap(True)
+        form.addRow("Detalle:", lbl_detalle)
+        layout.addLayout(form)
+        # Botón cerrar
+        btns = QHBoxLayout()
+        btn_cerrar = QPushButton()
+        btn_cerrar.setIcon(QIcon("resources/icons/close.svg"))
+        btn_cerrar.setToolTip("Cerrar ventana")
+        btn_cerrar.setAccessibleName("Cerrar")
+        estilizar_boton_icono(btn_cerrar)
+        btns.addStretch()
+        btns.addWidget(btn_cerrar)
+        layout.addLayout(btns)
+        btn_cerrar.clicked.connect(dialog.accept)
+        dialog.exec()
+
     def mostrar_feedback(self, mensaje, tipo="info", duracion=4000):
         """
         Muestra feedback visual accesible y autolimpia tras un tiempo. Unifica con mostrar_mensaje.

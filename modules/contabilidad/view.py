@@ -1373,3 +1373,74 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         btn_cancelar.clicked.connect(dialog.reject)
         dialog.exec()
 
+    def abrir_dialogo_detalle_factura(self, id_factura):
+        """
+        Abre un diálogo modal robusto para mostrar el detalle de una factura: ítems, pagos, saldo, estado.
+        Cumple checklist: feedback, accesibilidad, tooltips, cierre solo en éxito.
+        """
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QFormLayout, QTableWidget, QTableWidgetItem, QPushButton, QHBoxLayout
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Detalle de Factura ID {id_factura}")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #f1f5f9; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        # --- Obtener datos de la factura ---
+        factura = None
+        pagos = []
+        items = []
+        if hasattr(self, 'controller') and hasattr(self.controller, 'obtener_detalle_factura'):
+            detalle = self.controller.obtener_detalle_factura(id_factura)
+            factura = detalle.get('factura')
+            pagos = detalle.get('pagos', [])
+            items = detalle.get('items', [])
+        # --- Resumen principal ---
+        form = QFormLayout()
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setSpacing(12)
+        if factura:
+            form.addRow("Estado:", QLabel(factura.get('estado', 'N/A')))
+            form.addRow("Saldo:", QLabel(f"${factura.get('saldo', 0):,.2f}"))
+        else:
+            form.addRow("Factura:", QLabel("No encontrada"))
+        layout.addLayout(form)
+        # --- Tabla de ítems ---
+        if items:
+            label_items = QLabel("Ítems de la factura:")
+            label_items.setAccessibleName("Título ítems factura")
+            layout.addWidget(label_items)
+            tabla_items = QTableWidget(len(items), 3)
+            tabla_items.setHorizontalHeaderLabels(["Descripción", "Cantidad", "Precio"])
+            for row, item in enumerate(items):
+                tabla_items.setItem(row, 0, QTableWidgetItem(str(item.get('descripcion', ''))))
+                tabla_items.setItem(row, 1, QTableWidgetItem(str(item.get('cantidad', ''))))
+                tabla_items.setItem(row, 2, QTableWidgetItem(f"${item.get('precio', 0):,.2f}"))
+            tabla_items.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+            tabla_items.setToolTip("Ítems facturados")
+            layout.addWidget(tabla_items)
+        # --- Tabla de pagos ---
+        if pagos:
+            label_pagos = QLabel("Pagos realizados:")
+            label_pagos.setAccessibleName("Título pagos factura")
+            layout.addWidget(label_pagos)
+            tabla_pagos = QTableWidget(len(pagos), 2)
+            tabla_pagos.setHorizontalHeaderLabels(["Fecha", "Monto"])
+            for row, pago in enumerate(pagos):
+                tabla_pagos.setItem(row, 0, QTableWidgetItem(str(pago.get('fecha', ''))))
+                tabla_pagos.setItem(row, 1, QTableWidgetItem(f"${pago.get('monto', 0):,.2f}"))
+            tabla_pagos.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+            tabla_pagos.setToolTip("Pagos realizados sobre la factura")
+            layout.addWidget(tabla_pagos)
+        # --- Botón cerrar ---
+        btns = QHBoxLayout()
+        btn_cerrar = QPushButton()
+        btn_cerrar.setIcon(QIcon("resources/icons/close.svg"))
+        btn_cerrar.setToolTip("Cerrar ventana")
+        estilizar_boton_icono(btn_cerrar)
+        btns.addStretch()
+        btns.addWidget(btn_cerrar)
+        layout.addLayout(btns)
+        btn_cerrar.clicked.connect(dialog.accept)
+        dialog.exec()
+

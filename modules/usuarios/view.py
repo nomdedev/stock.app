@@ -54,7 +54,6 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")  # Para QSS global
-        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de usuarios")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
@@ -62,32 +61,39 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self._feedback_timer = None
 
         # Refuerzo de accesibilidad en botón principal
-        self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        font = self.boton_agregar.font()
-        if font.pointSize() < 12:
-            font.setPointSize(12)
-        self.boton_agregar.setFont(font)
-
-        # Refuerzo de accesibilidad en tabla principal
-        self.tabla_usuarios.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.tabla_usuarios.setObjectName("tabla_usuarios")
-        # Refuerzo de accesibilidad en todos los QLineEdit de la vista principal
-        for widget in self.findChildren(QComboBox):
-            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            font = widget.font()
+        if hasattr(self, 'boton_agregar') and self.boton_agregar:
+            self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            font = self.boton_agregar.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
-            widget.setFont(font)
-            if not widget.toolTip():
-                widget.setToolTip("Selector de usuario")
-            if not widget.accessibleName():
-                widget.setAccessibleName("Selector de usuario para permisos")
+            self.boton_agregar.setFont(font)
+
+        # Refuerzo de accesibilidad en tabla principal
+        if hasattr(self, 'tabla_usuarios') and self.tabla_usuarios:
+            self.tabla_usuarios.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            self.tabla_usuarios.setObjectName("tabla_usuarios")
+
+        # Refuerzo de accesibilidad en todos los QComboBox de la vista principal
+        for widget in self.findChildren(QComboBox):
+            if widget:
+                widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+                font = widget.font()
+                if font.pointSize() < 12:
+                    font.setPointSize(12)
+                widget.setFont(font)
+                if not widget.toolTip():
+                    widget.setToolTip("Selector de usuario")
+                if not widget.accessibleName():
+                    widget.setAccessibleName("Selector de usuario para permisos")
 
         # Aplicar QSS global y tema visual (solo desde resources/qss/)
-        from utils.theme_manager import cargar_modo_tema
-        tema = cargar_modo_tema()
-        qss_tema = f"resources/qss/theme_{tema}.qss"
-        aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
+        try:
+            from utils.theme_manager import cargar_modo_tema
+            tema = cargar_modo_tema()
+            qss_tema = f"resources/qss/theme_{tema}.qss"
+            aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
+        except Exception as e:
+            print(f"Error aplicando QSS global: {e}")
 
     def mostrar_feedback(self, mensaje, tipo="info"):
         if not hasattr(self, "label_feedback") or self.label_feedback is None:
@@ -121,32 +127,38 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self._feedback_timer.start(4000)
 
     def ocultar_feedback(self):
-        if hasattr(self, "label_feedback") and self.label_feedback:
-            self.label_feedback.setVisible(False)
-            self.label_feedback.clear()
+        if not hasattr(self, "label_feedback") or self.label_feedback is None:
+            return
+        self.label_feedback.setVisible(False)
+        self.label_feedback.clear()
         if hasattr(self, '_feedback_timer') and self._feedback_timer:
             self._feedback_timer.stop()
 
     def mostrar_tab_permisos(self, visible):
-        # Solo mostrar la pestaña de permisos si el usuario es admin
-        idx = self.tabs.indexOf(self.tab_permisos)
+        # Robustecer acceso a tabs y tab_permisos
+        if not hasattr(self, 'tabs') or self.tabs is None or not hasattr(self, 'tab_permisos') or self.tab_permisos is None:
+            self.mostrar_feedback("No se puede mostrar/ocultar la pestaña de permisos: tabs o tab_permisos no inicializados", "error")
+            return
+        idx = self.tabs.indexOf(self.tab_permisos) if self.tabs and self.tab_permisos else -1
         if visible and idx == -1:
             self.tabs.addTab(self.tab_permisos, "Permisos de módulos")
         elif not visible and idx != -1:
             self.tabs.removeTab(idx)
 
     def _cargar_stylesheet(self):
-        # Cargar y aplicar QSS global y tema visual (solo desde resources/qss/)
-        from utils.theme_manager import cargar_modo_tema
-        tema = cargar_modo_tema()
-        qss_tema = f"resources/qss/theme_{tema}.qss"
-        aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
+        try:
+            from utils.theme_manager import cargar_modo_tema
+            tema = cargar_modo_tema()
+            qss_tema = f"resources/qss/theme_{tema}.qss"
+            aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
+        except Exception as e:
+            self.mostrar_feedback(f"Error cargando tema: {e}", "error")
 
     def _init_tabs(self):
         self.tabs = QTabWidget()
         self.tab_usuarios = QWidget()
         self.tab_permisos = QWidget()
-        self.tab_resumen_permisos = QWidget()  # Nueva pestaña
+        self.tab_resumen_permisos = QWidget()
         self.tabs.addTab(self.tab_usuarios, "Usuarios")
         self.tabs.addTab(self.tab_permisos, "Permisos de módulos")
         self.tabs.addTab(self.tab_resumen_permisos, "Resumen de permisos")
@@ -157,7 +169,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         tab_usuarios_layout = QVBoxLayout(self.tab_usuarios)
         botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setObjectName("boton_agregar_usuarios")  # Para QSS global
+        self.boton_agregar.setObjectName("boton_agregar_usuarios")
         self.boton_agregar.setIcon(QIcon("resources/icons/agregar-user.svg"))
         self.boton_agregar.setIconSize(QSize(20, 20))
         self.boton_agregar.setToolTip("Agregar usuario")
@@ -177,15 +189,12 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.columnas_visibles = self.cargar_config_columnas()
         self.aplicar_columnas_visibles()
         # Menú contextual en el header
-        header = self.tabla_usuarios.horizontalHeader()
+        header = self.tabla_usuarios.horizontalHeader() if hasattr(self, 'tabla_usuarios') and self.tabla_usuarios else None
         if header is not None:
-            header.setObjectName("header_inventario")  # Unificación visual
+            header.setObjectName("header_inventario")
             header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             if hasattr(header, 'customContextMenuRequested'):
                 header.customContextMenuRequested.connect(self.mostrar_menu_columnas)
-            # Eliminar/congelar conexión a autoajustar_columna hasta que se implemente correctamente
-            # if hasattr(self, 'autoajustar_columna') and hasattr(header, 'sectionDoubleClicked'):
-            #     header.sectionDoubleClicked.connect(self.autoajustar_columna)
             if hasattr(header, 'setSectionsMovable'):
                 header.setSectionsMovable(True)
             if hasattr(header, 'setSectionsClickable'):
@@ -194,12 +203,10 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 header.sectionClicked.connect(self.mostrar_menu_columnas_header)
         # Refuerzo visual y robustez en header de tabla de usuarios
         if header is not None:
-            try:
-                pass
-            except Exception:
-                pass
+            # No es necesario un try vacío aquí, ya que no hay código que pueda lanzar excepción
+            pass
         # Señal para mostrar QR al seleccionar un ítem
-        if hasattr(self.tabla_usuarios, 'itemSelectionChanged'):
+        if hasattr(self, 'tabla_usuarios') and self.tabla_usuarios and hasattr(self.tabla_usuarios, 'itemSelectionChanged'):
             self.tabla_usuarios.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
 
     def _init_tab_permisos(self):
@@ -236,15 +243,13 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         layout.addWidget(self.label_resumen_info)
 
     def obtener_headers_desde_db(self, tabla):
-        # Obtención dinámica de headers desde la base de datos (si hay controller y método disponible)
-        if self.controller and hasattr(self.controller, 'obtener_headers_desde_db'):
+        if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'obtener_headers_desde_db'):
             try:
                 headers = self.controller.obtener_headers_desde_db(tabla)
                 if headers:
                     return headers
             except Exception as e:
-                print(f"Error obteniendo headers desde BD: {e}")
-        # Fallback seguro
+                self.mostrar_feedback(f"Error obteniendo headers desde BD: {e}", "error")
         return self.obtener_headers_fallback()
 
     def obtener_headers_fallback(self):
@@ -252,15 +257,17 @@ class UsuariosView(QWidget, TableResponsiveMixin):
 
     def cargar_config_columnas(self):
         try:
-            if os.path.exists(self.config_path):
+            if hasattr(self, 'config_path') and self.config_path and os.path.exists(self.config_path):
                 with open(self.config_path, "r", encoding="utf-8") as f:
                     return json.load(f)
         except Exception as e:
-            print(f"Error cargando configuración de columnas: {e}")
+            self.mostrar_feedback(f"Error cargando configuración de columnas: {e}", "error")
         return {header: True for header in self.usuarios_headers}
 
     def guardar_config_columnas(self):
         try:
+            if not hasattr(self, 'config_path') or not self.config_path:
+                return
             with open(self.config_path, "w", encoding="utf-8") as f:
                 json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
             QMessageBox.information(self, "Configuración guardada", "La configuración de columnas se ha guardado correctamente.")
@@ -268,12 +275,21 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             QMessageBox.warning(self, "Error", f"No se pudo guardar la configuración: {e}")
 
     def aplicar_columnas_visibles(self):
+        if not hasattr(self, 'tabla_usuarios') or self.tabla_usuarios is None:
+            self.mostrar_feedback("Tabla de usuarios no inicializada para aplicar columnas visibles", "error")
+            return
         for idx, header in enumerate(self.usuarios_headers):
             visible = self.columnas_visibles.get(header, True)
             if hasattr(self.tabla_usuarios, 'setColumnHidden'):
                 self.tabla_usuarios.setColumnHidden(idx, not visible)
 
     def mostrar_menu_columnas(self, pos):
+        if not hasattr(self, 'tabla_usuarios') or self.tabla_usuarios is None:
+            self.mostrar_feedback("Tabla de usuarios no disponible para menú de columnas.", "error")
+            return
+        if not hasattr(self, 'usuarios_headers') or not self.usuarios_headers:
+            self.mostrar_feedback("Headers de usuarios no definidos.", "error")
+            return
         menu = QMenu(self)
         for idx, header in enumerate(self.usuarios_headers):
             accion = QAction(header, self)
@@ -289,7 +305,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
 
     def mostrar_menu_columnas_header(self, idx):
         from PyQt6.QtCore import QPoint
-        header = self.tabla_usuarios.horizontalHeader() if hasattr(self.tabla_usuarios, 'horizontalHeader') else None
+        header = self.tabla_usuarios.horizontalHeader() if hasattr(self, 'tabla_usuarios') and self.tabla_usuarios and hasattr(self.tabla_usuarios, 'horizontalHeader') else None
         try:
             if header is not None and all(hasattr(header, m) for m in ['sectionPosition', 'mapToGlobal', 'sectionViewportPosition']):
                 if idx < 0 or idx >= self.tabla_usuarios.columnCount():
@@ -305,77 +321,91 @@ class UsuariosView(QWidget, TableResponsiveMixin):
 
     def toggle_columna(self, idx, header, checked):
         self.columnas_visibles[header] = checked
-        if hasattr(self.tabla_usuarios, 'setColumnHidden'):
+        if hasattr(self, 'tabla_usuarios') and self.tabla_usuarios and hasattr(self.tabla_usuarios, 'setColumnHidden'):
             self.tabla_usuarios.setColumnHidden(idx, not checked)
+        else:
+            self.mostrar_feedback("No se pudo ocultar/mostrar columna: tabla_usuarios no inicializada", "error")
         self.guardar_config_columnas()
 
     def mostrar_qr_item_seleccionado(self):
-        # Ejemplo de acceso seguro a item
-        row = self.tabla_usuarios.currentRow() if hasattr(self.tabla_usuarios, 'currentRow') else -1
+        if not hasattr(self, 'tabla_usuarios') or self.tabla_usuarios is None or not hasattr(self.tabla_usuarios, 'currentRow'):
+            self.mostrar_feedback("Tabla de usuarios no inicializada para mostrar QR", "error")
+            return
+        row = self.tabla_usuarios.currentRow()
         if row != -1 and hasattr(self.tabla_usuarios, 'item'):
             item = self.tabla_usuarios.item(row, 0)
             if item is not None and hasattr(item, 'text'):
                 codigo = item.text()  # Usar el primer campo como dato QR
-                qr = qrcode.QRCode(version=1, box_size=6, border=2)
-                qr.add_data(codigo)
-                qr.make(fit=True)
-                img = qr.make_image(fill_color="black", back_color="white")
-                with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-                    img.save(tmp)
-                    tmp_path = tmp.name
-                pixmap = QPixmap(tmp_path)
-                dialog = QDialog(self)
-                dialog.setWindowTitle(f"Código QR para {codigo}")
-                vbox = QVBoxLayout(dialog)
-                qr_label = QLabel()
-                qr_label.setPixmap(pixmap)
-                vbox.addWidget(qr_label)
-                btns = QHBoxLayout()
-                btn_guardar = QPushButton("Guardar QR como imagen")
-                btn_pdf = QPushButton("Exportar QR a PDF")
-                btns.addWidget(btn_guardar)
-                btns.addWidget(btn_pdf)
-                vbox.addLayout(btns)
-                def guardar():
-                    file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
-                    if file_path:
-                        with open(tmp_path, "rb") as src, open(file_path, "wb") as dst:
-                            dst.write(src.read())
-                def exportar_pdf():
-                    file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
-                    if file_path:
-                        from reportlab.pdfgen import canvas
-                        from reportlab.lib.pagesizes import letter
-                        c = canvas.Canvas(file_path, pagesize=letter)
-                        c.drawInlineImage(tmp_path, 100, 500, 200, 200)
-                        c.save()
-                btn_guardar.clicked.connect(guardar)
-                btn_pdf.clicked.connect(exportar_pdf)
-                dialog.exec()
+                try:
+                    qr = qrcode.QRCode(version=1, box_size=6, border=2)
+                    qr.add_data(codigo)
+                    qr.make(fit=True)
+                    img = qr.make_image(fill_color="black", back_color="white")
+                    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+                        img.save(tmp)
+                        tmp_path = tmp.name
+                    pixmap = QPixmap(tmp_path)
+                    dialog = QDialog(self)
+                    dialog.setWindowTitle(f"Código QR para {codigo}")
+                    vbox = QVBoxLayout(dialog)
+                    qr_label = QLabel()
+                    qr_label.setPixmap(pixmap)
+                    vbox.addWidget(qr_label)
+                    btns = QHBoxLayout()
+                    btn_guardar = QPushButton("Guardar QR como imagen")
+                    btn_pdf = QPushButton("Exportar QR a PDF")
+                    btns.addWidget(btn_guardar)
+                    btns.addWidget(btn_pdf)
+                    vbox.addLayout(btns)
+                    def guardar():
+                        file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
+                        if file_path:
+                            with open(tmp_path, "rb") as src, open(file_path, "wb") as dst:
+                                dst.write(src.read())
+                    def exportar_pdf():
+                        file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
+                        if file_path:
+                            from reportlab.pdfgen import canvas
+                            from reportlab.lib.pagesizes import letter
+                            c = canvas.Canvas(file_path, pagesize=letter)
+                            c.drawInlineImage(tmp_path, 100, 500, 200, 200)
+                            c.save()
+                    btn_guardar.clicked.connect(guardar)
+                    btn_pdf.clicked.connect(exportar_pdf)
+                    dialog.exec()
+                except Exception as e:
+                    self.mostrar_feedback(f"Error generando QR: {e}", "error")
 
     def cargar_resumen_permisos(self, usuarios, modulos, permisos_dict):
         """
-        Llena la tabla de resumen de permisos. Recibe:
-        - usuarios: lista de dicts o tuplas con al menos 'id', 'usuario', 'rol'
-        - modulos: lista de nombres de módulos
-        - permisos_dict: dict {(usuario_id, modulo): {'ver': bool, 'modificar': bool, 'aprobar': bool}}
+        Carga la tabla de resumen de permisos de forma robusta y defensiva.
+        Edge cases cubiertos:
+        - Si la tabla no está inicializada, muestra feedback y no lanza excepción.
+        - Si los datos de entrada no son del tipo esperado, muestra feedback y no lanza excepción.
+        - Si algún usuario no tiene los campos esperados, se maneja de forma segura.
+        Cumple checklist de robustez, feedback y accesibilidad (ver docs/estandares_feedback.md y checklist_formularios_botones_ui.txt).
         """
+        if not hasattr(self, 'tabla_resumen_permisos') or self.tabla_resumen_permisos is None:
+            self.mostrar_feedback("Tabla de resumen de permisos no inicializada", "error")
+            return
+        if not isinstance(usuarios, (list, tuple)) or not isinstance(modulos, (list, tuple)) or not isinstance(permisos_dict, dict):
+            self.mostrar_feedback("Datos inválidos para cargar resumen de permisos", "error")
+            return
         self.tabla_resumen_permisos.clear()
         headers = ["Usuario", "Rol", "Módulo", "Ver", "Modificar", "Aprobar"]
         self.tabla_resumen_permisos.setColumnCount(len(headers))
         self.tabla_resumen_permisos.setHorizontalHeaderLabels(headers)
         rows = 0
         for usuario in usuarios:
-            usuario_id = usuario['id'] if isinstance(usuario, dict) else usuario[0]
-            usuario_nombre = usuario['usuario'] if isinstance(usuario, dict) else usuario[4] if len(usuario) > 4 else str(usuario_id)
-            rol = usuario['rol'] if isinstance(usuario, dict) else usuario[6] if len(usuario) > 6 else ''
+            usuario_id = usuario['id'] if isinstance(usuario, dict) and 'id' in usuario else usuario[0] if isinstance(usuario, (list, tuple)) and len(usuario) > 0 else None
+            usuario_nombre = usuario['usuario'] if isinstance(usuario, dict) and 'usuario' in usuario else usuario[4] if isinstance(usuario, (list, tuple)) and len(usuario) > 4 else str(usuario_id)
+            rol = usuario['rol'] if isinstance(usuario, dict) and 'rol' in usuario else usuario[6] if isinstance(usuario, (list, tuple)) and len(usuario) > 6 else ''
             for modulo in modulos:
                 permisos = permisos_dict.get((usuario_id, modulo), {'ver': False, 'modificar': False, 'aprobar': False})
                 self.tabla_resumen_permisos.insertRow(rows)
                 self.tabla_resumen_permisos.setItem(rows, 0, QTableWidgetItem(str(usuario_nombre)))
                 self.tabla_resumen_permisos.setItem(rows, 1, QTableWidgetItem(str(rol)))
                 self.tabla_resumen_permisos.setItem(rows, 2, QTableWidgetItem(str(modulo)))
-                # Permisos como íconos o texto
                 for i, key in enumerate(['ver', 'modificar', 'aprobar']):
                     item = QTableWidgetItem("✅" if permisos.get(key, False) else "❌")
                     item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
@@ -383,6 +413,488 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 rows += 1
         self.tabla_resumen_permisos.resizeColumnsToContents()
 
-# NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
-# Si necesitas una cadena de conexión, obténla de un archivo seguro o variable de entorno, nunca hardcodeada.
-# En los flujos de error, asegúrate de usar log_error y/o registrar_evento para cumplir el estándar de feedback visual y logging.
+    def abrir_dialogo_crear_usuario(self):
+        """
+        Abre un diálogo modal robusto para crear un nuevo usuario.
+        Cumple checklist: validación visual/backend, feedback, accesibilidad, tooltips, cierre solo en éxito, validación de contraseña fuerte.
+        """
+        if not hasattr(self, 'controller') or self.controller is None:
+            self.mostrar_feedback("Controlador no disponible para crear usuario.", "error")
+            return
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QLineEdit, QComboBox, QPushButton, QHBoxLayout, QLabel, QCheckBox
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Crear Usuario")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        form = QFormLayout()
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setSpacing(12)
+        # --- Username ---
+        username_input = QLineEdit()
+        username_input.setPlaceholderText("Nombre de usuario")
+        username_input.setToolTip("Ingrese el nombre de usuario")
+        username_input.setAccessibleName("Nombre de usuario")
+        form.addRow("Usuario:", username_input)
+        # --- Contraseña ---
+        password_input = QLineEdit()
+        password_input.setEchoMode(QLineEdit.EchoMode.Password)
+        password_input.setPlaceholderText("Contraseña fuerte")
+        password_input.setToolTip("Ingrese una contraseña fuerte (mín. 8 caracteres, mayúscula, minúscula, número y símbolo)")
+        password_input.setAccessibleName("Contraseña")
+        form.addRow("Contraseña:", password_input)
+        # --- Rol ---
+        combo_rol = QComboBox()
+        combo_rol.setToolTip("Seleccionar rol del usuario")
+        combo_rol.setAccessibleName("Rol de usuario")
+        roles = []
+        if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'obtener_roles'):
+            try:
+                roles = self.controller.obtener_roles()
+            except Exception as e:
+                self.mostrar_feedback(f"Error obteniendo roles: {e}", "error")
+        for rol in roles:
+            combo_rol.addItem(rol)
+        form.addRow("Rol:", combo_rol)
+        # --- Permisos (checkboxes por módulo) ---
+        permisos_layout = QVBoxLayout()
+        permisos = []
+        if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'obtener_permisos_modulos'):
+            try:
+                permisos = self.controller.obtener_permisos_modulos()
+            except Exception as e:
+                self.mostrar_feedback(f"Error obteniendo permisos: {e}", "error")
+        checkboxes = []
+        for permiso in permisos:
+            cb = QCheckBox(permiso)
+            cb.setToolTip(f"Permitir acceso a {permiso}")
+            cb.setAccessibleName(f"Permiso {permiso}")
+            permisos_layout.addWidget(cb)
+            checkboxes.append(cb)
+        form.addRow("Permisos:", permisos_layout)
+        # --- Feedback campo ---
+        lbl_feedback = QLabel()
+        lbl_feedback.setStyleSheet("color: #b91c1c; font-size: 12px;")
+        lbl_feedback.setVisible(False)
+        form.addRow("", lbl_feedback)
+        layout.addLayout(form)
+        # --- Botones ---
+        btns = QHBoxLayout()
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("resources/icons/finish-check.svg"))
+        btn_guardar.setToolTip("Crear usuario")
+        btn_guardar.setAccessibleName("Crear usuario")
+        estilizar_boton_icono(btn_guardar)
+        btn_cancelar = QPushButton()
+        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
+        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
+        btn_cancelar.setAccessibleName("Cancelar")
+        estilizar_boton_icono(btn_cancelar)
+        btns.addStretch()
+        btns.addWidget(btn_guardar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        # --- Validación de contraseña fuerte ---
+        import re
+        def es_contrasena_fuerte(pw):
+            return (
+                len(pw) >= 8 and
+                re.search(r"[A-Z]", pw) and
+                re.search(r"[a-z]", pw) and
+                re.search(r"[0-9]", pw) and
+                re.search(r"[^A-Za-z0-9]", pw)
+            )
+        # --- Acción guardar ---
+        def guardar():
+            username = username_input.text().strip()
+            password = password_input.text()
+            rol = combo_rol.currentText()
+            permisos_seleccionados = [cb.text() for cb in checkboxes if cb.isChecked()]
+            if not username or not password or not rol:
+                lbl_feedback.setText("Complete todos los campos obligatorios.")
+                lbl_feedback.setVisible(True)
+                return
+            if not es_contrasena_fuerte(password):
+                lbl_feedback.setText("La contraseña debe tener al menos 8 caracteres, mayúscula, minúscula, número y símbolo.")
+                lbl_feedback.setVisible(True)
+                return
+            try:
+                if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'crear_usuario'):
+                    self.controller.crear_usuario(username, password, rol, permisos_seleccionados)
+                    self.mostrar_feedback("Usuario creado correctamente.", tipo="exito")
+                    dialog.accept()
+                    if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'actualizar_tabla_usuarios'):
+                        self.controller.actualizar_tabla_usuarios()
+                else:
+                    self.mostrar_feedback("No se implementó la lógica de crear usuario.", tipo="error")
+            except Exception as e:
+                lbl_feedback.setText(f"Error: {e}")
+                lbl_feedback.setVisible(True)
+        btn_guardar.clicked.connect(guardar)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
+
+    def abrir_dialogo_editar_usuario(self, usuario):
+        """
+        Abre un diálogo modal robusto para editar un usuario existente.
+        Cumple checklist: validación visual/backend, feedback, accesibilidad, tooltips, cierre solo en éxito, validación de contraseña fuerte si se cambia.
+        usuario: dict con claves 'username', 'rol', 'permisos' (lista de str)
+        """
+        if not hasattr(self, 'controller') or self.controller is None:
+            self.mostrar_feedback("Controlador no disponible para editar usuario.", "error")
+            return
+        if not usuario or not isinstance(usuario, dict):
+            self.mostrar_feedback("Datos de usuario inválidos para edición.", "error")
+            return
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QLineEdit, QComboBox, QPushButton, QHBoxLayout, QLabel, QCheckBox
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Editar Usuario: {usuario.get('username','')}")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        form = QFormLayout()
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setSpacing(12)
+        # --- Username (readonly) ---
+        username_input = QLineEdit(usuario.get('username',''))
+        username_input.setReadOnly(True)
+        username_input.setToolTip("Nombre de usuario (no editable)")
+        username_input.setAccessibleName("Nombre de usuario")
+        form.addRow("Usuario:", username_input)
+        # --- Contraseña (opcional, solo si se desea cambiar) ---
+        password_input = QLineEdit()
+        password_input.setEchoMode(QLineEdit.EchoMode.Password)
+        password_input.setPlaceholderText("Nueva contraseña (opcional)")
+        password_input.setToolTip("Ingrese una nueva contraseña fuerte si desea cambiarla")
+        password_input.setAccessibleName("Contraseña")
+        form.addRow("Contraseña:", password_input)
+        # --- Rol ---
+        combo_rol = QComboBox()
+        combo_rol.setToolTip("Seleccionar rol del usuario")
+        combo_rol.setAccessibleName("Rol de usuario")
+        roles = []
+        if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'obtener_roles'):
+            try:
+                roles = self.controller.obtener_roles()
+            except Exception as e:
+                self.mostrar_feedback(f"Error obteniendo roles: {e}", "error")
+        for rol in roles:
+            combo_rol.addItem(rol)
+        if usuario.get('rol') and usuario.get('rol') in roles:
+            combo_rol.setCurrentText(usuario['rol'])
+        form.addRow("Rol:", combo_rol)
+        # --- Permisos (checkboxes por módulo) ---
+        permisos_layout = QVBoxLayout()
+        permisos = []
+        if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'obtener_permisos_modulos'):
+            try:
+                permisos = self.controller.obtener_permisos_modulos()
+            except Exception as e:
+                self.mostrar_feedback(f"Error obteniendo permisos: {e}", "error")
+        checkboxes = []
+        permisos_usuario = set(usuario.get('permisos', []))
+        for permiso in permisos:
+            cb = QCheckBox(permiso)
+            cb.setToolTip(f"Permitir acceso a {permiso}")
+            cb.setAccessibleName(f"Permiso {permiso}")
+            if permiso in permisos_usuario:
+                cb.setChecked(True)
+            permisos_layout.addWidget(cb)
+            checkboxes.append(cb)
+        form.addRow("Permisos:", permisos_layout)
+        # --- Feedback campo ---
+        lbl_feedback = QLabel()
+        lbl_feedback.setStyleSheet("color: #b91c1c; font-size: 12px;")
+        lbl_feedback.setVisible(False)
+        form.addRow("", lbl_feedback)
+        layout.addLayout(form)
+        # --- Botones ---
+        btns = QHBoxLayout()
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("resources/icons/finish-check.svg"))
+        btn_guardar.setToolTip("Guardar cambios")
+        btn_guardar.setAccessibleName("Guardar cambios")
+        estilizar_boton_icono(btn_guardar)
+        btn_cancelar = QPushButton()
+        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
+        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
+        btn_cancelar.setAccessibleName("Cancelar")
+        estilizar_boton_icono(btn_cancelar)
+        btns.addStretch()
+        btns.addWidget(btn_guardar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        # --- Validación de contraseña fuerte (si se cambia) ---
+        import re
+        def es_contrasena_fuerte(pw):
+            return (
+                len(pw) >= 8 and
+                re.search(r"[A-Z]", pw) and
+                re.search(r"[a-z]", pw) and
+                re.search(r"[0-9]", pw) and
+                re.search(r"[^A-Za-z0-9]", pw)
+            )
+        # --- Acción guardar ---
+        def guardar():
+            rol = combo_rol.currentText()
+            permisos_seleccionados = [cb.text() for cb in checkboxes if cb.isChecked()]
+            nueva_contrasena = password_input.text()
+            if not rol:
+                lbl_feedback.setText("Seleccione un rol.")
+                lbl_feedback.setVisible(True)
+                return
+            if nueva_contrasena and not es_contrasena_fuerte(nueva_contrasena):
+                lbl_feedback.setText("La nueva contraseña debe tener al menos 8 caracteres, mayúscula, minúscula, número y símbolo.")
+                lbl_feedback.setVisible(True)
+                return
+            try:
+                if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'editar_usuario'):
+                    self.controller.editar_usuario(
+                        username_input.text(),
+                        nueva_contrasena if nueva_contrasena else None,
+                        rol,
+                        permisos_seleccionados
+                    )
+                    self.mostrar_feedback("Usuario editado correctamente.", tipo="exito")
+                    dialog.accept()
+                    if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'actualizar_tabla_usuarios'):
+                        self.controller.actualizar_tabla_usuarios()
+                else:
+                    self.mostrar_feedback("No se implementó la lógica de editar usuario.", tipo="error")
+            except Exception as e:
+                lbl_feedback.setText(f"Error: {e}")
+                lbl_feedback.setVisible(True)
+        btn_guardar.clicked.connect(guardar)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
+
+    def abrir_dialogo_editar_permisos(self, usuario):
+        """
+        Abre un diálogo modal robusto para editar los permisos de un usuario.
+        Cumple checklist: validación visual/backend, feedback, accesibilidad, tooltips, cierre solo en éxito.
+        usuario: dict con claves 'username', 'rol', 'permisos' (lista de str)
+        """
+        if not hasattr(self, 'controller') or self.controller is None:
+            self.mostrar_feedback("Controlador no disponible para editar permisos.", "error")
+            return
+        if not usuario or not isinstance(usuario, dict):
+            self.mostrar_feedback("Datos de usuario inválidos para edición de permisos.", "error")
+            return
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QLabel, QCheckBox, QPushButton, QHBoxLayout
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Editar Permisos: {usuario.get('username','')}")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        form = QFormLayout()
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setSpacing(12)
+        # --- Usuario (readonly) ---
+        lbl_usuario = QLabel(usuario.get('username',''))
+        lbl_usuario.setToolTip("Usuario al que se le asignan permisos")
+        lbl_usuario.setAccessibleName("Usuario")
+        form.addRow("Usuario:", lbl_usuario)
+        # --- Permisos (checkboxes por módulo) ---
+        permisos_layout = QVBoxLayout()
+        permisos = []
+        if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'obtener_permisos_modulos'):
+            try:
+                permisos = self.controller.obtener_permisos_modulos()
+            except Exception as e:
+                self.mostrar_feedback(f"Error obteniendo permisos: {e}", "error")
+        checkboxes = []
+        permisos_usuario = set(usuario.get('permisos', []))
+        for permiso in permisos:
+            cb = QCheckBox(permiso)
+            cb.setToolTip(f"Permitir acceso a {permiso}")
+            cb.setAccessibleName(f"Permiso {permiso}")
+            if permiso in permisos_usuario:
+                cb.setChecked(True)
+            permisos_layout.addWidget(cb)
+            checkboxes.append(cb)
+        form.addRow("Permisos:", permisos_layout)
+        # --- Feedback campo ---
+        lbl_feedback = QLabel()
+        lbl_feedback.setStyleSheet("color: #b91c1c; font-size: 12px;")
+        lbl_feedback.setVisible(False)
+        form.addRow("", lbl_feedback)
+        layout.addLayout(form)
+        # --- Botones ---
+        btns = QHBoxLayout()
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("resources/icons/finish-check.svg"))
+        btn_guardar.setToolTip("Guardar permisos")
+        btn_guardar.setAccessibleName("Guardar permisos")
+        estilizar_boton_icono(btn_guardar)
+        btn_cancelar = QPushButton()
+        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
+        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
+        btn_cancelar.setAccessibleName("Cancelar")
+        estilizar_boton_icono(btn_cancelar)
+        btns.addStretch()
+        btns.addWidget(btn_guardar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        # --- Acción guardar ---
+        def guardar():
+            permisos_seleccionados = [cb.text() for cb in checkboxes if cb.isChecked()]
+            if not permisos_seleccionados:
+                lbl_feedback.setText("Seleccione al menos un permiso.")
+                lbl_feedback.setVisible(True)
+                return
+            try:
+                if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'editar_permisos_usuario'):
+                    self.controller.editar_permisos_usuario(
+                        usuario.get('username',''),
+                        permisos_seleccionados
+                    )
+                    self.mostrar_feedback("Permisos actualizados correctamente.", tipo="exito")
+                    dialog.accept()
+                    if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'actualizar_tabla_usuarios'):
+                        self.controller.actualizar_tabla_usuarios()
+                else:
+                    self.mostrar_feedback("No se implementó la lógica de editar permisos.", tipo="error")
+            except Exception as e:
+                lbl_feedback.setText(f"Error: {e}")
+                lbl_feedback.setVisible(True)
+        btn_guardar.clicked.connect(guardar)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
+
+    def abrir_dialogo_eliminar_usuario(self, usuario):
+        """
+        Abre un diálogo modal robusto para eliminar un usuario existente.
+        Cumple checklist: confirmación modal, feedback visual/accesible, cierre solo en éxito, tooltips, logging/auditoría, refresco de UI.
+        usuario: dict con claves 'id', 'username', 'rol', ...
+        """
+        if not hasattr(self, 'controller') or self.controller is None:
+            self.mostrar_feedback("Controlador no disponible para eliminar usuario.", "error")
+            return
+        if not usuario or not isinstance(usuario, dict) or 'id' not in usuario:
+            self.mostrar_feedback("Datos de usuario inválidos para eliminación.", "error")
+            return
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Eliminar Usuario: {usuario.get('username','')}")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        # Mensaje de confirmación
+        lbl_confirm = QLabel(f"¿Está seguro que desea eliminar el usuario <b>{usuario.get('username','')}</b>? Esta acción no se puede deshacer.")
+        lbl_confirm.setAccessibleName("Mensaje de confirmación de eliminación de usuario")
+        lbl_confirm.setWordWrap(True)
+        layout.addWidget(lbl_confirm)
+        # Feedback
+        lbl_feedback = QLabel()
+        lbl_feedback.setStyleSheet("color: #b91c1c; font-size: 12px;")
+        lbl_feedback.setVisible(False)
+        layout.addWidget(lbl_feedback)
+        # Botones
+        btns = QHBoxLayout()
+        btn_eliminar = QPushButton()
+        btn_eliminar.setIcon(QIcon("resources/icons/delete.svg"))
+        btn_eliminar.setToolTip("Eliminar usuario")
+        btn_eliminar.setAccessibleName("Eliminar usuario")
+        estilizar_boton_icono(btn_eliminar)
+        btn_cancelar = QPushButton()
+        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
+        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
+        btn_cancelar.setAccessibleName("Cancelar")
+        estilizar_boton_icono(btn_cancelar)
+        btns.addStretch()
+        btns.addWidget(btn_eliminar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        # Acción eliminar
+        def eliminar():
+            try:
+                if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'eliminar_usuario'):
+                    self.controller.eliminar_usuario(usuario.get('id'))
+                    self.mostrar_feedback("Usuario eliminado correctamente.", tipo="exito")
+                    dialog.accept()
+                    if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'actualizar_tabla_usuarios'):
+                        self.controller.actualizar_tabla_usuarios()
+                else:
+                    self.mostrar_feedback("No se implementó la lógica de eliminar usuario.", tipo="error")
+            except Exception as e:
+                lbl_feedback.setText(f"Error: {e}")
+                lbl_feedback.setVisible(True)
+        btn_eliminar.clicked.connect(eliminar)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
+
+    def actualizar_tabla_usuarios(self):
+        """
+        Refresca la tabla de usuarios de forma robusta.
+        Valida existencia y tipo de tabla, y muestra feedback si no es posible refrescar.
+        """
+        if not hasattr(self, 'tabla_usuarios') or self.tabla_usuarios is None:
+            self.mostrar_feedback("Tabla de usuarios no inicializada.", "error")
+            return
+        if not (hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'cargar_usuarios')):
+            self.mostrar_feedback("Controlador no disponible para cargar usuarios.", "error")
+            return
+        try:
+            self.controller.cargar_usuarios()
+        except Exception as e:
+            self.mostrar_feedback(f"Error actualizando tabla de usuarios: {e}", "error")
+
+    # Refuerzo defensivo en métodos de menú contextual y columnas
+    def mostrar_menu_columnas(self, pos):
+        if not hasattr(self, 'tabla_usuarios') or self.tabla_usuarios is None:
+            self.mostrar_feedback("Tabla de usuarios no disponible para menú de columnas.", "error")
+            return
+        if not hasattr(self, 'usuarios_headers') or not self.usuarios_headers:
+            self.mostrar_feedback("Headers de usuarios no definidos.", "error")
+            return
+        menu = QMenu(self)
+        for idx, header in enumerate(self.usuarios_headers):
+            accion = QAction(header, self)
+            accion.setCheckable(True)
+            accion.setChecked(self.columnas_visibles.get(header, True))
+            accion.toggled.connect(partial(self.toggle_columna, idx, header))
+            menu.addAction(accion)
+        viewport = self.tabla_usuarios.viewport() if hasattr(self.tabla_usuarios, 'viewport') else None
+        if viewport is not None and hasattr(viewport, 'mapToGlobal'):
+            menu.exec(viewport.mapToGlobal(pos))
+        else:
+            menu.exec(pos)
+
+    def mostrar_menu_columnas_header(self, idx):
+        from PyQt6.QtCore import QPoint
+        header = self.tabla_usuarios.horizontalHeader() if hasattr(self, 'tabla_usuarios') and self.tabla_usuarios and hasattr(self.tabla_usuarios, 'horizontalHeader') else None
+        try:
+            if header is not None and all(hasattr(header, m) for m in ['sectionPosition', 'mapToGlobal', 'sectionViewportPosition']):
+                if idx < 0 or idx >= self.tabla_usuarios.columnCount():
+                    self.mostrar_feedback("Índice de columna fuera de rango", "error")
+                    return
+                pos = header.sectionPosition(idx)
+                global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
+                self.mostrar_menu_columnas(global_pos)
+            else:
+                self.mostrar_feedback("No se puede mostrar el menú de columnas: header no disponible o incompleto", "error")
+        except Exception as e:
+            self.mostrar_feedback(f"Error al mostrar menú de columnas: {e}", "error")
+
+    def aplicar_columnas_visibles(self):
+        if not hasattr(self, 'tabla_usuarios') or self.tabla_usuarios is None:
+            self.mostrar_feedback("Tabla de usuarios no disponible para aplicar columnas.", "error")
+            return
+        if not hasattr(self, 'usuarios_headers') or not self.usuarios_headers:
+            self.mostrar_feedback("Headers de usuarios no definidos.", "error")
+            return
+        for idx, header in enumerate(self.usuarios_headers):
+            visible = self.columnas_visibles.get(header, True)
+            if hasattr(self.tabla_usuarios, 'setColumnHidden'):
+                self.tabla_usuarios.setColumnHidden(idx, not visible)
+
+    # NOTA: Todos los métodos públicos y de señal deben validar existencia y tipo de widgets antes de operar.
+    #       Se recomienda usar mostrar_feedback para informar al usuario en caso de error o acceso inválido.

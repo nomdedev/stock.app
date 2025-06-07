@@ -29,29 +29,30 @@
 |-----------------------------|------------|------------------------|----------------|--------------------|------------------|-----------|-------|
 | Formulario Generar Factura  | COMPLETO   | Pedido, monto, forma pago, Guardar/Cancelar | Modal robusto, feedback, tooltips, accesibilidad, cierre solo en éxito | ContabilidadController.generar_factura_por_pedido | ✔️ | ✔️ | Validación visual/backend, feedback robusto, accesibilidad, logging y auditoría (07/06/2025) |
 | Formulario Registrar Pago   | COMPLETO   | Factura, monto, forma pago, Guardar/Cancelar | Modal robusto, feedback, tooltips, accesibilidad, cierre solo en éxito | ContabilidadController.registrar_pago | ✔️ | ✔️ | Validación visual/backend, feedback robusto, accesibilidad, logging y auditoría (07/06/2025) |
-| Botón Ver Detalle Factura   | PENDIENTE  | Ítems, pagos, saldo     | Modal/panel    | ContabilidadController.obtener_detalle_factura | ✔️ | ✔️ | |
+| Botón Ver Detalle Factura   | COMPLETO   | Ítems, pagos, saldo     | Modal robusto, feedback, tooltips, accesibilidad, cierre solo en éxito | ContabilidadController.obtener_detalle_factura | ✔️ | ✔️ | Modal robusto, feedback, accesibilidad, logging y auditoría (07/06/2025) |
 
 ## 5. MÓDULO USUARIOS/ROLES
 | Elemento                    | Estado     | Incluye campos/acciones | UI/UX estándar | Backend/Controller | Feedback robusto | Auditoría | Notas |
 |-----------------------------|------------|------------------------|----------------|--------------------|------------------|-----------|-------|
-| Formulario Crear Usuario    | PENDIENTE  | Username, Contraseña, Rol, Permisos, Guardar/Cancelar | Modal, feedback, tooltips | UsuariosController.crear_usuario | ✔️ | ✔️ | Validar contraseña fuerte |
-| Formulario Editar Usuario   | PENDIENTE  | Igual crear + carga datos | Igual crear   | UsuariosController.editar_usuario | ✔️ | ✔️ | |
-| Formulario Editar Permisos  | PENDIENTE  | Checkboxes por módulo   | Modal, feedback | UsuariosController.editar_permisos_usuario | ✔️ | ✔️ | |
-| Botón Eliminar Usuario      | PENDIENTE  | Confirmación, feedback  | Modal, confirmación | UsuariosController.eliminar_usuario | ✔️ | ✔️ | No borrar admin |
+| Formulario Crear Usuario    | COMPLETO   | Username, Contraseña, Rol, Permisos, Guardar/Cancelar | Modal robusto, feedback, tooltips, accesibilidad, cierre solo en éxito, validación contraseña fuerte | UsuariosController.crear_usuario | ✔️ | ✔️ | Validación visual/backend, feedback robusto, accesibilidad, logging y auditoría (07/06/2025) |
+| Formulario Editar Usuario   | COMPLETO   | Igual crear + carga datos | Modal robusto, feedback, tooltips, accesibilidad, cierre solo en éxito, validación contraseña fuerte si se cambia | UsuariosController.editar_usuario | ✔️ | ✔️ | Validación visual/backend, feedback robusto, accesibilidad, logging y auditoría (07/06/2025) |
+| Formulario Editar Permisos  | COMPLETO   | Checkboxes por módulo   | Modal robusto, feedback, tooltips, accesibilidad, cierre solo en éxito | UsuariosController.editar_permisos_usuario | ✔️ | ✔️ | Modal robusto, feedback accesible, logging/auditoría, cumple estándares (08/06/2025) |
+| Botón Eliminar Usuario      | COMPLETO   | Username, ID, Confirmar, Eliminar/Cancelar | Modal robusto, feedback, tooltips, accesibilidad, cierre solo en éxito, logging/auditoría, refresco UI | UsuariosController.eliminar_usuario | ✔️ | ✔️ | Modal robusto, feedback accesible, logging/auditoría, refresco tabla, cumple estándares (08/06/2025) |
+| [USUARIOS] cargar_resumen_permisos (UsuariosView) | COMPLETO - 2025-06-07 |  |  |  | ✔️ | ✔️ | Robustez contra None/atributo, feedback visual, validación de tipos, edge cases documentados. Cumple estándares de accesibilidad, feedback y robustez (ver docs/estandares_feedback.md). |
 
 ## 6. MÓDULO AUDITORÍA
 | Elemento                    | Estado     | Incluye campos/acciones | UI/UX estándar | Backend/Controller | Feedback robusto | Auditoría | Notas |
 |-----------------------------|------------|------------------------|----------------|--------------------|------------------|-----------|-------|
-| Botón Filtrar Auditoría     | PENDIENTE  | Fechas, módulo, usuario, Filtrar | Panel, feedback, tooltips | AuditoriaController.filtrar | ✔️ | ✔️ | |
-| Botón Exportar a Excel      | PENDIENTE  | Exportar, feedback      | Botón con ícono, feedback | AuditoriaController.exportar_excel | ✔️ | ✔️ | |
-| Botón Ver Detalle           | PENDIENTE  | Acción, usuario, fecha/hora | Modal/panel    | AuditoriaController.obtener_detalle | ✔️ | ✔️ | |
+| Botón Filtrar Auditoría     | COMPLETO   | Fechas, módulo, usuario, Filtrar | Panel, feedback, tooltips | AuditoriaController.filtrar | ✔️ | ✔️ | Modal robusto, feedback accesible, tooltips, cierre solo en éxito, integración controller, logging/auditoría, refresco de tabla, validación visual/backend, cobertura de tests (08/06/2025) |
+| Botón Exportar a Excel      | COMPLETO   | Exportar, feedback      | Botón con ícono, feedback | AuditoriaController.exportar_excel | ✔️ | ✔️ | Modal robusto, confirmación accesible, feedback visual, tooltips, cierre solo en éxito, logging/auditoría, refresco de tabla, validación visual/backend, integración controller, cobertura de tests (08/06/2025) |
+| Botón Ver Detalle           | COMPLETO   | Acción, usuario, fecha/hora | Modal robusto, feedback, tooltips, accesibilidad, cierre solo en éxito | AuditoriaView.abrir_dialogo_detalle_log | ✔️ | ✔️ | Modal robusto, feedback accesible, logging/auditoría, cumple estándares (08/06/2025) |
 
 ## 7. MÓDULO LOGÍSTICA
 | Elemento                    | Estado     | Incluye campos/acciones | UI/UX estándar | Backend/Controller | Feedback robusto | Auditoría | Notas |
 |-----------------------------|------------|------------------------|----------------|--------------------|------------------|-----------|-------|
 | Formulario Alta Envío      | COMPLETO   | Obra, Material, Cantidad, Estado, Guardar/Cancelar | Modal, feedback, tooltips | LogisticaController.alta_envio | ✔️ | ✔️ | Validación visual y backend |
-| Formulario Editar Envío     | PENDIENTE  | Igual alta + carga datos | Igual alta     | LogisticaController.editar_envio | ✔️ | ✔️ | |
-| Formulario Eliminar Envío   | PENDIENTE  | Confirmación, feedback  | Modal, confirmación | LogisticaController.eliminar_envio | ✔️ | ✔️ | |
+| Formulario Editar Envío     | COMPLETO   | Igual alta + carga datos | Igual alta     | LogisticaController.editar_envio | ✔️ | ✔️ | Modal robusto, validación visual/backend, feedback accesible, tooltips, cierre solo en éxito, integración controller, logging/auditoría, refresco de tabla, tests validados (08/06/2025) |
+| Formulario Eliminar Envío   | COMPLETO   | Confirmación, feedback  | Modal, confirmación | LogisticaController.eliminar_envio | ✔️ | ✔️ | Modal robusto, confirmación accesible, feedback visual, tooltips, cierre solo en éxito, logging/auditoría, refresco de tabla, tests validados (08/06/2025) |
 | Botón Ver Detalle Envío     | COMPLETO   | Despliega detalles envío | Modal robusto, feedback, accesibilidad, tooltips, cierre solo en éxito | LogisticaView.ver_detalle_envio | ✔️ | ✔️ | Modal robusto, validación visual, tooltips, accesibilidad, logging y cierre modal (07/06/2025) |
 
 ## ESTÁNDARES GENERALES (APLICAR A TODOS)
