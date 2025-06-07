@@ -91,6 +91,22 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.boton_agregar_balance.setToolTip("Agregar movimiento contable")
         estilizar_boton_icono(self.boton_agregar_balance)
         btn_balance_layout.addWidget(self.boton_agregar_balance)
+        # --- Botón Generar Factura en pestaña Balance ---
+        self.boton_generar_factura = QPushButton()
+        self.boton_generar_factura.setIcon(QIcon("resources/icons/factura.svg"))
+        self.boton_generar_factura.setToolTip("Generar factura por pedido recibido")
+        self.boton_generar_factura.setAccessibleName("Botón generar factura")
+        estilizar_boton_icono(self.boton_generar_factura)
+        btn_balance_layout.addWidget(self.boton_generar_factura)
+        self.boton_generar_factura.clicked.connect(self.abrir_dialogo_generar_factura)
+        # --- Botón Registrar Pago en pestaña Balance ---
+        self.boton_registrar_pago = QPushButton()
+        self.boton_registrar_pago.setIcon(QIcon("resources/icons/pago.svg"))
+        self.boton_registrar_pago.setToolTip("Registrar pago de factura")
+        self.boton_registrar_pago.setAccessibleName("Botón registrar pago")
+        estilizar_boton_icono(self.boton_registrar_pago)
+        btn_balance_layout.addWidget(self.boton_registrar_pago)
+        self.boton_registrar_pago.clicked.connect(self.abrir_dialogo_registrar_pago)
         self.tab_balance_layout.addLayout(btn_balance_layout)
         self.tabs.addTab(self.tab_balance, "Balance")
 
@@ -642,7 +658,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         try:
             dialog = QDialog(self)
             dialog.setWindowTitle("Agregar nuevo recibo")
-            layout = QVBoxLayout(dialog)
+            layout = QVBoxLayout()
             form = QFormLayout()
             fecha_input = QLineEdit()
             fecha_input.setPlaceholderText("YYYY-MM-DD")
@@ -694,6 +710,12 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
                 dialog.accept()
             btn_agregar.clicked.connect(agregar_recibo)
             btn_cancelar.clicked.connect(dialog.reject)
+            self.setTabOrder(fecha_input, obra_combo)
+            self.setTabOrder(obra_combo, monto_input)
+            self.setTabOrder(monto_input, concepto_input)
+            self.setTabOrder(concepto_input, destinatario_input)
+            self.setTabOrder(destinatario_input, btn_agregar)
+            dialog.setLayout(layout)
             dialog.exec()
         except Exception as e:
             log_error(f"Error al abrir diálogo de nuevo recibo: {e}")
@@ -1149,4 +1171,205 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         except Exception as e:
             QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
             self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
+
+    def abrir_dialogo_generar_factura(self):
+        """
+        Abre un diálogo modal robusto para generar una factura a partir de un pedido recibido.
+        Cumple checklist: validación visual/backend, feedback, accesibilidad, tooltips, cierre solo en éxito.
+        """
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QComboBox, QDoubleSpinBox, QPushButton, QHBoxLayout, QLabel
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Generar Factura por Pedido")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        form = QFormLayout()
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setSpacing(12)
+        # --- Combo de pedidos recibidos sin factura ---
+        combo_pedidos = QComboBox()
+        combo_pedidos.setToolTip("Seleccionar pedido recibido sin factura")
+        combo_pedidos.setAccessibleName("Selector de pedido recibido")
+        pedidos = []
+        if hasattr(self, 'controller') and hasattr(self.controller, 'obtener_pedidos_recibidos_sin_factura'):
+            pedidos = self.controller.obtener_pedidos_recibidos_sin_factura()
+        for pedido in pedidos:
+            # pedido: (id, descripcion, total)
+            combo_pedidos.addItem(f"ID {pedido[0]} - {pedido[1]} (${pedido[2]:,.2f})", pedido)
+        form.addRow("Pedido:", combo_pedidos)
+        # --- Monto (por defecto el total del pedido) ---
+        spin_monto = QDoubleSpinBox()
+        spin_monto.setMinimum(0.01)
+        spin_monto.setMaximum(99999999)
+        spin_monto.setDecimals(2)
+        spin_monto.setToolTip("Monto de la factura (por defecto el total del pedido)")
+        spin_monto.setAccessibleName("Monto de la factura")
+        if pedidos:
+            spin_monto.setValue(float(pedidos[0][2]))
+        def actualizar_monto():
+            pedido = combo_pedidos.currentData()
+            if pedido:
+                spin_monto.setValue(float(pedido[2]))
+        combo_pedidos.currentIndexChanged.connect(actualizar_monto)
+        form.addRow("Monto:", spin_monto)
+        # --- Forma de pago ---
+        combo_forma_pago = QComboBox()
+        combo_forma_pago.addItems(["Efectivo", "Transferencia", "Cheque"])
+        combo_forma_pago.setToolTip("Seleccionar forma de pago")
+        combo_forma_pago.setAccessibleName("Forma de pago")
+        form.addRow("Forma de pago:", combo_forma_pago)
+        # --- Feedback campo ---
+        lbl_feedback = QLabel()
+        lbl_feedback.setStyleSheet("color: #b91c1c; font-size: 12px;")
+        lbl_feedback.setVisible(False)
+        form.addRow("", lbl_feedback)
+        layout.addLayout(form)
+        # --- Botones ---
+        btns = QHBoxLayout()
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("resources/icons/finish-check.svg"))
+        btn_guardar.setToolTip("Generar factura")
+        btn_guardar.setAccessibleName("Generar factura")
+        estilizar_boton_icono(btn_guardar)
+        btn_cancelar = QPushButton()
+        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
+        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
+        btn_cancelar.setAccessibleName("Cancelar")
+        estilizar_boton_icono(btn_cancelar)
+        btns.addStretch()
+        btns.addWidget(btn_guardar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        # --- Acción guardar ---
+        def guardar():
+            pedido = combo_pedidos.currentData()
+            monto = spin_monto.value()
+            forma_pago = combo_forma_pago.currentText()
+            if not pedido:
+                lbl_feedback.setText("Seleccione un pedido válido.")
+                lbl_feedback.setVisible(True)
+                return
+            if monto < 0.01 or monto > float(pedido[2]):
+                lbl_feedback.setText("El monto debe ser mayor a 0 y no superar el total del pedido.")
+                lbl_feedback.setVisible(True)
+                return
+            try:
+                if hasattr(self, 'controller') and hasattr(self.controller, 'generar_factura_por_pedido'):
+                    self.controller.generar_factura_por_pedido(pedido[0], monto, forma_pago)
+                    self.mostrar_feedback("Factura generada correctamente.", tipo="exito")
+                    dialog.accept()
+                    # Refrescar tablas tras éxito
+                    if hasattr(self, 'controller') and hasattr(self.controller, 'actualizar_tabla_balance'):
+                        self.controller.actualizar_tabla_balance()
+                else:
+                    self.mostrar_feedback("No se implementó la lógica de generación de factura.", tipo="error")
+            except Exception as e:
+                lbl_feedback.setText(f"Error: {e}")
+                lbl_feedback.setVisible(True)
+        btn_guardar.clicked.connect(guardar)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
+
+    def abrir_dialogo_registrar_pago(self):
+        """
+        Abre un diálogo modal robusto para registrar un pago sobre una factura pendiente.
+        Cumple checklist: validación visual/backend, feedback, accesibilidad, tooltips, cierre solo en éxito.
+        """
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QComboBox, QDoubleSpinBox, QPushButton, QHBoxLayout, QLabel
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Registrar Pago de Factura")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        form = QFormLayout()
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setSpacing(12)
+        # --- Combo de facturas pendientes ---
+        combo_facturas = QComboBox()
+        combo_facturas.setToolTip("Seleccionar factura pendiente")
+        combo_facturas.setAccessibleName("Selector de factura pendiente")
+        facturas = []
+        if hasattr(self, 'controller') and hasattr(self.controller, 'obtener_facturas_pendientes'):
+            facturas = self.controller.obtener_facturas_pendientes()
+        for factura in facturas:
+            # factura: (id, descripcion, saldo)
+            combo_facturas.addItem(f"ID {factura[0]} - {factura[1]} (${factura[2]:,.2f})", factura)
+        form.addRow("Factura:", combo_facturas)
+        # --- Monto (máximo saldo de la factura) ---
+        spin_monto = QDoubleSpinBox()
+        spin_monto.setMinimum(0.01)
+        spin_monto.setMaximum(99999999)
+        spin_monto.setDecimals(2)
+        spin_monto.setToolTip("Monto a pagar (máximo el saldo de la factura)")
+        spin_monto.setAccessibleName("Monto a pagar")
+        if facturas:
+            spin_monto.setValue(float(facturas[0][2]))
+            spin_monto.setMaximum(float(facturas[0][2]))
+        def actualizar_monto():
+            factura = combo_facturas.currentData()
+            if factura:
+                spin_monto.setValue(float(factura[2]))
+                spin_monto.setMaximum(float(factura[2]))
+        combo_facturas.currentIndexChanged.connect(actualizar_monto)
+        form.addRow("Monto:", spin_monto)
+        # --- Forma de pago ---
+        combo_forma_pago = QComboBox()
+        combo_forma_pago.addItems(["Efectivo", "Transferencia", "Cheque"])
+        combo_forma_pago.setToolTip("Seleccionar forma de pago")
+        combo_forma_pago.setAccessibleName("Forma de pago")
+        form.addRow("Forma de pago:", combo_forma_pago)
+        # --- Feedback campo ---
+        lbl_feedback = QLabel()
+        lbl_feedback.setStyleSheet("color: #b91c1c; font-size: 12px;")
+        lbl_feedback.setVisible(False)
+        form.addRow("", lbl_feedback)
+        layout.addLayout(form)
+        # --- Botones ---
+        btns = QHBoxLayout()
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("resources/icons/finish-check.svg"))
+        btn_guardar.setToolTip("Registrar pago")
+        btn_guardar.setAccessibleName("Registrar pago")
+        estilizar_boton_icono(btn_guardar)
+        btn_cancelar = QPushButton()
+        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
+        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
+        btn_cancelar.setAccessibleName("Cancelar")
+        estilizar_boton_icono(btn_cancelar)
+        btns.addStretch()
+        btns.addWidget(btn_guardar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        # --- Acción guardar ---
+        def guardar():
+            factura = combo_facturas.currentData()
+            monto = spin_monto.value()
+            forma_pago = combo_forma_pago.currentText()
+            if not factura:
+                lbl_feedback.setText("Seleccione una factura válida.")
+                lbl_feedback.setVisible(True)
+                return
+            if monto < 0.01 or monto > float(factura[2]):
+                lbl_feedback.setText("El monto debe ser mayor a 0 y no superar el saldo de la factura.")
+                lbl_feedback.setVisible(True)
+                return
+            try:
+                if hasattr(self, 'controller') and hasattr(self.controller, 'registrar_pago'):
+                    self.controller.registrar_pago(factura[0], monto, forma_pago)
+                    self.mostrar_feedback("Pago registrado correctamente.", tipo="exito")
+                    dialog.accept()
+                    if hasattr(self, 'controller') and hasattr(self.controller, 'actualizar_tabla_balance'):
+                        self.controller.actualizar_tabla_balance()
+                else:
+                    self.mostrar_feedback("No se implementó la lógica de registrar pago.", tipo="error")
+            except Exception as e:
+                lbl_feedback.setText(f"Error: {e}")
+                lbl_feedback.setVisible(True)
+        btn_guardar.clicked.connect(guardar)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
 

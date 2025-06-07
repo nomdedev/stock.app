@@ -3,13 +3,20 @@
 | Módulo         | Botón/Acción                | Confirmación | Feedback modal | Estilo visual | Accesibilidad | Estado    | Notas |
 |---------------|-----------------------------|--------------|---------------|---------------|---------------|-----------|-------|
 | Inventario    | Exportar a Excel            | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Inventario    | Reservar perfil/material      | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Modal robusto por fila |
 | Herrajes      | Exportar a Excel            | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Vidrios       | Exportar a Excel            | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Contabilidad  | Exportar a Excel (Balance)  | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Contabilidad  | Exportar a Excel (Pagos)    | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Contabilidad  | Exportar a Excel (Recibos)  | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
-| Logística     | Exportar a Excel            |              |               |               |               | PENDIENTE |      |
+| Logística     | Exportar a Excel            | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Logística     | Editar envío                | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Logística     | Eliminar envío              | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Logística     | Ver Detalle envío           | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Configuración | Importar/Exportar           |              |               |               |               | PENDIENTE |      |
+| Obras         | Editar obra                  | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Obras         | Eliminar obra                | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
+| Obras         | Ver Detalle obra             | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 # ...agregar más según módulos y botones principales...
 
 Notas:

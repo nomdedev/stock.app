@@ -980,4 +980,119 @@ class InventarioView(QWidget, TableResponsiveMixin):
             self.tabla_inventario.setRowHeight(fila, alto_expandido)
             self.filas_expandidas.add(fila)
             self.mostrar_feedback(f"Fila {fila+1} expandida.", tipo="info")
+
+    def abrir_reserva_perfil_dialog(self, id_perfil=None):
+        """
+        Abre un diálogo modal robusto para reservar perfil/material desde la fila seleccionada.
+        Cumple checklist: validación, feedback, tooltips, accesibilidad, visual, controller.
+        """
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QComboBox, QSpinBox, QLabel, QPushButton, QHBoxLayout
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Reservar perfil/material para obra")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        form = QFormLayout()
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setSpacing(12)
+        # --- Combo de obras ---
+        cmb_obras = QComboBox()
+        cmb_obras.setToolTip("Seleccione la obra a la que reservar el material")
+        cmb_obras.setAccessibleName("Obra para reserva")
+        # Cargar obras desde el controller/modelo
+        obras = getattr(self, 'controller', None).model.obtener_obras() if hasattr(self, 'controller') and hasattr(self.controller.model, 'obtener_obras') else []
+        for obra in obras:
+            cmb_obras.addItem(str(obra['nombre']), obra['id_obra'])
+        form.addRow("Obra:", cmb_obras)
+        # --- Combo de perfiles/materiales ---
+        cmb_perfiles = QComboBox()
+        cmb_perfiles.setToolTip("Seleccione el perfil/material a reservar")
+        cmb_perfiles.setAccessibleName("Perfil/material para reserva")
+        perfiles = getattr(self, 'controller', None).model.obtener_perfiles() if hasattr(self, 'controller') and hasattr(self.controller.model, 'obtener_perfiles') else []
+        for perfil in perfiles:
+            cmb_perfiles.addItem(f"{perfil['codigo']} - {perfil['nombre']}", perfil['id_perfil'])
+        if id_perfil:
+            idx = cmb_perfiles.findData(id_perfil)
+            if idx >= 0:
+                cmb_perfiles.setCurrentIndex(idx)
+        form.addRow("Perfil:", cmb_perfiles)
+        # --- SpinBox de cantidad ---
+        spin_cantidad = QSpinBox()
+        spin_cantidad.setMinimum(1)
+        spin_cantidad.setMaximum(1)
+        spin_cantidad.setToolTip("Cantidad a reservar (máximo: stock actual)")
+        spin_cantidad.setAccessibleName("Cantidad a reservar")
+        form.addRow("Cantidad:", spin_cantidad)
+        # --- Stock actual label ---
+        lbl_stock = QLabel("")
+        lbl_stock.setStyleSheet("color: #2563eb; font-size: 13px;")
+        form.addRow("Stock actual:", lbl_stock)
+        # --- Actualizar stock/cantidad al cambiar perfil ---
+        def actualizar_stock():
+            idp = cmb_perfiles.currentData()
+            perfil = next((p for p in perfiles if p['id_perfil'] == idp), None)
+            stock = int(perfil['stock_actual']) if perfil and 'stock_actual' in perfil else 1
+            spin_cantidad.setMaximum(stock if stock > 0 else 1)
+            lbl_stock.setText(str(stock))
+        cmb_perfiles.currentIndexChanged.connect(actualizar_stock)
+        actualizar_stock()
+        layout.addLayout(form)
+        # --- Feedback visual ---
+        lbl_feedback = QLabel("")
+        lbl_feedback.setObjectName("label_feedback_reserva")
+        lbl_feedback.setStyleSheet("font-size: 13px; color: #ef4444; padding: 4px 0;")
+        lbl_feedback.setVisible(False)
+        layout.addWidget(lbl_feedback)
+        # --- Botones ---
+        btns = QHBoxLayout()
+        btn_reservar = QPushButton()
+        btn_reservar.setIcon(QIcon("resources/icons/add-material.svg"))
+        btn_reservar.setToolTip("Reservar perfil/material seleccionado")
+        estilizar_boton_icono(btn_reservar)
+        btn_cancelar = QPushButton()
+        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
+        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
+        estilizar_boton_icono(btn_cancelar)
+        btns.addStretch()
+        btns.addWidget(btn_reservar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        # --- Acción reservar ---
+        def reservar():
+            id_obra = cmb_obras.currentData()
+            id_perfil = cmb_perfiles.currentData()
+            cantidad = spin_cantidad.value()
+            if id_obra is None or id_perfil is None or cantidad < 1:
+                lbl_feedback.setText("Complete todos los campos y seleccione cantidad válida.")
+                lbl_feedback.setVisible(True)
+                return
+            try:
+                self.controller.reservar_perfil(self.usuario_actual, id_obra, id_perfil, cantidad)
+                self.mostrar_feedback("Reserva exitosa.", tipo="exito")
+                dialog.accept()
+                self.actualizar_signal.emit()
+            except ValueError as e:
+                lbl_feedback.setText(str(e))
+                lbl_feedback.setVisible(True)
+            except Exception as e:
+                lbl_feedback.setText(f"Error inesperado: {e}")
+                lbl_feedback.setVisible(True)
+        btn_reservar.clicked.connect(reservar)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
+
+    def agregar_boton_reserva_a_tabla(self):
+        """
+        Agrega un botón de acción de reserva en cada fila de la tabla de inventario.
+        """
+        for row in range(self.tabla_inventario.rowCount()):
+            btn_reservar = QPushButton()
+            btn_reservar.setIcon(QIcon("resources/icons/add-material.svg"))
+            btn_reservar.setToolTip("Reservar este perfil/material para una obra")
+            estilizar_boton_icono(btn_reservar)
+            id_perfil = self.tabla_inventario.item(row, 0).text() if self.tabla_inventario.item(row, 0) else None
+            btn_reservar.clicked.connect(lambda _, idp=id_perfil: self.abrir_reserva_perfil_dialog(idp))
+            self.tabla_inventario.setCellWidget(row, self.tabla_inventario.columnCount()-1, btn_reservar)
 # NOTA: Todos los estilos visuales y feedback deben ser gestionados por QSS global (themes/light.qss and dark.qss). No usar setStyleSheet embebido. Si se requiere excepción, documentar y justificar en docs/estandares_visuales.md

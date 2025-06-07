@@ -109,6 +109,7 @@ class ObrasController:
                 self.view.gantt_on_bar_clicked = self.editar_fecha_entrega_dialog
             if hasattr(self.view, 'boton_verificar_obra'):
                 self.view.boton_verificar_obra.clicked.connect(self.verificar_obra_en_sql_dialog_base)
+
         self._insertar_obras_ejemplo_si_vacio()
         self.cargar_headers_obras()
         self.cargar_datos_obras_tabla()
@@ -247,27 +248,40 @@ class ObrasController:
         layout = QVBoxLayout(dialog)
         layout.addWidget(QLabel("Nombre de la obra:"))
         nombre_input = QLineEdit()
+        nombre_input.setPlaceholderText("Ingrese el nombre de la obra")
+        nombre_input.setAccessibleName("Nombre de la obra")
         layout.addWidget(nombre_input)
         layout.addWidget(QLabel("Cliente:"))
         cliente_input = QLineEdit()
+        cliente_input.setPlaceholderText("Ingrese el nombre del cliente")
+        cliente_input.setAccessibleName("Cliente")
         layout.addWidget(cliente_input)
+        btns_layout = QHBoxLayout()
         btn_verificar = QPushButton("Verificar")
         btn_verificar.setIcon(QIcon("resources/icons/search_icon.svg"))
+        btn_verificar.setToolTip("Verificar existencia de obra en SQL")
+        btn_verificar.setAccessibleName("Verificar obra")
         estilizar_boton_icono(btn_verificar)
         btn_cancelar = QPushButton("Cancelar")
         btn_cancelar.setIcon(QIcon("resources/icons/reject.svg"))
+        btn_cancelar.setToolTip("Cancelar verificación")
+        btn_cancelar.setAccessibleName("Cancelar")
         estilizar_boton_icono(btn_cancelar)
         btn_verificar.clicked.connect(dialog.accept)
         btn_cancelar.clicked.connect(dialog.reject)
-        layout.addWidget(btn_verificar)
-        layout.addWidget(btn_cancelar)
+        btns_layout.addWidget(btn_verificar)
+        btns_layout.addWidget(btn_cancelar)
+        layout.addLayout(btns_layout)
         dialog.setLayout(layout)
+        # Accesibilidad: foco inicial
+        nombre_input.setFocus()
+        # Modal robusto: feedback inmediato y validación
         if dialog.exec() == QDialog.DialogCode.Accepted:
-            nombre = nombre_input.text()
-            cliente = cliente_input.text()
+            nombre = nombre_input.text().strip()
+            cliente = cliente_input.text().strip()
             if not (nombre and cliente):
                 if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje("Debe ingresar nombre y cliente.", tipo='warning')
+                    self.view.mostrar_mensaje("Debe ingresar nombre y cliente.", tipo='warning', titulo_personalizado="Verificar Obra")
                 elif hasattr(self.view, 'label'):
                     self.view.label.setText("Debe ingresar nombre y cliente.")
                 return
@@ -360,17 +374,20 @@ class ObrasController:
             form.addRow("Fecha de entrega:", fecha_entrega_input)
             layout.addLayout(form)
 
-            # Botones
+            # Botones robustos y accesibles
             btns_layout = QHBoxLayout()
-            btn_guardar = QPushButton()
+            btn_guardar = QPushButton("Guardar")
             btn_guardar.setIcon(QIcon("resources/icons/plus_icon.svg"))
             btn_guardar.setToolTip("Guardar obra")
+            btn_guardar.setAccessibleName("Guardar obra")
             estilizar_boton_icono(btn_guardar, tam_icono=28, tam_boton=48)
-            btn_guardar.clicked.connect(dialog.accept)
-            btn_cancelar = QPushButton()
+            btn_guardar.setDefault(True)
+            btn_cancelar = QPushButton("Cancelar")
             btn_cancelar.setIcon(QIcon("resources/icons/reject.svg"))
             btn_cancelar.setToolTip("Cancelar")
+            btn_cancelar.setAccessibleName("Cancelar")
             estilizar_boton_icono(btn_cancelar, tam_icono=28, tam_boton=48)
+            btn_guardar.clicked.connect(dialog.accept)
             btn_cancelar.clicked.connect(dialog.reject)
             btns_layout.addWidget(btn_guardar)
             btns_layout.addWidget(btn_cancelar)
@@ -654,3 +671,35 @@ class ObrasController:
         except Exception as e:
             from core.logger import log_error
             log_error(f"Error en actualizar_por_pedido_cancelado (ObrasController): {e}")
+
+    @permiso_auditoria_obras('editar')
+    def editar_obra(self, id_obra, datos, rowversion_orig):
+        """
+        Edita una obra robustamente usando validación, feedback, logging, auditoría y bloqueo optimista (rowversion).
+        Cumple checklist: validación visual/backend, feedback, accesibilidad, refresco UI, registro en auditoría.
+        """
+        from core.logger import Logger
+        logger = Logger()
+        try:
+            errores = self.model.validar_datos_obra({**datos, 'id': id_obra})
+            if errores:
+                mensaje = f"Errores en los datos: {'; '.join(errores)}"
+                if self.view and hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(mensaje, tipo='error')
+                logger.warning(f"Edición de obra fallida por validación: {mensaje}")
+                self._registrar_evento_auditoria('editar', mensaje, exito=False)
+                raise ValueError(mensaje)
+            nuevo_rowversion = self.model.editar_obra(id_obra, datos, rowversion_orig)
+            self._registrar_evento_auditoria('editar', f"Editó obra {id_obra}", exito=True)
+            if self.view and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje("Obra editada correctamente.", tipo="exito", titulo_personalizado="Editar Obra")
+            if hasattr(self, 'cargar_datos_obras_tabla'):
+                self.cargar_datos_obras_tabla()
+            logger.info(f"Obra {id_obra} editada correctamente.")
+            return nuevo_rowversion
+        except Exception as e:
+            logger.error(f"Error al editar obra: {e}")
+            if self.view and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error al editar la obra: {e}", tipo="error", titulo_personalizado="Editar Obra")
+            self._registrar_evento_auditoria('editar', f"Error edición obra {id_obra}: {e}", exito=False)
+            raise

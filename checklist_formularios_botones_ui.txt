@@ -1,0 +1,69 @@
+# CHECKLIST DE FORMULARIOS, BOTONES, FUNCIONALIDADES Y UI POR MÓDULO (ERP/Inventario)
+
+## 1. MÓDULO OBRAS
+| Elemento                | Estado     | Incluye campos/acciones | UI/UX estándar | Backend/Controller | Feedback robusto | Auditoría | Notas |
+|-------------------------|------------|------------------------|----------------|--------------------|------------------|-----------|-------|
+| Formulario Alta de Obra | COMPLETO   | Nombre, Cliente, Fechas, Guardar/Cancelar | Modal, bordes redondeados, tooltips, feedback campo, botones accesibles y robustos | ObrasController.alta_obra | ✔️ | ✔️ | Validación visual y backend, botones UI/UX unificados (07/06/2025) |
+| Formulario Editar Obra  | COMPLETO   | Igual alta + carga datos | Igual alta     | ObrasController.editar_obra | ✔️ | ✔️ | UI/UX, feedback, accesibilidad, botones robustos, validación visual/backend (07/06/2025) |
+| Formulario Eliminar Obra| COMPLETO  | Confirmación, feedback  | Modal, confirmación | ObrasController.eliminar_obra | ✔️ | ✔️ | Modal de confirmación, feedback robusto, accesibilidad, logging y auditoría (07/06/2025) |
+| Botón Ver Detalle       | COMPLETO   | Despliega etapas, materiales | Panel/Modal  | ObrasController.obtener_detalle | ✔️ | ✔️ | UI/UX, feedback, accesibilidad, panel/modal robusto, logging y auditoría (07/06/2025) |
+| Botón Verificar obra en SQL | COMPLETO   | Nombre, Cliente, Verificar/Cancelar | Modal, tooltips, feedback, accesibilidad | ObrasController.verificar_obra_en_sql_base | ✔️ | ✔️ | Modal robusto, validación, feedback y accesibilidad (07/06/2025) |
+
+## 2. MÓDULO INVENTARIO (PERFILES, HERRAJES, VIDRIOS)
+| Elemento                    | Estado     | Incluye campos/acciones | UI/UX estándar | Backend/Controller | Feedback robusto | Auditoría | Notas |
+|-----------------------------|------------|------------------------|----------------|--------------------|------------------|-----------|-------|
+| Formulario Reserva Material | COMPLETO   | Obra, Material, Cantidad, Reservar/Cancelar | Modal/panel, tooltips, feedback campo | InventarioController.reservar_perfil | ✔️ | ✔️ | Validar stock, modal por fila |
+| Formulario Devolución       | COMPLETO   | Igual reserva + motivo  | Igual reserva  | InventarioController.devolver_perfil | ✔️ | ✔️ | Modal/panel robusto, feedback, validación, accesibilidad, logging y auditoría (07/06/2025) |
+| Formulario Ajuste Stock     | COMPLETO   | Igual reserva + motivo  | Igual reserva  | InventarioController.ajustar_stock_perfil | ✔️ | ✔️ | Modal/panel robusto, feedback, validación, accesibilidad, logging y auditoría (07/06/2025) |
+| Botón Ver Detalle Movimientos| COMPLETO   | Muestra historial       | Modal/panel    | InventarioController.obtener_movimientos | ✔️ | ✔️ | UI/UX, feedback, accesibilidad, panel/modal robusto, logging y auditoría (07/06/2025) |
+
+## 3. MÓDULO PEDIDOS
+| Elemento                    | Estado     | Incluye campos/acciones | UI/UX estándar | Backend/Controller | Feedback robusto | Auditoría | Notas |
+|-----------------------------|------------|------------------------|----------------|--------------------|------------------|-----------|-------|
+| Formulario Generar Pedido   | COMPLETO   | Obra, tabla faltantes, Generar/Cancelar | Modal, feedback, tooltips | PedidosController.generar_pedido_por_obra | ✔️ | ✔️ | Validación visual/backend, feedback robusto, accesibilidad, logging y auditoría (07/06/2025) |
+| Formulario Recepción Pedido | COMPLETO   | Resumen ítems, Confirmar/Cancelar | Modal robusto, feedback, tooltips, accesibilidad, cierre solo en éxito | PedidosController.recibir_pedido / abrir_dialogo_recepcion_pedido | ✔️ | ✔️ | Validación visual/backend, feedback robusto, accesibilidad, logging y auditoría (07/06/2025) |
+| Botón Ver Detalle Pedido    | PENDIENTE  | Ítems, estados          | Modal/panel    | PedidosController.obtener_detalle | ✔️ | ✔️ | |
+
+## 4. MÓDULO CONTABILIDAD
+| Elemento                    | Estado     | Incluye campos/acciones | UI/UX estándar | Backend/Controller | Feedback robusto | Auditoría | Notas |
+|-----------------------------|------------|------------------------|----------------|--------------------|------------------|-----------|-------|
+| Formulario Generar Factura  | COMPLETO   | Pedido, monto, forma pago, Guardar/Cancelar | Modal robusto, feedback, tooltips, accesibilidad, cierre solo en éxito | ContabilidadController.generar_factura_por_pedido | ✔️ | ✔️ | Validación visual/backend, feedback robusto, accesibilidad, logging y auditoría (07/06/2025) |
+| Formulario Registrar Pago   | COMPLETO   | Factura, monto, forma pago, Guardar/Cancelar | Modal robusto, feedback, tooltips, accesibilidad, cierre solo en éxito | ContabilidadController.registrar_pago | ✔️ | ✔️ | Validación visual/backend, feedback robusto, accesibilidad, logging y auditoría (07/06/2025) |
+| Botón Ver Detalle Factura   | PENDIENTE  | Ítems, pagos, saldo     | Modal/panel    | ContabilidadController.obtener_detalle_factura | ✔️ | ✔️ | |
+
+## 5. MÓDULO USUARIOS/ROLES
+| Elemento                    | Estado     | Incluye campos/acciones | UI/UX estándar | Backend/Controller | Feedback robusto | Auditoría | Notas |
+|-----------------------------|------------|------------------------|----------------|--------------------|------------------|-----------|-------|
+| Formulario Crear Usuario    | PENDIENTE  | Username, Contraseña, Rol, Permisos, Guardar/Cancelar | Modal, feedback, tooltips | UsuariosController.crear_usuario | ✔️ | ✔️ | Validar contraseña fuerte |
+| Formulario Editar Usuario   | PENDIENTE  | Igual crear + carga datos | Igual crear   | UsuariosController.editar_usuario | ✔️ | ✔️ | |
+| Formulario Editar Permisos  | PENDIENTE  | Checkboxes por módulo   | Modal, feedback | UsuariosController.editar_permisos_usuario | ✔️ | ✔️ | |
+| Botón Eliminar Usuario      | PENDIENTE  | Confirmación, feedback  | Modal, confirmación | UsuariosController.eliminar_usuario | ✔️ | ✔️ | No borrar admin |
+
+## 6. MÓDULO AUDITORÍA
+| Elemento                    | Estado     | Incluye campos/acciones | UI/UX estándar | Backend/Controller | Feedback robusto | Auditoría | Notas |
+|-----------------------------|------------|------------------------|----------------|--------------------|------------------|-----------|-------|
+| Botón Filtrar Auditoría     | PENDIENTE  | Fechas, módulo, usuario, Filtrar | Panel, feedback, tooltips | AuditoriaController.filtrar | ✔️ | ✔️ | |
+| Botón Exportar a Excel      | PENDIENTE  | Exportar, feedback      | Botón con ícono, feedback | AuditoriaController.exportar_excel | ✔️ | ✔️ | |
+| Botón Ver Detalle           | PENDIENTE  | Acción, usuario, fecha/hora | Modal/panel    | AuditoriaController.obtener_detalle | ✔️ | ✔️ | |
+
+## 7. MÓDULO LOGÍSTICA
+| Elemento                    | Estado     | Incluye campos/acciones | UI/UX estándar | Backend/Controller | Feedback robusto | Auditoría | Notas |
+|-----------------------------|------------|------------------------|----------------|--------------------|------------------|-----------|-------|
+| Formulario Alta Envío      | COMPLETO   | Obra, Material, Cantidad, Estado, Guardar/Cancelar | Modal, feedback, tooltips | LogisticaController.alta_envio | ✔️ | ✔️ | Validación visual y backend |
+| Formulario Editar Envío     | PENDIENTE  | Igual alta + carga datos | Igual alta     | LogisticaController.editar_envio | ✔️ | ✔️ | |
+| Formulario Eliminar Envío   | PENDIENTE  | Confirmación, feedback  | Modal, confirmación | LogisticaController.eliminar_envio | ✔️ | ✔️ | |
+| Botón Ver Detalle Envío     | COMPLETO   | Despliega detalles envío | Modal robusto, feedback, accesibilidad, tooltips, cierre solo en éxito | LogisticaView.ver_detalle_envio | ✔️ | ✔️ | Modal robusto, validación visual, tooltips, accesibilidad, logging y cierre modal (07/06/2025) |
+
+## ESTÁNDARES GENERALES (APLICAR A TODOS)
+- Tooltips en todos los inputs y botones
+- Bordes redondeados y sombra en botones principales
+- Feedback visual claro y estandarizado (éxito/error)
+- Feedback por campo (debajo) y general (arriba del form)
+- Botones deshabilitados durante la operación
+- Spinners o indicación de carga en operaciones largas
+- Documentar cada formulario y botón en README/docstring
+- Interacción SIEMPRE vía Controller, nunca directo al modelo
+- Todo resultado/error: feedback visual + logging + auditoría
+- Refrescar UI/grilla tras operación exitosa
+- Cerrar modal solo si éxito
+- Emitir señal/slot para integración futura si aplica

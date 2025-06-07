@@ -278,6 +278,72 @@ class PedidosView(QWidget):
     def rechazar_pedido(self):
         self.mostrar_feedback("Funcionalidad de rechazar pedido pendiente de implementación", tipo="info")
 
+    def abrir_dialogo_recepcion_pedido(self, pedido_id, resumen_items, controller):
+        """
+        Abre un diálogo modal robusto para confirmar la recepción de un pedido.
+        Muestra resumen de ítems, feedback visual, botones accesibles y tooltips.
+        Cumple checklist: validación, feedback, accesibilidad, cierre solo en éxito.
+        """
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton, QHBoxLayout
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Confirmar recepción de pedido")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        label = QLabel(f"¿Desea confirmar la recepción del pedido ID {pedido_id}?")
+        label.setAccessibleName("Título confirmación recepción pedido")
+        layout.addWidget(label)
+        # Tabla resumen de ítems
+        tabla = QTableWidget()
+        tabla.setColumnCount(3)
+        tabla.setHorizontalHeaderLabels(["Tipo", "ID Ítem", "Cantidad"])
+        tabla.setRowCount(len(resumen_items))
+        tabla.setToolTip("Resumen de ítems del pedido")
+        tabla.setAccessibleName("Tabla resumen ítems recepción pedido")
+        for row, (tipo, id_item, cantidad) in enumerate(resumen_items):
+            tabla.setItem(row, 0, QTableWidgetItem(str(tipo)))
+            tabla.setItem(row, 1, QTableWidgetItem(str(id_item)))
+            tabla.setItem(row, 2, QTableWidgetItem(str(cantidad)))
+        tabla.resizeColumnsToContents()
+        layout.addWidget(tabla)
+        # Feedback visual
+        lbl_feedback = QLabel()
+        lbl_feedback.setObjectName("lbl_feedback_recepcion")
+        lbl_feedback.setVisible(False)
+        layout.addWidget(lbl_feedback)
+        # Botones
+        btns = QHBoxLayout()
+        btn_confirmar = QPushButton()
+        btn_confirmar.setIcon(QIcon("resources/icons/finish-check.svg"))
+        btn_confirmar.setToolTip("Confirmar recepción del pedido")
+        btn_confirmar.setAccessibleName("Confirmar recepción")
+        estilizar_boton_icono(btn_confirmar)
+        btn_cancelar = QPushButton()
+        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
+        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
+        btn_cancelar.setAccessibleName("Cancelar recepción")
+        estilizar_boton_icono(btn_cancelar)
+        btns.addStretch()
+        btns.addWidget(btn_confirmar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        # Acción confirmar
+        def confirmar():
+            try:
+                controller.recibir_pedido(pedido_id)
+                self.mostrar_feedback(f"Pedido recibido correctamente (ID: {pedido_id})", tipo="exito")
+                dialog.accept()
+                if hasattr(self, "cargar_pedidos"):
+                    self.cargar_pedidos()
+            except Exception as e:
+                lbl_feedback.setText(f"Error: {e}")
+                lbl_feedback.setVisible(True)
+        btn_confirmar.clicked.connect(confirmar)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.exec()
+
 # NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
 # Si necesitas una cadena de conexión, obténla de un archivo seguro o variable de entorno, nunca hardcodeada.
 # En los flujos de error, asegúrate de usar log_error y/o registrar_evento para cumplir el estándar de feedback visual y logging.

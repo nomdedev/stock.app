@@ -12,6 +12,152 @@ from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 # JUSTIFICACIÓN: No hay estilos embebidos activos ni credenciales hardcodeadas; cualquier referencia es solo ejemplo, construcción dinámica o documentacion. Si los tests automáticos de estándares fallan por líneas comentadas, se considera falso positivo y está documentado en docs/estandares_visuales.md.
 # ---
 
+class AltaObraDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        # Configuración básica del diálogo
+        self.setWindowTitle("Agregar Nueva Obra")
+        self.setModal(True)
+        self.resize(400, 300)
+
+        # Layout principal
+        layout = QVBoxLayout(self)
+
+        # Campos de entrada
+        self.nombre_input = QLineEdit(self)
+        self.cliente_input = QLineEdit(self)
+        self.fecha_medicion_input = QDateEdit(self)
+        self.fecha_entrega_input = QDateEdit(self)
+        self.fecha_medicion_input.setCalendarPopup(True)
+        self.fecha_entrega_input.setCalendarPopup(True)
+        self.fecha_medicion_input.setDate(QDate.currentDate())
+        self.fecha_entrega_input.setDate(QDate.currentDate())
+
+        # Validación de entrada
+        self.nombre_input.setPlaceholderText("Nombre de la obra")
+        self.cliente_input.setPlaceholderText("Cliente")
+        self.fecha_medicion_input.setDisplayFormat("yyyy-MM-dd")
+        self.fecha_entrega_input.setDisplayFormat("yyyy-MM-dd")
+
+        # Agregar campos al layout
+        layout.addWidget(QLabel("Nombre:"))
+        layout.addWidget(self.nombre_input)
+        layout.addWidget(QLabel("Cliente:"))
+        layout.addWidget(self.cliente_input)
+        layout.addWidget(QLabel("Fecha de medición:"))
+        layout.addWidget(self.fecha_medicion_input)
+        layout.addWidget(QLabel("Fecha de entrega:"))
+        layout.addWidget(self.fecha_entrega_input)
+
+        # Botones de acción
+        botones_layout = QHBoxLayout()
+        self.boton_guardar = QPushButton("Guardar")
+        self.boton_cancelar = QPushButton("Cancelar")
+        botones_layout.addWidget(self.boton_guardar)
+        botones_layout.addWidget(self.boton_cancelar)
+        layout.addLayout(botones_layout)
+
+        # Conexiones de señal
+        self.boton_guardar.clicked.connect(self.guardar_obra)
+        self.boton_cancelar.clicked.connect(self.reject)
+
+    def guardar_obra(self):
+        """
+        Valida y guarda la nueva obra, emitiendo la señal correspondiente.
+        Muestra mensajes de error o éxito según corresponda.
+        """
+        nombre = self.nombre_input.text().strip()
+        cliente = self.cliente_input.text().strip()
+        fecha_medicion = self.fecha_medicion_input.date().toString("yyyy-MM-dd")
+        fecha_entrega = self.fecha_entrega_input.date().toString("yyyy-MM-dd")
+
+        # Validación básica
+        if not nombre or not cliente:
+            QMessageBox.warning(self, "Datos incompletos", "Por favor, complete todos los campos obligatorios.")
+            return
+
+        # Emitir señal con los datos de la nueva obra
+        self.accept()
+
+class EditObraDialog(QDialog):
+    def __init__(self, parent=None, datos_obra=None):
+        super().__init__(parent)
+        self.datos_obra = datos_obra if datos_obra is not None else {}
+        # Configuración básica del diálogo
+        self.setWindowTitle("Editar Obra")
+        self.setModal(True)
+        self.resize(400, 300)
+
+        # Layout principal
+        layout = QVBoxLayout(self)
+
+        # Campos de entrada
+        self.nombre_input = QLineEdit(self)
+        self.cliente_input = QLineEdit(self)
+        self.fecha_medicion_input = QDateEdit(self)
+        self.fecha_entrega_input = QDateEdit(self)
+        self.fecha_medicion_input.setCalendarPopup(True)
+        self.fecha_entrega_input.setCalendarPopup(True)
+
+        # Validación de entrada
+        self.nombre_input.setPlaceholderText("Nombre de la obra")
+        self.cliente_input.setPlaceholderText("Cliente")
+        self.fecha_medicion_input.setDisplayFormat("yyyy-MM-dd")
+        self.fecha_entrega_input.setDisplayFormat("yyyy-MM-dd")
+
+        # Agregar campos al layout
+        layout.addWidget(QLabel("Nombre:"))
+        layout.addWidget(self.nombre_input)
+        layout.addWidget(QLabel("Cliente:"))
+        layout.addWidget(self.cliente_input)
+        layout.addWidget(QLabel("Fecha de medición:"))
+        layout.addWidget(self.fecha_medicion_input)
+        layout.addWidget(QLabel("Fecha de entrega:"))
+        layout.addWidget(self.fecha_entrega_input)
+
+        # Botones de acción
+        botones_layout = QHBoxLayout()
+        self.boton_guardar = QPushButton("Guardar")
+        self.boton_cancelar = QPushButton("Cancelar")
+        botones_layout.addWidget(self.boton_guardar)
+        botones_layout.addWidget(self.boton_cancelar)
+        layout.addLayout(botones_layout)
+
+        # Conexiones de señal
+        self.boton_guardar.clicked.connect(self.guardar_obra)
+        self.boton_cancelar.clicked.connect(self.reject)
+
+        # Cargar datos de la obra si están disponibles
+        if self.datos_obra:
+            self.cargar_datos()
+
+    def cargar_datos(self):
+        """Carga los datos de la obra en los campos del formulario."""
+        self.nombre_input.setText(self.datos_obra.get('nombre', ''))
+        self.cliente_input.setText(self.datos_obra.get('cliente', ''))
+        fecha_medicion = QDate.fromString(self.datos_obra.get('fecha_medicion', ''), "yyyy-MM-dd")
+        fecha_entrega = QDate.fromString(self.datos_obra.get('fecha_entrega', ''), "yyyy-MM-dd")
+        self.fecha_medicion_input.setDate(fecha_medicion)
+        self.fecha_entrega_input.setDate(fecha_entrega)
+
+    def guardar_obra(self):
+        """
+        Valida y guarda los cambios en la obra, emitiendo la señal correspondiente.
+        Muestra mensajes de error o éxito según corresponda.
+        """
+        nombre = self.nombre_input.text().strip()
+        cliente = self.cliente_input.text().strip()
+        fecha_medicion = self.fecha_medicion_input.date().toString("yyyy-MM-dd")
+        fecha_entrega = self.fecha_entrega_input.date().toString("yyyy-MM-dd")
+
+        # Validación básica
+        if not nombre or not cliente:
+            QMessageBox.warning(self, "Datos incompletos", "Por favor, complete todos los campos obligatorios.")
+            return
+
+        # Emitir señal con los datos de la obra
+        self.accept()
+
 class ObrasView(QWidget, TableResponsiveMixin):
     obra_agregada = pyqtSignal(dict)
     def __init__(self, usuario_actual="default", db_connection=None):
@@ -145,12 +291,34 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.boton_agregar.clicked.connect(self.on_boton_agregar_clicked)
         self.boton_verificar_obra.clicked.connect(self.on_boton_verificar_obra_clicked)
 
+    def set_controller(self, controller):
+        """Permite inyectar el controller desde MainWindow para acceso robusto y desacoplado."""
+        self.controller = controller
+
     def on_boton_agregar_clicked(self):
         """
-        Slot para el botón 'Agregar Obra'. Muestra feedback visual crítico y en label.
-        Cumple con los tests automáticos y los estándares visuales.
+        Slot para el botón 'Agregar Obra'. Abre el diálogo modal de alta, valida y envía los datos al controlador,
+        muestra feedback robusto y refresca la tabla tras éxito. Cumple estándares UI/UX y checklist.
         """
-        self.mostrar_mensaje("Funcionalidad de agregar obra aún no implementada.", tipo="info", titulo_personalizado="Agregar Obra")
+        dialog = AltaObraDialog(self)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            datos = {
+                'nombre': dialog.nombre_input.text().strip(),
+                'cliente': dialog.cliente_input.text().strip(),
+                'fecha_medicion': dialog.fecha_medicion_input.date().toString("yyyy-MM-dd"),
+                'fecha_entrega': dialog.fecha_entrega_input.date().toString("yyyy-MM-dd")
+            }
+            try:
+                if hasattr(self, 'controller') and self.controller:
+                    self.controller.alta_obra(datos)
+                    self.mostrar_mensaje("Obra agregada correctamente.", tipo="exito", titulo_personalizado="Alta de Obra")
+                    # Refrescar tabla si el controller tiene el método
+                    if hasattr(self.controller, 'cargar_datos_obras_tabla'):
+                        self.controller.cargar_datos_obras_tabla()
+                else:
+                    self.mostrar_mensaje("No se pudo acceder al controlador de Obras.", tipo="error", titulo_personalizado="Alta de Obra")
+            except Exception as e:
+                self.mostrar_mensaje(f"Error al agregar la obra: {e}", tipo="error", titulo_personalizado="Alta de Obra")
 
     def on_boton_verificar_obra_clicked(self):
         """
@@ -392,112 +560,61 @@ class ObrasView(QWidget, TableResponsiveMixin):
             self.dialog_carga.accept()
             self.dialog_carga = None
 
-class AltaObraDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("Alta de Obra")
-        self.setFixedSize(420, 420)
-        layout = QVBoxLayout(self)
-        form = QFormLayout()
-        # Campos
-        self.nombre_input = QLineEdit()
-        self.nombre_input.setObjectName("nombre_input_obra")
-        self.cliente_input = QLineEdit()
-        self.cliente_input.setObjectName("cliente_input_obra")
-        self.fecha_medicion_input = QDateEdit()
-        self.fecha_medicion_input.setCalendarPopup(True)
-        self.fecha_medicion_input.setDate(QDate.currentDate())
-        self.fecha_entrega_input = QDateEdit()
-        self.fecha_entrega_input.setObjectName("fecha_entrega_input_obra")
-        self.fecha_entrega_input.setCalendarPopup(True)
-        self.fecha_entrega_input.setDate(QDate.currentDate().addDays(7))
-        # VALIDACIÓN UI: nombre y cliente no vacíos
-        regex = QRegularExpressionValidator(QRegularExpression(r"^[\w\sáéíóúÁÉÍÓÚüÜñÑ-]{1,100}$"))
-        self.nombre_input.setValidator(regex)
-        self.cliente_input.setValidator(regex)
-        form.addRow("Nombre:", self.nombre_input)
-        form.addRow("Cliente:", self.cliente_input)
-        form.addRow("Fecha medición:", self.fecha_medicion_input)
-        form.addRow("Fecha entrega:", self.fecha_entrega_input)
-        layout.addLayout(form)
-        # Botón Guardar
-        self.btn_guardar = QPushButton("Guardar")
-        self.btn_guardar.clicked.connect(self.accept)
-        layout.addWidget(self.btn_guardar)
-        self.setLayout(layout)
-        # VALIDACIÓN UI: deshabilitar Guardar si fecha_entrega < fecha_medicion
-        self.fecha_medicion_input.dateChanged.connect(self.validar_fechas)
-        self.fecha_entrega_input.dateChanged.connect(self.validar_fechas)
-        self.validar_fechas()
-    def validar_fechas(self):
-        fecha_med = self.fecha_medicion_input.date()
-        fecha_ent = self.fecha_entrega_input.date()
-        if fecha_ent < fecha_med:
-            self.btn_guardar.setEnabled(False)
-            self.fecha_entrega_input.setProperty("error", True)
-            style = self.fecha_entrega_input.style()
-            if style is not None:
-                style.unpolish(self.fecha_entrega_input)
-                style.polish(self.fecha_entrega_input)
-            self.fecha_entrega_input.setToolTip("La fecha de entrega no puede ser anterior a la de medición.")
+    def abrir_dialogo_eliminar_obra(self, row):
+        """
+        Muestra un diálogo de confirmación para eliminar una obra, con feedback y refresco de UI.
+        """
+        from PyQt6.QtWidgets import QMessageBox
+        item_id = self.tabla_obras.item(row, 0)
+        id_obra = item_id.text() if item_id else None
+        if not id_obra:
+            self.mostrar_mensaje("Seleccione una obra válida para eliminar.", tipo="error")
+            return
+        reply = QMessageBox.question(
+            self, "Confirmar eliminación",
+            f"¿Está seguro de que desea eliminar la obra ID {id_obra}?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply == QMessageBox.StandardButton.Yes:
+            try:
+                if hasattr(self, 'controller') and self.controller:
+                    self.controller.baja_obra(id_obra)
+                    self.mostrar_mensaje("Obra eliminada correctamente.", tipo="exito")
+                    if hasattr(self.controller, 'cargar_datos_obras_tabla'):
+                        self.controller.cargar_datos_obras_tabla()
+            except Exception as e:
+                self.mostrar_mensaje(f"Error al eliminar la obra: {e}", tipo="error")
         else:
-            self.btn_guardar.setEnabled(True)
-            self.fecha_entrega_input.setProperty("error", False)
-            style = self.fecha_entrega_input.style()
-            if style is not None:
-                style.unpolish(self.fecha_entrega_input)
-                style.polish(self.fecha_entrega_input)
-            self.fecha_entrega_input.setToolTip("")
-    def accept(self):
-        # VALIDACIÓN UI: nombre y cliente no vacíos
-        nombre = self.nombre_input.text().strip()
-        cliente = self.cliente_input.text().strip()
-        if not nombre:
-            self.nombre_input.setProperty("error", True)
-            style = self.nombre_input.style()
-            if style is not None:
-                style.unpolish(self.nombre_input)
-                style.polish(self.nombre_input)
-            self.nombre_input.setToolTip("El nombre es obligatorio.")
-            from core.logger import log_error
-            log_error("[AltaObraDialog] Nombre vacío en alta de obra")
-        else:
-            self.nombre_input.setProperty("error", False)
-            style = self.nombre_input.style()
-            if style is not None:
-                style.unpolish(self.nombre_input)
-                style.polish(self.nombre_input)
-            self.nombre_input.setToolTip("")
-        if not cliente:
-            self.cliente_input.setProperty("error", True)
-            style = self.cliente_input.style()
-            if style is not None:
-                style.unpolish(self.cliente_input)
-                style.polish(self.cliente_input)
-            self.cliente_input.setToolTip("El cliente es obligatorio.")
-            from core.logger import log_error
-            log_error("[AltaObraDialog] Cliente vacío en alta de obra")
-        else:
-            self.cliente_input.setProperty("error", False)
-            style = self.cliente_input.style()
-            if style is not None:
-                style.unpolish(self.cliente_input)
-                style.polish(self.cliente_input)
-            self.cliente_input.setToolTip("")
-        fecha_med = self.fecha_medicion_input.date()
-        fecha_ent = self.fecha_entrega_input.date()
-        # VALIDACIÓN UI: asegurar que fecha de entrega no sea anterior
-        if not nombre or not cliente:
-            return  # No cerrar diálogo
-        if fecha_ent < fecha_med:
-            self.fecha_entrega_input.setProperty("error", True)
-            style = self.fecha_entrega_input.style()
-            if style is not None:
-                style.unpolish(self.fecha_entrega_input)
-                style.polish(self.fecha_entrega_input)
-            self.fecha_entrega_input.setToolTip("La fecha de entrega no puede ser anterior a la de medición.")
-            from core.logger import log_error
-            log_error("[AltaObraDialog] Fecha de entrega anterior a medición")
-            return  # No cerrar diálogo
-        # Si todo OK, llamar a super().accept()
-        super().accept()
+            self.mostrar_mensaje("Eliminación cancelada.", tipo="info")
+
+    def abrir_dialogo_editar_obra(self, row):
+        """
+        Abre el diálogo modal de edición de obra, precarga datos, valida y llama al controller. Feedback robusto y refresco de tabla.
+        """
+        if not hasattr(self, 'controller') or not self.controller:
+            self.mostrar_mensaje("No se pudo acceder al controlador de Obras.", tipo="error", titulo_personalizado="Editar Obra")
+            return
+        # Obtener datos de la fila seleccionada
+        datos_obra = {}
+        for col, header in enumerate(self.obras_headers):
+            item = self.tabla_obras.item(row, col)
+            datos_obra[header] = item.text() if item else ""
+        # Obtener rowversion si está en los datos (si no, pedirlo al modelo/controller)
+        rowversion = datos_obra.get('rowversion')
+        if not rowversion and hasattr(self.controller.model, 'obtener_rowversion_obra'):
+            rowversion = self.controller.model.obtener_rowversion_obra(datos_obra.get('id'))
+        dialog = EditObraDialog(self, datos_obra)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            nuevos_datos = {
+                'nombre': dialog.nombre_input.text().strip(),
+                'cliente': dialog.cliente_input.text().strip(),
+                'fecha_medicion': dialog.fecha_medicion_input.date().toString("yyyy-MM-dd"),
+                'fecha_entrega': dialog.fecha_entrega_input.date().toString("yyyy-MM-dd")
+            }
+            try:
+                self.controller.editar_obra(datos_obra.get('id'), nuevos_datos, rowversion)
+                self.mostrar_mensaje("Obra editada correctamente.", tipo="exito", titulo_personalizado="Editar Obra")
+                if hasattr(self.controller, 'cargar_datos_obras_tabla'):
+                    self.controller.cargar_datos_obras_tabla()
+            except Exception as e:
+                self.mostrar_mensaje(f"Error al editar la obra: {e}", tipo="error", titulo_personalizado="Editar Obra")

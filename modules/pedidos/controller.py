@@ -129,6 +129,18 @@ class PedidosController:
                 self.view.mostrar_feedback(f"Error al recibir pedido: {e}", tipo="error")
             raise
 
+    def abrir_dialogo_recepcion_pedido(self, pedido_id):
+        """
+        Abre el diálogo modal de recepción de pedido, pasando el resumen de ítems a la vista.
+        Cumple checklist: feedback, accesibilidad, cierre solo en éxito, logging y auditoría.
+        """
+        # Obtener resumen de ítems del pedido
+        resumen_items = self.model.db.ejecutar_query(
+            "SELECT tipo_item, id_item, cantidad_requerida FROM pedidos_por_obra WHERE id_pedido=?",
+            (pedido_id,)
+        ) or []
+        self.view.abrir_dialogo_recepcion_pedido(pedido_id, resumen_items, self)
+
     # Ejemplo de integración cruzada para desarrolladores de UI:
     # Suscribirse a event_bus.pedido_actualizado en Inventario/Obras:
     # from core.event_bus import event_bus

@@ -1019,3 +1019,24 @@ La aplicación utiliza un archivo `.env` para gestionar todas las variables sens
 - Consulta `docs/estandares_visuales.md` para detalles y excepciones documentadas.
 
 ---
+
+## Cobertura de tests
+
+![Cobertura](https://img.shields.io/badge/coverage-11%25-red)
+
+Para ver el reporte de cobertura actualizado, ejecuta:
+
+```powershell
+pytest tests/ --disable-warnings --cov=modules --cov-report=term-missing
+```
+
+Más detalles en `README_TESTS.md`.
+
+---
+
+## Documentación de cumplimiento de estándares
+
+- [x] Formulario Recepción Pedido (Pedidos): Modal robusto, feedback, accesibilidad, validación visual/backend, logging y auditoría. COMPLETO 07/06/2025.
+- [x] Botón Ver Detalle Envío (Logística): Modal robusto, feedback, accesibilidad, tooltips, cierre modal solo en éxito. COMPLETO 07/06/2025.
+- [07/06/2025] Formulario Generar Factura (Contabilidad): Implementado modal robusto, validación visual/backend, feedback accesible, tooltips, cierre solo en éxito, integración con controller. Cumple checklist UI/UX, accesibilidad y feedback.
+- [07/06/2025] Formulario Registrar Pago (Contabilidad): Implementado modal robusto, validación visual/backend, feedback accesible, tooltips, cierre solo en éxito, integración con controller. Cumple checklist UI/UX, accesibilidad y feedback.

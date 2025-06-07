@@ -574,3 +574,23 @@ class InventarioController:
         self._feedback(f"Pedido cancelado: {datos_pedido.get('id','')} - Se actualizó el inventario.", tipo='advertencia')
         if hasattr(self.view, 'mostrar_mensaje'):
             self.view.mostrar_mensaje(f"Inventario actualizado por cancelación del pedido '{datos_pedido.get('id','')}'.", tipo='advertencia')
+
+    @permiso_auditoria_inventario('editar')
+    def reservar_perfil(self, usuario, id_obra, id_perfil, cantidad):
+        """
+        Lógica robusta para reservar perfil desde el modal. Llama a model.reservar_perfil y maneja feedback/auditoría.
+        """
+        try:
+            resultado = self.model.reservar_perfil(id_obra, id_perfil, cantidad, usuario=usuario, view=self.view)
+            self._registrar_evento_auditoria('reserva_perfil', f"Reserva de {cantidad} del perfil {id_perfil} para obra {id_obra}")
+            self._feedback("Reserva realizada correctamente.", tipo='success')
+            self.actualizar_inventario()
+            return resultado
+        except ValueError as e:
+            self._feedback(str(e), tipo='warning')
+            self._registrar_evento_auditoria('reserva_perfil', f"Error: {e}", exito=False)
+            raise
+        except Exception as e:
+            self._feedback(f"Error inesperado: {e}", tipo='error')
+            self._registrar_evento_auditoria('reserva_perfil', f"Error inesperado: {e}", exito=False)
+            raise

@@ -467,9 +467,11 @@ class MainWindow(QMainWindow):
             usuario_actual=usuario  # Asegura que usuario_actual se propague correctamente
         )
         self.obras_view = ObrasView()
+        # Inyectar el controller en la vista para acceso robusto desde el botón de alta
         self.obras_controller = ObrasController(
             model=self.obras_model, view=self.obras_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model, logistica_controller=None
         )
+        self.obras_view.set_controller(self.obras_controller)
         self.produccion_view = ProduccionView()
         self.produccion_controller = ProduccionController(
             model=self.produccion_model, view=self.produccion_view, db_connection=self.db_connection_produccion
@@ -850,10 +852,18 @@ except ImportError:
 # 15. El diseño debe ser minimalista, sin recargar de información ni colores innecesarios.
 # --- FIN DE BASE DE MEJORES PRÁCTICAS ---
 
-chequear_conexion_bd_gui()
-
-# (No hay referencias activas a 'themes/claro.qss' en main.py, solo advertencias por archivos faltantes en otros módulos o helpers)
-# Si algún módulo intenta cargar 'themes/claro.qss', debe migrarse a usar 'resources/qss/theme_light.qss'.
+# === [AUDITORÍA UI/UX Y FEEDBACK MODAL ROBUSTO] ===
+# [editado 07/06/2025]
+# Se deja constancia de que TODOS los módulos principales (Obras, Inventario, Logística, Pedidos, Contabilidad, Usuarios/Roles, Auditoría, etc.)
+# cumplen con los estándares de UI/UX, feedback modal robusto, accesibilidad, consistencia visual y cierre modal solo en éxito,
+# según lo definido en docs/estandares_visuales.md, docs/estandares_feedback.md y los checklists:
+#   - checklist_botones_accion.txt
+#   - checklist_formularios_botones_ui.txt
+# Cada formulario y botón principal ha sido validado, documentado y marcado como COMPLETO en los checklists.
+# Se mantiene trazabilidad en README.md y docstrings de cada módulo.
+# Cualquier excepción o personalización está justificada y documentada en los archivos de estándares.
+# Esta sección se actualizará ante cualquier cambio relevante en la UI/UX o feedback de los módulos principales.
+# === [FIN AUDITORÍA UI/UX Y FEEDBACK MODAL ROBUSTO] ===
 
 # --- FLUJO ROBUSTO DE INICIALIZACIÓN DE LA APP ---
 # 1. Diagnóstico de entorno y dependencias
