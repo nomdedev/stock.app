@@ -11,9 +11,9 @@ class TestIntegracionRealTimeInventario(unittest.TestCase):
         self.view = InventarioView(usuario_actual="testuser")
         self._feedback = []
         # Mock feedback visual
-        self.view.mostrar_feedback_visual = lambda msg, tipo="info": self._feedback.append((msg, tipo))
+        self.view.mostrar_feedback_visual = lambda mensaje, tipo="info": self._feedback.append((mensaje, tipo))
         # Mock refresco
-        self.view.refrescar_stock_por_obra = lambda datos: self._feedback.append(("refrescado", datos))
+        self.view.refrescar_stock_por_obra = lambda datos_obra: self._feedback.append(("refrescado", datos_obra))
         # Conectar la señal manualmente (en la app real esto es automático)
         event_bus.obra_agregada.connect(self.view.actualizar_por_obra)
 

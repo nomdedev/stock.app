@@ -285,7 +285,7 @@ class InventarioModel:
         Recorre todos los perfiles, extrae tipo, acabado y longitud de la descripción,
         y actualiza la tabla inventario_perfiles con esos datos y el QR.
         """
-        perfiles = self.db.ejecutar_query("SELECT id, codigo, descripcion FROM inventario_perfiles")
+        perfiles = self.db.ejecutar_query("SELECT id, codigo, descripcion FROM inventario_perfiles") or []
         for perfil in perfiles:
             id_item = perfil[0]
             codigo = perfil[1]
@@ -305,7 +305,7 @@ class InventarioModel:
         Si encuentra registros incompletos, los corrige usando extraer_datos_descripcion y actualiza la tabla.
         Devuelve la cantidad de registros corregidos.
         """
-        perfiles = self.db.ejecutar_query("SELECT id, descripcion, tipo, acabado, longitud, codigo FROM inventario_perfiles")
+        perfiles = self.db.ejecutar_query("SELECT id, descripcion, tipo, acabado, longitud, codigo FROM inventario_perfiles") or []
         faltantes = []
         for perfil in perfiles:
             id_item, descripcion, tipo, acabado, longitud, codigo = perfil
@@ -352,74 +352,138 @@ class InventarioModel:
             # print("No hay perfiles para exportar.")
             pass
 
-    def reservar_perfil(self, id_obra, id_perfil, cantidad, usuario=None):
+    def reservar_perfil(self, id_obra, id_perfil, cantidad, usuario=None, view=None):
         """
-        Reserva cantidad de perfil para una obra, actualiza stock y movimientos, y registra auditoría.
+        Reserva cantidad de perfil para una obra. Cumple estandares_seguridad.md y estandares_feedback.md.
+        - Transacción atómica. Rollback ante error.
+        - No permite stock negativo. Feedback visual y logging estándar.
+        - Registra movimiento y auditoría (helper global).
+        - Alerta visual si stock_actual <= stock_minimo.
         """
-        if cantidad is None or cantidad <= 0:
-            raise ValueError("Cantidad inválida")
-        stock = self.db.ejecutar_query("SELECT stock_actual FROM inventario_perfiles WHERE id = ?", (id_perfil,))
-        if not stock or stock[0][0] is None:
-            raise ValueError("Perfil no encontrado")
-        if cantidad > stock[0][0]:
-            raise ValueError("Stock insuficiente")
-        with self.db.transaction(timeout=30, retries=2):
-            self.db.ejecutar_query("UPDATE inventario_perfiles SET stock_actual = stock_actual - ? WHERE id = ?", (cantidad, id_perfil))
-            # Insertar o actualizar reserva
-            res = self.db.ejecutar_query("SELECT cantidad_reservada FROM perfiles_por_obra WHERE id_obra=? AND id_perfil=?", (id_obra, id_perfil))
-            if res:
-                nueva = res[0][0] + cantidad
-                self.db.ejecutar_query("UPDATE perfiles_por_obra SET cantidad_reservada=?, estado='Reservado' WHERE id_obra=? AND id_perfil=?", (nueva, id_obra, id_perfil))
-            else:
-                self.db.ejecutar_query("INSERT INTO perfiles_por_obra (id_obra, id_perfil, cantidad_reservada, estado) VALUES (?, ?, ?, 'Reservado')", (id_obra, id_perfil, cantidad))
-            self.db.ejecutar_query("INSERT INTO movimientos_stock (id_perfil, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Egreso', ?, CURRENT_TIMESTAMP, ?)", (id_perfil, cantidad, usuario or ""))
-            if usuario:
-                self.db.ejecutar_query("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", (usuario, "Inventario", f"Reservó {cantidad} del perfil {id_perfil} para obra {id_obra}",))
-        return True
+        from core.logger import Logger
+        from modules.auditoria.helpers import _registrar_evento_auditoria
+        logger = Logger()
+        try:
+            with self.db.transaction(timeout=30, retries=2):
+                if cantidad is None or cantidad <= 0:
+                    raise ValueError("Cantidad inválida para reservar.")
+                stock = self.db.ejecutar_query("SELECT stock_actual, stock_minimo FROM inventario_perfiles WHERE id = ?", (id_perfil,))
+                if not stock or stock[0][0] is None:
+                    raise ValueError("Perfil no encontrado.")
+                stock_actual, stock_minimo = stock[0]
+                if cantidad > stock_actual:
+                    raise ValueError("Stock insuficiente para reservar.")
+                # Actualizar stock y reservas
+                self.db.ejecutar_query("UPDATE inventario_perfiles SET stock_actual = stock_actual - ? WHERE id = ?", (cantidad, id_perfil))
+                res = self.db.ejecutar_query("SELECT cantidad_reservada FROM perfiles_por_obra WHERE id_obra=? AND id_perfil=?", (id_obra, id_perfil))
+                if res:
+                    nueva = res[0][0] + cantidad
+                    self.db.ejecutar_query("UPDATE perfiles_por_obra SET cantidad_reservada=?, estado='Reservado' WHERE id_obra=? AND id_perfil=?", (nueva, id_obra, id_perfil))
+                else:
+                    self.db.ejecutar_query("INSERT INTO perfiles_por_obra (id_obra, id_perfil, cantidad_reservada, estado) VALUES (?, ?, ?, 'Reservado')", (id_obra, id_perfil, cantidad))
+                self.db.ejecutar_query("INSERT INTO movimientos_stock (id_perfil, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Egreso', ?, CURRENT_TIMESTAMP, ?)", (id_perfil, cantidad, usuario or ""))
+                _registrar_evento_auditoria(usuario, "Inventario", f"Reservó {cantidad} del perfil {id_perfil} para obra {id_obra}")
+                # Alerta visual si stock bajo
+                stock_post = self.db.ejecutar_query("SELECT stock_actual, stock_minimo FROM inventario_perfiles WHERE id = ?", (id_perfil,))
+                if stock_post and stock_post[0][0] <= stock_post[0][1]:
+                    mensaje = f"Alerta: el stock del perfil {id_perfil} está en mínimo o por debajo ({stock_post[0][0]})"
+                    if view and hasattr(view, 'mostrar_mensaje'):
+                        view.mostrar_mensaje(mensaje, tipo='error')
+                    logger.warning(mensaje)
+            logger.info(f"Reserva exitosa: {cantidad} del perfil {id_perfil} para obra {id_obra}")
+            return True
+        except Exception as e:
+            mensaje = f"Error al reservar perfil: {e}"
+            if view and hasattr(view, 'mostrar_mensaje'):
+                view.mostrar_mensaje(mensaje, tipo='error')
+            logger.error(mensaje)
+            _registrar_evento_auditoria(usuario, "Inventario", f"Error reserva perfil: {e}")
+            raise
 
-    def devolver_perfil(self, id_obra, id_perfil, cantidad, usuario=None):
+    def devolver_perfil(self, id_obra, id_perfil, cantidad, usuario=None, view=None):
         """
-        Devuelve cantidad de perfil a inventario, actualiza stock y movimientos, y registra auditoría.
+        Devuelve cantidad de perfil a inventario. Cumple estandares_seguridad.md y estandares_feedback.md.
+        - Transacción atómica. Rollback ante error.
+        - No permite stock negativo ni devolución mayor a lo reservado.
+        - Registra movimiento y auditoría (helper global).
+        - Alerta visual si stock_actual <= stock_minimo.
         """
-        if cantidad is None or cantidad <= 0:
-            raise ValueError("Cantidad inválida")
-        # Para compatibilidad con los tests unitarios, el primer query debe ser el UPDATE,
-        # aunque en producción lo correcto sería validar primero la reserva.
-        # Por robustez, validamos después y revertimos si corresponde (solo en tests esto es relevante).
-        self.db.ejecutar_query("UPDATE inventario_perfiles SET stock_actual = stock_actual + ? WHERE id = ?", (cantidad, id_perfil))
-        res = self.db.ejecutar_query("SELECT cantidad_reservada FROM perfiles_por_obra WHERE id_obra=? AND id_perfil=?", (id_obra, id_perfil))
-        if not res or res[0][0] is None or res[0][0] == 0:
-            raise ValueError("No hay reserva previa")
-        cantidad_reservada = res[0][0]
-        if cantidad > cantidad_reservada:
-            raise ValueError("No se puede devolver más de lo reservado")
-        with self.db.transaction(timeout=30, retries=2):
-            nueva = cantidad_reservada - cantidad
-            if nueva > 0:
-                self.db.ejecutar_query("UPDATE perfiles_por_obra SET cantidad_reservada=?, estado='Reservado' WHERE id_obra=? AND id_perfil=?", (nueva, id_obra, id_perfil))
-            else:
-                self.db.ejecutar_query("UPDATE perfiles_por_obra SET cantidad_reservada=0, estado='Liberado' WHERE id_obra=? AND id_perfil=?", (id_obra, id_perfil))
-            self.db.ejecutar_query("INSERT INTO movimientos_stock (id_perfil, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Ingreso', ?, CURRENT_TIMESTAMP, ?)", (id_perfil, cantidad, usuario or ""))
-            if usuario:
-                self.db.ejecutar_query("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", (usuario, "Inventario", f"Devolvió {cantidad} del perfil {id_perfil} de la obra {id_obra}",))
-        return True
+        from core.logger import Logger
+        from modules.auditoria.helpers import _registrar_evento_auditoria
+        logger = Logger()
+        try:
+            with self.db.transaction(timeout=30, retries=2):
+                if cantidad is None or cantidad <= 0:
+                    raise ValueError("Cantidad inválida para devolución.")
+                res = self.db.ejecutar_query("SELECT cantidad_reservada FROM perfiles_por_obra WHERE id_obra=? AND id_perfil=?", (id_obra, id_perfil))
+                if not res or res[0][0] is None or res[0][0] == 0:
+                    raise ValueError("No hay reserva previa para devolver.")
+                cantidad_reservada = res[0][0]
+                if cantidad > cantidad_reservada:
+                    raise ValueError("No se puede devolver más de lo reservado.")
+                # Actualizar reservas y stock
+                nueva = cantidad_reservada - cantidad
+                if nueva > 0:
+                    self.db.ejecutar_query("UPDATE perfiles_por_obra SET cantidad_reservada=?, estado='Reservado' WHERE id_obra=? AND id_perfil=?", (nueva, id_obra, id_perfil))
+                else:
+                    self.db.ejecutar_query("UPDATE perfiles_por_obra SET cantidad_reservada=0, estado='Liberado' WHERE id_obra=? AND id_perfil=?", (id_obra, id_perfil))
+                self.db.ejecutar_query("UPDATE inventario_perfiles SET stock_actual = stock_actual + ? WHERE id = ?", (cantidad, id_perfil))
+                self.db.ejecutar_query("INSERT INTO movimientos_stock (id_perfil, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Ingreso', ?, CURRENT_TIMESTAMP, ?)", (id_perfil, cantidad, usuario or ""))
+                _registrar_evento_auditoria(usuario, "Inventario", f"Devolvió {cantidad} del perfil {id_perfil} de la obra {id_obra}")
+                # Alerta visual si stock bajo
+                stock_post = self.db.ejecutar_query("SELECT stock_actual, stock_minimo FROM inventario_perfiles WHERE id = ?", (id_perfil,))
+                if stock_post and stock_post[0][0] <= stock_post[0][1]:
+                    mensaje = f"Alerta: el stock del perfil {id_perfil} está en mínimo o por debajo ({stock_post[0][0]})"
+                    if view and hasattr(view, 'mostrar_mensaje'):
+                        view.mostrar_mensaje(mensaje, tipo='error')
+                    logger.warning(mensaje)
+            logger.info(f"Devolución exitosa: {cantidad} del perfil {id_perfil} de la obra {id_obra}")
+            return True
+        except Exception as e:
+            mensaje = f"Error al devolver perfil: {e}"
+            if view and hasattr(view, 'mostrar_mensaje'):
+                view.mostrar_mensaje(mensaje, tipo='error')
+            logger.error(mensaje)
+            _registrar_evento_auditoria(usuario, "Inventario", f"Error devolución perfil: {e}")
+            raise
 
-    def ajustar_stock_perfil(self, id_perfil, nueva_cantidad, usuario=None):
+    def ajustar_stock_perfil(self, id_perfil, nueva_cantidad, usuario=None, view=None):
         """
-        Ajusta el stock de un perfil a un nuevo valor, registra movimiento y auditoría.
+        Ajusta el stock de un perfil a un nuevo valor. Cumple estandares_seguridad.md y estandares_feedback.md.
+        - Transacción atómica. Rollback ante error.
+        - No permite stock negativo. Feedback visual y logging estándar.
+        - Registra movimiento y auditoría (helper global).
+        - Alerta visual si stock_actual <= stock_minimo.
         """
-        if nueva_cantidad < 0:
-            raise ValueError("Cantidad inválida")
-        stock_ant = self.db.ejecutar_query("SELECT stock_actual FROM inventario_perfiles WHERE id = ?", (id_perfil,))
-        if not stock_ant or stock_ant[0][0] is None:
-            raise ValueError("Perfil no encontrado")
-        stock_anterior = stock_ant[0][0]
-        with self.db.transaction(timeout=30, retries=2):
-            self.db.ejecutar_query("UPDATE inventario_perfiles SET stock_actual = ? WHERE id = ?", (nueva_cantidad, id_perfil))
-            self.db.ejecutar_query("INSERT INTO movimientos_stock (id_perfil, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Ajuste', ?, CURRENT_TIMESTAMP, ?)", (id_perfil, abs(nueva_cantidad - stock_anterior), usuario or ""))
-            if usuario:
-                self.db.ejecutar_query("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", (usuario, "Inventario", f"Ajustó stock del perfil {id_perfil} de {stock_anterior} a {nueva_cantidad}",))
-        return True
+        from core.logger import Logger
+        from modules.auditoria.helpers import _registrar_evento_auditoria
+        logger = Logger()
+        try:
+            with self.db.transaction(timeout=30, retries=2):
+                if nueva_cantidad < 0:
+                    raise ValueError("Cantidad inválida para ajuste.")
+                stock_ant = self.db.ejecutar_query("SELECT stock_actual, stock_minimo FROM inventario_perfiles WHERE id = ?", (id_perfil,))
+                if not stock_ant or stock_ant[0][0] is None:
+                    raise ValueError("Perfil no encontrado.")
+                stock_anterior, stock_minimo = stock_ant[0]
+                self.db.ejecutar_query("UPDATE inventario_perfiles SET stock_actual = ? WHERE id = ?", (nueva_cantidad, id_perfil))
+                self.db.ejecutar_query("INSERT INTO movimientos_stock (id_perfil, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Ajuste', ?, CURRENT_TIMESTAMP, ?)", (id_perfil, abs(nueva_cantidad - stock_anterior), usuario or ""))
+                _registrar_evento_auditoria(usuario, "Inventario", f"Ajustó stock del perfil {id_perfil} de {stock_anterior} a {nueva_cantidad}")
+                # Alerta visual si stock bajo
+                if nueva_cantidad <= stock_minimo:
+                    mensaje = f"Alerta: el stock del perfil {id_perfil} está en mínimo o por debajo ({nueva_cantidad})"
+                    if view and hasattr(view, 'mostrar_mensaje'):
+                        view.mostrar_mensaje(mensaje, tipo='error')
+                    logger.warning(mensaje)
+            logger.info(f"Ajuste de stock: perfil {id_perfil} de {stock_anterior} a {nueva_cantidad}")
+            return True
+        except Exception as e:
+            mensaje = f"Error al ajustar stock de perfil: {e}"
+            if view and hasattr(view, 'mostrar_mensaje'):
+                view.mostrar_mensaje(mensaje, tipo='error')
+            logger.error(mensaje)
+            _registrar_evento_auditoria(usuario, "Inventario", f"Error ajuste stock perfil: {e}")
+            raise
     # NOTA: Si se detectan errores en los tests relacionados con la cantidad de columnas, tipos de retorno o mensajes,
     # revisar los mocks y la estructura de datos simulados. Los tests automáticos pueden requerir workarounds específicos
     # para compatibilidad con los datos de prueba.

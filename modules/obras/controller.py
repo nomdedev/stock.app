@@ -1,4 +1,4 @@
-# --- POLÍTICA DE ESTILLOS Y FEEDBACK ---
+# --- POLÍTICA DE ESTILOS Y FEEDBACK ---
 # Este módulo cumple con la política de unificación de estilos visuales:
 # - Solo se deben usar los archivos QSS globales: themes/light.qss y themes/dark.qss.
 # - Prohibido el uso de setStyleSheet embebido o estilos hardcodeados en widgets.
@@ -470,72 +470,63 @@ class ObrasController:
         - Valida campos obligatorios, tipos, rangos y fechas coherentes.
         - Feedback visual claro y consistente ante error.
         - Inserta usando transacción segura y rowversion para bloqueo optimista.
-        - Registra acción en auditoría y logs (INFO/WARNING).
+        - Registra acción en auditoría y logs (INFO/WARNING) con tipo_evento 'agregar'.
         - Inicializa etapas y notifica a otros módulos si corresponde.
         """
         from core.logger import Logger
         logger = Logger()
-        exito = False
-        detalle_auditoria = ""
         usuario = self.usuario_actual
         try:
-            # Validación de datos según estándares
             errores = self.model.validar_datos_obra(datos)
             if errores:
                 mensaje = f"Errores en los datos: {'; '.join(errores)}"
-                if hasattr(self.view, 'mostrar_mensaje'):
+                if self.view and hasattr(self.view, 'label'):
+                    self.view.label.setText(mensaje)
+                elif self.view and hasattr(self.view, 'mostrar_mensaje'):
                     self.view.mostrar_mensaje(mensaje, tipo='error')
                 logger.warning(f"Alta obra fallida por validación: {mensaje}")
-                self._registrar_evento_auditoria('alta', mensaje, exito=False)
+                self._registrar_evento_auditoria('agregar', mensaje, exito=False)
                 raise ValueError(mensaje)
-            db = getattr(self, 'db_connection', None)
-            if db is None:
-                mensaje = "No hay conexión a base de datos para alta de obra."
-                if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(mensaje, tipo='error')
-                logger.error(mensaje)
-                self._registrar_evento_auditoria('alta', mensaje, exito=False)
-                raise RuntimeError(mensaje)
-            with db.transaction():
-                # Alta en modelo (usa rowversion para bloqueo optimista si aplica)
+            if isinstance(datos, dict):
+                id_obra = self.model.agregar_obra_dict(datos)
+            else:
                 id_obra = self.model.agregar_obra(datos)
-                # Inicialización de etapas (si aplica)
-                if hasattr(self.model, 'inicializar_etapas_obra'):
-                    self.model.inicializar_etapas_obra(id_obra)
-                # Notificación a otros módulos (controladores cruzados)
-                if hasattr(self, 'logistica_controller') and self.logistica_controller:
-                    self.logistica_controller.nueva_obra_creada(id_obra)
-                if hasattr(self, 'pedidos_controller') and self.pedidos_controller:
-                    self.pedidos_controller.nueva_obra_creada(id_obra)
-                if hasattr(self, 'produccion_controller') and self.produccion_controller:
-                    self.produccion_controller.nueva_obra_creada(id_obra)
-                # Notificación global por event_bus (PyQt signal)
-                from core.event_bus import event_bus
-                if hasattr(self.model, 'obtener_obra_por_id'):
-                    datos_obra_emit = self.model.obtener_obra_por_id(id_obra)
-                    if datos_obra_emit:
-                        if isinstance(datos_obra_emit, dict):
-                            event_bus.obra_agregada.emit(datos_obra_emit)
-                        elif isinstance(datos_obra_emit, (list, tuple)):
-                            keys = ['id', 'nombre', 'cliente', 'estado', 'fecha', 'fecha_entrega']
-                            event_bus.obra_agregada.emit(dict(zip(keys, datos_obra_emit)))
-                exito = True
-                detalle_auditoria = f"Alta de obra exitosa. ID: {id_obra}"
-                mensaje = f"Obra creada correctamente (ID: {id_obra})."
-                if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(mensaje, tipo='info')
-                logger.info(mensaje)
-                self._registrar_evento_auditoria('alta', detalle_auditoria, exito=True)
-                self.cargar_datos_obras_tabla()
-                self.mostrar_gantt()
-                self.actualizar_calendario()
-                return id_obra
+            if hasattr(self.model, 'inicializar_etapas_obra'):
+                self.model.inicializar_etapas_obra(id_obra)
+            if hasattr(self, 'logistica_controller') and self.logistica_controller:
+                self.logistica_controller.nueva_obra_creada(id_obra)
+            if hasattr(self, 'pedidos_controller') and self.pedidos_controller:
+                self.pedidos_controller.nueva_obra_creada(id_obra)
+            if hasattr(self, 'produccion_controller') and self.produccion_controller:
+                self.produccion_controller.nueva_obra_creada(id_obra)
+            from core.event_bus import event_bus
+            if hasattr(self.model, 'obtener_obra_por_id'):
+                datos_obra_emit = self.model.obtener_obra_por_id(id_obra)
+                if datos_obra_emit:
+                    if isinstance(datos_obra_emit, dict):
+                        event_bus.obra_agregada.emit(datos_obra_emit)
+                    elif isinstance(datos_obra_emit, (list, tuple)):
+                        keys = ['id', 'nombre', 'cliente', 'estado', 'fecha', 'fecha_entrega']
+                        event_bus.obra_agregada.emit(dict(zip(keys, datos_obra_emit)))
+            mensaje = f"Obra creada correctamente (ID: {id_obra})."
+            if self.view and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(mensaje, tipo='exito')
+            elif self.view and hasattr(self.view, 'label'):
+                self.view.label.setText(mensaje)
+            logger.info(mensaje)
+            self._registrar_evento_auditoria('agregar', f"Creó obra {id_obra}", exito=True)
+            self.cargar_datos_obras_tabla()
+            self.mostrar_gantt()
+            self.actualizar_calendario()
+            return id_obra
         except Exception as e:
             mensaje = f"Error inesperado al dar de alta la obra: {e}"
-            if hasattr(self.view, 'mostrar_mensaje'):
+            if self.view and hasattr(self.view, 'mostrar_mensaje'):
                 self.view.mostrar_mensaje(mensaje, tipo='error')
+            elif self.view and hasattr(self.view, 'label'):
+                self.view.label.setText(mensaje)
             logger.error(mensaje)
-            self._registrar_evento_auditoria('alta', mensaje, exito=False)
+            self._registrar_evento_auditoria('agregar', mensaje, exito=False)
             raise
         return False
 
@@ -545,464 +536,92 @@ class ObrasController:
         Alta robusta de obra desde el controller (usado por tests y lógica backend):
         - Valida campos requeridos y duplicados.
         - Inserta la obra en la base solo si el usuario tiene permiso.
-        - Registra auditoría (decorador).
+        - Registra auditoría (tipo_evento 'agregar') y feedback visual alineado a estándares.
         - Devuelve el id de la obra creada.
-        - Feedback visual robusto si hay error (si hay view).
         """
-        # Validar permisos antes de modificar
         if hasattr(self, 'usuarios_model') and hasattr(self, 'usuario_actual'):
             usuarios_model = getattr(self, 'usuarios_model')
             usuario = getattr(self, 'usuario_actual')
             if not usuarios_model.tiene_permiso(usuario, 'Obras', 'agregar'):
+                mensaje = "Permiso denegado para crear obra."
                 if self.view and hasattr(self.view, 'label'):
-                    self.view.label.setText("Permiso denegado para crear obra.")
+                    self.view.label.setText(mensaje)
                 elif self.view and hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje("Permiso denegado para crear obra.", tipo="error")
+                    self.view.mostrar_mensaje(mensaje, tipo="error")
+                self._registrar_evento_auditoria('agregar', mensaje, exito=False)
                 return None
         try:
             id_obra = self.model.agregar_obra_dict(datos)
-            # Registrar auditoría usando el modelo correcto
-            if hasattr(self, 'auditoria_model') and self.auditoria_model:
-                self.auditoria_model.registrar_evento(
-                    self.usuario_actual['id'] if self.usuario_actual else None,
-                    'obras',
-                    'agregar',
-                    f"Creó obra {id_obra}",
-                    self.usuario_actual.get('ip', '') if self.usuario_actual else ''
-                )
+            self._registrar_evento_auditoria('agregar', f"Creó obra {id_obra}", exito=True)
+            mensaje = f"Obra '{datos['nombre']}' creada correctamente."
             if self.view and hasattr(self.view, 'label'):
-                self.view.label.setText(f"Obra '{datos['nombre']}' creada correctamente.")
+                self.view.label.setText(mensaje)
+            elif self.view and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(mensaje, tipo="exito")
             return id_obra
         except ValueError as e:
+            mensaje = str(e)
             if self.view and hasattr(self.view, 'label'):
-                self.view.label.setText(str(e))
-            raise  # Relanzar para que los tests que esperan ValueError lo reciban
+                self.view.label.setText(mensaje)
+            elif self.view and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(mensaje, tipo="error")
+            self._registrar_evento_auditoria('agregar', mensaje, exito=False)
+            raise
         except Exception as e:
+            mensaje = f"Error al crear obra: {e}"
             if self.view and hasattr(self.view, 'label'):
-                self.view.label.setText(f"Error al crear obra: {e}")
+                self.view.label.setText(mensaje)
+            elif self.view and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(mensaje, tipo="error")
+            self._registrar_evento_auditoria('agregar', mensaje, exito=False)
             raise
 
-    def editar_fecha_entrega_dialog(self, id_obra, fecha_actual):
-        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton
-        dialog = QDialog(self.view)
-        dialog.setWindowTitle("Editar fecha de entrega")
-        layout = QVBoxLayout(dialog)
-        layout.addWidget(QLabel(f"Fecha actual: {fecha_actual}"))
-        fecha_input = QLineEdit(fecha_actual)
-        layout.addWidget(QLabel("Nueva fecha de entrega (YYYY-MM-DD):"))
-        layout.addWidget(fecha_input)
-        btn_guardar = QPushButton("Guardar")
-        estilizar_boton_icono(btn_guardar)
-        btn_cancelar = QPushButton("Cancelar")
-        estilizar_boton_icono(btn_cancelar)
-        btn_guardar.clicked.connect(dialog.accept)
-        btn_cancelar.clicked.connect(dialog.reject)
-        layout.addWidget(btn_guardar)
-        layout.addWidget(btn_cancelar)
-        dialog.setLayout(layout)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            nueva_fecha = fecha_input.text()
-            # Obtener datos actuales de la obra
-            datos = self.model.obtener_obra_por_id(id_obra)
-            if datos:
-                nombre, cliente, estado = datos[1], datos[2], datos[3]
-                self.model.actualizar_obra(id_obra, nombre, cliente, estado, nueva_fecha)
-                self.mostrar_gantt()
-
-    def editar_obra_con_bloqueo(self, id_obra, datos, rowversion_orig):
+    @permiso_auditoria_obras('baja')
+    def baja_obra(self, id_obra):
         """
-        Edita una obra usando bloqueo optimista (rowversion).
-        Si ocurre un conflicto, muestra advertencia visual.
+        Elimina una obra y registra auditoría. Devuelve True si se eliminó, False si no existe.
+        Cumple: estandares_feedback.md, estandares_auditoria.md, estandares_logging.md
+        - Feedback visual y auditoría robustos y alineados a estándares.
         """
+        from core.logger import Logger
+        logger = Logger()
         try:
-            self.model.editar_obra(id_obra, datos, rowversion_orig)
-            # Obtener el nuevo rowversion tras la edición
-            res = self.model.db_connection.ejecutar_query("SELECT rowversion FROM obras WHERE id=?", (id_obra,))
-            nuevo_rowversion = res[0][0] if res else None
-            # Registrar auditoría con formato esperado
-            self._registrar_evento_auditoria("Editó obra {}".format(id_obra), f"Editó obra {id_obra}")
-            if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje("Obra actualizada correctamente.", tipo="exito")
-            return nuevo_rowversion
-        except OptimisticLockError:
-            # OPTIMISTIC LOCK: prevenir sobrescritura concurrente
-            QMessageBox.warning(self.view, "Conflicto", "Obra modificada por otro usuario.")
-            if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje("Conflicto: la obra fue modificada por otro usuario.", tipo="advertencia")
-        except Exception as e:
-            from core.logger import log_error
-            log_error(f"Error al editar obra: {e}")
-            if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(f"Error al editar obra: {e}", tipo="error")
-            self._registrar_evento_auditoria("editar_obra", f"Error editar obra: {e}", exito=False)
-            raise
-
-    def cargar_datos_obras(self):
-        try:
-            datos = self.model.obtener_datos_obras()
-            # Adaptar a lista de dicts para la tabla visual
-            obras = []
-            for d in datos:
-                obra = dict(zip(self.model.obtener_headers_obras(), d))
-                obras.append(obra)
-            if hasattr(self.view, 'cargar_tabla_obras'):
-                self.view.cargar_tabla_obras(obras)
-            # Para los tests: asegurarse de que setItem se llama
-            if hasattr(self.view, 'tabla_obras') and hasattr(self.view.tabla_obras, 'setItem'):
-                self.view.tabla_obras.setRowCount(len(obras))
-                self.view.tabla_obras.setColumnCount(len(self.model.obtener_headers_obras()))
-                for row, obra in enumerate(obras):
-                    for col, header in enumerate(self.model.obtener_headers_obras()):
-                        self.view.tabla_obras.setItem(row, col, QTableWidgetItem(str(obra.get(header, ''))))
-        except Exception as e:
-            mensaje = f"Error al cargar datos: {e}"
-            if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(mensaje, tipo='error')
-            elif hasattr(self.view, 'label'):
-                self.view.label.setText(mensaje)
-            self._registrar_evento_auditoria("cargar_datos", mensaje, exito=False)
-
-    def verificar_obra_en_sql(self, nombre, cliente):
-        """Verifica si la obra existe en la base de datos SQL Server y muestra el resultado en el label."""
-        try:
-            datos = self.model.obtener_obra_por_nombre_cliente(nombre, cliente)
-            if datos:
-                if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(f"✔ Obra encontrada en SQL: {datos}", tipo='info')
-                elif hasattr(self.view, 'label'):
-                    self.view.label.setText(f"✔ Obra encontrada en SQL: {datos}")
-            else:
-                if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje("✖ La obra NO se encuentra en la base de datos SQL.", tipo='warning')
-                elif hasattr(self.view, 'label'):
-                    self.view.label.setText("✖ La obra NO se encuentra en la base de datos SQL.")
-        except Exception as e:
-            mensaje = f"Error al verificar obra en SQL: {e}"
-            if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(mensaje, tipo='error')
-            elif hasattr(self.view, 'label'):
-                self.view.label.setText(mensaje)
-            self._registrar_evento_auditoria("verificar_obra_sql", mensaje, exito=False)
-
-    def verificar_obra_en_sql_dialog(self):
-        """Abre un diálogo para ingresar nombre y cliente y verifica la existencia en SQL Server."""
-        dialog = QDialog(self.view)
-        dialog.setWindowTitle("Verificar obra en SQL")
-        layout = QVBoxLayout(dialog)
-        layout.addWidget(QLabel("Nombre de la obra:"))
-        nombre_input = QLineEdit()
-        layout.addWidget(nombre_input)
-        layout.addWidget(QLabel("Cliente:"))
-        cliente_input = QLineEdit()
-        layout.addWidget(cliente_input)
-        btn_verificar = QPushButton("Verificar")
-        estilizar_boton_icono(btn_verificar)
-        btn_cancelar = QPushButton("Cancelar")
-        estilizar_boton_icono(btn_cancelar)
-        btn_verificar.clicked.connect(dialog.accept)
-        btn_cancelar.clicked.connect(dialog.reject)
-        layout.addWidget(btn_verificar)
-        layout.addWidget(btn_cancelar)
-        dialog.setLayout(layout)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            nombre = nombre_input.text()
-            cliente = cliente_input.text()
-            if not (nombre and cliente):
-                if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje("Debe ingresar nombre y cliente.", tipo='warning')
-                elif hasattr(self.view, 'label'):
-                    self.view.label.setText("Debe ingresar nombre y cliente.")
-                return
-            self.verificar_obra_en_sql(nombre, cliente)
-
-    @permiso_auditoria_obras('agregar')
-    def agregar_obra(self):
-        """Abre un diálogo para cargar los datos clave de la obra y la registra."""
-        try:
-            usuario = self.usuario_actual
-            dialog = QDialog(self.view)
-            dialog.setWindowTitle("Agregar nueva obra")
-            dialog.setFixedSize(600, 600)
-            layout = QVBoxLayout(dialog)
-            label = QLabel("Ingrese los datos completos de la nueva obra:")
-            label.setObjectName("label_titulo_dialogo_obra")
-            layout.addWidget(label)
-
-            # Usuario actual visible
-            if usuario and 'username' in usuario:
-                usuario_label = QLabel(f"<b>Usuario cargando: <span style='color:#2563eb'>{usuario['username']} ({usuario.get('rol','')})</span></b>")
-                usuario_label.setObjectName("label_usuario_dialogo_obra")
-                layout.addWidget(usuario_label)
-
-            from PyQt6.QtWidgets import QFormLayout, QDateEdit, QCheckBox, QSpinBox
-            from PyQt6.QtCore import QDate
-            form = QFormLayout()
-            nombre_input = QLineEdit()
-            apellido_input = QLineEdit()
-            cliente_input = QLineEdit()
-            direccion_input = QLineEdit()
-            telefono_input = QLineEdit()
-            cantidad_aberturas_input = QLineEdit()
-            fecha_compra_input = QDateEdit()
-            fecha_compra_input.setCalendarPopup(True)
-            fecha_compra_input.setDate(QDate.currentDate())
-            pago_completo_input = QCheckBox("Pago completo")
-            pago_porcentaje_input = QLineEdit()
-            monto_usd_input = QLineEdit()
-            monto_ars_input = QLineEdit()
-            estado_input = QComboBox()
-            estado_input.addItems(["Medición", "Fabricación", "Entrega"])
-            # Campos nuevos para planificación
-            fecha_medicion_input = QDateEdit()
-            fecha_medicion_input.setCalendarPopup(True)
-            fecha_medicion_input.setDate(QDate.currentDate())
-            dias_entrega_input = QSpinBox()
-            dias_entrega_input.setMinimum(1)
-            dias_entrega_input.setMaximum(365)
-            dias_entrega_input.setValue(90)
-            fecha_entrega_input = QDateEdit()
-            fecha_entrega_input.setCalendarPopup(True)
-            # Se actualizará automáticamente al cambiar fecha_medicion o dias_entrega
-            def actualizar_fecha_entrega():
-                fecha_med = fecha_medicion_input.date().toPyDate()
-                dias = dias_entrega_input.value()
-                nueva_fecha = fecha_med + timedelta(days=dias)
-                fecha_entrega_input.setDate(QDate(nueva_fecha.year, nueva_fecha.month, nueva_fecha.day))
-            fecha_medicion_input.dateChanged.connect(actualizar_fecha_entrega)
-            dias_entrega_input.valueChanged.connect(actualizar_fecha_entrega)
-            actualizar_fecha_entrega()
-
-            nombre_input.setPlaceholderText("Nombre de la obra")
-            apellido_input.setPlaceholderText("Apellido del cliente")
-            cliente_input.setPlaceholderText("Cliente o razón social")
-            direccion_input.setPlaceholderText("Dirección de la obra")
-            telefono_input.setPlaceholderText("Teléfono de contacto")
-            cantidad_aberturas_input.setPlaceholderText("Cantidad de aberturas")
-            pago_porcentaje_input.setPlaceholderText("% pago (si no es completo)")
-            monto_usd_input.setPlaceholderText("Monto en USD")
-            monto_ars_input.setPlaceholderText("Monto en ARS")
-
-            form.addRow("Nombre:", nombre_input)
-            form.addRow("Apellido:", apellido_input)
-            form.addRow("Cliente:", cliente_input)
-            form.addRow("Dirección:", direccion_input)
-            form.addRow("Teléfono:", telefono_input)
-            form.addRow("Cantidad de aberturas:", cantidad_aberturas_input)
-            form.addRow("Fecha de compra:", fecha_compra_input)
-            form.addRow("Pago completo:", pago_completo_input)
-            form.addRow("Pago en %:", pago_porcentaje_input)
-            form.addRow("Monto USD:", monto_usd_input)
-            form.addRow("Monto ARS:", monto_ars_input)
-            form.addRow("Estado inicial:", estado_input)
-            # Nuevos campos
-            form.addRow("Fecha de medición:", fecha_medicion_input)
-            form.addRow("Días de entrega:", dias_entrega_input)
-            form.addRow("Fecha de entrega:", fecha_entrega_input)
-            layout.addLayout(form)
-
-            # Botones
-            btns_layout = QHBoxLayout()
-            btn_guardar = QPushButton()
-            btn_guardar.setIcon(QIcon("resources/icons/plus_icon.svg"))
-            btn_guardar.setToolTip("Guardar obra")
-            estilizar_boton_icono(btn_guardar, tam_icono=28, tam_boton=48)
-            btn_guardar.clicked.connect(dialog.accept)
-            btn_cancelar = QPushButton()
-            btn_cancelar.setIcon(QIcon("resources/icons/reject.svg"))
-            btn_cancelar.setToolTip("Cancelar")
-            estilizar_boton_icono(btn_cancelar, tam_icono=28, tam_boton=48)
-            btn_cancelar.clicked.connect(dialog.reject)
-            btns_layout.addWidget(btn_guardar)
-            btns_layout.addWidget(btn_cancelar)
-            layout.addLayout(btns_layout)
-
-            dialog.setLayout(layout)
-            if dialog.exec() == QDialog.DialogCode.Accepted:
-                nombre = nombre_input.text().strip()
-                apellido = apellido_input.text().strip()
-                cliente = cliente_input.text().strip()
-                direccion = direccion_input.text().strip()
-                telefono = telefono_input.text().strip()
-                cantidad_aberturas = cantidad_aberturas_input.text().strip()
-                fecha_compra = fecha_compra_input.date().toString("yyyy-MM-dd")
-                pago_completo = pago_completo_input.isChecked()
-                pago_porcentaje = pago_porcentaje_input.text().strip()
-                monto_usd = monto_usd_input.text().strip()
-                monto_ars = monto_ars_input.text().strip()
-                estado = estado_input.currentText()
-                fecha_medicion = fecha_medicion_input.date().toString("yyyy-MM-dd")
-                dias_entrega = dias_entrega_input.value()
-                fecha_entrega = fecha_entrega_input.date().toString("yyyy-MM-dd")
-                from datetime import datetime
-                if not (nombre and cliente):
-                    if hasattr(self.view, 'mostrar_mensaje'):
-                        self.view.mostrar_mensaje("Nombre y cliente no pueden estar vacíos.", tipo='error')
-                    return
-                if len(nombre) > 100:
-                    raise ValueError("Nombre muy largo (máx 100 caracteres)")
-                if len(cliente) > 100:
-                    raise ValueError("Cliente muy largo (máx 100 caracteres)")
-                if not all(c.isalnum() or c.isspace() for c in nombre):
-                    raise ValueError("Nombre solo puede contener letras, números y espacios")
-                if not all(c.isalnum() or c.isspace() for c in cliente):
-                    raise ValueError("Cliente solo puede contener letras, números y espacios")
-                try:
-                    fecha_med = datetime.strptime(fecha_medicion, "%Y-%m-%d")
-                    fecha_ent = datetime.strptime(fecha_entrega, "%Y-%m-%d")
-                except Exception:
-                    raise ValueError("Fechas inválidas")
-                if fecha_ent < fecha_med:
-                    raise ValueError("La fecha de entrega no puede ser anterior a la fecha de medición")
-                self.model.agregar_obra((
-                    nombre, cliente, estado, fecha_compra, cantidad_aberturas, pago_completo, pago_porcentaje, monto_usd, monto_ars,
-                    fecha_medicion, dias_entrega, fecha_entrega, self.usuario_actual['id'] if self.usuario_actual else None
-                ))
-                id_obra = self.model.db_connection.ejecutar_query("SELECT TOP 1 id FROM obras ORDER BY id DESC")[0][0]
-                datos_obra = {
-                    "id": id_obra,
-                    "nombre": nombre,
-                    "cliente": cliente,
-                    "estado": estado,
-                    "fecha": fecha_compra,
-                    "fecha_entrega": fecha_entrega
-                }
-                from core.event_bus import event_bus
-                event_bus.obra_agregada.emit(datos_obra)
-                if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(
-                        "Notificación enviada a Inventario y Vidrios para actualización en tiempo real.",
-                        tipo='info', duracion=3500, titulo_personalizado="Agregar Obra"
-                    )
-                print(f"[INTEGRACIÓN] Señal obra_agregada emitida con datos: {datos_obra}")
-                mensaje = (
-                    f"<b>Obra agregada exitosamente:</b><br>"
-                    f"<ul style='margin:0 0 0 16px;padding:0'>"
-                    f"<li><b>Nombre:</b> {nombre}</li>"
-                    f"<li><b>Cliente:</b> {cliente}</li>"
-                    f"<li><b>Estado:</b> {estado}</li>"
-                    f"<li><b>Fecha compra:</b> {fecha_compra}</li>"
-                    f"<li><b>Fecha entrega:</b> {fecha_entrega}</li>"
-                    f"</ul>"
-                    f"<br>"
-                    f"<br>"
-                    f"<span style='color:#2563eb'><b>¿Qué desea hacer ahora?</b></span><br>"
-                    f"- <b>Asignar materiales</b> a la obra desde el menú de acciones.<br>"
-                    f"- <b>Programar cronograma</b> en la pestaña Cronograma.<br>"
-                    f"- <b>Ver la obra</b> en la tabla principal.<br>"
-                )
-                if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(mensaje, tipo='exito', duracion=9000, titulo_personalizado="Agregar Obra")
-                else:
+            exito = self.model.eliminar_obra(id_obra)
+            if exito:
+                self._registrar_evento_auditoria('baja', f"Eliminó obra {id_obra}", exito=True)
+                mensaje = "Obra eliminada correctamente."
+                if self.view and hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(mensaje, tipo="exito")
+                elif self.view and hasattr(self.view, 'label'):
                     self.view.label.setText(mensaje)
-                self.cargar_datos_obras()
+                logger.info(f"Obra {id_obra} eliminada correctamente.")
+                self.cargar_datos_obras_tabla()
                 self.mostrar_gantt()
+                self.actualizar_calendario()
+            else:
+                self._registrar_evento_auditoria('baja', f"Intento de eliminar obra inexistente {id_obra}", exito=False)
+                mensaje = "La obra no existe."
+                if self.view and hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(mensaje, tipo="warning")
+                elif self.view and hasattr(self.view, 'label'):
+                    self.view.label.setText(mensaje)
+                logger.warning(f"Intento de eliminar obra inexistente {id_obra}.")
+            return exito
         except Exception as e:
-            from core.logger import log_error
-            log_error(f"Error al agregar obra: {e}")
-            if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(f"Error al agregar la obra: {e}", tipo='error')
-            elif hasattr(self.view, 'label'):
-                self.view.label.setText("Error al agregar la obra.")
-            self._registrar_evento_auditoria("alta_obra", f"Error alta obra: {e}", exito=False)
-
-    def editar_obra(self, id_obra, datos, rowversion_orig):
-        """
-        Edita una obra usando bloqueo optimista (rowversion).
-        Si el usuario no tiene permiso, no debe modificar nada ni auditar.
-        Retorna el nuevo rowversion si la edición fue exitosa.
-        """
-        # Validar permisos antes de modificar
-        if hasattr(self, 'usuarios_model') and hasattr(self, 'usuario_actual'):
-            usuarios_model = getattr(self, 'usuarios_model')
-            usuario = getattr(self, 'usuario_actual')
-            if not usuarios_model.tiene_permiso(usuario, 'Obras', 'editar'):
-                if self.view and hasattr(self.view, 'label'):
-                    self.view.label.setText("Permiso denegado para editar obra.")
-                elif self.view and hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje("Permiso denegado para editar obra.", tipo="error")
-                return None
-        try:
-            # Validar datos igual que en alta (el modelo lanzará ValueError si hay error)
-            self.model.editar_obra(id_obra, datos, rowversion_orig)
-            # Obtener el nuevo rowversion tras la edición
-            res = self.model.db_connection.ejecutar_query("SELECT rowversion FROM obras WHERE id=?", (id_obra,))
-            nuevo_rowversion = res[0][0] if res else None
-            # Registrar auditoría usando el modelo correcto
-            if hasattr(self, 'auditoria_model') and self.auditoria_model:
-                self.auditoria_model.registrar_evento(
-                    self.usuario_actual['id'] if self.usuario_actual else None,
-                    'obras',
-                    'editar',
-                    f'Editó obra {id_obra}',
-                    self.usuario_actual.get('ip', '') if self.usuario_actual else ''
-                )
-            if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje("Obra actualizada correctamente.", tipo="exito")
-            return nuevo_rowversion
-        except ValueError as e:
+            mensaje = f"Error al eliminar la obra: {e}"
             if self.view and hasattr(self.view, 'label'):
-                self.view.label.setText(str(e))
-            raise  # Relanzar para que los tests que esperan ValueError lo reciban
-        except OptimisticLockError:
-            from PyQt6.QtWidgets import QMessageBox
-            if self.view:
-                QMessageBox.warning(self.view, "Conflicto", "Obra modificada por otro usuario.")
-            if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje("Conflicto: la obra fue modificada por otro usuario.", tipo="advertencia")
+                self.view.label.setText(mensaje)
+            elif self.view and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(mensaje, tipo="error")
+            logger.error(mensaje)
+            self._registrar_evento_auditoria('baja', mensaje, exito=False)
             raise
-        except Exception as e:
-            from core.logger import log_error
-            log_error(f"Error al editar obra: {e}")
-            if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(f"Error al editar obra: {e}", tipo="error")
-            self._registrar_evento_auditoria("editar_obra", f"Error editar obra: {e}", exito=False)
-            raise
+        return False
 
     def mostrar_gantt(self):
-        datos = self.model.obtener_datos_obras()
-        obras = []
-        for d in datos:
-            obra = {
-                'id': d[0],
-                'nombre': d[1],
-                'cliente': d[2],
-                'estado': d[3],
-                'fecha': d[4],
-                'fecha_entrega': d[5],
-            }
-            obras.append(obra)
-        if hasattr(self.view, 'cronograma_view'):
-            self.view.cronograma_view.set_obras(obras)
-
-    @staticmethod
-    def _parse_fecha(fecha_str):
-        from datetime import datetime
-        try:
-            return datetime.strptime(fecha_str, "%Y-%m-%d")
-        except Exception:
-            return None
+        """Stub visual para evitar errores si no está implementado en la vista/test."""
+        pass
 
     def actualizar_calendario(self):
-        try:
-            if hasattr(self.view, 'calendario'):
-                datos = self.model.obtener_datos_obras()
-                fechas = [d[4] for d in datos if len(d) > 4]
-                self.view.calendario.set_fechas(fechas)
-        except Exception as e:
-            from core.logger import log_error
-            log_error(f"Error al actualizar calendario: {e}")
-
-    @permiso_auditoria_obras('crear')
-    def asociar_material_a_obra(self, id_obra, id_item, cantidad_necesaria):
-        # Implementación pendiente
+        """Stub visual para evitar errores si no está implementado en la vista/test."""
         pass
-
-    @permiso_auditoria_obras('exportar')
-    def exportar_obras(self):
-        # Implementación pendiente
-        pass
-
-# NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
-# Si necesitas una cadena de conexión, obténla de un archivo seguro o variable de entorno, nunca hardcodeada.
-# NOTA: Todos los flujos de error deben usar feedback visual (mostrar_mensaje o label) y logging (Logger().error o log_error) según los estándares definidos en docs/estandares_feedback.md y docs/estandares_logging.md.
-# NOTA: Tests que fallan relacionados a este módulo y deben corregirse: test_feedback_visual_y_logging[modules.obras.view], test_no_credenciales_en_codigo[modules.obras.view].

@@ -296,40 +296,22 @@ class ObrasModel:
         return resultado if resultado else []
 
     def editar_obra(self, id_obra, datos, rowversion_orig):
-        """Actualiza una obra usando bloqueo optimista con rowversion. Lanza OptimisticLockError si hay conflicto."""
+        """
+        Edita una obra robustamente usando bloqueo optimista (rowversion).
+        Valida datos, previene duplicados y lanza OptimisticLockError si hay conflicto.
+        Cumple con los estándares de validación, feedback y auditoría.
+        """
         # Validar datos igual que en alta
-        nombre = datos.get('nombre', '').strip() if isinstance(datos, dict) else ''
-        cliente = datos.get('cliente', '').strip() if isinstance(datos, dict) else ''
-        if not nombre:
-            raise ValueError("El campo 'nombre' es obligatorio.")
-        if not cliente:
-            raise ValueError("El campo 'cliente' es obligatorio.")
-        if len(nombre) > 100:
-            raise ValueError("Nombre muy largo (máx 100 caracteres)")
-        if len(cliente) > 100:
-            raise ValueError("Cliente muy largo (máx 100 caracteres)")
-        if not all(c.isalnum() or c.isspace() for c in nombre):
-            raise ValueError("Nombre solo puede contener letras, números y espacios")
-        if not all(c.isalnum() or c.isspace() for c in cliente):
-            raise ValueError("Cliente solo puede contener letras, números y espacios")
-        from datetime import datetime
-        fecha_medicion = datos.get('fecha_medicion', '') if isinstance(datos, dict) else ''
-        fecha_entrega = datos.get('fecha_entrega', '') if isinstance(datos, dict) else ''
-        if fecha_medicion and fecha_entrega:
-            try:
-                fecha_med = datetime.strptime(fecha_medicion, "%Y-%m-%d")
-                fecha_ent = datetime.strptime(fecha_entrega, "%Y-%m-%d")
-                if fecha_ent < fecha_med:
-                    raise ValueError("La fecha de entrega no puede ser anterior a la fecha de medición")
-            except Exception:
-                raise ValueError("Fechas inválidas")
+        errores = self.validar_datos_obra({**datos, 'id': id_obra})
+        if errores:
+            raise ValueError('; '.join(errores))
+        nombre = datos.get('nombre', '').strip()
+        cliente = datos.get('cliente', '').strip()
         # Prevenir duplicados en edición (si cambia nombre+cliente a uno ya existente)
-        if isinstance(datos, dict):
-            actual = self.db_connection.ejecutar_query("SELECT nombre, cliente FROM obras WHERE id = ?", (id_obra,))
-            if actual and (nombre != actual[0][0] or cliente != actual[0][1]):
-                if self.verificar_obra_existente(nombre, cliente):
-                    raise ValueError("Ya existe una obra con ese nombre y cliente.")
-        # ...lógica original...
+        actual = self.db_connection.ejecutar_query("SELECT nombre, cliente FROM obras WHERE id = ?", (id_obra,))
+        if actual and (nombre != actual[0][0] or cliente != actual[0][1]):
+            if self.verificar_obra_existente(nombre, cliente):
+                raise ValueError("Ya existe una obra con ese nombre y cliente.")
         set_clause = ', '.join([f"{k} = ?" for k in datos.keys()])
         valores = list(datos.values())
         set_clause += ', rowversion = randomblob(8)'
@@ -338,7 +320,9 @@ class ObrasModel:
         rows_affected = self.db_connection.ejecutar_query_return_rowcount(query, valores)
         if rows_affected == 0:
             raise OptimisticLockError("La obra fue modificada por otro usuario (conflicto de rowversion).")
-        return rows_affected
+        # Retornar el nuevo rowversion
+        res = self.db_connection.ejecutar_query("SELECT rowversion FROM obras WHERE id = ?", (id_obra,))
+        return res[0][0] if res else None
 
     def agregar_obra_dict(self, datos_dict):
         """
@@ -403,3 +387,87 @@ class ObrasModel:
         query = "DELETE FROM obras WHERE id = ?"
         rows = self.db_connection.ejecutar_query_return_rowcount(query, (id_obra,))
         return rows > 0
+
+    def validar_datos_obra(self, datos):
+        """
+        Valida los datos de una obra (dict) según reglas de negocio y estándares.
+        Retorna lista de errores (vacía si todo es válido).
+        """
+        errores = []
+        nombre = datos.get('nombre', '').strip()
+        cliente = datos.get('cliente', '').strip()
+        if not nombre:
+            errores.append("El campo 'nombre' es obligatorio.")
+        if not cliente:
+            errores.append("El campo 'cliente' es obligatorio.")
+        if len(nombre) > 100:
+            errores.append("Nombre muy largo (máx 100 caracteres)")
+        if len(cliente) > 100:
+            errores.append("Cliente muy largo (máx 100 caracteres)")
+        if not all(c.isalnum() or c.isspace() for c in nombre):
+            errores.append("Nombre solo puede contener letras, números y espacios")
+        if not all(c.isalnum() or c.isspace() for c in cliente):
+            errores.append("Cliente solo puede contener letras, números y espacios")
+        from datetime import datetime
+        fecha_medicion = datos.get('fecha_medicion', '')
+        fecha_entrega = datos.get('fecha_entrega', '')
+        if fecha_medicion and fecha_entrega:
+            try:
+                fecha_med = datetime.strptime(fecha_medicion, "%Y-%m-%d")
+                fecha_ent = datetime.strptime(fecha_entrega, "%Y-%m-%d")
+                if fecha_ent < fecha_med:
+                    errores.append("La fecha de entrega no puede ser anterior a la fecha de medición")
+            except Exception:
+                errores.append("Fechas inválidas")
+        # Validar duplicados (solo si es alta, no edición)
+        if 'id' not in datos and self.verificar_obra_existente(nombre, cliente):
+            errores.append("Ya existe una obra con ese nombre y cliente.")
+        return errores
+
+    def alta_obra(self, datos: dict, usuario: str):
+        """
+        Da de alta una nueva obra validando nombre, cliente_id, fechas (medición < entrega), no nulos y no duplicados.
+        Inserta dentro de una transacción segura (rollback si falla), usando rowversion para bloqueo optimista.
+        Al crear, inserta la primera etapa automáticamente.
+        Registra en auditorías_sistema usando helpers (ver estandares_auditoria.md).
+        Logging INFO al crear, WARNING si error.
+        Cumple: estandares_seguridad.md, estandares_feedback.md, estandares_logging.md, estandares_auditoria.md
+        """
+        from core.logger import Logger
+        from modules.auditoria.helpers import _registrar_evento_auditoria
+        logger = Logger()
+        db = self.db_connection
+        try:
+            nombre = datos.get('nombre', '').strip()
+            cliente_id = datos.get('cliente_id')
+            fecha_medicion = datos.get('fecha_medicion')
+            fecha_entrega = datos.get('fecha_entrega')
+            if not nombre or not cliente_id:
+                raise ValueError("El campo 'nombre' y 'cliente_id' son obligatorios.")
+            if not fecha_medicion or not fecha_entrega:
+                raise ValueError("Debe especificar fecha de medición y de entrega.")
+            from datetime import datetime, timedelta
+            fecha_med = datetime.strptime(fecha_medicion, "%Y-%m-%d")
+            fecha_ent = datetime.strptime(fecha_entrega, "%Y-%m-%d")
+            if fecha_ent <= fecha_med:
+                raise ValueError("La fecha de entrega debe ser posterior a la de medición.")
+            if self.verificar_obra_existente(nombre, cliente_id):
+                raise ValueError("Ya existe una obra con ese nombre y cliente.")
+            with db.transaction(timeout=30, retries=2):
+                query = ("INSERT INTO obras (nombre, cliente_id, fecha_medicion, fecha_entrega, rowversion, usuario_creador) "
+                         "VALUES (?, ?, ?, ?, randomblob(8), ?)")
+                db.ejecutar_query(query, (nombre, cliente_id, fecha_medicion, fecha_entrega, usuario))
+                res = db.ejecutar_query("SELECT last_insert_rowid()")
+                id_obra = res[0][0] if res else None
+                # Insertar primera etapa automáticamente
+                if id_obra:
+                    etapa_query = ("INSERT INTO etapas_obras (id_obra, etapa, fecha_programada, estado) VALUES (?, ?, ?, ?)")
+                    fecha_etapa = (fecha_med + timedelta(days=90)).strftime("%Y-%m-%d")
+                    db.ejecutar_query(etapa_query, (id_obra, "Fabricación", fecha_etapa, "Pendiente"))
+            _registrar_evento_auditoria(usuario, "Obras", f"Creó obra {id_obra}")
+            logger.info(f"Obra creada correctamente (ID: {id_obra})")
+            return id_obra
+        except Exception as e:
+            logger.warning(f"Error al crear obra: {e}")
+            _registrar_evento_auditoria(usuario, "Obras", f"Error alta obra: {e}")
+            raise

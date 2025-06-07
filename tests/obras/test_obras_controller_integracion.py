@@ -63,7 +63,6 @@ def controller(model, db_conn):
     usuario = {'id': 1, 'username': 'admin', 'ip': '127.0.0.1'}
     auditoria_model = AuditoriaModel(model.db_connection)
     ctrl = ObrasController(model, None, db_conn, DummyUsuarios(), usuario, auditoria_model=auditoria_model)
-    ctrl.db_conn = db_conn  # Agrega referencia directa para los tests
     return ctrl
 
 def test_alta_obra_exitoso(controller, model):

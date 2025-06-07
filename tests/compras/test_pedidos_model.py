@@ -35,8 +35,8 @@ def model():
             return cur.fetchall()
         def transaction(self, timeout=30, retries=2):
             class Tx:
-                def __enter__(self_): return self
-                def __exit__(self_, exc_type, exc_val, exc_tb): pass
+                def __enter__(self): return self
+                def __exit__(self, exc_type, exc_val, exc_tb): pass
             return Tx()
     return PedidosModel(DummyConn(conn))
 
@@ -74,3 +74,7 @@ def test_recibir_pedido_repetido(model):
     db.ejecutar_query("INSERT INTO pedidos (id_pedido, id_obra, fecha_emision, estado, total_estimado) VALUES (2, 1, '2025-06-01', 'Recibido', 500)")
     with pytest.raises(ValueError):
         model.recibir_pedido(2, usuario="admin")
+
+# Si en algún test o mock necesitas una función mostrar_feedback_visual, usa este formato:
+def mostrar_feedback_visual(mensaje, tipo="info"):
+    pass  # o print(mensaje, tipo)

@@ -78,3 +78,51 @@ def test_editar_obra_conflicto_rowversion(model):
     )
     with pytest.raises(OptimisticLockError):
         model.editar_obra(id_obra, {"nombre": "Nuevo"}, rowversion_orig)
+
+def test_alta_obra_exitosa(model, mocker):
+    datos = {
+        "nombre": "Obra Test",
+        "cliente_id": "ClienteX",
+        "fecha_medicion": "2025-06-01",
+        "fecha_entrega": "2025-07-01"
+    }
+    mock_auditoria = mocker.patch("modules.auditoria.helpers._registrar_evento_auditoria")
+    id_obra = model.alta_obra(datos, usuario="tester")
+    obras = model.db_connection.ejecutar_query("SELECT * FROM obras WHERE id=?", (id_obra,))
+    assert len(obras) == 1
+    assert obras[0][1] == "Obra Test"
+    assert obras[0][2] == "ClienteX"
+    assert obras[0][3] is None or obras[0][3] == "Medición"  # estado
+    assert obras[0][10] == "2025-06-01"  # fecha_medicion
+    assert obras[0][12] == "2025-07-01"  # fecha_entrega
+    mock_auditoria.assert_called_once()
+
+def test_alta_obra_datos_invalidos(model):
+    datos = {"nombre": "", "cliente_id": ""}  # Faltan campos requeridos
+    with pytest.raises(ValueError):
+        model.alta_obra(datos, usuario="tester")
+    assert model.listar_obras() == []  # No se insertó nada
+
+def test_alta_obra_rollback_por_excepcion(model, mocker):
+    datos = {
+        "nombre": "Obra Rollback",
+        "cliente_id": "ClienteY",
+        "fecha_medicion": "2025-06-01",
+        "fecha_entrega": "2025-07-01"
+    }
+    mocker.patch("modules.auditoria.helpers._registrar_evento_auditoria", side_effect=Exception("Fallo auditoría"))
+    with pytest.raises(Exception):
+        model.alta_obra(datos, usuario="tester")
+    assert model.listar_obras() == []  # Rollback efectivo
+
+def test_alta_obra_rowversion_generado(model, mocker):
+    datos = {
+        "nombre": "Obra Rowversion",
+        "cliente_id": "ClienteZ",
+        "fecha_medicion": "2025-06-01",
+        "fecha_entrega": "2025-07-01"
+    }
+    mocker.patch("modules.auditoria.helpers._registrar_evento_auditoria")
+    id_obra = model.alta_obra(datos, usuario="tester")
+    row = model.db_connection.ejecutar_query("SELECT rowversion FROM obras WHERE id=?", (id_obra,))
+    assert row and isinstance(row[0][0], (bytes, bytearray)) and len(row[0][0]) == 8
