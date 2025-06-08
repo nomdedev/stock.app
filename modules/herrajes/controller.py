@@ -72,6 +72,9 @@ class HerrajesController:
         self.auditoria_model = AuditoriaModel(db_connection)
         self.db_connection = db_connection
         self.view.boton_agregar.clicked.connect(self.agregar_material)
+        # Conexión del botón de nuevo pedido de herrajes con autocompletado
+        if hasattr(self.view, '_conectar_nuevo_pedido'):
+            self.view._conectar_nuevo_pedido(self)
 
     def _registrar_evento_auditoria(self, accion, detalle_extra="", estado=""):
         usuario = getattr(self, 'usuario_actual', None)

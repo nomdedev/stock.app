@@ -24,6 +24,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default", headers_dinamicos=None):
         super().__init__()
         self.usuario_actual = usuario_actual
+        self._cambio_columnas_interactivo = False  # Bandera para feedback interactivo
         # Inicializar headers ANTES de cualquier uso
         self.vidrios_headers = headers_dinamicos if headers_dinamicos else ["tipo", "ancho", "alto", "cantidad", "proveedor", "fecha_entrega"]
         self.main_layout = QVBoxLayout()
@@ -173,7 +174,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
         try:
             with open(self.config_path, "w", encoding="utf-8") as f:
                 json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
-            QMessageBox.information(self, "Configuración guardada", "La configuración de columnas se ha guardado correctamente.")
+            # Eliminado: No mostrar ningún mensaje de configuración guardada
         except Exception as e:
             QMessageBox.critical(self, "Error al guardar", f"No se pudo guardar la configuración: {e}")
 
@@ -183,6 +184,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
             self.tabla_vidrios.setColumnHidden(idx, not visible)
 
     def mostrar_menu_columnas(self, pos):
+        self._cambio_columnas_interactivo = True  # Activar bandera de interacción
         menu = QMenu(self)
         for idx, header in enumerate(self.vidrios_headers):
             accion = QAction(header, self)
@@ -195,6 +197,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
             menu.exec(header.mapToGlobal(pos))
         else:
             menu.exec(pos)
+        self._cambio_columnas_interactivo = False  # Desactivar bandera al cerrar menú
 
     def mostrar_menu_columnas_header(self, idx):
         from PyQt6.QtCore import QPoint
@@ -216,6 +219,10 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.columnas_visibles[header] = checked
         self.tabla_vidrios.setColumnHidden(idx, not checked)
         self.guardar_config_columnas()
+        # Mostrar feedback solo si la acción es interactiva
+        if getattr(self, '_cambio_columnas_interactivo', False):
+            self.mostrar_feedback("Configuración de columnas actualizada.", tipo="info")
+            self._cambio_columnas_interactivo = False
 
     def auto_ajustar_columna(self, idx):
         if idx < 0 or idx >= self.tabla_vidrios.columnCount():
@@ -263,9 +270,13 @@ class VidriosView(QWidget, TableResponsiveMixin):
         qr_label.setPixmap(pixmap)
         vbox.addWidget(qr_label)
         btns = QHBoxLayout()
-        btn_guardar = QPushButton("Guardar QR como imagen")
-        btn_pdf = QPushButton("Exportar QR a PDF")
+        btn_guardar = QPushButton()
+        btn_guardar.setIcon(QIcon("resources/icons/guardar-qr.svg"))
+        btn_guardar.setToolTip("Guardar QR como imagen")
         estilizar_boton_icono(btn_guardar)
+        btn_pdf = QPushButton()
+        btn_pdf.setIcon(QIcon("resources/icons/pdf.svg"))
+        btn_pdf.setToolTip("Exportar QR a PDF")
         estilizar_boton_icono(btn_pdf)
         btns.addWidget(btn_guardar)
         btns.addWidget(btn_pdf)

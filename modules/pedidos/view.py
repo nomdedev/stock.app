@@ -160,7 +160,6 @@ class PedidosView(QWidget):
     def guardar_config_columnas(self):
         with open(self.config_path, "w", encoding="utf-8") as f:
             json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
-        QMessageBox.information(self, "Configuración guardada", "La configuración de columnas se ha guardado correctamente.")
 
     def aplicar_columnas_visibles(self):
         for idx, header in enumerate(self.pedidos_headers):

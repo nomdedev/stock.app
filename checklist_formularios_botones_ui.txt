@@ -68,3 +68,80 @@
 - Refrescar UI/grilla tras operación exitosa
 - Cerrar modal solo si éxito
 - Emitir señal/slot para integración futura si aplica
+
+# PENDIENTE / TO-DO TESTS Y COBERTURA (actualizado 2025-06-07)
+
+## OBRAS
+- [x] test_alta_obra_exito
+- [x] test_alta_obra_faltante
+- [x] test_alta_obra_fechas_incorrectas
+- [x] test_alta_obra_duplicada
+- [x] test_editar_obra_rowversion
+- [x] test_alta_obra_cliente_none
+- [x] test_editar_obra_nombre_vacio
+- [x] test_editar_obra_cliente_vacio
+
+## INVENTARIO
+- [x] test_reserva_exito
+- [x] test_reserva_stock_insuficiente
+- [x] test_reserva_cantidad_invalida
+- [x] test_devolucion_exito
+- [x] test_devolucion_cantidad_excedida
+- [x] test_ajuste_stock_valido
+- [x] test_ajuste_stock_negativo
+- [x] test_alerta_stock_bajo
+
+## PEDIDOS
+- [x] test_generar_pedido_faltante
+- [x] test_generar_pedido_sin_faltantes
+- [x] test_generar_pedido_duplicado
+- [x] test_recibir_pedido_exito
+- [x] test_recibir_pedido_repetido
+- [x] test_recibir_pedido_estado_invalido
+- [x] test_rollback_en_recepcion
+- [x] test_auditoria_en_generar_pedido
+- [x] test_auditoria_en_recepcion
+
+## CONTABILIDAD
+- [x] test_generar_recibo
+- [x] test_anular_recibo
+- [x] test_obtener_balance
+- [x] test_carga_y_reflejo_en_tabla
+
+## USUARIOS/ROLES
+- [x] test_crear_usuario
+- [x] test_actualizar_estado_usuario
+- [x] test_obtener_usuarios_activos
+- [x] test_obtener_modulos_permitidos
+- [x] test_obtener_usuarios
+- [x] test_obtener_permisos_por_usuario
+- [x] test_guardar_permisos_usuario_admin
+- [x] test_guardar_permisos_usuario_no_admin
+- [x] test_feedback_visual_sin_permisos
+
+## AUDITORÍA
+- [x] test_registrar_evento
+- [x] test_registrar_evento_faltan_argumentos
+- [x] test_obtener_logs
+- [x] test_obtener_auditorias
+- [x] test_exportar_auditorias
+- [x] test_registrar_evento_error
+- [x] test_exportar_auditorias_pdf
+- [x] test_exportar_auditorias_formato_no_soportado
+- [x] test_obtener_logs_vacio
+- [x] test_obtener_auditorias_filtros_invalidos
+- [x] test_flujo_integracion_registro_y_lectura
+- [x] test_registrar_evento_guarda_evento
+- [x] test_obtener_eventos_retorna_lista
+- [x] test_no_conexion_real
+
+## INTEGRACIÓN Y E2E
+- [x] test_flujo_alta_obra_a_pago
+- [x] test_rollback_en_flujo
+- [x] test_auditoria_en_flujo
+
+## README
+- [ ] Agregar sección de tests, cómo correrlos, interpretar cobertura, checklist de casos cubiertos y badge si hay CI.
+
+# Todos los tests deben mockear logging/auditoría y limpiar DB donde aplique.
+# Actualizar este checklist tras cada avance.

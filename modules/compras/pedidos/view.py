@@ -49,10 +49,13 @@ class PedidosView(QWidget, TableResponsiveMixin):
         self.boton_crear = QPushButton()
         self.boton_ver_detalles = QPushButton()
         self.boton_cargar_presupuesto = QPushButton()
+        # Botón EMITIR REMITO
+        self.boton_emitir_remito = QPushButton()
         botones = [
             (self.boton_crear, "add-entrega.svg", "Crear nuevo pedido"),
             (self.boton_ver_detalles, "search_icon.svg", "Ver detalles del pedido"),
-            (self.boton_cargar_presupuesto, "excel_icon.svg", "Cargar presupuesto")
+            (self.boton_cargar_presupuesto, "excel_icon.svg", "Cargar presupuesto"),
+            (self.boton_emitir_remito, "factura.svg", "Emitir remito")
         ]
         for boton, icono, tooltip in botones:
             boton.setObjectName(f"boton_{icono.split('.')[0]}")  # Para QSS global
@@ -103,7 +106,7 @@ class PedidosView(QWidget, TableResponsiveMixin):
         self.setLayout(main_layout)
 
         # Refuerzo de accesibilidad en botones principales
-        for btn in [self.boton_crear, self.boton_ver_detalles, self.boton_cargar_presupuesto]:
+        for btn in [self.boton_crear, self.boton_ver_detalles, self.boton_cargar_presupuesto, self.boton_emitir_remito]:
             # btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")  # Migrado a QSS global
             btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
             btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")

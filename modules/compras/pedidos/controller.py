@@ -59,6 +59,7 @@ class ComprasPedidosController:
         self.view.boton_crear.clicked.connect(self.crear_pedido)
         self.view.boton_ver_detalles.clicked.connect(self.ver_detalles_pedido)
         self.view.boton_cargar_presupuesto.clicked.connect(self.cargar_presupuesto)
+        self.view.boton_emitir_remito.clicked.connect(self.abrir_dialogo_emitir_remito)
 
     def _registrar_evento_auditoria(self, accion, detalle_extra="", estado=""):
         usuario = getattr(self, 'usuario_actual', None)
@@ -244,3 +245,49 @@ class ComprasPedidosController:
             log_error(f"Error al cancelar pedido: {e}")
             self.view.label.setText(f"Error al cancelar el pedido: {e}")
             self._registrar_evento_auditoria('cancelar', f"error: {e}", 'error')
+
+    @permiso_auditoria_compras('emitir_remito')
+    def abrir_dialogo_emitir_remito(self):
+        """
+        Abre un diálogo modal para emitir un remito asociado al pedido seleccionado.
+        Valida selección, muestra formulario y llama a emitir_remito si el usuario confirma.
+        """
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QMessageBox
+        from PyQt6.QtCore import Qt
+        tabla = self.view.tabla_pedidos
+        selected = tabla.selectedItems()
+        if not selected:
+            QMessageBox.warning(self.view, "Emitir Remito", "Seleccione un pedido para emitir el remito.")
+            return
+        row = selected[0].row()
+        id_pedido = tabla.item(row, 0).text() if tabla.item(row, 0) else None
+        if not id_pedido:
+            QMessageBox.warning(self.view, "Emitir Remito", "No se pudo obtener el ID del pedido seleccionado.")
+            return
+        dialog = QDialog(self.view)
+        dialog.setWindowTitle("Emitir Remito")
+        layout = QVBoxLayout(dialog)
+        layout.addWidget(QLabel(f"¿Desea emitir el remito para el pedido #{id_pedido}?"))
+        btns = QHBoxLayout()
+        btn_emitir = QPushButton("Emitir")
+        btn_cancelar = QPushButton("Cancelar")
+        btns.addWidget(btn_emitir)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        btn_emitir.clicked.connect(dialog.accept)
+        btn_cancelar.clicked.connect(dialog.reject)
+        dialog.setLayout(layout)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self.emitir_remito(id_pedido)
+
+    def emitir_remito(self, id_pedido):
+        """
+        Lógica backend para registrar el remito asociado al pedido seleccionado.
+        Crea la tabla/modelo de remitos si no existe, registra el remito y muestra feedback.
+        """
+        try:
+            self.model.crear_tabla_remitos_si_no_existe()
+            id_remito = self.model.emitir_remito(id_pedido, self.usuario_actual)
+            self.view.mostrar_feedback(f"Remito #{id_remito} emitido correctamente.", tipo="exito")
+        except Exception as e:
+            self.view.mostrar_feedback(f"Error al emitir remito: {e}", tipo="error")

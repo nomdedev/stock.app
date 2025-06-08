@@ -34,10 +34,12 @@ class InventarioView(QWidget, TableResponsiveMixin):
     def __init__(self, db_connection=None, usuario_actual="default"):
         super().__init__()
         self.setObjectName("InventarioView")
+        self._cambio_columnas_interactivo = False  # Inicializar bandera para feedback de columnas
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(32, 32, 32, 32)
         self.main_layout.setSpacing(16)
 
+        self.controller = None  # Atributo controller inicializado para evitar errores de acceso
         self.db_connection = db_connection
         self.usuario_actual = usuario_actual
 
@@ -65,74 +67,81 @@ class InventarioView(QWidget, TableResponsiveMixin):
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
 
-        # --- BOTONES PRINCIPALES COMO ICONOS (arriba a la derecha) ---
-        # Cada botón tiene su función, tooltip y SVG documentado para fácil mantenimiento.
-        # Puedes cambiar el SVG o el tooltip según la función que desees destacar.
+        # --- BOTONES PRINCIPALES COMO ICONOS (arriba a la derecha, ordenados por frecuencia de uso) ---
         top_btns_layout = QHBoxLayout()
         top_btns_layout.addStretch()
-        # Botón: Agregar nuevo ítem de inventario
-        btn_nuevo_item = QPushButton()
-        btn_nuevo_item.setIcon(QIcon("resources/icons/add-material.svg"))  # SVG: add-material.svg
-        btn_nuevo_item.setIconSize(QSize(24, 24))
-        btn_nuevo_item.setToolTip("Agregar nuevo ítem de inventario")
-        btn_nuevo_item.setAccessibleName("Botón agregar nuevo ítem de inventario")
-        btn_nuevo_item.clicked.connect(self.nuevo_item_signal.emit)
-        estilizar_boton_icono(btn_nuevo_item)
-        top_btns_layout.addWidget(btn_nuevo_item)
-        # Botón: Exportar a Excel
-        btn_excel = QPushButton()
-        btn_excel.setIcon(QIcon("resources/icons/excel_icon.svg"))  # SVG: excel_icon.svg
-        btn_excel.setIconSize(QSize(24, 24))
-        btn_excel.setToolTip("Exportar inventario a Excel")
-        btn_excel.setAccessibleName("Botón exportar inventario a Excel")
-        btn_excel.clicked.connect(self.exportar_excel_signal.emit)
-        estilizar_boton_icono(btn_excel)
-        top_btns_layout.addWidget(btn_excel)
-        # Botón: Exportar a PDF
-        btn_pdf = QPushButton()
-        btn_pdf.setIcon(QIcon("resources/icons/pdf_icon.svg"))  # SVG: pdf_icon.svg
-        btn_pdf.setIconSize(QSize(24, 24))
-        btn_pdf.setToolTip("Exportar inventario a PDF")
-        btn_pdf.setAccessibleName("Botón exportar inventario a PDF")
-        btn_pdf.clicked.connect(self.exportar_pdf_signal.emit)
-        estilizar_boton_icono(btn_pdf)
-        top_btns_layout.addWidget(btn_pdf)
-        # Botón: Buscar ítem
+        # 1. Ajustar stock (más usado)
+        btn_ajustar_stock = QPushButton()
+        btn_ajustar_stock.setIcon(QIcon("resources/icons/guardar-permisos.svg"))  # Usar ícono existente
+        btn_ajustar_stock.setIconSize(QSize(24, 24))
+        btn_ajustar_stock.setToolTip("Ajustar stock de inventario")
+        btn_ajustar_stock.setAccessibleName("Botón ajustar stock de inventario")
+        btn_ajustar_stock.clicked.connect(self.abrir_ajuste_stock_dialog)
+        estilizar_boton_icono(btn_ajustar_stock)
+        top_btns_layout.addWidget(btn_ajustar_stock)
+        # 2. Buscar ítem
         btn_buscar = QPushButton()
-        btn_buscar.setIcon(QIcon("resources/icons/search_icon.svg"))  # SVG: search_icon.svg
+        btn_buscar.setIcon(QIcon("resources/icons/search_icon.svg"))
         btn_buscar.setIconSize(QSize(24, 24))
         btn_buscar.setToolTip("Buscar ítem de inventario")
         btn_buscar.setAccessibleName("Botón buscar ítem de inventario")
         btn_buscar.clicked.connect(self.buscar_signal.emit)
         estilizar_boton_icono(btn_buscar)
         top_btns_layout.addWidget(btn_buscar)
-        # Botón: Generar código QR
-        btn_qr = QPushButton()
-        btn_qr.setIcon(QIcon("resources/icons/qr_icon.svg"))  # SVG: qr_icon.svg
-        btn_qr.setIconSize(QSize(24, 24))
-        btn_qr.setToolTip("Generar código QR de inventario")
-        btn_qr.setAccessibleName("Botón generar código QR de inventario")
-        btn_qr.clicked.connect(self.generar_qr_signal.emit)
-        estilizar_boton_icono(btn_qr)
-        top_btns_layout.addWidget(btn_qr)
-        # Botón: Ver obras pendientes de material
+        # 3. Ver obras pendientes de material
         btn_obras_pendientes = QPushButton()
-        btn_obras_pendientes.setIcon(QIcon("resources/icons/viewdetails.svg"))  # SVG: viewdetails.svg
+        btn_obras_pendientes.setIcon(QIcon("resources/icons/viewdetails.svg"))
         btn_obras_pendientes.setIconSize(QSize(24, 24))
         btn_obras_pendientes.setToolTip("Ver obras pendientes de material")
         btn_obras_pendientes.setAccessibleName("Botón ver obras pendientes de material")
         btn_obras_pendientes.clicked.connect(self.ver_obras_pendientes_material)
         estilizar_boton_icono(btn_obras_pendientes)
         top_btns_layout.addWidget(btn_obras_pendientes)
-        # Botón: Reservar lote de perfiles
+        # 4. Reservar lote de perfiles
         btn_reservar_lote = QPushButton()
-        btn_reservar_lote.setIcon(QIcon("resources/icons/reserve-stock.svg"))  # SVG: reserve-stock.svg
+        btn_reservar_lote.setIcon(QIcon("resources/icons/reserve-stock.svg"))
         btn_reservar_lote.setIconSize(QSize(24, 24))
         btn_reservar_lote.setToolTip("Reservar lote de perfiles")
         btn_reservar_lote.setAccessibleName("Botón reservar lote de perfiles")
         btn_reservar_lote.clicked.connect(self.abrir_reserva_lote_perfiles)
         estilizar_boton_icono(btn_reservar_lote)
         top_btns_layout.addWidget(btn_reservar_lote)
+        # 5. Generar código QR
+        btn_qr = QPushButton()
+        btn_qr.setIcon(QIcon("resources/icons/qr_icon.svg"))
+        btn_qr.setIconSize(QSize(24, 24))
+        btn_qr.setToolTip("Generar código QR de inventario")
+        btn_qr.setAccessibleName("Botón generar código QR de inventario")
+        btn_qr.clicked.connect(self.generar_qr_signal.emit)
+        estilizar_boton_icono(btn_qr)
+        top_btns_layout.addWidget(btn_qr)
+        # 6. Agregar nuevo ítem de inventario
+        btn_nuevo_item = QPushButton()
+        btn_nuevo_item.setIcon(QIcon("resources/icons/add-material.svg"))
+        btn_nuevo_item.setIconSize(QSize(24, 24))
+        btn_nuevo_item.setToolTip("Agregar nuevo ítem de inventario")
+        btn_nuevo_item.setAccessibleName("Botón agregar nuevo ítem de inventario")
+        btn_nuevo_item.clicked.connect(self.nuevo_item_signal.emit)
+        estilizar_boton_icono(btn_nuevo_item)
+        top_btns_layout.addWidget(btn_nuevo_item)
+        # 7. Exportar a Excel
+        btn_excel = QPushButton()
+        btn_excel.setIcon(QIcon("resources/icons/excel_icon.svg"))
+        btn_excel.setIconSize(QSize(24, 24))
+        btn_excel.setToolTip("Exportar inventario a Excel")
+        btn_excel.setAccessibleName("Botón exportar inventario a Excel")
+        btn_excel.clicked.connect(self.exportar_excel_signal.emit)
+        estilizar_boton_icono(btn_excel)
+        top_btns_layout.addWidget(btn_excel)
+        # 8. Exportar a PDF
+        btn_pdf = QPushButton()
+        btn_pdf.setIcon(QIcon("resources/icons/pdf_icon.svg"))
+        btn_pdf.setIconSize(QSize(24, 24))
+        btn_pdf.setToolTip("Exportar inventario a PDF")
+        btn_pdf.setAccessibleName("Botón exportar inventario a PDF")
+        btn_pdf.clicked.connect(self.exportar_pdf_signal.emit)
+        estilizar_boton_icono(btn_pdf)
+        top_btns_layout.addWidget(btn_pdf)
         self.main_layout.addLayout(top_btns_layout)
 
         # Validar conexión
@@ -178,9 +187,11 @@ class InventarioView(QWidget, TableResponsiveMixin):
             if hasattr(h_header, 'setContextMenuPolicy'):
                 h_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             if hasattr(h_header, 'customContextMenuRequested'):
-                h_header.customContextMenuRequested.connect(self.mostrar_menu_header)
+                # h_header.customContextMenuRequested.connect(self.mostrar_menu_header)  # Eliminado: no existe mostrar_menu_header
+                pass
             if hasattr(h_header, 'sectionClicked'):
-                h_header.sectionClicked.connect(self.mostrar_menu_header)
+                # h_header.sectionClicked.connect(self.mostrar_menu_header)  # Eliminado: no existe mostrar_menu_header
+                pass
             h_header.setMinimumSectionSize(80)
             h_header.setDefaultSectionSize(120)
         self.tabla_inventario.cellClicked.connect(self.toggle_expandir_fila)
@@ -271,8 +282,10 @@ class InventarioView(QWidget, TableResponsiveMixin):
         for idx, header in enumerate(self.inventario_headers):
             visible = self.columnas_visibles.get(header, True)
             self.tabla_inventario.setColumnHidden(idx, not visible)
+        # No mostrar feedback aquí (al iniciar la vista)
 
     def mostrar_menu_columnas(self, pos):
+        self._cambio_columnas_interactivo = True  # Activar bandera de interacción
         menu = QMenu(self)
         for idx, header in enumerate(self.inventario_headers):
             accion = QAction(header, self)
@@ -285,43 +298,16 @@ class InventarioView(QWidget, TableResponsiveMixin):
             menu.exec(viewport.mapToGlobal(pos))
         else:
             menu.exec(pos)
+        self._cambio_columnas_interactivo = False  # Desactivar bandera al cerrar menú
 
     def toggle_columna(self, idx, header, checked):
         self.columnas_visibles[header] = checked
         self.tabla_inventario.setColumnHidden(idx, not checked)
         self.guardar_config_columnas()
-
-    def mostrar_menu_header(self, pos):
-        """
-        Muestra el menú contextual del header de la tabla de inventario.
-        Corrige robustamente el error de tipo: siempre convierte a QPoint.
-        """
-        from PyQt6.QtCore import QPoint
-        menu = QMenu(self)
-        accion_autoajustar = QAction("Autoajustar todas las columnas", self)
-        accion_autoajustar.triggered.connect(self.autoajustar_todas_columnas)
-        menu.addAction(accion_autoajustar)
-        h_header = self.tabla_inventario.horizontalHeader() if hasattr(self.tabla_inventario, 'horizontalHeader') else None
-        try:
-            if h_header is not None and hasattr(h_header, 'mapToGlobal'):
-                # Convertir siempre a QPoint
-                if isinstance(pos, QPoint):
-                    global_pos = pos
-                elif isinstance(pos, int):
-                    global_pos = QPoint(pos, 0)
-                elif isinstance(pos, tuple) and len(pos) == 2:
-                    global_pos = QPoint(pos[0], pos[1])
-                else:
-                    # Fallback: intentar construir QPoint si es posible
-                    try:
-                        global_pos = QPoint(*pos)
-                    except Exception:
-                        global_pos = QPoint(0, 0)
-                menu.exec(h_header.mapToGlobal(global_pos))
-            else:
-                menu.exec(pos)
-        except Exception as e:
-            self.mostrar_feedback(f"Error al mostrar menú de header: {e}", tipo="error")
+        # Mostrar feedback solo si la acción es interactiva (no al iniciar la vista)
+        if getattr(self, '_cambio_columnas_interactivo', False):
+            self.mostrar_feedback("Configuración de columnas actualizada.", tipo="info")
+            self._cambio_columnas_interactivo = False  # Resetear bandera tras mostrar feedback
 
     def autoajustar_columna(self, idx):
         self.tabla_inventario.resizeColumnToContents(idx)
@@ -427,7 +413,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 label.setStyleSheet("font-size: 13px; color: #2563eb; background: #e3f6fd; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px;")
                 layout.addWidget(label)
             btn_cerrar = QPushButton()
-            btn_cerrar.setIcon(QIcon("resources/icons/close.svg"))  # SVG: close.svg
+            btn_cerrar.setIcon(QIcon("resources/icons/cerrar.svg"))  # SVG: cerrar.svg (existe)
             btn_cerrar.setToolTip("Cerrar ventana de reservas")
             estilizar_boton_icono(btn_cerrar)
             btn_cerrar.clicked.connect(dialog.accept)
@@ -479,7 +465,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
         btn_reservar.setToolTip("Pedir material seleccionado")
         estilizar_boton_icono(btn_reservar)
         btn_cancelar = QPushButton()
-        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))  # SVG: close.svg
+        btn_cancelar.setIcon(QIcon("resources/icons/cerrar.svg"))  # SVG: cerrar.svg
         btn_cancelar.setToolTip("Cancelar y cerrar ventana")
         estilizar_boton_icono(btn_cancelar)
         btns = QHBoxLayout()
@@ -672,7 +658,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
         btn_guardar.setToolTip("Guardar ítem de inventario")
         estilizar_boton_icono(btn_guardar)
         btn_cancelar = QPushButton()
-        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))  # SVG: close.svg
+        btn_cancelar.setIcon(QIcon("resources/icons/cerrar.svg"))  # SVG: cerrar.svg
         btn_cancelar.setToolTip("Cancelar y cerrar ventana")
         estilizar_boton_icono(btn_cancelar)
         btns.addStretch()
@@ -777,7 +763,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
         btn_aceptar.setToolTip("Aceptar y guardar ajustes")
         estilizar_boton_icono(btn_aceptar)
         btn_cancelar = QPushButton()
-        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))  # SVG: close.svg
+        btn_cancelar.setIcon(QIcon("resources/icons/cerrar.svg"))  # SVG: cerrar.svg
         btn_cancelar.setToolTip("Cancelar y cerrar ventana")
         estilizar_boton_icono(btn_cancelar)
         btns.addStretch()
@@ -1002,7 +988,9 @@ class InventarioView(QWidget, TableResponsiveMixin):
         cmb_obras.setToolTip("Seleccione la obra a la que reservar el material")
         cmb_obras.setAccessibleName("Obra para reserva")
         # Cargar obras desde el controller/modelo
-        obras = getattr(self, 'controller', None).model.obtener_obras() if hasattr(self, 'controller') and hasattr(self.controller.model, 'obtener_obras') else []
+        obras = []
+        if hasattr(self, 'controller') and self.controller is not None and hasattr(self.controller, 'model') and self.controller.model is not None and hasattr(self.controller.model, 'obtener_obras'):
+            obras = self.controller.model.obtener_obras()
         for obra in obras:
             cmb_obras.addItem(str(obra['nombre']), obra['id_obra'])
         form.addRow("Obra:", cmb_obras)
@@ -1010,7 +998,9 @@ class InventarioView(QWidget, TableResponsiveMixin):
         cmb_perfiles = QComboBox()
         cmb_perfiles.setToolTip("Seleccione el perfil/material a reservar")
         cmb_perfiles.setAccessibleName("Perfil/material para reserva")
-        perfiles = getattr(self, 'controller', None).model.obtener_perfiles() if hasattr(self, 'controller') and hasattr(self.controller.model, 'obtener_perfiles') else []
+        perfiles = []
+        if hasattr(self, 'controller') and self.controller is not None and hasattr(self.controller, 'model') and self.controller.model is not None and hasattr(self.controller.model, 'obtener_perfiles'):
+            perfiles = self.controller.model.obtener_perfiles()
         for perfil in perfiles:
             cmb_perfiles.addItem(f"{perfil['codigo']} - {perfil['nombre']}", perfil['id_perfil'])
         if id_perfil:
@@ -1052,8 +1042,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
         btn_reservar.setToolTip("Reservar perfil/material seleccionado")
         estilizar_boton_icono(btn_reservar)
         btn_cancelar = QPushButton()
-        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
-        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
+        btn_cancelar.setIcon(QIcon("resources/icons/cerrar.svg"))
+        btn_cancelar.setToolTip("Cancelar y cerrar")
         estilizar_boton_icono(btn_cancelar)
         btns.addStretch()
         btns.addWidget(btn_reservar)
@@ -1066,6 +1056,15 @@ class InventarioView(QWidget, TableResponsiveMixin):
             cantidad = spin_cantidad.value()
             if id_obra is None or id_perfil is None or cantidad < 1:
                 lbl_feedback.setText("Complete todos los campos y seleccione cantidad válida.")
+                lbl_feedback.setVisible(True)
+                return
+            # Validar que el controlador esté configurado correctamente
+            if self.controller is None:
+                lbl_feedback.setText("Error: No se ha configurado el controlador de inventario. Contacte al administrador.")
+                lbl_feedback.setVisible(True)
+                return
+            if not hasattr(self.controller, "reservar_perfil"):
+                lbl_feedback.setText("Error: El controlador no implementa 'reservar_perfil'.")
                 lbl_feedback.setVisible(True)
                 return
             try:

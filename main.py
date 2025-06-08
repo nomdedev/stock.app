@@ -384,6 +384,37 @@ from modules.herrajes.model import HerrajesModel
 # Importar componentes
 from components.sidebar_button import SidebarButton
 
+# --- ORDEN LÓGICO DE MÓDULOS SEGÚN FLUJO DE NEGOCIO ---
+svg_dir = os.path.join(os.path.dirname(__file__), 'resources', 'icons')
+sidebar_sections = [
+    ("Obras", os.path.join(svg_dir, 'obras.svg')),
+    ("Inventario", os.path.join(svg_dir, 'inventario.svg')),
+    ("Herrajes", os.path.join(svg_dir, 'herrajes.svg')),
+    ("Vidrios", os.path.join(svg_dir, 'vidrios.svg')),
+    ("Producción", os.path.join(svg_dir, 'produccion.svg')),
+    ("Logística", os.path.join(svg_dir, 'logistica.svg')),
+    ("Compras / Pedidos", os.path.join(svg_dir, 'compras.svg')),
+    ("Contabilidad", os.path.join(svg_dir, 'contabilidad.svg')),
+    ("Auditoría", os.path.join(svg_dir, 'auditoria.svg')),
+    ("Mantenimiento", os.path.join(svg_dir, 'mantenimiento.svg')),
+    ("Usuarios", os.path.join(svg_dir, 'users.svg')),
+    ("Configuración", os.path.join(svg_dir, 'configuracion.svg'))
+]
+icon_map = {
+    "Obras": "obras",
+    "Inventario": "inventario",
+    "Herrajes": "herrajes",
+    "Vidrios": "vidrios",
+    "Producción": "produccion",
+    "Logística": "logistica",
+    "Compras / Pedidos": "compras",
+    "Contabilidad": "contabilidad",
+    "Auditoría": "auditoria",
+    "Mantenimiento": "mantenimiento",
+    "Usuarios": "users",
+    "Configuración": "configuracion"
+}
+
 # Clase principal
 class MainWindow(QMainWindow):
     def __init__(self, usuario, modulos_permitidos):
@@ -529,69 +560,19 @@ class MainWindow(QMainWindow):
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
         self.module_stack = QStackedWidget()
-        self.module_stack.addWidget(self.obras_view)
-        self.module_stack.addWidget(self.inventario_view)
-        self.module_stack.addWidget(self.herrajes_view)
-        self.module_stack.addWidget(self.compras_pedidos_view)
-        self.module_stack.addWidget(self.logistica_view)
-        self.module_stack.addWidget(self.vidrios_view)
-        self.module_stack.addWidget(self.mantenimiento_view)
-        self.module_stack.addWidget(self.produccion_view)
-        self.module_stack.addWidget(self.contabilidad_view)
-        self.module_stack.addWidget(self.auditoria_view)
-        self.module_stack.addWidget(self.usuarios_view)
-        self.module_stack.addWidget(self.configuracion_view)
-        svg_dir = os.path.join(os.path.dirname(__file__), 'resources', 'icons')
-        # --- ORDEN LÓGICO DE MÓDULOS SEGÚN FLUJO DE NEGOCIO ---
-        # Justificación técnica y lógica:
-        # El orden de los módulos refleja el ciclo real de trabajo en la empresa:
-        # 1. Obras: punto de partida, alta y gestión de proyectos.
-        # 2. Inventario: asignación y control de materiales para las obras.
-        # 3. Herrajes: selección y reserva de herrajes específicos para cada proyecto.
-        # 4. Vidrios: gestión de vidrios requeridos para cada obra.
-        # 5. Producción: seguimiento de la fabricación y armado de componentes.
-        # 6. Logística: organización de entregas, traslados y colocaciones.
-        # 7. Compras/Pedidos: gestión de pedidos de materiales faltantes.
-        # 8. Contabilidad: registro de costos, facturación y control financiero.
-        # 9. Usuarios: administración de usuarios y permisos.
-        # 10. Configuración: ajustes generales y técnicos del sistema.
-        # Este orden asegura que la navegación y el flujo de trabajo sean naturales y eficientes, acompañando el ciclo de vida del producto desde la planificación hasta la entrega y cierre administrativo.
-        sidebar_sections = [
-            ("Obras", os.path.join(svg_dir, 'obras.svg')),
-            ("Inventario", os.path.join(svg_dir, 'inventario.svg')),
-            ("Herrajes", os.path.join(svg_dir, 'herrajes.png')),
-            ("Vidrios", os.path.join(svg_dir, 'vidrios.svg')),
-            ("Producción", os.path.join(svg_dir, 'produccion.svg')),
-            ("Logística", os.path.join(svg_dir, 'logistica.png')),
-            ("Compras / Pedidos", os.path.join(svg_dir, 'compras.svg')),
-            ("Contabilidad", os.path.join(svg_dir, 'contabilidad.svg')),
-            ("Auditoría", os.path.join(svg_dir, 'auditoria.svg')),
-            ("Mantenimiento", os.path.join(svg_dir, 'mantenimiento.svg')),
-            ("Usuarios", os.path.join(svg_dir, 'users.svg')),
-            ("Configuración", os.path.join(svg_dir, 'configuracion.svg'))
-        ]
-        # Mapeo explícito de nombres de módulo a nombre de icono (sin extensión)
-        icon_map = {
-            "Obras": "obras",
-            "Inventario": "inventario",
-            "Herrajes": "herrajes",
-            "Vidrios": "vidrios",
-            "Producción": "produccion",
-            "Logística": "logistica",
-            "Compras / Pedidos": "compras",
-            "Contabilidad": "contabilidad",
-            "Auditoría": "auditoria",
-            "Mantenimiento": "mantenimiento",
-            "Usuarios": "users",
-            "Configuración": "configuracion"
-        }
-        # sidebar_sections_robustos = []
-        # for nombre, _ in sidebar_sections:
-        #     icon_name = icon_map.get(nombre, nombre.lower().replace(" / ", "_").replace(" ", "_"))
-        #     icono_qicon = get_icon(icon_name)
-        #     sidebar_sections_robustos.append((nombre, icono_qicon))
-        # self.sidebar = Sidebar(sections=sidebar_sections_robustos, mostrar_nombres=True)
-        # main_layout.addWidget(self.sidebar, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        # Agregar vistas al stack en el MISMO orden que sidebar_sections
+        self.module_stack.addWidget(self.obras_view)            # 0 Obras
+        self.module_stack.addWidget(self.inventario_view)       # 1 Inventario
+        self.module_stack.addWidget(self.herrajes_view)         # 2 Herrajes
+        self.module_stack.addWidget(self.vidrios_view)          # 3 Vidrios
+        self.module_stack.addWidget(self.produccion_view)       # 4 Producción
+        self.module_stack.addWidget(self.logistica_view)        # 5 Logística
+        self.module_stack.addWidget(self.compras_pedidos_view)  # 6 Compras / Pedidos
+        self.module_stack.addWidget(self.contabilidad_view)     # 7 Contabilidad
+        self.module_stack.addWidget(self.auditoria_view)        # 8 Auditoría
+        self.module_stack.addWidget(self.mantenimiento_view)    # 9 Mantenimiento
+        self.module_stack.addWidget(self.usuarios_view)         # 10 Usuarios
+        self.module_stack.addWidget(self.configuracion_view)    # 11 Configuración
         main_layout.addWidget(self.module_stack)
         self._ajustar_sidebar()
 

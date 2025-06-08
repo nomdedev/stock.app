@@ -14,7 +14,7 @@ from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 class UsuariosView(QWidget, TableResponsiveMixin):
     """
     Vista robusta para gestión de usuarios y permisos.
-    Cumple los estándares de layout, accesibilidad, feedback y permisos definidos en docs/estandares_visuales.md.
+    Cumple los estándares de layout, accesibilidad, feedback y permisos definidos en docs/estandards_visuales.md.
     - Header visual con título y barra de botones alineados horizontalmente.
     - Refuerzo de accesibilidad en botones y tabla.
     - Feedback visual centralizado.
@@ -223,7 +223,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.boton_guardar_permisos.setIconSize(QSize(20, 20))
         estilizar_boton_icono(self.boton_guardar_permisos)
         self.boton_refrescar_resumen = QPushButton("Refrescar resumen de permisos")
-        self.boton_refrescar_resumen.setIcon(QIcon("resources/icons/refresh.svg"))
+        self.boton_refrescar_resumen.setIcon(QIcon("resources/icons/actualizar.svg"))
         self.boton_refrescar_resumen.setIconSize(QSize(20, 20))
         estilizar_boton_icono(self.boton_refrescar_resumen)
         tab_permisos_layout.addWidget(self.boton_guardar_permisos)
@@ -233,6 +233,8 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         layout = QVBoxLayout(self.tab_resumen_permisos)
         self.boton_refrescar_resumen = QPushButton("Refrescar resumen de permisos")
         self.boton_refrescar_resumen.setObjectName("boton_refrescar_resumen_permisos")
+        self.boton_refrescar_resumen.setIcon(QIcon("resources/icons/refresh-cw.svg"))
+        self.boton_refrescar_resumen.setIconSize(QSize(20, 20))
         estilizar_boton_icono(self.boton_refrescar_resumen)
         layout.addWidget(self.boton_refrescar_resumen)
         self.tabla_resumen_permisos = QTableWidget()
@@ -270,56 +272,81 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 return
             with open(self.config_path, "w", encoding="utf-8") as f:
                 json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
-            QMessageBox.information(self, "Configuración guardada", "La configuración de columnas se ha guardado correctamente.")
+            # Eliminado feedback modal innecesario
         except Exception as e:
             QMessageBox.warning(self, "Error", f"No se pudo guardar la configuración: {e}")
 
     def aplicar_columnas_visibles(self):
+        # Sincronizar columnas_visibles con usuarios_headers
         if not hasattr(self, 'tabla_usuarios') or self.tabla_usuarios is None:
             self.mostrar_feedback("Tabla de usuarios no inicializada para aplicar columnas visibles", "error")
             return
+        if not hasattr(self, 'usuarios_headers') or not self.usuarios_headers:
+            self.mostrar_feedback("Headers de usuarios no definidos para aplicar columnas visibles", "error")
+            return
+        # Reparar claves faltantes o sobrantes en columnas_visibles
+        headers_set = set(self.usuarios_headers)
+        visibles_set = set(self.columnas_visibles.keys())
+        # Agregar headers nuevos
+        for h in headers_set - visibles_set:
+            self.columnas_visibles[h] = True
+        # Eliminar claves huérfanas
+        for h in visibles_set - headers_set:
+            del self.columnas_visibles[h]
+        self.guardar_config_columnas()
+        # Aplicar visibilidad
         for idx, header in enumerate(self.usuarios_headers):
             visible = self.columnas_visibles.get(header, True)
             if hasattr(self.tabla_usuarios, 'setColumnHidden'):
                 self.tabla_usuarios.setColumnHidden(idx, not visible)
 
     def mostrar_menu_columnas(self, pos):
+        # Robustez: sincronizar antes de mostrar menú
         if not hasattr(self, 'tabla_usuarios') or self.tabla_usuarios is None:
             self.mostrar_feedback("Tabla de usuarios no disponible para menú de columnas.", "error")
             return
         if not hasattr(self, 'usuarios_headers') or not self.usuarios_headers:
             self.mostrar_feedback("Headers de usuarios no definidos.", "error")
             return
+        # Reparar desincronización si la hay
+        headers_set = set(self.usuarios_headers)
+        visibles_set = set(self.columnas_visibles.keys())
+        if headers_set != visibles_set:
+            self.mostrar_feedback("Detectada desincronización de columnas. Reparando...", "advertencia")
+            for h in headers_set - visibles_set:
+                self.columnas_visibles[h] = True
+            for h in visibles_set - headers_set:
+                del self.columnas_visibles[h]
+            self.guardar_config_columnas()
+        # Si después de reparar no hay headers válidos, no mostrar menú
+        if not self.usuarios_headers:
+            self.mostrar_feedback("No hay columnas configurables para mostrar en el menú.", "error")
+            return
         menu = QMenu(self)
+        any_action = False
         for idx, header in enumerate(self.usuarios_headers):
+            if header is None or header == "":
+                continue
             accion = QAction(header, self)
             accion.setCheckable(True)
             accion.setChecked(self.columnas_visibles.get(header, True))
             accion.toggled.connect(partial(self.toggle_columna, idx, header))
             menu.addAction(accion)
+            any_action = True
+        if not any_action:
+            self.mostrar_feedback("No hay columnas configurables para mostrar en el menú.", "error")
+            return
         viewport = self.tabla_usuarios.viewport() if hasattr(self.tabla_usuarios, 'viewport') else None
         if viewport is not None and hasattr(viewport, 'mapToGlobal'):
             menu.exec(viewport.mapToGlobal(pos))
         else:
             menu.exec(pos)
 
-    def mostrar_menu_columnas_header(self, idx):
-        from PyQt6.QtCore import QPoint
-        header = self.tabla_usuarios.horizontalHeader() if hasattr(self, 'tabla_usuarios') and self.tabla_usuarios and hasattr(self.tabla_usuarios, 'horizontalHeader') else None
-        try:
-            if header is not None and all(hasattr(header, m) for m in ['sectionPosition', 'mapToGlobal', 'sectionViewportPosition']):
-                if idx < 0 or idx >= self.tabla_usuarios.columnCount():
-                    self.mostrar_feedback("Índice de columna fuera de rango", "error")
-                    return
-                pos = header.sectionPosition(idx)
-                global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-                self.mostrar_menu_columnas(global_pos)
-            else:
-                self.mostrar_feedback("No se puede mostrar el menú de columnas: header no disponible o incompleto", "error")
-        except Exception as e:
-            self.mostrar_feedback(f"Error al mostrar menú de columnas: {e}", "error")
-
     def toggle_columna(self, idx, header, checked):
+        # Robustez: asegurar que header existe en usuarios_headers
+        if not hasattr(self, 'usuarios_headers') or header not in self.usuarios_headers:
+            self.mostrar_feedback(f"Header '{header}' no válido para toggle_columna", "error")
+            return
         self.columnas_visibles[header] = checked
         if hasattr(self, 'tabla_usuarios') and self.tabla_usuarios and hasattr(self.tabla_usuarios, 'setColumnHidden'):
             self.tabla_usuarios.setColumnHidden(idx, not checked)
@@ -848,26 +875,6 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             self.mostrar_feedback(f"Error actualizando tabla de usuarios: {e}", "error")
 
     # Refuerzo defensivo en métodos de menú contextual y columnas
-    def mostrar_menu_columnas(self, pos):
-        if not hasattr(self, 'tabla_usuarios') or self.tabla_usuarios is None:
-            self.mostrar_feedback("Tabla de usuarios no disponible para menú de columnas.", "error")
-            return
-        if not hasattr(self, 'usuarios_headers') or not self.usuarios_headers:
-            self.mostrar_feedback("Headers de usuarios no definidos.", "error")
-            return
-        menu = QMenu(self)
-        for idx, header in enumerate(self.usuarios_headers):
-            accion = QAction(header, self)
-            accion.setCheckable(True)
-            accion.setChecked(self.columnas_visibles.get(header, True))
-            accion.toggled.connect(partial(self.toggle_columna, idx, header))
-            menu.addAction(accion)
-        viewport = self.tabla_usuarios.viewport() if hasattr(self.tabla_usuarios, 'viewport') else None
-        if viewport is not None and hasattr(viewport, 'mapToGlobal'):
-            menu.exec(viewport.mapToGlobal(pos))
-        else:
-            menu.exec(pos)
-
     def mostrar_menu_columnas_header(self, idx):
         from PyQt6.QtCore import QPoint
         header = self.tabla_usuarios.horizontalHeader() if hasattr(self, 'tabla_usuarios') and self.tabla_usuarios and hasattr(self.tabla_usuarios, 'horizontalHeader') else None
@@ -883,18 +890,3 @@ class UsuariosView(QWidget, TableResponsiveMixin):
                 self.mostrar_feedback("No se puede mostrar el menú de columnas: header no disponible o incompleto", "error")
         except Exception as e:
             self.mostrar_feedback(f"Error al mostrar menú de columnas: {e}", "error")
-
-    def aplicar_columnas_visibles(self):
-        if not hasattr(self, 'tabla_usuarios') or self.tabla_usuarios is None:
-            self.mostrar_feedback("Tabla de usuarios no disponible para aplicar columnas.", "error")
-            return
-        if not hasattr(self, 'usuarios_headers') or not self.usuarios_headers:
-            self.mostrar_feedback("Headers de usuarios no definidos.", "error")
-            return
-        for idx, header in enumerate(self.usuarios_headers):
-            visible = self.columnas_visibles.get(header, True)
-            if hasattr(self.tabla_usuarios, 'setColumnHidden'):
-                self.tabla_usuarios.setColumnHidden(idx, not visible)
-
-    # NOTA: Todos los métodos públicos y de señal deben validar existencia y tipo de widgets antes de operar.
-    #       Se recomienda usar mostrar_feedback para informar al usuario en caso de error o acceso inválido.

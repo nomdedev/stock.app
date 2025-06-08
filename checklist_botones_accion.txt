@@ -19,9 +19,67 @@
 | Obras         | Ver Detalle obra             | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Auditoría     | Filtrar Auditoría             | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Modal robusto, feedback accesible, tooltips, cierre solo en éxito, integración controller, logging/auditoría, refresco de tabla, validación visual/backend, cobertura de tests (08/06/2025) |
 | Auditoría     | Exportar a Excel              | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Modal robusto, confirmación accesible, feedback visual, tooltips, cierre solo en éxito, logging/auditoría, refresco de tabla, validación visual/backend, integración controller, cobertura de tests (08/06/2025) |
+| Usuarios       | Todos los botones y formularios principales (crear, editar, eliminar, editar permisos, feedback, columnas) | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Robustez contra None/atributo, validación de tipos, feedback visual, edge cases documentados. Cumple estándares docs/estandares_feedback.md y docs/estandares_visuales.md. |
 # ...agregar más según módulos y botones principales...
 
 Notas:
 - Marcar cada columna con ✔️ al cumplir el estándar (confirmación, feedback modal, estilo visual, accesibilidad).
 - Actualizar este checklist tras cada mejora o refactor.
 - Documentar cualquier excepción visual o de feedback en la columna Notas y en docs/estandares_visuales.md.
+
+# PENDIENTE / TO-DO (actualizado 2025-06-07)
+
+# OBRAS
+- [ ] test_alta_obra_exito: Alta con todos los campos válidos, verifica DB y auditoría
+- [ ] test_alta_obra_faltante: Faltan campos, espera ValueError y feedback visual
+- [ ] test_alta_obra_fechas_incorrectas: Fechas inválidas, espera error y rollback
+- [ ] test_alta_obra_duplicada: Inserta igual, espera error de unicidad y feedback
+- [ ] test_editar_obra_rowversion: Edita con rowversion válido y luego viejo (conflicto)
+
+# INVENTARIO
+- [ ] test_reserva_exito: Reserva exitosa, stock y auditoría
+- [ ] test_reserva_stock_insuficiente: Reserva más de lo que hay, espera error y rollback
+- [ ] test_reserva_cantidad_invalida: Reserva con cantidad negativa/cero, espera error
+- [ ] test_devolucion_exito: Devuelve material, stock y auditoría OK
+- [ ] test_devolucion_cantidad_excedida: Devuelve más de lo reservado, espera error
+- [ ] test_ajuste_stock_valido: Ajuste positivo, stock y auditoría OK
+- [ ] test_ajuste_stock_negativo: Ajuste negativo, espera error y rollback
+- [ ] test_alerta_stock_bajo: Reserva hasta dejar stock < mínimo, feedback de alerta
+
+# PEDIDOS
+- [ ] test_generar_pedido_faltante: Genera pedido con faltantes, auditoría
+- [ ] test_generar_pedido_sin_faltantes: Sin faltantes, no crea nada
+- [ ] test_generar_pedido_duplicado: Duplicado, espera error de estado
+- [ ] test_recibir_pedido_exito: Recibe pedido, stock y auditoría OK
+- [ ] test_recibir_pedido_repetido: Recibe dos veces, espera error
+- [ ] test_recibir_pedido_estado_invalido: Estado no permitido, espera error
+
+# CONTABILIDAD
+- [ ] test_generar_factura_exito: Factura pedido recibido, auditoría
+- [ ] test_generar_factura_doble: Factura dos veces, espera error
+- [ ] test_registrar_pago_total: Pago total, saldo cero, auditoría OK
+- [ ] test_registrar_pago_parcial: Pago parcial, saldo correcto
+- [ ] test_registrar_pago_mayor: Pago mayor, espera error y rollback
+- [ ] test_registrar_pago_doble: Paga dos veces, espera error
+
+# USUARIOS/ROLES
+- [ ] test_crear_usuario_exito: Usuario nuevo, password fuerte, rol válido, auditoría
+- [ ] test_crear_usuario_duplicado: Duplicado, espera error
+- [ ] test_editar_usuario_permisos: Cambia permisos y rol, auditoría
+- [ ] test_no_permitir_editar_admin: Intenta editar/eliminar admin, espera error
+- [ ] test_login_valido_invalido: Login correcto y fallido, feedback y auditoría
+
+# AUDITORÍA
+- [ ] test_registro_automatico: Acciones en módulos, quedan registros
+- [ ] test_filtrar_por_usuario_modulo_fecha: Filtra y verifica resultados
+- [ ] test_exportar_excel: Exporta, verifica archivo y feedback
+- [ ] test_feedback_errores: Simula error en export/filtro, feedback visual/log
+
+# INTEGRACIÓN Y E2E
+- [ ] test_flujo_completo: Crea obra → reserva → pedido → recibe → factura → paga → exporta auditoría. Chequea feedback, rollback y UI
+
+# Instrucciones README:
+- [ ] Agregar sección de tests, cómo correrlos, interpretar cobertura, checklist de casos cubiertos y badge si hay CI.
+
+# Todos los tests deben mockear logging/auditoría y limpiar DB donde aplique.
+# Actualizar este checklist tras cada avance.

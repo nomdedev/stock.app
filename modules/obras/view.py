@@ -61,6 +61,47 @@ class AltaObraDialog(QDialog):
         self.boton_guardar.clicked.connect(self.guardar_obra)
         self.boton_cancelar.clicked.connect(self.reject)
 
+        # Mejorar estética del formulario de alta de obra
+        self.setStyleSheet("""
+            QDialog {
+                background: #f9fafb;
+                border-radius: 14px;
+            }
+            QLabel {
+                font-size: 15px;
+                color: #22223b;
+                margin-bottom: 2px;
+            }
+            QLineEdit, QDateEdit {
+                padding: 7px 10px;
+                border: 1px solid #bfc0c0;
+                border-radius: 7px;
+                font-size: 15px;
+                margin-bottom: 10px;
+            }
+            QPushButton {
+                min-width: 90px;
+                min-height: 36px;
+                border-radius: 7px;
+                font-size: 15px;
+                margin-top: 8px;
+            }
+            QPushButton#boton_guardar {
+                background: #2563eb;
+                color: white;
+            }
+            QPushButton#boton_cancelar {
+                background: #e0e1dd;
+                color: #22223b;
+            }
+        """)
+        self.boton_guardar.setObjectName("boton_guardar")
+        self.boton_cancelar.setObjectName("boton_cancelar")
+        # Centrar y espaciar mejor los botones
+        botones_layout.setSpacing(18)
+        layout.setSpacing(14)
+        layout.setContentsMargins(28, 22, 28, 18)
+
     def guardar_obra(self):
         """
         Valida y guarda la nueva obra, emitiendo la señal correspondiente.
@@ -131,6 +172,46 @@ class EditObraDialog(QDialog):
         if self.datos_obra:
             self.cargar_datos()
 
+        # Mejorar estética del formulario de edición de obra
+        self.setStyleSheet("""
+            QDialog {
+                background: #f9fafb;
+                border-radius: 14px;
+            }
+            QLabel {
+                font-size: 15px;
+                color: #22223b;
+                margin-bottom: 2px;
+            }
+            QLineEdit, QDateEdit {
+                padding: 7px 10px;
+                border: 1px solid #bfc0c0;
+                border-radius: 7px;
+                font-size: 15px;
+                margin-bottom: 10px;
+            }
+            QPushButton {
+                min-width: 90px;
+                min-height: 36px;
+                border-radius: 7px;
+                font-size: 15px;
+                margin-top: 8px;
+            }
+            QPushButton#boton_guardar {
+                background: #2563eb;
+                color: white;
+            }
+            QPushButton#boton_cancelar {
+                background: #e0e1dd;
+                color: #22223b;
+            }
+        """)
+        self.boton_guardar.setObjectName("boton_guardar")
+        self.boton_cancelar.setObjectName("boton_cancelar")
+        botones_layout.setSpacing(18)
+        layout.setSpacing(14)
+        layout.setContentsMargins(28, 22, 28, 18)
+
     def cargar_datos(self):
         """Carga los datos de la obra en los campos del formulario."""
         self.nombre_input.setText(self.datos_obra.get('nombre', ''))
@@ -195,16 +276,14 @@ class ObrasView(QWidget, TableResponsiveMixin):
         botones_layout.addStretch()
         self.main_layout.addLayout(botones_layout)
 
-        # Botón para verificar obra en SQL
-        self.boton_verificar_obra = QPushButton("Verificar obra en SQL")
-        self.boton_verificar_obra.setIcon(QIcon("resources/icons/search_icon.svg"))
-        self.boton_verificar_obra.setIconSize(QSize(20, 20))
-        self.boton_verificar_obra.setToolTip("Verificar existencia de obra en la base de datos SQL")
-        self.boton_verificar_obra.setAccessibleName("Botón verificar obra en SQL")
-        self.boton_verificar_obra.setAccessibleDescription("Botón para verificar si la obra existe en la base de datos SQL")
-        estilizar_boton_icono(self.boton_verificar_obra)
-        self.boton_verificar_obra.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.main_layout.addWidget(self.boton_verificar_obra)
+        # Buscador de obras por nombre o cliente
+        self.buscador_obra = QLineEdit()
+        self.buscador_obra.setPlaceholderText("Buscar obra por nombre o cliente...")
+        self.buscador_obra.setToolTip("Ingrese parte del nombre o cliente de la obra para buscar")
+        self.buscador_obra.setAccessibleName("Buscador de obras")
+        self.buscador_obra.setFixedWidth(320)
+        self.main_layout.insertWidget(1, self.buscador_obra)
+        self.buscador_obra.textChanged.connect(self.filtrar_tabla_obras)
 
         # Obtener headers dinámicamente (fallback si no hay conexión)
         self.obras_headers = self.obtener_headers_desde_db("obras")
@@ -289,7 +368,6 @@ class ObrasView(QWidget, TableResponsiveMixin):
 
         # Conectar botones a métodos
         self.boton_agregar.clicked.connect(self.on_boton_agregar_clicked)
-        self.boton_verificar_obra.clicked.connect(self.on_boton_verificar_obra_clicked)
 
     def set_controller(self, controller):
         """Permite inyectar el controller desde MainWindow para acceso robusto y desacoplado."""
@@ -319,13 +397,6 @@ class ObrasView(QWidget, TableResponsiveMixin):
                     self.mostrar_mensaje("No se pudo acceder al controlador de Obras.", tipo="error", titulo_personalizado="Alta de Obra")
             except Exception as e:
                 self.mostrar_mensaje(f"Error al agregar la obra: {e}", tipo="error", titulo_personalizado="Alta de Obra")
-
-    def on_boton_verificar_obra_clicked(self):
-        """
-        Slot para el botón 'Verificar Obra'. Muestra feedback visual crítico y en label.
-        Cumple con los tests automáticos y los estándares visuales.
-        """
-        self.mostrar_mensaje("Funcionalidad de verificación aún no implementada.", tipo="info", titulo_personalizado="Verificar Obra")
 
     def obtener_headers_desde_db(self, tabla):
         """Obtiene los headers de una tabla de la base de datos de forma segura y estándar."""
@@ -618,3 +689,17 @@ class ObrasView(QWidget, TableResponsiveMixin):
                     self.controller.cargar_datos_obras_tabla()
             except Exception as e:
                 self.mostrar_mensaje(f"Error al editar la obra: {e}", tipo="error", titulo_personalizado="Editar Obra")
+
+    def filtrar_tabla_obras(self):
+        """
+        Filtra la tabla de obras mostrando solo las filas que coincidan con el texto del buscador
+        en el nombre o cliente (insensible a mayúsculas/minúsculas).
+        """
+        texto = self.buscador_obra.text().strip().lower()
+        for row in range(self.tabla_obras.rowCount()):
+            item_nombre = self.tabla_obras.item(row, 1)
+            item_cliente = self.tabla_obras.item(row, 2)
+            nombre = item_nombre.text().lower() if item_nombre and item_nombre.text() else ""
+            cliente = item_cliente.text().lower() if item_cliente and item_cliente.text() else ""
+            visible = texto in nombre or texto in cliente
+            self.tabla_obras.setRowHidden(row, not visible)

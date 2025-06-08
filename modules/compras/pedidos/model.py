@@ -58,3 +58,34 @@ class PedidosModel:
     def actualizar_estado_pedido(self, id_pedido, nuevo_estado):
         query = "UPDATE pedidos_compra SET estado = ? WHERE id = ?"
         self.db.ejecutar_query(query, (nuevo_estado, id_pedido))
+
+    def crear_tabla_remitos_si_no_existe(self):
+        """
+        Crea la tabla 'remitos' si no existe en la base de datos.
+        """
+        query = (
+            "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='remitos' AND xtype='U') "
+            "CREATE TABLE remitos ("
+            "id_remito INT IDENTITY(1,1) PRIMARY KEY, "
+            "id_pedido INT NOT NULL, "
+            "fecha DATETIME DEFAULT GETDATE(), "
+            "usuario NVARCHAR(100), "
+            "observaciones NVARCHAR(MAX), "
+            "FOREIGN KEY (id_pedido) REFERENCES pedidos(id) ON DELETE CASCADE)"
+        )
+        try:
+            self.db.ejecutar_query(query)
+        except Exception as e:
+            print(f"Error creando tabla remitos: {e}")
+
+    def emitir_remito(self, id_pedido, usuario):
+        """
+        Registra un nuevo remito asociado a un pedido y retorna el id_remito.
+        """
+        query = (
+            "INSERT INTO remitos (id_pedido, usuario) VALUES (?, ?)"
+        )
+        self.db.ejecutar_query(query, (id_pedido, usuario['usuario'] if usuario and 'usuario' in usuario else None))
+        # Obtener el id_remito recién insertado
+        res = self.db.ejecutar_query("SELECT TOP 1 id_remito FROM remitos ORDER BY id_remito DESC")
+        return res[0][0] if res else None

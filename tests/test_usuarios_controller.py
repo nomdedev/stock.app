@@ -52,9 +52,11 @@ class DummyView:
 def controller():
     model = DummyModel()
     view = DummyView()
-    auditoria_model = MagicMock()
+    auditoria = MagicMock()
     usuario_actual = {"id": 1, "username": "testuser", "ip": "127.0.0.1"}
-    return usuarios_controller.UsuariosController(model, view, None, usuario_actual, auditoria_model=auditoria_model)
+    controller = usuarios_controller.UsuariosController(model, view, None, usuario_actual)
+    controller.auditoria_model = auditoria
+    return controller
 
 def test_crear_usuario_valido(controller):
     id_usuario = controller.crear_usuario("nuevo", "passwordfuerte", "operador")

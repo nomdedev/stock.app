@@ -62,7 +62,9 @@ class DummyContabilidadModel:
                 return True
         raise ValueError("Factura no encontrada")
 
-class DummyAuditoriaModel:
+from modules.auditoria.model import AuditoriaModel
+
+class DummyAuditoriaModel(AuditoriaModel):
     def __init__(self):
         self.eventos = []
     def registrar_evento(self, usuario_id, modulo, accion, detalle, ip):
@@ -78,9 +80,12 @@ def flujo_integrado():
     view = MagicMock()
     usuario = {"id": 1, "username": "testuser", "ip": "127.0.0.1"}
     obras_ctrl = obras_controller.ObrasController(obras, view, None, MagicMock(), usuario, auditoria_model=auditoria)
-    inventario_ctrl = inventario_controller.InventarioController(inventario, view, None, None, usuario, auditoria_model=auditoria)
-    pedidos_ctrl = pedidos_controller.PedidosController(pedidos, view, None, None, usuario, auditoria_model=auditoria)
-    contabilidad_ctrl = contabilidad_controller.ContabilidadController(contabilidad, view, None, None, usuario, auditoria_model=auditoria)
+    # Instanciar InventarioController con la firma correcta
+    inventario_ctrl = inventario_controller.InventarioController(inventario, view, None, usuario)
+    # Asignar el modelo de auditoría mockeado
+    inventario_ctrl.auditoria_model = auditoria
+    pedidos_ctrl = pedidos_controller.PedidosController(pedidos, view, None, None)
+    contabilidad_ctrl = contabilidad_controller.ContabilidadController(contabilidad, view, None, None)
     auditoria_ctrl = auditoria_controller.AuditoriaController(auditoria, view, None, usuario)
     return {
         "obras": obras_ctrl,

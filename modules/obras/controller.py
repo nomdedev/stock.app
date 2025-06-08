@@ -288,7 +288,7 @@ class ObrasController:
             self.verificar_obra_en_sql_base(nombre, cliente)
 
     @permiso_auditoria_obras('agregar')
-    def agregar_obra_dialog(self):
+    def agregar_obra_dialog(self, *args, **kwargs):
         """Abre un diálogo para cargar los datos clave de la obra y la registra."""
         try:
             usuario = self.usuario_actual

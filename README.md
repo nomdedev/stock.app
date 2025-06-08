@@ -1050,3 +1050,10 @@ Más detalles en `README_TESTS.md`.
 - [08/06/2025] Formulario Eliminar Envío (Logística): Implementado modal robusto, confirmación accesible, feedback visual, tooltips, cierre solo en éxito, logging/auditoría, refresco de tabla. Cumple checklist UI/UX, accesibilidad y feedback.
 - [08/06/2025] Botón Filtrar Auditoría (Auditoría): Implementado modal robusto, feedback accesible, tooltips, cierre solo en éxito, integración con controller, logging/auditoría, refresco de tabla, validación visual/backend, cobertura de tests. Cumple checklist UI/UX, accesibilidad y feedback.
 - [08/06/2025] Botón Exportar a Excel (Auditoría): Implementado modal robusto, confirmación accesible, feedback visual, tooltips, cierre solo en éxito, logging/auditoría, refresco de tabla, validación visual/backend, integración con controller, cobertura de tests. Cumple checklist UI/UX, accesibilidad y feedback.
+
+---
+
+## Checklist de robustez y feedback UI/UX (actualizado 2025-06-07)
+- UsuariosView: COMPLETO. Todos los métodos críticos y formularios robustos contra None/atributo, validación de tipos, feedback visual, edge cases documentados.
+  - Métodos: cargar_resumen_permisos, aplicar_columnas_visibles, mostrar_menu_columnas, mostrar_menu_columnas_header, toggle_columna, feedback, abrir_dialogo_crear_usuario, abrir_dialogo_editar_usuario, abrir_dialogo_editar_permisos, abrir_dialogo_eliminar_usuario.
+  - Cumple estándares de docs/estandares_feedback.md, docs/estandares_visuales.md, checklist_formularios_botones_ui.txt.
