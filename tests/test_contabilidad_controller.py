@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import MagicMock, patch
 from modules.contabilidad import controller as contabilidad_controller
+from modules.contabilidad.view import ContabilidadView
 
 class DummyModel:
     def __init__(self):
@@ -46,7 +47,9 @@ def controller():
     view = DummyView()
     auditoria_model = MagicMock()
     usuario_actual = {"id": 1, "username": "testuser", "ip": "127.0.0.1"}
-    return contabilidad_controller.ContabilidadController(model, view, None, None, usuario_actual, auditoria_model=auditoria_model)
+    ctrl = contabilidad_controller.ContabilidadController(model, view, None, None, usuario_actual)
+    ctrl.auditoria_model = auditoria_model  # Mock explícito tras instanciar
+    return ctrl
 
 def test_generar_factura_valida(controller):
     id_factura = controller.generar_factura(1)
@@ -112,8 +115,9 @@ def test_generar_factura_por_pedido_modal(monkeypatch):
             self.actualizado = True
         def obtener_pedidos_recibidos_sin_factura(self):
             return [(1, "Pedido prueba", 1500.0)]
-    class DummyView:
+    class DummyView(ContabilidadView):
         def __init__(self):
+            super().__init__()
             self.controller = DummyController()
             self.feedback = None
         def mostrar_feedback(self, mensaje, tipo="info", **kwargs):
@@ -129,6 +133,6 @@ def test_generar_factura_por_pedido_modal(monkeypatch):
     from modules.contabilidad import view as contab_view_mod
     contab_view_mod.QDialog.exec = fake_exec
     # Llamar al método
-    contab_view_mod.ContabilidadView.abrir_dialogo_generar_factura(view)
+    view.abrir_dialogo_generar_factura()
     # Validar que se llamó a generar_factura_por_pedido y feedback
     assert view.controller.llamado is not False

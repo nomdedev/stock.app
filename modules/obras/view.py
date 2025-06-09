@@ -51,8 +51,28 @@ class AltaObraDialog(QDialog):
 
         # Botones de acción
         botones_layout = QHBoxLayout()
-        self.boton_guardar = QPushButton("Guardar")
-        self.boton_cancelar = QPushButton("Cancelar")
+        self.boton_guardar = QPushButton()
+        self.boton_guardar.setObjectName("boton_guardar_obra")
+        self.boton_guardar.setIcon(QIcon("resources/icons/finish-check.svg"))
+        self.boton_guardar.setToolTip("Guardar obra")
+        self.boton_guardar.setAccessibleName("Botón guardar obra")
+        estilizar_boton_icono(self.boton_guardar)
+        sombra_guardar = QGraphicsDropShadowEffect()
+        sombra_guardar.setBlurRadius(10)
+        sombra_guardar.setColor(QColor(37, 99, 235, 60))
+        sombra_guardar.setOffset(0, 4)
+        self.boton_guardar.setGraphicsEffect(sombra_guardar)
+        self.boton_cancelar = QPushButton()
+        self.boton_cancelar.setObjectName("boton_cancelar_obra")
+        self.boton_cancelar.setIcon(QIcon("resources/icons/close.svg"))
+        self.boton_cancelar.setToolTip("Cancelar")
+        self.boton_cancelar.setAccessibleName("Botón cancelar obra")
+        estilizar_boton_icono(self.boton_cancelar)
+        sombra_cancelar = QGraphicsDropShadowEffect()
+        sombra_cancelar.setBlurRadius(10)
+        sombra_cancelar.setColor(QColor(37, 99, 235, 60))
+        sombra_cancelar.setOffset(0, 4)
+        self.boton_cancelar.setGraphicsEffect(sombra_cancelar)
         botones_layout.addWidget(self.boton_guardar)
         botones_layout.addWidget(self.boton_cancelar)
         layout.addLayout(botones_layout)
@@ -70,9 +90,13 @@ class AltaObraDialog(QDialog):
         campos = [self.nombre_input, self.cliente_input]
         for campo in campos:
             if not campo.text().strip():
-                campo.setStyleSheet("border: 2px solid red;")
+                campo.setProperty("error", True)
             else:
-                campo.setStyleSheet("border: 1px solid #bfc0c0;")
+                campo.setProperty("error", False)
+            style = campo.style()
+            if style is not None:
+                style.unpolish(campo)
+                style.polish(campo)
 
     def guardar_obra(self):
         """
@@ -130,8 +154,28 @@ class EditObraDialog(QDialog):
 
         # Botones de acción
         botones_layout = QHBoxLayout()
-        self.boton_guardar = QPushButton("Guardar")
-        self.boton_cancelar = QPushButton("Cancelar")
+        self.boton_guardar = QPushButton()
+        self.boton_guardar.setObjectName("boton_guardar_editar_obra")
+        self.boton_guardar.setIcon(QIcon("resources/icons/finish-check.svg"))
+        self.boton_guardar.setToolTip("Guardar cambios")
+        self.boton_guardar.setAccessibleName("Botón guardar cambios obra")
+        estilizar_boton_icono(self.boton_guardar)
+        sombra_guardar = QGraphicsDropShadowEffect()
+        sombra_guardar.setBlurRadius(10)
+        sombra_guardar.setColor(QColor(37, 99, 235, 60))
+        sombra_guardar.setOffset(0, 4)
+        self.boton_guardar.setGraphicsEffect(sombra_guardar)
+        self.boton_cancelar = QPushButton()
+        self.boton_cancelar.setObjectName("boton_cancelar_editar_obra")
+        self.boton_cancelar.setIcon(QIcon("resources/icons/close.svg"))
+        self.boton_cancelar.setToolTip("Cancelar edición")
+        self.boton_cancelar.setAccessibleName("Botón cancelar edición obra")
+        estilizar_boton_icono(self.boton_cancelar)
+        sombra_cancelar = QGraphicsDropShadowEffect()
+        sombra_cancelar.setBlurRadius(10)
+        sombra_cancelar.setColor(QColor(37, 99, 235, 60))
+        sombra_cancelar.setOffset(0, 4)
+        self.boton_cancelar.setGraphicsEffect(sombra_cancelar)
         botones_layout.addWidget(self.boton_guardar)
         botones_layout.addWidget(self.boton_cancelar)
         layout.addLayout(botones_layout)
@@ -199,10 +243,16 @@ class ObrasView(QWidget, TableResponsiveMixin):
         titulo_layout.addStretch()
         # Botón principal de acción (Agregar obra)
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setObjectName("boton_agregar")  # Unificación visual: todos los botones principales usan este objectName
+        self.boton_agregar.setObjectName("boton_agregar")
         self.boton_agregar.setIcon(QIcon("resources/icons/plus_icon.svg"))
         self.boton_agregar.setToolTip("Agregar nueva obra")
         self.boton_agregar.setAccessibleName("Botón agregar obra")
+        estilizar_boton_icono(self.boton_agregar)
+        sombra_agregar = QGraphicsDropShadowEffect()
+        sombra_agregar.setBlurRadius(10)
+        sombra_agregar.setColor(QColor(37, 99, 235, 60))
+        sombra_agregar.setOffset(0, 4)
+        self.boton_agregar.setGraphicsEffect(sombra_agregar)
         titulo_layout.addWidget(self.boton_agregar)
         self.main_layout.addLayout(titulo_layout)
 
@@ -356,5 +406,8 @@ class TestObrasViewHeaders:
         import sys
         app = QApplication.instance() or QApplication(sys.argv)
         view = ObrasView()
-        headers = [view.tabla_obras.horizontalHeaderItem(i).text() if view.tabla_obras.horizontalHeaderItem(i) else '' for i in range(view.tabla_obras.columnCount())]
+        headers = []
+        for i in range(view.tabla_obras.columnCount()):
+            item = view.tabla_obras.horizontalHeaderItem(i)
+            headers.append(item.text() if item is not None else '')
         assert headers == ["Nombre", "Cliente", "Fecha Medición", "Fecha Entrega"], f"Headers incorrectos: {headers}"

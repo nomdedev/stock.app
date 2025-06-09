@@ -106,7 +106,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
         # --- TABS PRINCIPALES (layout moderno y consistente con Vidrios) ---
         self.tabs = QTabWidget()
         self.tabs.setObjectName("tabs_inventario")
-        self.tabs.setStyleSheet("QTabWidget::pane { border-radius: 12px; background: #fff9f3; margin: 0 0 0 0; } QTabBar::tab { min-width: 180px; min-height: 36px; font-size: 13px; padding: 10px 24px; border-radius: 8px; background: #e3f6fd; margin-right: 8px; } QTabBar::tab:selected { background: #fff; color: #2563eb; border: 2px solid #2563eb; }")
+        # Eliminar setStyleSheet embebido, migrar a QSS global
+        # self.tabs.setStyleSheet(...)
         self.main_layout.addWidget(self.tabs)
 
         # Pestaña 1: Todos los perfiles/materiales
@@ -170,12 +171,23 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.tabs.addTab(self.tab_obras_material, "Obras y pedidos de material")
 
         # Cargar configuración de columnas visibles
-        # --- NOTA: La cadena de conexión SQL se construye dinámicamente usando variables de configuración.
-        # Esto NO constituye una credencial hardcodeada ni viola el estándar de seguridad.
-        # Ver test_no_credenciales_en_codigo en tests/test_estandares_modulos.py para justificación.
-        # ---
         self.config_path = f"config_inventario_columns_{self.usuario_actual}.json"
-        self.columnas_visibles = self.cargar_config_columnas()
+        # Definir columnas visibles por defecto
+        columnas_visibles_default = {}
+        for header in self.inventario_headers:
+            if header.lower() in ["codigo", "descripcion", "stock", "necesario", "pedido"]:
+                columnas_visibles_default[header] = True
+            else:
+                columnas_visibles_default[header] = False
+        # Si existe config previa, usarla; si no, usar el default
+        if os.path.exists(self.config_path):
+            try:
+                with open(self.config_path, "r", encoding="utf-8") as f:
+                    self.columnas_visibles = json.load(f)
+            except Exception:
+                self.columnas_visibles = columnas_visibles_default
+        else:
+            self.columnas_visibles = columnas_visibles_default
         self.aplicar_columnas_visibles()
 
         # Menú contextual para mostrar/ocultar columnas
@@ -361,9 +373,19 @@ class InventarioView(QWidget, TableResponsiveMixin):
                 codigo = r.get("codigo_reserva", "")
                 label = QLabel(f"Obra: <b>{obra}</b> | Cantidad: <b>{cantidad}</b> | Estado: <b>{estado}</b> | Código: <b>{codigo}</b>")
                 layout.addWidget(label)
-            btn_cerrar = QPushButton("Cerrar")
+            btn_cerrar = QPushButton()
+            btn_cerrar.setObjectName("boton_cerrar_dialogo_obras_pendientes")
+            btn_cerrar.setIcon(QIcon("resources/icons/close.svg"))
+            btn_cerrar.setToolTip("Cerrar ventana")
+            btn_cerrar.setAccessibleName("Botón cerrar diálogo obras pendientes")
+            estilizar_boton_icono(btn_cerrar)
+            sombra_cerrar = QGraphicsDropShadowEffect()
+            sombra_cerrar.setBlurRadius(10)
+            sombra_cerrar.setColor(QColor(37, 99, 235, 60))
+            sombra_cerrar.setOffset(0, 4)
+            btn_cerrar.setGraphicsEffect(sombra_cerrar)
             btn_cerrar.clicked.connect(dialog.accept)
-            layout.addWidget(btn_cerrar)
+            layout.addWidget(btn_cerrar, alignment=Qt.AlignmentFlag.AlignRight)
             dialog.setLayout(layout)
             dialog.exec()
         except Exception as e:

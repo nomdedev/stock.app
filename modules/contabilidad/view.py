@@ -45,14 +45,12 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Contabilidad")
-        self.label_titulo.setAccessibleDescription("Título principal de la vista de Contabilidad")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar registro)
         self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
+        self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar registro")
-        self.boton_agregar.setAccessibleName("Botón agregar registro de contabilidad")
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
@@ -77,36 +75,13 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.tabla_balance.setObjectName("tabla_balance")
         self.make_table_responsive(self.tabla_balance)
         self.tab_balance_layout.addWidget(self.tabla_balance)
-        # Botones de acción para Balance
-        btn_balance_layout = QHBoxLayout()
-        btn_balance_layout.addStretch()
-        self.boton_exportar_excel_balance = QPushButton()
-        self.boton_exportar_excel_balance.setIcon(QIcon("resources/icons/excel_icon.svg"))
-        self.boton_exportar_excel_balance.setToolTip("Exportar balance a Excel")
-        self.boton_exportar_excel_balance.setAccessibleName("Botón exportar balance a Excel")
-        estilizar_boton_icono(self.boton_exportar_excel_balance)
-        btn_balance_layout.addWidget(self.boton_exportar_excel_balance)
         self.boton_agregar_balance = QPushButton()
-        self.boton_agregar_balance.setIcon(QIcon("resources/icons/plus_icon.svg"))
+        self.boton_agregar_balance.setIcon(QIcon("img/plus_icon.svg"))
         self.boton_agregar_balance.setToolTip("Agregar movimiento contable")
         estilizar_boton_icono(self.boton_agregar_balance)
+        btn_balance_layout = QHBoxLayout()
+        btn_balance_layout.addStretch()
         btn_balance_layout.addWidget(self.boton_agregar_balance)
-        # --- Botón Generar Factura en pestaña Balance ---
-        self.boton_generar_factura = QPushButton()
-        self.boton_generar_factura.setIcon(QIcon("resources/icons/factura.svg"))
-        self.boton_generar_factura.setToolTip("Generar factura por pedido recibido")
-        self.boton_generar_factura.setAccessibleName("Botón generar factura")
-        estilizar_boton_icono(self.boton_generar_factura)
-        btn_balance_layout.addWidget(self.boton_generar_factura)
-        self.boton_generar_factura.clicked.connect(self.abrir_dialogo_generar_factura)
-        # --- Botón Registrar Pago en pestaña Balance ---
-        self.boton_registrar_pago = QPushButton()
-        self.boton_registrar_pago.setIcon(QIcon("resources/icons/pago.svg"))
-        self.boton_registrar_pago.setToolTip("Registrar pago de factura")
-        self.boton_registrar_pago.setAccessibleName("Botón registrar pago")
-        estilizar_boton_icono(self.boton_registrar_pago)
-        btn_balance_layout.addWidget(self.boton_registrar_pago)
-        self.boton_registrar_pago.clicked.connect(self.abrir_dialogo_registrar_pago)
         self.tab_balance_layout.addLayout(btn_balance_layout)
         self.tabs.addTab(self.tab_balance, "Balance")
 
@@ -123,16 +98,6 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.tabla_pagos.setObjectName("tabla_pagos")
         self.make_table_responsive(self.tabla_pagos)
         self.tab_pagos_layout.addWidget(self.tabla_pagos)
-        # Botones de acción para Pagos
-        btn_pagos_layout = QHBoxLayout()
-        btn_pagos_layout.addStretch()
-        self.boton_exportar_excel_pagos = QPushButton()
-        self.boton_exportar_excel_pagos.setIcon(QIcon("resources/icons/excel_icon.svg"))
-        self.boton_exportar_excel_pagos.setToolTip("Exportar pagos a Excel")
-        self.boton_exportar_excel_pagos.setAccessibleName("Botón exportar pagos a Excel")
-        estilizar_boton_icono(self.boton_exportar_excel_pagos)
-        btn_pagos_layout.addWidget(self.boton_exportar_excel_pagos)
-        self.tab_pagos_layout.addLayout(btn_pagos_layout)
         self.tabs.addTab(self.tab_pagos, "Seguimiento de Pagos")
 
         # --- Pestaña Recibos ---
@@ -148,7 +113,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         top_btn_layout = QHBoxLayout()
         top_btn_layout.addStretch()
         self.boton_agregar_recibo = QPushButton()
-        self.boton_agregar_recibo.setIcon(QIcon("resources/icons/plus_icon.svg"))
+        self.boton_agregar_recibo.setIcon(QIcon("img/plus_icon.svg"))
         self.boton_agregar_recibo.setToolTip("Agregar nuevo recibo")
         estilizar_boton_icono(self.boton_agregar_recibo)
         top_btn_layout.addWidget(self.boton_agregar_recibo)
@@ -158,16 +123,6 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.tabla_recibos.setObjectName("tabla_recibos")
         self.make_table_responsive(self.tabla_recibos)
         self.tab_recibos_layout.addWidget(self.tabla_recibos)
-        # Botones de acción para Recibos
-        btn_recibos_layout = QHBoxLayout()
-        btn_recibos_layout.addStretch()
-        self.boton_exportar_excel_recibos = QPushButton()
-        self.boton_exportar_excel_recibos.setIcon(QIcon("resources/icons/excel_icon.svg"))
-        self.boton_exportar_excel_recibos.setToolTip("Exportar recibos a Excel")
-        self.boton_exportar_excel_recibos.setAccessibleName("Botón exportar recibos a Excel")
-        estilizar_boton_icono(self.boton_exportar_excel_recibos)
-        btn_recibos_layout.addWidget(self.boton_exportar_excel_recibos)
-        self.tab_recibos_layout.addLayout(btn_recibos_layout)
         self.tabs.addTab(self.tab_recibos, "Recibos")
 
         # --- Pestaña Estadísticas ---
@@ -200,65 +155,110 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         controles_layout.addWidget(QLabel("Dólar:"))
         controles_layout.addWidget(self.input_dolar)
         self.boton_actualizar_grafico = QPushButton()
-        self.boton_actualizar_grafico.setIcon(QIcon("resources/icons/actualizar.svg"))
+        self.boton_actualizar_grafico.setIcon(QIcon("img/actualizar.svg"))
         self.boton_actualizar_grafico.setToolTip("Actualizar gráfico")
         estilizar_boton_icono(self.boton_actualizar_grafico)
         controles_layout.addWidget(self.boton_actualizar_grafico)
         self.boton_estadistica_personalizada = QPushButton()
-        self.boton_estadistica_personalizada.setIcon(QIcon("resources/icons/estadistica.svg"))
+        self.boton_estadistica_personalizada.setIcon(QIcon("img/estadistica.svg"))
         self.boton_estadistica_personalizada.setToolTip("Estadística Personalizada")
         estilizar_boton_icono(self.boton_estadistica_personalizada)
         controles_layout.addWidget(self.boton_estadistica_personalizada)
+        self.boton_exportar_excel_recibos.setAccessibleName("Botón exportar recibos a Excel")ersonalizada)
+        estilizar_boton_icono(self.boton_exportar_excel_recibos)
+        btn_recibos_layout.addWidget(self.boton_exportar_excel_recibos)
+        self.tab_recibos_layout.addLayout(btn_recibos_layout)ccionar estadística personalizada guardada")
+        self.tabs.addTab(self.tab_recibos, "Recibos")"(Ninguna personalizada)")
+        self.combo_estadistica_personalizada.currentIndexChanged.connect(self.seleccionar_estadistica_personalizada)
+        # --- Pestaña Estadísticas ---bel("Personalizada:"))
+        self.tab_estadisticas = QWidget()ombo_estadistica_personalizada)
+        self.tab_estadisticas_layout = QVBoxLayout()oles_layout)
+        self.tab_estadisticas.setLayout(self.tab_estadisticas_layout)
+        self.label_resumen = QLabel("Resumen de Balance")co_canvas)
+        self.tab_estadisticas_layout.addWidget(self.label_resumen)
+        # Controles para filtros y tipo de gráficostadísticas")
+        controles_layout = QHBoxLayout()
+        self.combo_tipo_grafico = QComboBox()
+        self.combo_tipo_grafico.addItems([ked.connect(self.actualizar_grafico_estadisticas)
+            "Ingresos vs Egresos", "Cobros por Obra", "Pagos por Obra", "Evolución Mensual", "Desglose por Moneda"
+        ])lf.combo_anio.currentIndexChanged.connect(self.actualizar_grafico_estadisticas)
+        self.combo_tipo_grafico.setToolTip("Seleccionar tipo de gráfico estadístico")as)
+        controles_layout.addWidget(QLabel("Tipo de gráfico:"))ar_grafico_estadisticas)
+        controles_layout.addWidget(self.combo_tipo_grafico)
+        self.combo_anio = QComboBox()ut)
+        self.combo_anio.setToolTip("Año a analizar")
+        controles_layout.addWidget(QLabel("Año:"))LOBAL ---
+        controles_layout.addWidget(self.combo_anio)
+        self.combo_mes = QComboBox()tName("label_feedback")
+        self.combo_mes.addItems(["Todos"] + [str(m) for m in range(1, 13)])leSheet embebido
+        self.combo_mes.setToolTip("Mes a analizar")
+        controles_layout.addWidget(QLabel("Mes:"))saje de feedback de contabilidad")
+        controles_layout.addWidget(self.combo_mes)on("Mensaje de feedback visual y accesible para el usuario")
+        self.input_dolar = QLineEdit()f.label_feedback)
+        self.input_dolar.setPlaceholderText("Valor dólar oficial")
+        self.input_dolar.setToolTip("Ingrese el valor del dólar para conversión")
+        controles_layout.addWidget(QLabel("Dólar:"))
+        controles_layout.addWidget(self.input_dolar)
+        self.boton_actualizar_grafico = QPushButton()
+        self.boton_actualizar_grafico.setIcon(QIcon("resources/icons/actualizar.svg"))
+        self.boton_actualizar_grafico.setToolTip("Actualizar gráfico")
+        estilizar_boton_icono(self.boton_actualizar_grafico)ance_columns.json"
+        controles_layout.addWidget(self.boton_actualizar_grafico)mns.json"
+        self.boton_estadistica_personalizada = QPushButton()ibos_columns.json"
+        self.boton_estadistica_personalizada.setIcon(QIcon("resources/icons/estadistica.svg")) self.balance_headers)
+        self.boton_estadistica_personalizada.setToolTip("Estadística Personalizada")pagos, self.pagos_headers)
+        estilizar_boton_icono(self.boton_estadistica_personalizada)s(self.config_path_recibos, self.recibos_headers)
+        controles_layout.addWidget(self.boton_estadistica_personalizada)headers, self.columnas_visibles_balance)
         self.boton_estadistica_personalizada.clicked.connect(self.abrir_dialogo_estadistica_personalizada)
-        # Combo para estadísticas personalizadas
+        # Combo para estadísticas personalizadasa_recibos, self.recibos_headers, self.columnas_visibles_recibos)
         self.combo_estadistica_personalizada = QComboBox()
         self.combo_estadistica_personalizada.setToolTip("Seleccionar estadística personalizada guardada")
-        self.combo_estadistica_personalizada.addItem("(Ninguna personalizada)")
+        self.combo_estadistica_personalizada.addItem("(Ninguna personalizada)")tabla_balance, 'horizontalHeader') else None
         self.combo_estadistica_personalizada.currentIndexChanged.connect(self.seleccionar_estadistica_personalizada)
-        controles_layout.addWidget(QLabel("Personalizada:"))
-        controles_layout.addWidget(self.combo_estadistica_personalizada)
-        self.tab_estadisticas_layout.addLayout(controles_layout)
-        self.grafico_canvas = FigureCanvas(Figure(figsize=(6, 4)))
+        controles_layout.addWidget(QLabel("Personalizada:"))'):
+        controles_layout.addWidget(self.combo_estadistica_personalizada).CustomContextMenu)
+        self.tab_estadisticas_layout.addLayout(controles_layout)ed'):
+        self.grafico_canvas = FigureCanvas(Figure(figsize=(6, 4)))partial(self.mostrar_menu_columnas, self.tabla_balance, self.balance_headers, self.columnas_visibles_balance, self.config_path_balance))
         self.tab_estadisticas_layout.addWidget(self.grafico_canvas)
-        self.setup_exportar_grafico_btn()
+        self.setup_exportar_grafico_btn()bleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_balance))
         self.tabs.addTab(self.tab_estadisticas, "Estadísticas")
-
-        # Señales para actualizar el gráfico
+                header_balance.setSectionsMovable(True)
+        # Señales para actualizar el gráficoectionsClickable'):
         self.boton_actualizar_grafico.clicked.connect(self.actualizar_grafico_estadisticas)
         self.combo_tipo_grafico.currentIndexChanged.connect(self.actualizar_grafico_estadisticas)
-        self.combo_anio.currentIndexChanged.connect(self.actualizar_grafico_estadisticas)
+        self.combo_anio.currentIndexChanged.connect(self.actualizar_grafico_estadisticas)header, self.tabla_balance, self.balance_headers, self.columnas_visibles_balance, self.config_path_balance))
         self.combo_mes.currentIndexChanged.connect(self.actualizar_grafico_estadisticas)
         self.input_dolar.editingFinished.connect(self.actualizar_grafico_estadisticas)
-        self.setLayout(self.main_layout)
-
+        self.setLayout(self.main_layout)ader es None, no se puede aplicar menú contextual ni acciones de header.
+            # Documentar en docs/estandares_visuales.md si ocurre en producción.
         # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
         self.label_feedback.setVisible(False)
-        self.label_feedback.setAccessibleName("Feedback visual de Contabilidad")
-        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario en Contabilidad")
-        self.main_layout.addWidget(self.label_feedback)
-        self._feedback_timer = None
-        # --- FIN FEEDBACK VISUAL GLOBAL ---
-
+        self.label_feedback.setAccessibleName("Feedback visual de Contabilidad")Menu)
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario en Contabilidad")eaders, self.columnas_visibles_pagos, self.config_path_pagos))
+        self.main_layout.addWidget(self.label_feedback)artial(self.auto_ajustar_columna, self.tabla_pagos))
+        self._feedback_timer = NonesMovable(True)
+        # --- FIN FEEDBACK VISUAL GLOBAL ---e(True)
+            self.tabla_pagos.setHorizontalHeader(header_pagos)
         # --- Sincronización dinámica de headers ---
-        self.sync_headers()
-
-        # Configuración de columnas y persistencia para cada tabla
-        self.config_path_balance = f"config_contabilidad_balance_columns.json"
-        self.config_path_pagos = f"config_contabilidad_pagos_columns.json"
+        self.sync_headers()lf.tabla_recibos.horizontalHeader()
+        if header_recibos is not None:
+        # Configuración de columnas y persistencia para cada tablacy.CustomContextMenu)
+        self.config_path_balance = f"config_contabilidad_balance_columns.json"trar_menu_columnas, self.tabla_recibos, self.recibos_headers, self.columnas_visibles_recibos, self.config_path_recibos))
+        self.config_path_pagos = f"config_contabilidad_pagos_columns.json"ajustar_columna, self.tabla_recibos))
         self.config_path_recibos = f"config_contabilidad_recibos_columns.json"
         self.columnas_visibles_balance = self.cargar_config_columnas(self.config_path_balance, self.balance_headers)
         self.columnas_visibles_pagos = self.cargar_config_columnas(self.config_path_pagos, self.pagos_headers)
-        self.columnas_visibles_recibos = self.cargar_config_columnas(self.config_path_recibos, self.recibos_headers)
+        self.columnas_visibles_recibos = self.cargar_config_columnas(self.config_path_recibos, self.recibos_headers)s))
         self.aplicar_columnas_visibles(self.tabla_balance, self.balance_headers, self.columnas_visibles_balance)
         self.aplicar_columnas_visibles(self.tabla_pagos, self.pagos_headers, self.columnas_visibles_pagos)
         self.aplicar_columnas_visibles(self.tabla_recibos, self.recibos_headers, self.columnas_visibles_recibos)
-
-        # Menú de columnas y QR para cada tabla
+        # Refuerzo de accesibilidad en botones principales
+        # Menú de columnas y QR para cada tabla self.boton_agregar_recibo]:
         header_balance = self.tabla_balance.horizontalHeader() if hasattr(self.tabla_balance, 'horizontalHeader') else None
-        if header_balance is not None:
-            if hasattr(header_balance, 'setContextMenuPolicy'):
+        if header_balance is not None: tamaño de fuente se gestiona en themes/light.qss y dark.qss
+            if hasattr(header_balance, 'setContextMenuPolicy'):on:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
                 header_balance.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             if hasattr(header_balance, 'customContextMenuRequested'):
                 header_balance.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_balance, self.balance_headers, self.columnas_visibles_balance, self.config_path_balance))
@@ -266,25 +266,25 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
                 header_balance.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_balance))
             if hasattr(header_balance, 'setSectionsMovable'):
                 header_balance.setSectionsMovable(True)
-            if hasattr(header_balance, 'setSectionsClickable'):
+            if hasattr(header_balance, 'setSectionsClickable'):bilidad")
                 header_balance.setSectionsClickable(True)
-            if hasattr(header_balance, 'sectionClicked'):
+            if hasattr(header_balance, 'sectionClicked'):s, self.tabla_recibos]:
                 header_balance.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_balance, self.balance_headers, self.columnas_visibles_balance, self.config_path_balance))
-            self.tabla_balance.setHorizontalHeader(header_balance)
-        else:
+            self.tabla_balance.setHorizontalHeader(header_balance)a en themes/light.qss y dark.qss
+        else: tabla.setStyleSheet(tabla.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
             # EXCEPCIÓN VISUAL: Si el header es None, no se puede aplicar menú contextual ni acciones de header.
             # Documentar en docs/estandares_visuales.md si ocurre en producción.
-            pass
-
-        header_pagos = self.tabla_pagos.horizontalHeader()
-        if header_pagos is not None:
-            header_pagos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            passader = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
+            if h_header is not None:
+        header_pagos = self.tabla_pagos.horizontalHeader()e en themes/light.qss y dark.qss
+        if header_pagos is not None:heet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
+            header_pagos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)tyleSheet embebido
             header_pagos.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_pagos, self.pagos_headers, self.columnas_visibles_pagos, self.config_path_pagos))
             header_pagos.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_pagos))
-            header_pagos.setSectionsMovable(True)
+            header_pagos.setSectionsMovable(True)StrongFocus)
             header_pagos.setSectionsClickable(True)
             self.tabla_pagos.setHorizontalHeader(header_pagos)
-
+                font.setPointSize(12)
         header_recibos = self.tabla_recibos.horizontalHeader()
         if header_recibos is not None:
             header_recibos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
@@ -294,57 +294,57 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             header_recibos.setSectionsClickable(True)
             self.tabla_recibos.setHorizontalHeader(header_recibos)
         self.tabla_recibos.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_recibos))
-
-        self.boton_agregar_recibo.clicked.connect(self.abrir_dialogo_nuevo_recibo)
-
-        # Refuerzo de accesibilidad en botones principales
-        for btn in [self.boton_agregar_balance, self.boton_agregar_recibo, self.boton_actualizar_grafico, self.boton_estadistica_personalizada]:
-            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            font = btn.font()
-            if font.pointSize() < 12:
                 font.setPointSize(12)
-            btn.setFont(font)
-            if not btn.toolTip():
-                btn.setToolTip("Botón de acción")
+        self.boton_agregar_recibo.clicked.connect(self.abrir_dialogo_nuevo_recibo)
+        # Márgenes y padding en layouts según estándar
+        # Refuerzo de accesibilidad en botones principales)
+        for btn in [self.boton_agregar_balance, self.boton_agregar_recibo, self.boton_actualizar_grafico, self.boton_estadistica_personalizada]:
+            btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus).tab_recibos, self.tab_estadisticas]:
+            font = btn.font()ut() if hasattr(tab, 'layout') else None
+            if font.pointSize() < 12:
+                font.setPointSize(12)gins(24, 20, 24, 20)
+            btn.setFont(font)cing(16)
+            if not btn.toolTip():sual si aplica
+                btn.setToolTip("Botón de acción") en la vista principal fuera de filtros, por lo que no aplica refuerzo en inputs de edición.
             # Nombres accesibles más descriptivos
             if btn is self.boton_agregar_balance:
                 btn.setAccessibleName("Botón agregar movimiento contable")
-            elif btn is self.boton_agregar_recibo:
+            elif btn is self.boton_agregar_recibo:lf.boton_agregar_recibo, self.boton_actualizar_grafico, self.boton_estadistica_personalizada]:
                 btn.setAccessibleName("Botón agregar recibo de contabilidad")
-            elif btn is self.boton_actualizar_grafico:
+            elif btn is self.boton_actualizar_grafico:e se gestiona en themes/light.qss y dark.qss
                 btn.setAccessibleName("Botón actualizar gráfico de estadísticas")
             elif btn is self.boton_estadistica_personalizada:
                 btn.setAccessibleName("Botón estadística personalizada de contabilidad")
-            else:
+            else:etFont(font)
                 btn.setAccessibleName("Botón de acción de contabilidad")
         # Refuerzo de accesibilidad en tablas principales
         for tabla, nombre in zip([self.tabla_balance, self.tabla_pagos, self.tabla_recibos],
                                  ["Tabla de balance contable", "Tabla de pagos contables", "Tabla de recibos contables"]):
             tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            tabla.setToolTip(nombre)
-            tabla.setAccessibleName(nombre)
-            h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
-            if h_header is not None:
+            tabla.setToolTip(nombre)ance, self.tabla_pagos, self.tabla_recibos]:
+            tabla.setAccessibleName(nombre)licy.StrongFocus)
+            h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else Noneqss
+            if h_header is not None:de datos contables")
                 # QSS global: el estilo de header se define en themes/light.qss y dark.qss
                 # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
                 pass  # excepción justificada: migración a QSS global, no se usa setStyleSheet embebido
-        # Refuerzo de accesibilidad en QComboBox
+        # Refuerzo de accesibilidad en QComboBoxr se define en themes/light.qss y dark.qss
         for widget in self.findChildren(QComboBox):
             widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            font = widget.font()
-            if font.pointSize() < 12:
+            font = widget.font()hildren(QComboBox):
+            if font.pointSize() < 12:FocusPolicy.StrongFocus)
                 font.setPointSize(12)
-            widget.setFont(font)
-            if not widget.toolTip():
+            widget.setFont(font)< 12:
+            if not widget.toolTip():)
                 widget.setToolTip("Seleccionar opción")
             if not widget.accessibleName():
                 widget.setAccessibleName("Selector de opción contable")
         # Refuerzo de accesibilidad en QLabel
-        for widget in self.findChildren(QLabel):
-            font = widget.font()
-            if font.pointSize() < 12:
+        for widget in self.findChildren(QLabel):or de opción contable")
+            font = widget.font()dad en QLabel
+            if font.pointSize() < 12:en(QLabel):
                 font.setPointSize(12)
-            widget.setFont(font)
+            widget.setFont(font)< 12:
             if not widget.accessibleDescription():
                 widget.setAccessibleDescription("Label informativo o de feedback en Contabilidad")
         # Márgenes y padding en layouts según estándar
@@ -358,15 +358,15 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         # Documentar excepción visual si aplica
         # EXCEPCIÓN: Este módulo no usa QLineEdit en la vista principal fuera de filtros, por lo que no aplica refuerzo en inputs de edición.
 
-    def _reforzar_accesibilidad(self):
+    def _reforzar_accesibilidad(self):, tipo="info", duracion=4000):
         # Refuerzo de accesibilidad en botones principales
         for btn in [self.boton_agregar_balance, self.boton_agregar_recibo, self.boton_actualizar_grafico, self.boton_estadistica_personalizada]:
             btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
             # QSS global: el outline y tamaño de fuente se gestiona en themes/light.qss y dark.qss
-            font = btn.font()
-            if font.pointSize() < 12:
-                font.setPointSize(12)
-            btn.setFont(font)
+            font = btn.font()nd: #e3f6fd; color: #2563eb;",
+            if font.pointSize() < 12:f7e7; color: #15803d;",
+                font.setPointSize(12)d: #fef9c3; color: #b45309;",
+            btn.setFont(font)und: #fee2e2; color: #b91c1c;"
             if not btn.toolTip():
                 btn.setToolTip("Botón de acción")
             # Nombres accesibles más descriptivos
@@ -374,573 +374,501 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
                 btn.setAccessibleName("Botón agregar movimiento contable")
             elif btn is self.boton_agregar_recibo:
                 btn.setAccessibleName("Botón agregar recibo de contabilidad")
-            elif btn is self.boton_actualizar_grafico:
-                btn.setAccessibleName("Botón actualizar gráfico de estadísticas")
-            elif btn is self.boton_estadistica_personalizada:
+            elif btn is self.boton_actualizar_grafico:feedback se gestiona en themes/light.qss y dark.qss
+                btn.setAccessibleName("Botón actualizar gráfico de estadísticas"); padding: 8px; font-weight: 500; {colores.get(tipo, '')}")
+            elif btn is self.boton_estadistica_personalizada:)}{mensaje}")
                 btn.setAccessibleName("Botón estadística personalizada de contabilidad")
-            else:
+            else:l_feedback.setAccessibleDescription(mensaje)
                 btn.setAccessibleName("Botón de acción de contabilidad")
         # Refuerzo de accesibilidad en tablas principales
         for tabla, nombre in zip([self.tabla_balance, self.tabla_pagos, self.tabla_recibos],
                                  ["Tabla de balance contable", "Tabla de pagos contables", "Tabla de recibos contables"]):
-            tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            tabla.setToolTip(nombre)
+            tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)edback)
+            tabla.setToolTip(nombre)uracion)
             tabla.setAccessibleName(nombre)
             h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
-            if h_header is not None:
+            if h_header is not None:f, "Error", mensaje)
                 # QSS global: el estilo de header se define en themes/light.qss y dark.qss
-                pass
+                passBox.warning(self, "Advertencia", mensaje)
         # Refuerzo de accesibilidad en QComboBox
-        for widget in self.findChildren(QComboBox):
-            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        for widget in self.findChildren(QComboBox):mensaje)
+            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)ífico por accesibilidad, justificar en docs/estandares_visuales.md
             font = widget.font()
-            if font.pointSize() < 12:
+            if font.pointSize() < 12:, tipo="info", duracion=4000):
                 font.setPointSize(12)
-            widget.setFont(font)
+            widget.setFont(font)ack, para compatibilidad con otros módulos.
             if not widget.toolTip():
                 widget.setToolTip("Seleccionar opción")
             if not widget.accessibleName():
                 widget.setAccessibleName("Selector de opción contable")
         # Refuerzo de accesibilidad en QLabel
         for widget in self.findChildren(QLabel):
-            font = widget.font()
+            font = widget.font()ccessibleDescription("")
             if font.pointSize() < 12:
-                font.setPointSize(12)
-            widget.setFont(font)
-            if not widget.accessibleDescription():
+                font.setPointSize(12)mensaje="Cargando...", minimo=0, maximo=0):
+            widget.setFont(font)log(self)
+            if not widget.accessibleDescription():")
                 widget.setAccessibleDescription("Label informativo o de feedback en Contabilidad")
         # Márgenes y padding en layouts según estándar
         self.main_layout.setContentsMargins(24, 20, 24, 20)
-        self.main_layout.setSpacing(16)
+        self.main_layout.setSpacing(16)r()
         for tab in [self.tab_balance, self.tab_pagos, self.tab_recibos, self.tab_estadisticas]:
             layout = tab.layout() if hasattr(tab, 'layout') else None
-            if layout is not None:
+            if layout is not None:(True)
                 layout.setContentsMargins(24, 20, 24, 20)
                 layout.setSpacing(16)
         # Documentar excepción visual si aplica
         # EXCEPCIÓN: Este módulo no usa QLineEdit en la vista principal fuera de filtros, por lo que no aplica refuerzo en inputs de edición.
-
+    def ocultar_feedback_carga(self):
     def mostrar_feedback(self, mensaje, tipo="info", duracion=4000):
-        """
+        """ self.dialog_carga.accept()
         Muestra feedback visual accesible y autolimpia tras un tiempo. Unifica con mostrar_mensaje.
         """
-        colores = {
-            "info": "background: #e3f6fd; color: #2563eb;",
+        colores = {s(self):
+            "info": "background: #e3f6fd; color: #2563eb;",de datos
             "exito": "background: #d1f7e7; color: #15803d;",
             "advertencia": "background: #fef9c3; color: #b45309;",
             "error": "background: #fee2e2; color: #b91c1c;"
-        }
-        iconos = {
-            "info": "ℹ️ ",
-            "exito": "✅ ",
-            "advertencia": "⚠️ ",
-            "error": "❌ "
-        }
+        }   headers_recibos = [column[0] for column in cursor.description]
+        iconos = {abla_recibos.setColumnCount(len(headers_recibos))
+            "info": "ℹ️ ",ibos.setHorizontalHeaderLabels(headers_recibos)
+            "exito": "✅ ",eaders = headers_recibos
+            "advertencia": "⚠️ ",T TOP 0 * FROM movimientos_contables")
+            "error": "❌ "ce = [column[0] for column in cursor.description]
+        }   self.tabla_balance.setColumnCount(len(headers_balance))
         # QSS global: el tamaño de fuente y estilo de feedback se gestiona en themes/light.qss y dark.qss
         # self.label_feedback.setStyleSheet(f"font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; {colores.get(tipo, '')}")
-        self.label_feedback.setText(f"{iconos.get(tipo, 'ℹ️ ')}{mensaje}")
-        self.label_feedback.setVisible(True)
-        self.label_feedback.setAccessibleDescription(mensaje)
+        self.label_feedback.setText(f"{iconos.get(tipo, 'ℹ️ ')}{mensaje}")o", "Pendiente", "Estado"]
+        self.label_feedback.setVisible(True)self.pagos_headers))
+        self.label_feedback.setAccessibleDescription(mensaje)_headers)
         if self._feedback_timer:
-            self._feedback_timer.stop()
+            self._feedback_timer.stop()nfig_path, headers):
         self._feedback_timer = QTimer(self)
         self._feedback_timer.setSingleShot(True)
         self._feedback_timer.timeout.connect(self.ocultar_feedback)
         self._feedback_timer.start(duracion)
-        if tipo == "error":
-            log_error(mensaje)
-            QMessageBox.critical(self, "Error", mensaje)
-        elif tipo == "advertencia":
+        if tipo == "error":n as e:
+            log_error(mensaje)ror al cargar configuración de columnas: {e}")
+            QMessageBox.critical(self, "Error", mensaje)onfiguración de columnas: {e}", "error")
+        elif tipo == "advertencia":ader in headers}
             QMessageBox.warning(self, "Advertencia", mensaje)
-        elif tipo == "exito":
+        elif tipo == "exito":as(self, config_path, columnas_visibles):
             QMessageBox.information(self, "Éxito", mensaje)
         # EXCEPCIÓN: Si se requiere un tamaño de fuente específico por accesibilidad, justificar en docs/estandares_visuales.md
-
-    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
-        """
+                json.dump(columnas_visibles, f, ensure_ascii=False, indent=2)
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):a", "exito")
+        """ept Exception as e:
         Alias para mostrar_feedback, para compatibilidad con otros módulos.
-        """
+        """ self.mostrar_mensaje(f"Error al guardar configuración de columnas: {e}", "error")
         self.mostrar_feedback(mensaje, tipo, duracion)
-
+    def aplicar_columnas_visibles(self, tabla, headers, columnas_visibles):
     def ocultar_feedback(self):
-        self.label_feedback.clear()
-        self.label_feedback.setVisible(False)
+        self.label_feedback.clear()erate(headers):
+        self.label_feedback.setVisible(False)et(header, True)
         self.label_feedback.setAccessibleDescription("")
-
+        except Exception as e:
     def mostrar_feedback_carga(self, mensaje="Cargando...", minimo=0, maximo=0):
-        self.dialog_carga = QDialog(self)
+        self.dialog_carga = QDialog(self)al aplicar columnas visibles: {e}", "error")
         self.dialog_carga.setWindowTitle("Cargando")
-        vbox = QVBoxLayout(self.dialog_carga)
+        vbox = QVBoxLayout(self.dialog_carga)aders, columnas_visibles, config_path, pos):
         label = QLabel(mensaje)
-        vbox.addWidget(label)
-        self.progress_bar = QProgressBar()
+        vbox.addWidget(label))
+        self.progress_bar = QProgressBar()eaders):
         self.progress_bar.setRange(minimo, maximo)
         vbox.addWidget(self.progress_bar)
-        self.dialog_carga.setModal(True)
-        self.dialog_carga.setFixedSize(300, 100)
-        self.dialog_carga.show()
-        return self.progress_bar
-
-    def ocultar_feedback_carga(self):
+        self.dialog_carga.setModal(True)as_visibles.get(header, True))
+        self.dialog_carga.setFixedSize(300, 100)elf.toggle_columna, tabla, idx, header, columnas_visibles, config_path))
+        self.dialog_carga.show()ccion)
+        return self.progress_barontalHeader()
+            if header is not None:
+    def ocultar_feedback_carga(self):oGlobal(pos))
         if hasattr(self, 'dialog_carga') and self.dialog_carga:
-            self.dialog_carga.accept()
-            self.dialog_carga = None
-
-    def sync_headers(self):
-        # Sincroniza los headers de las tablas con la base de datos
+            self.dialog_carga.accept() mostrar el menú de columnas: header no disponible")
+            self.dialog_carga = None("No se puede mostrar el menú de columnas: header no disponible", "error")
+        except Exception as e:
+    def sync_headers(self):or al mostrar menú de columnas: {e}")
+        # Sincroniza los headers de las tablas con la base de datoss: {e}", "error")
         if self.db_connection:
-            cursor = self.db_connection.get_cursor()
+            cursor = self.db_connection.get_cursor()aders, columnas_visibles, config_path, idx):
             cursor.execute("SELECT TOP 0 * FROM recibos")
             headers_recibos = [column[0] for column in cursor.description]
             self.tabla_recibos.setColumnCount(len(headers_recibos))
             self.tabla_recibos.setHorizontalHeaderLabels(headers_recibos)
-            self.recibos_headers = headers_recibos
-            cursor.execute("SELECT TOP 0 * FROM movimientos_contables")
+            self.recibos_headers = headers_recibosoint(header.sectionViewportPosition(idx), 0))
+            cursor.execute("SELECT TOP 0 * FROM movimientos_contables")ibles, config_path, global_pos)
             headers_balance = [column[0] for column in cursor.description]
-            self.tabla_balance.setColumnCount(len(headers_balance))
-            self.tabla_balance.setHorizontalHeaderLabels(headers_balance)
+            self.tabla_balance.setColumnCount(len(headers_balance)) header no disponible")
+            self.tabla_balance.setHorizontalHeaderLabels(headers_balance)mnas: header no disponible", "error")
             self.balance_headers = headers_balance
         self.pagos_headers = ["Obra", "Colocador", "Total a Pagar", "Pagado", "Pendiente", "Estado"]
-        self.tabla_pagos.setColumnCount(len(self.pagos_headers))
+        self.tabla_pagos.setColumnCount(len(self.pagos_headers))mnas: {e}", "error")
         self.tabla_pagos.setHorizontalHeaderLabels(self.pagos_headers)
-
+    def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):
     def cargar_config_columnas(self, config_path, headers):
-        if os.path.exists(config_path):
-            try:
-                with open(config_path, "r", encoding="utf-8") as f:
-                    return json.load(f)
+        if os.path.exists(config_path): checked
+            try:a.setColumnHidden(idx, not checked)
+                with open(config_path, "r", encoding="utf-8") as f:bles)
+                    return json.load(f)mna '{header}' {'mostrada' if checked else 'ocultada'}", "info")
             except Exception as e:
                 log_error(f"Error al cargar configuración de columnas: {e}")
                 self.mostrar_mensaje(f"Error al cargar configuración de columnas: {e}", "error")
         return {header: True for header in headers}
-
+    def auto_ajustar_columna(self, tabla, idx):
     def guardar_config_columnas(self, config_path, columnas_visibles):
-        try:
+        try:tabla.resizeColumnToContents(idx)
             with open(config_path, "w", encoding="utf-8") as f:
                 json.dump(columnas_visibles, f, ensure_ascii=False, indent=2)
             self.mostrar_mensaje("Configuración de columnas guardada", "exito")
         except Exception as e:
             log_error(f"Error al guardar configuración de columnas: {e}")
             self.mostrar_mensaje(f"Error al guardar configuración de columnas: {e}", "error")
-
+            selected = tabla.selectedItems()
     def aplicar_columnas_visibles(self, tabla, headers, columnas_visibles):
-        try:
+        try:    return
             for idx, header in enumerate(headers):
-                visible = columnas_visibles.get(header, True)
+                visible = columnas_visibles.get(header, True)mer campo como dato QR
                 tabla.setColumnHidden(idx, not visible)
-        except Exception as e:
+        except Exception as e:ensaje("No se pudo obtener el código para el QR.", "error")
             log_error(f"Error al aplicar columnas visibles: {e}")
             self.mostrar_mensaje(f"Error al aplicar columnas visibles: {e}", "error")
-
+            qr.add_data(codigo)
     def mostrar_menu_columnas(self, tabla, headers, columnas_visibles, config_path, pos):
-        try:
-            menu = QMenu(self)
+        try:img = qr.make_image(fill_color="black", back_color="white")
+            menu = QMenu(self)dTemporaryFile(suffix=".png", delete=False) as tmp:
             for idx, header in enumerate(headers):
                 accion = QAction(header, self)
                 accion.setCheckable(True)
                 accion.setChecked(columnas_visibles.get(header, True))
                 accion.toggled.connect(partial(self.toggle_columna, tabla, idx, header, columnas_visibles, config_path))
-                menu.addAction(accion)
-            header = tabla.horizontalHeader()
+                menu.addAction(accion)ar QR: {e}")
+            header = tabla.horizontalHeader()enerar QR: {e}", "error")
             if header is not None:
                 menu.exec(header.mapToGlobal(pos))
-            else:
+            else:tWindowTitle(f"Código QR para {codigo}")
                 log_error("No se puede mostrar el menú de columnas: header no disponible")
                 self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible", "error")
-        except Exception as e:
+        except Exception as e:map)
             log_error(f"Error al mostrar menú de columnas: {e}")
             self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
-
+        btns = QHBoxLayout()
     def mostrar_menu_columnas_header(self, tabla, headers, columnas_visibles, config_path, idx):
-        from PyQt6.QtCore import QPoint
-        try:
+        from PyQt6.QtCore import QPointguardar-qr.svg"))
+        try:guardar.setToolTip("Guardar QR como imagen")
             header = tabla.horizontalHeader()
             if header is not None and all(hasattr(header, m) for m in ['sectionPosition', 'mapToGlobal', 'sectionViewportPosition']):
                 if idx < 0 or idx >= tabla.columnCount():
                     self.mostrar_mensaje("Índice de columna fuera de rango", "error")
-                    return
+                    returnono(btn_pdf)
                 pos = header.sectionPosition(idx)
                 global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
                 self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
-            else:
+            else:ar():
                 log_error("No se puede mostrar el menú de columnas: header no disponible o incompleto")
                 self.mostrar_mensaje("No se puede mostrar el menú de columnas: header no disponible o incompleto", "error")
         except Exception as e:
-            log_error(f"Error al mostrar menú de columnas desde header: {e}")
+            log_error(f"Error al mostrar menú de columnas desde header: {e}")s dst:
             self.mostrar_mensaje(f"Error al mostrar menú de columnas: {e}", "error")
-
+            except Exception as e:
     def toggle_columna(self, tabla, idx, header, columnas_visibles, config_path, checked):
-        try:
-            columnas_visibles[header] = checked
+        try:    self.mostrar_mensaje(f"Error al guardar imagen QR: {e}", "error")
+            columnas_visibles[header] = checkediable para evitar error de compilación
             tabla.setColumnHidden(idx, not checked)
             self.guardar_config_columnas(config_path, columnas_visibles)
             self.mostrar_mensaje(f"Columna '{header}' {'mostrada' if checked else 'ocultada'}", "info")
-        except Exception as e:
-            log_error(f"Error al alternar columna: {e}")
+        except Exception as e:.lib.pagesizes import letter
+            log_error(f"Error al alternar columna: {e}")me(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
             self.mostrar_mensaje(f"Error al alternar columna: {e}", "error")
-
-    def auto_ajustar_columna(self, tabla, idx):
-        try:
+                    c = canvas.Canvas(file_path, pagesize=letter)
+    def auto_ajustar_columna(self, tabla, idx): 100, 500, 200, 200)
+        try:        c.save()
             tabla.resizeColumnToContents(idx)
-        except Exception as e:
-            log_error(f"Error al autoajustar columna: {e}")
+        except Exception as e:ror al exportar QR a PDF: {e}")
+            log_error(f"Error al autoajustar columna: {e}") a PDF: {e}", "error")
             self.mostrar_mensaje(f"Error al autoajustar columna: {e}", "error")
-
+        btn_pdf.clicked.connect(exportar_pdf)
     def mostrar_qr_item_seleccionado(self, tabla):
         try:
             selected = tabla.selectedItems()
             if not selected:
-                return
-            row = selected[0].row()
+                returnDialog(self)
+            row = selected[0].row()Agregar nuevo recibo")
             codigo = tabla.item(row, 0).text()  # Usar el primer campo como dato QR
-            if not codigo:
+            if not codigo:yout()
                 self.mostrar_mensaje("No se pudo obtener el código para el QR.", "error")
-                return
-            qr = qrcode.QRCode(version=1, box_size=6, border=2)
-            qr.add_data(codigo)
-            qr.make(fit=True)
+                returnt.setPlaceholderText("YYYY-MM-DD")
+            qr = qrcode.QRCode(version=1, box_size=6, border=2)")
+            qr.add_data(codigo)Box()
+            qr.make(fit=True)ner_obras_para_selector()
             img = qr.make_image(fill_color="black", back_color="white")
             with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
-                img.save(tmp)
-                tmp.flush()
-                tmp_path = tmp.name
-                pixmap = QPixmap(tmp_path)
-        except Exception as e:
-            log_error(f"Error al generar QR: {e}")
+                img.save(tmp)dItem(f"{obra_id} - {nombre} ({cliente})", obra_id)
+                tmp.flush()LineEdit()
+                tmp_path = tmp.namederText("Monto total")
+                pixmap = QPixmap(tmp_path)total del recibo")
+        except Exception as e:LineEdit()
+            log_error(f"Error al generar QR: {e}")cepto")
             self.mostrar_mensaje(f"Error al generar QR: {e}", "error")
-            return
-        dialog = QDialog(self)
-        dialog.setWindowTitle(f"Código QR para {codigo}")
-        vbox = QVBoxLayout(dialog)
-        qr_label = QLabel()
-        qr_label.setPixmap(pixmap)
-        vbox.addWidget(qr_label)
-        btns = QHBoxLayout()
-        btns = QHBoxLayout()
+            returnatario_input = QLineEdit()
+        dialog = QDialog(self).setPlaceholderText("Destinatario")
+        dialog.setWindowTitle(f"Código QR para {codigo}")el recibo")
+        vbox = QVBoxLayout(dialog)Emisión:", fecha_input)
+        qr_label = QLabel()ra:", obra_combo)
+        qr_label.setPixmap(pixmap)al:", monto_input)
+        vbox.addWidget(qr_label)o:", concepto_input)
+        btns = QHBoxLayout()tinatario:", destinatario_input)
+        btns = QHBoxLayout()(form)
         btn_guardar = QPushButton()
         btn_guardar.setIcon(QIcon("resources/icons/guardar-qr.svg"))
-        btn_guardar.setToolTip("Guardar QR como imagen")
-        estilizar_boton_icono(btn_guardar)
-        btn_pdf = QPushButton()
+        btn_guardar.setToolTip("Guardar QR como imagen"))
+        estilizar_boton_icono(btn_guardar)r")
+        btn_pdf = QPushButton()no(btn_agregar)
         btn_pdf.setIcon(QIcon("resources/icons/pdf.svg"))
         btn_pdf.setToolTip("Exportar QR a PDF")
-        estilizar_boton_icono(btn_pdf)
-        btns.addWidget(btn_guardar)
-        btns.addWidget(btn_pdf)
-        vbox.addLayout(btns)
-        def guardar():
-            try:
+        estilizar_boton_icono(btn_pdf))
+        btns.addWidget(btn_guardar)elar)
+        btns.addWidget(btn_pdf)ns)
+        vbox.addLayout(btns)bo():
+        def guardar():= [
+            try:    fecha_input.text(),
                 file_path, _ = QFileDialog.getSaveFileName(dialog, "Guardar QR", f"qr_{codigo}.png", "Imagen PNG (*.png)")
-                if file_path:
+                if file_path:ut.text(),
                     with open(tmp_path, "rb") as src, open(file_path, "wb") as dst:
-                        dst.write(src.read())
+                        dst.write(src.read()),
             except Exception as e:
                 log_error(f"Error al guardar imagen QR: {e}")
                 self.mostrar_mensaje(f"Error al guardar imagen QR: {e}", "error")
                 e = None  # Fix: consolidar variable para evitar error de compilación
         def exportar_pdf():
-            try:
-                from reportlab.pdfgen import canvas
+            try:if hasattr(self, 'controller'):
+                from reportlab.pdfgen import canvasdatos)
                 from reportlab.lib.pagesizes import letter
                 file_path, _ = QFileDialog.getSaveFileName(dialog, "Exportar QR a PDF", f"qr_{codigo}.pdf", "Archivo PDF (*.pdf)")
-                if file_path:
+                if file_path:ked.connect(dialog.reject)
                     c = canvas.Canvas(file_path, pagesize=letter)
                     c.drawInlineImage(tmp_path, 100, 500, 200, 200)
-                    c.save()
-            except Exception as e:
+                    c.save()r al abrir diálogo de nuevo recibo: {e}")
+            except Exception as e:"Error al abrir diálogo de nuevo recibo: {e}", "error")
                 log_error(f"Error al exportar QR a PDF: {e}")
                 self.mostrar_mensaje(f"Error al exportar QR a PDF: {e}", "error")
-        btn_guardar.clicked.connect(guardar)
-        btn_pdf.clicked.connect(exportar_pdf)
+        btn_guardar.clicked.connect(guardar)de nuevo movimiento
+        btn_pdf.clicked.connect(exportar_pdf)ntable (stub)")
         dialog.exec()
-
+    def abrir_dialogo_estadistica_personalizada(self):
     def abrir_dialogo_nuevo_recibo(self):
-        try:
-            dialog = QDialog(self)
+        try:og.setWindowTitle("Configurar Estadística Personalizada")
+            dialog = QDialog(self)g)
             dialog.setWindowTitle("Agregar nuevo recibo")
-            layout = QVBoxLayout()
-            form = QFormLayout()
+            layout = QVBoxLayout()últiple)
+            form = QFormLayout() 'balance_headers', ["tipo", "monto", "moneda", "obra", "fecha"])
             fecha_input = QLineEdit()
             fecha_input.setPlaceholderText("YYYY-MM-DD")
-            fecha_input.setToolTip("Fecha de emisión del recibo")
-            obra_combo = QComboBox()
+            fecha_input.setToolTip("Fecha de emisión del recibo")para agrupar")
+            obra_combo = QComboBox()al:", combo_columnas)
             obras = self.obtener_obras_para_selector()
-            for obra in obras:
-                obra_id, nombre, cliente = obra[0], obra[1], obra[2]
+            for obra in obras:Box()
+                obra_id, nombre, cliente = obra[0], obra[1], obra[2]lumnas.currentText()])
                 obra_combo.addItem(f"{obra_id} - {nombre} ({cliente})", obra_id)
-            monto_input = QLineEdit()
+            monto_input = QLineEdit(), combo_filtros)
             monto_input.setPlaceholderText("Monto total")
             monto_input.setToolTip("Monto total del recibo")
-            concepto_input = QLineEdit()
-            concepto_input.setPlaceholderText("Concepto")
+            concepto_input = QLineEdit()"Promedio", "Conteo"])
+            concepto_input.setPlaceholderText("Concepto")plicar")
             concepto_input.setToolTip("Concepto del recibo")
             destinatario_input = QLineEdit()
             destinatario_input.setPlaceholderText("Destinatario")
             destinatario_input.setToolTip("Destinatario del recibo")
             form.addRow("Fecha de Emisión:", fecha_input)
-            form.addRow("Obra:", obra_combo)
+            form.addRow("Obra:", obra_combo)o_grafico)
             form.addRow("Monto Total:", monto_input)
             form.addRow("Concepto:", concepto_input)
-            form.addRow("Destinatario:", destinatario_input)
-            layout.addLayout(form)
+            form.addRow("Destinatario:", destinatario_input)stica personalizada")
+            layout.addLayout(form)bre_input)
             btns = QHBoxLayout()
             btn_agregar = QPushButton()
             btn_agregar.setIcon(QIcon("resources/icons/agregar.svg"))
             btn_agregar.setToolTip("Agregar")
-            estilizar_boton_icono(btn_agregar)
-            btn_cancelar = QPushButton("Cancelar")
-            btns.addStretch()
+            estilizar_boton_icono(btn_agregar)-qr.svg"))
+            btn_cancelar = QPushButton("Cancelar")estadística personalizada")
+            btn_cancelar.setObjectName("btn_cancelar")(btn_guardar)
+            btns.addStretch()celar")
             btns.addWidget(btn_agregar)
-            btns.addWidget(btn_cancelar)
-            layout.addLayout(btns)
-            def agregar_recibo():
+            btns.addWidget(btn_cancelar))
+            layout.addLayout(btns)ar)
+            def agregar_recibo():btns)
                 datos = [
-                    fecha_input.text(),
-                    obra_combo.currentData(),
-                    monto_input.text(),
-                    concepto_input.text(),
-                    destinatario_input.text(),
-                    "pendiente"
-                ]
+                    fecha_input.text(),ext()
+                    obra_combo.currentData(),entText()
+                    monto_input.text(),tText()
+                    concepto_input.text(),ntText()
+                    destinatario_input.text(),ut.text().strip()
+                    "pendiente"t nombre:
+                ]log, "Nombre requerido", "Ingrese un nombre para la estadística.")
                 if not all(datos[:-1]):
-                    self.mostrar_mensaje("Complete todos los campos.", "advertencia")
+                    self.mostrar_mensaje("Complete todos los campos.", "advertencia")umna": columna, "filtro": filtro, "metrica": metrica, "tipo_grafico": tipo_grafico, "nombre": nombre}
                     return
-                if hasattr(self, 'controller'):
-                    self.controller.agregar_recibo(datos)
+                if hasattr(self, 'controller'):on"
+                    self.controller.agregar_recibo(datos)onfig_path):
                 dialog.accept()
-            btn_agregar.clicked.connect(agregar_recibo)
+            btn_agregar.clicked.connect(agregar_recibo)g="utf-8") as f:
             btn_cancelar.clicked.connect(dialog.reject)
             self.setTabOrder(fecha_input, obra_combo)
             self.setTabOrder(obra_combo, monto_input)
-            self.setTabOrder(monto_input, concepto_input)
+            self.setTabOrder(monto_input, concepto_input)nombre]
             self.setTabOrder(concepto_input, destinatario_input)
-            self.setTabOrder(destinatario_input, btn_agregar)
-            dialog.setLayout(layout)
-            dialog.exec()
+            self.setTabOrder(destinatario_input, btn_agregar)w", encoding="utf-8") as f:
+            dialog.setLayout(layout)(configs, f, ensure_ascii=False, indent=2)
+            dialog.exec()sticas_personalizadas()
         except Exception as e:
             log_error(f"Error al abrir diálogo de nuevo recibo: {e}")
-            self.mostrar_mensaje(f"Error al abrir diálogo de nuevo recibo: {e}", "error")
+            self.mostrar_mensaje(f"Error al abrir diálogo de nuevo recibo: {e}", "error")            dialog.accept()
 
     def abrir_dialogo_nuevo_movimiento(self, *args, **kwargs):
         # TODO: Implementar el diálogo real de nuevo movimiento
         print("Diálogo de nuevo movimiento contable (stub)")
 
-    def abrir_dialogo_estadistica_personalizada(self):
+    def abrir_dialogo_estadistica_personalizada(self):boton_exportar_grafico'):
         dialog = QDialog(self)
-        dialog.setWindowTitle("Configurar Estadística Personalizada")
-        layout = QVBoxLayout(dialog)
-        form = QFormLayout()
+        dialog.setWindowTitle("Configurar Estadística Personalizada")ico.setIcon(QIcon("img/pdf.svg"))
+        layout = QVBoxLayout(dialog)tar_grafico.setToolTip("Exportar gráfico a imagen o PDF")
+        form = QFormLayout()on_exportar_grafico)
         # Selección de columnas (múltiple)
-        columnas = getattr(self, 'balance_headers', ["tipo", "monto", "moneda", "obra", "fecha"])
+        columnas = getattr(self, 'balance_headers', ["tipo", "monto", "moneda", "obra", "fecha"])yout.addWidget(self.boton_exportar_grafico)
         combo_columnas = QComboBox()
         combo_columnas.addItems(columnas)
-        combo_columnas.setToolTip("Seleccionar columna principal para agrupar")
+        combo_columnas.setToolTip("Seleccionar columna principal para agrupar")"Exportar gráfico", "estadistica.png", "Imagen PNG (*.png);;Archivo PDF (*.pdf)")
         form.addRow("Columna principal:", combo_columnas)
-        # Selección de columnas secundarias (filtros)
+        # Selección de columnas secundarias (filtros)as.figure
         combo_filtros = QComboBox()
         combo_filtros.addItems([c for c in columnas if c != combo_columnas.currentText()])
         combo_filtros.setToolTip("Seleccionar columna para filtrar (opcional)")
-        form.addRow("Columna filtro:", combo_filtros)
+        form.addRow("Columna filtro:", combo_filtros)le_path, format='png')
         # Selección de métrica
         combo_metrica = QComboBox()
         combo_metrica.addItems(["Suma", "Promedio", "Conteo"])
-        combo_metrica.setToolTip("Seleccionar métrica a aplicar")
+        combo_metrica.setToolTip("Seleccionar métrica a aplicar")ras()
         form.addRow("Métrica:", combo_metrica)
         # Selección de tipo de gráfico
         combo_grafico = QComboBox()
         combo_grafico.addItems(["Barra", "Torta", "Línea"])
         combo_grafico.setToolTip("Tipo de visualización")
-        form.addRow("Tipo de gráfico:", combo_grafico)
-        # Nombre para guardar la estadística
+        form.addRow("Tipo de gráfico:", combo_grafico)nce.columnCount()):
+        # Nombre para guardar la estadísticabalance.item(row, col)
         nombre_input = QLineEdit()
         nombre_input.setPlaceholderText("Nombre de la estadística personalizada")
         form.addRow("Nombre:", nombre_input)
-        layout.addLayout(form)
+        layout.addLayout(form)tabla_balance.setRowHidden(row, not visible)
         # Botones
-        btns = QHBoxLayout()
+        btns = QHBoxLayout()exto):
         btn_guardar = QPushButton()
         btn_guardar.setIcon(QIcon("resources/icons/guardar-qr.svg"))
-        btn_guardar.setToolTip("Guardar y mostrar estadística personalizada")
-        estilizar_boton_icono(btn_guardar)
-        btn_cancelar = QPushButton("Cancelar")
+        btn_guardar.setToolTip("Guardar y mostrar estadística personalizada")gos.columnCount()):
+        estilizar_boton_icono(btn_guardar)ow, col)
+        btn_cancelar = QPushButton("Cancelar")nd texto.lower() in item.text().lower():
+        btn_cancelar.setObjectName("btn_cancelar")
         btns.addStretch()
-        btns.addWidget(btn_guardar)
+        btns.addWidget(btn_guardar)etRowHidden(row, not visible)
         btns.addWidget(btn_cancelar)
         layout.addLayout(btns)
-        def guardar_estadistica():
+        def guardar_estadistica():ount()):
             columna = combo_columnas.currentText()
-            filtro = combo_filtros.currentText()
-            metrica = combo_metrica.currentText()
-            tipo_grafico = combo_grafico.currentText()
+            filtro = combo_filtros.currentText()Count()):
+            metrica = combo_metrica.currentText()ow, col)
+            tipo_grafico = combo_grafico.currentText()d texto.lower() in item.text().lower():
             nombre = nombre_input.text().strip()
-            if not nombre:
+            if not nombre:eak
                 QMessageBox.warning(dialog, "Nombre requerido", "Ingrese un nombre para la estadística.")
                 return
             config = {"columna": columna, "filtro": filtro, "metrica": metrica, "tipo_grafico": tipo_grafico, "nombre": nombre}
-            configs = []
-            config_path = "estadisticas_personalizadas.json"
+            configs = [] lista_fechas if f})
+            config_path = "estadisticas_personalizadas.json"nio.clear()
             if os.path.exists(config_path):
                 try:
                     with open(config_path, "r", encoding="utf-8") as f:
-                        configs = json.load(f)
-                except Exception:
-                    pass
+                        configs = json.load(f)co_estadisticas(self):
+                except Exception: filtrados
+                    passfico.currentText()
             configs = [c for c in configs if c.get("nombre") != nombre]
             configs.append(config)
             with open(config_path, "w", encoding="utf-8") as f:
-                json.dump(configs, f, ensure_ascii=False, indent=2)
+                json.dump(configs, f, ensure_ascii=False, indent=2)dolar.text().replace(",", ".")) if self.input_dolar.text() else None
             self.cargar_estadisticas_personalizadas()
-            if hasattr(self, 'controller'):
-                self.controller.mostrar_estadistica_personalizada(config)
+            if hasattr(self, 'controller'):one
+                self.controller.mostrar_estadistica_personalizada(config)s y llamar a la función de graficado adecuada
             dialog.accept()
-        btn_guardar.clicked.connect(guardar_estadistica)
+        btn_guardar.clicked.connect(guardar_estadistica)roller.mostrar_estadisticas_balance(tipo, anio, mes, valor_dolar)
         btn_cancelar.clicked.connect(dialog.reject)
-        dialog.exec()
-
+        dialog.exec(), tipo, anio, mes, valor_dolar, datos):
+tipo, monto, moneda, obra, fecha, etc.)
     def setup_exportar_grafico_btn(self):
         if not hasattr(self, 'boton_exportar_grafico'):
             self.boton_exportar_grafico = QPushButton()
             self.boton_exportar_grafico.setIcon(QIcon("resources/icons/pdf.svg"))
-            self.boton_exportar_grafico.setToolTip("Exportar gráfico a imagen o PDF")
-            estilizar_boton_icono(self.boton_exportar_grafico)
-            self.boton_exportar_grafico.clicked.connect(self.exportar_grafico)
-            self.tab_estadisticas_layout.addWidget(self.boton_exportar_grafico)
+            self.boton_exportar_grafico.setToolTip("Exportar gráfico a imagen o PDF")neda', 'ARS') == 'USD' and valor_dolar else 1)
+            estilizar_boton_icono(self.boton_exportar_grafico)a')
+            self.boton_exportar_grafico.clicked.connect(self.exportar_grafico)            total_salidas = sum(float(d['monto']) * (valor_dolar if d.get('moneda', 'ARS') == 'USD' and valor_dolar else 1)
+            self.tab_estadisticas_layout.addWidget(self.boton_exportar_grafico)  for d in datos if d['tipo'].lower() == 'salida')
 
-    def exportar_grafico(self):
+    def exportar_grafico(self):tle('Ingresos vs Egresos (en Pesos)')
         file_path, _ = QFileDialog.getSaveFileName(self, "Exportar gráfico", "estadistica.png", "Imagen PNG (*.png);;Archivo PDF (*.pdf)")
-        if file_path:
+        if file_path:otal Entradas: ${total_entradas:,.2f}   |   Total Salidas: ${total_salidas:,.2f}   |   Saldo: ${total_entradas-total_salidas:,.2f}")
             fig = self.grafico_canvas.figure
-            if file_path.endswith('.pdf'):
+            if file_path.endswith('.pdf'): = {}
                 fig.savefig(file_path, format='pdf')
-            else:
-                fig.savefig(file_path, format='png')
-
-    def obtener_obras_para_selector(self):
-        if self.obras_model:
-            return self.obras_model.obtener_obras()
+            else:                if d['tipo'].lower() == 'entrada':
+                fig.savefig(file_path, format='png')Sin Obra')
+float(d['monto']) * (valor_dolar if d.get('moneda', 'ARS') == 'USD' and valor_dolar else 1)
+    def obtener_obras_para_selector(self):) + monto
+        if self.obras_model:r(list(obras.keys()), list(obras.values()), color='#2563eb')
+            return self.obras_model.obtener_obras()            ax.set_title('Cobros por Obra (en Pesos)')
         return []
-
-    def filtrar_tabla_balance(self, texto):
+: {len(obras)} obras")
+    def filtrar_tabla_balance(self, texto): por Obra":
         for row in range(self.tabla_balance.rowCount()):
             visible = False
             for col in range(self.tabla_balance.columnCount()):
-                item = self.tabla_balance.item(row, col)
-                if item and texto.lower() in item.text().lower():
+                item = self.tabla_balance.item(row, col)obra', 'Sin Obra')
+                if item and texto.lower() in item.text().lower(): = float(d['monto']) * (valor_dolar if d.get('moneda', 'ARS') == 'USD' and valor_dolar else 1)
                     visible = True
-                    break
-            self.tabla_balance.setRowHidden(row, not visible)
+                    break            ax.bar(list(obras.keys()), list(obras.values()), color='#ef4444')
+            self.tabla_balance.setRowHidden(row, not visible)(en Pesos)')
 
-    def filtrar_tabla_pagos(self, texto):
+    def filtrar_tabla_pagos(self, texto):men.setText(f"Pagos por obra: {len(obras)} obras")
         for row in range(self.tabla_pagos.rowCount()):
             visible = False
-            for col in range(self.tabla_pagos.columnCount()):
-                item = self.tabla_pagos.item(row, col)
-                if item and texto.lower() in item.text().lower():
-                    visible = True
-                    break
-            self.tabla_pagos.setRowHidden(row, not visible)
+            for col in range(self.tabla_pagos.columnCount()):]
+                item = self.tabla_pagos.item(row, col)lf.procesar_movimientos(datos)
+                if item and texto.lower() in item.text().lower():ntradas.get(m, 0.0) for m in range(1, 13)]
+                    visible = True, 13)]
+                    break            ax.plot(meses, entradas, label='Entradas', color='#22c55e', marker='o')
+            self.tabla_pagos.setRowHidden(row, not visible)Salidas', color='#ef4444', marker='o')
 
-    def filtrar_tabla_recibos(self, texto):
+    def filtrar_tabla_recibos(self, texto):Monto (ARS)')
         for row in range(self.tabla_recibos.rowCount()):
-            visible = False
+            visible = Falsel de ingresos y egresos")
             for col in range(self.tabla_recibos.columnCount()):
-                item = self.tabla_recibos.item(row, col)
-                if item and texto.lower() in item.text().lower():
-                    visible = True
-                    break
-            self.tabla_recibos.setRowHidden(row, not visible)
+                item = self.tabla_recibos.item(row, col)to']) for d in datos if d.get('moneda', 'ARS') == 'ARS')
+                if item and texto.lower() in item.text().lower():at(d['monto']) for d in datos if d.get('moneda', 'ARS') == 'USD')
+                    visible = Trueutopct='%1.1f%%', colors=['#2563eb', '#fbbf24'])
+                    break            ax.set_title('Desglose por Moneda')
+            self.tabla_recibos.setRowHidden(row, not visible)s: ${ars:,.2f} | Total en Dólares: U$D {usd:,.2f}")
 
     def cargar_anios_estadisticas(self, lista_fechas):
-        anios = sorted({str(f[:4]) for f in lista_fechas if f})
+        anios = sorted({str(f[:4]) for f in lista_fechas if f})ientos):
         self.combo_anio.clear()
-        self.combo_anio.addItem("Todos")
+        self.combo_anio.addItem("Todos")        salidas = {}
         self.combo_anio.addItems(anios)
 
     def actualizar_grafico_estadisticas(self):
         # Este método debe ser llamado por el controlador con los datos filtrados
-        tipo = self.combo_tipo_grafico.currentText()
-        anio = self.combo_anio.currentText()
+        tipo = self.combo_tipo_grafico.currentText()(m, 0.0) + monto
+        anio = self.combo_anio.currentText()else:
         mes = self.combo_mes.currentText()
-        try:
+        try:salidas
             valor_dolar = float(self.input_dolar.text().replace(",", ".")) if self.input_dolar.text() else None
         except Exception:
-            valor_dolar = None
+            valor_dolar = Nonesonalizadas.json"
         # El controlador debe proveer los datos filtrados y llamar a la función de graficado adecuada
-        if hasattr(self, 'controller'):
-            self.controller.mostrar_estadisticas_balance(tipo, anio, mes, valor_dolar)
-
-    def mostrar_estadisticas_balance(self, tipo, anio, mes, valor_dolar, datos):
-        # datos: lista de dicts con claves relevantes (tipo, monto, moneda, obra, fecha, etc.)
-        fig = self.grafico_canvas.figure
-        fig.clear()
-        ax = fig.add_subplot(111)
-        if tipo == "Ingresos vs Egresos":
-            total_entradas = sum(float(d['monto']) * (valor_dolar if d.get('moneda', 'ARS') == 'USD' and valor_dolar else 1)
-                                 for d in datos if d['tipo'].lower() == 'entrada')
-            total_salidas = sum(float(d['monto']) * (valor_dolar if d.get('moneda', 'ARS') == 'USD' and valor_dolar else 1)
-                                 for d in datos if d['tipo'].lower() == 'salida')
-            ax.bar(['Entradas', 'Salidas'], [total_entradas, total_salidas], color=['#22c55e', '#ef4444'])
-            ax.set_title('Ingresos vs Egresos (en Pesos)')
-            ax.set_ylabel('Monto (ARS)')
-            self.label_resumen.setText(f"Total Entradas: ${total_entradas:,.2f}   |   Total Salidas: ${total_salidas:,.2f}   |   Saldo: ${total_entradas-total_salidas:,.2f}")
-        elif tipo == "Cobros por Obra":
-            obras = {}
-            for d in datos:
-                if d['tipo'].lower() == 'entrada':
-                    obra = d.get('obra', 'Sin Obra')
-                    monto = float(d['monto']) * (valor_dolar if d.get('moneda', 'ARS') == 'USD' and valor_dolar else 1)
-                    obras[obra] = obras.get(obra, 0) + monto
-            ax.bar(list(obras.keys()), list(obras.values()), color='#2563eb')
-            ax.set_title('Cobros por Obra (en Pesos)')
-            ax.set_ylabel('Monto (ARS)')
-            self.label_resumen.setText(f"Cobros por obra: {len(obras)} obras")
-        elif tipo == "Pagos por Obra":
-            obras = {}
-            for d in datos:
-                if d['tipo'].lower() == 'salida':
-                    obra = d.get('obra', 'Sin Obra')
-                    monto = float(d['monto']) * (valor_dolar if d.get('moneda', 'ARS') == 'USD' and valor_dolar else 1)
-                    obras[obra] = obras.get(obra, 0) + monto
-            ax.bar(list(obras.keys()), list(obras.values()), color='#ef4444')
-            ax.set_title('Pagos por Obra (en Pesos)')
-            ax.set_ylabel('Monto (ARS)')
-            self.label_resumen.setText(f"Pagos por obra: {len(obras)} obras")
-        elif tipo == "Evolución Mensual":
-            import calendar
-            meses = [calendar.month_abbr[m] for m in range(1, 13)]
-            entradas, salidas = self.procesar_movimientos(datos)
-            entradas = [entradas.get(m, 0.0) for m in range(1, 13)]
-            salidas = [salidas.get(m, 0.0) for m in range(1, 13)]
-            ax.plot(meses, entradas, label='Entradas', color='#22c55e', marker='o')
-            ax.plot(meses, salidas, label='Salidas', color='#ef4444', marker='o')
-            ax.set_title('Evolución Mensual')
-            ax.set_ylabel('Monto (ARS)')
-            ax.legend()
-            self.label_resumen.setText("Evolución mensual de ingresos y egresos")
-        elif tipo == "Desglose por Moneda":
-            ars = sum(float(d['monto']) for d in datos if d.get('moneda', 'ARS') == 'ARS')
-            usd = sum(float(d['monto']) for d in datos if d.get('moneda', 'ARS') == 'USD')
-            ax.pie([ars, usd], labels=['Pesos', 'Dólares'], autopct='%1.1f%%', colors=['#2563eb', '#fbbf24'])
-            ax.set_title('Desglose por Moneda')
-            self.label_resumen.setText(f"Total en Pesos: ${ars:,.2f} | Total en Dólares: U$D {usd:,.2f}")
-        fig.tight_layout()
-
-    def procesar_movimientos(self, movimientos):
-        entradas = {}
-        salidas = {}
-        for mov in movimientos:
-            m = mov['mes']
-            monto = float(mov['monto'])
-            if mov['tipo'] == 'entrada':
-                entradas[m] = entradas.get(m, 0.0) + monto
-            else:
-                salidas[m] = salidas.get(m, 0.0) + monto
-        return entradas, salidas
-
-    def cargar_estadisticas_personalizadas(self):
-        config_path = "estadisticas_personalizadas.json"
-        self.combo_estadistica_personalizada.blockSignals(True)
-        self.combo_estadistica_personalizada.clear()
+        if hasattr(self, 'controller'):        self.combo_estadistica_personalizada.clear()
         self.combo_estadistica_personalizada.addItem("(Ninguna personalizada)")
         if os.path.exists(config_path):
             try:
@@ -1029,418 +957,3 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
             pass
         # EXCEPCIÓN JUSTIFICADA: Si algún proceso no tiene feedback de carga es porque no hay operaciones largas en la UI de contabilidad. Ver test_feedback_carga y docs/estandares_visuales.md.
         # JUSTIFICACIÓN: No hay credenciales hardcodeadas ni estilos embebidos activos; cualquier referencia es solo ejemplo o documentación.
-
-    # Conectar botón exportar a Excel (Balance)
-        self.boton_exportar_excel_balance.clicked.connect(self.exportar_tabla_balance_a_excel)
-
-    def exportar_tabla_balance_a_excel(self):
-        """
-        Exporta la tabla de balance a un archivo Excel, con confirmación y feedback modal robusto.
-        """
-        from PyQt6.QtWidgets import QFileDialog, QMessageBox
-        import pandas as pd
-        # Confirmación previa
-        confirm = QMessageBox.question(
-            self,
-            "Confirmar exportación",
-            "¿Desea exportar el balance a Excel?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
-        if confirm != QMessageBox.StandardButton.Yes:
-            self.mostrar_feedback("Exportación cancelada por el usuario.", tipo="advertencia")
-            return
-        # Diálogo para elegir ubicación
-        file_path, _ = QFileDialog.getSaveFileName(
-            self,
-            "Exportar a Excel",
-            "balance.xlsx",
-            "Archivos Excel (*.xlsx)"
-        )
-        if not file_path:
-            self.mostrar_feedback("Exportación cancelada.", tipo="advertencia")
-            return
-        # Obtener datos de la tabla
-        data = []
-        # Usar headers robustos
-        if hasattr(self, 'balance_headers') and self.balance_headers:
-            headers = self.balance_headers
-        else:
-            headers = []
-            for i in range(self.tabla_balance.columnCount()):
-                header_item = self.tabla_balance.horizontalHeaderItem(i)
-                if header_item is not None:
-                    headers.append(header_item.text())
-                else:
-                    headers.append(f"Columna {i+1}")
-        for row in range(self.tabla_balance.rowCount()):
-            row_data = {}
-            for col, header in enumerate(headers):
-                item = self.tabla_balance.item(row, col)
-                row_data[header] = item.text() if item else ""
-            data.append(row_data)
-        try:
-            import pandas as pd
-            df = pd.DataFrame(data)
-            df.to_excel(file_path, index=False)
-            from PyQt6.QtWidgets import QMessageBox
-            QMessageBox.information(self, "Exportación exitosa", f"Balance exportado correctamente a:\n{file_path}")
-            self.mostrar_feedback(f"Balance exportado correctamente a {file_path}", tipo="exito")
-        except Exception as e:
-            from PyQt6.QtWidgets import QMessageBox
-            QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
-            self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
-
-    def exportar_tabla_pagos_a_excel(self):
-        """
-        Exporta la tabla de pagos a un archivo Excel, con confirmación y feedback modal robusto.
-        """
-        from PyQt6.QtWidgets import QFileDialog, QMessageBox
-        import pandas as pd
-        confirm = QMessageBox.question(
-            self,
-            "Confirmar exportación",
-            "¿Desea exportar los pagos a Excel?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
-        if confirm != QMessageBox.StandardButton.Yes:
-            self.mostrar_feedback("Exportación cancelada por el usuario.", tipo="advertencia")
-            return
-        file_path, _ = QFileDialog.getSaveFileName(
-            self,
-            "Exportar a Excel",
-            "pagos.xlsx",
-            "Archivos Excel (*.xlsx)"
-        )
-        if not file_path:
-            self.mostrar_feedback("Exportación cancelada.", tipo="advertencia")
-            return
-        data = []
-        headers = self.pagos_headers if hasattr(self, 'pagos_headers') and self.pagos_headers else [self.tabla_pagos.horizontalHeaderItem(i).text() if self.tabla_pagos.horizontalHeaderItem(i) else f"Columna {i+1}" for i in range(self.tabla_pagos.columnCount())]
-        for row in range(self.tabla_pagos.rowCount()):
-            row_data = {}
-            for col, header in enumerate(headers):
-                item = self.tabla_pagos.item(row, col)
-                row_data[header] = item.text() if item else ""
-            data.append(row_data)
-        try:
-            df = pd.DataFrame(data)
-            df.to_excel(file_path, index=False)
-            QMessageBox.information(self, "Exportación exitosa", f"Pagos exportados correctamente a:\n{file_path}")
-            self.mostrar_feedback(f"Pagos exportados correctamente a {file_path}", tipo="exito")
-        except Exception as e:
-            QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
-            self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
-
-    def exportar_tabla_recibos_a_excel(self):
-        """
-        Exporta la tabla de recibos a un archivo Excel, con confirmación y feedback modal robusto.
-        """
-        from PyQt6.QtWidgets import QFileDialog, QMessageBox
-        import pandas as pd
-        confirm = QMessageBox.question(
-            self,
-            "Confirmar exportación",
-            "¿Desea exportar los recibos a Excel?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
-        if confirm != QMessageBox.StandardButton.Yes:
-            self.mostrar_feedback("Exportación cancelada por el usuario.", tipo="advertencia")
-            return
-        file_path, _ = QFileDialog.getSaveFileName(
-            self,
-            "Exportar a Excel",
-            "recibos.xlsx",
-            "Archivos Excel (*.xlsx)"
-        )
-        if not file_path:
-            self.mostrar_feedback("Exportación cancelada.", tipo="advertencia")
-            return
-        data = []
-        headers = self.recibos_headers if hasattr(self, 'recibos_headers') and self.recibos_headers else [self.tabla_recibos.horizontalHeaderItem(i).text() if self.tabla_recibos.horizontalHeaderItem(i) else f"Columna {i+1}" for i in range(self.tabla_recibos.columnCount())]
-        for row in range(self.tabla_recibos.rowCount()):
-            row_data = {}
-            for col, header in enumerate(headers):
-                item = self.tabla_recibos.item(row, col)
-                row_data[header] = item.text() if item else ""
-            data.append(row_data)
-        try:
-            df = pd.DataFrame(data)
-            df.to_excel(file_path, index=False)
-            QMessageBox.information(self, "Exportación exitosa", f"Recibos exportados correctamente a:\n{file_path}")
-            self.mostrar_feedback(f"Recibos exportados correctamente a {file_path}", tipo="exito")
-        except Exception as e:
-            QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
-            self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
-
-    def abrir_dialogo_generar_factura(self):
-        """
-        Abre un diálogo modal robusto para generar una factura a partir de un pedido recibido.
-        Cumple checklist: validación visual/backend, feedback, accesibilidad, tooltips, cierre solo en éxito.
-        """
-        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QComboBox, QDoubleSpinBox, QPushButton, QHBoxLayout, QLabel
-        dialog = QDialog(self)
-        dialog.setWindowTitle("Generar Factura por Pedido")
-        dialog.setModal(True)
-        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
-        layout = QVBoxLayout(dialog)
-        layout.setContentsMargins(24, 20, 24, 20)
-        layout.setSpacing(16)
-        form = QFormLayout()
-        form.setContentsMargins(0, 0, 0, 0)
-        form.setSpacing(12)
-        # --- Combo de pedidos recibidos sin factura ---
-        combo_pedidos = QComboBox()
-        combo_pedidos.setToolTip("Seleccionar pedido recibido sin factura")
-        combo_pedidos.setAccessibleName("Selector de pedido recibido")
-        pedidos = []
-        if hasattr(self, 'controller') and hasattr(self.controller, 'obtener_pedidos_recibidos_sin_factura'):
-            pedidos = self.controller.obtener_pedidos_recibidos_sin_factura()
-        for pedido in pedidos:
-            # pedido: (id, descripcion, total)
-            combo_pedidos.addItem(f"ID {pedido[0]} - {pedido[1]} (${pedido[2]:,.2f})", pedido)
-        form.addRow("Pedido:", combo_pedidos)
-        # --- Monto (por defecto el total del pedido) ---
-        spin_monto = QDoubleSpinBox()
-        spin_monto.setMinimum(0.01)
-        spin_monto.setMaximum(99999999)
-        spin_monto.setDecimals(2)
-        spin_monto.setToolTip("Monto de la factura (por defecto el total del pedido)")
-        spin_monto.setAccessibleName("Monto de la factura")
-        if pedidos:
-            spin_monto.setValue(float(pedidos[0][2]))
-        def actualizar_monto():
-            pedido = combo_pedidos.currentData()
-            if pedido:
-                spin_monto.setValue(float(pedido[2]))
-        combo_pedidos.currentIndexChanged.connect(actualizar_monto)
-        form.addRow("Monto:", spin_monto)
-        # --- Forma de pago ---
-        combo_forma_pago = QComboBox()
-        combo_forma_pago.addItems(["Efectivo", "Transferencia", "Cheque"])
-        combo_forma_pago.setToolTip("Seleccionar forma de pago")
-        combo_forma_pago.setAccessibleName("Forma de pago")
-        form.addRow("Forma de pago:", combo_forma_pago)
-        # --- Feedback campo ---
-        lbl_feedback = QLabel()
-        lbl_feedback.setStyleSheet("color: #b91c1c; font-size: 12px;")
-        lbl_feedback.setVisible(False)
-        form.addRow("", lbl_feedback)
-        layout.addLayout(form)
-        # --- Botones ---
-        btns = QHBoxLayout()
-        btn_guardar = QPushButton()
-        btn_guardar.setIcon(QIcon("resources/icons/finish-check.svg"))
-        btn_guardar.setToolTip("Generar factura")
-        btn_guardar.setAccessibleName("Generar factura")
-        estilizar_boton_icono(btn_guardar)
-        btn_cancelar = QPushButton()
-        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
-        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
-        btn_cancelar.setAccessibleName("Cancelar")
-        estilizar_boton_icono(btn_cancelar)
-        btns.addStretch()
-        btns.addWidget(btn_guardar)
-        btns.addWidget(btn_cancelar)
-        layout.addLayout(btns)
-        # --- Acción guardar ---
-        def guardar():
-            pedido = combo_pedidos.currentData()
-            monto = spin_monto.value()
-            forma_pago = combo_forma_pago.currentText()
-            if not pedido:
-                lbl_feedback.setText("Seleccione un pedido válido.")
-                lbl_feedback.setVisible(True)
-                return
-            if monto < 0.01 or monto > float(pedido[2]):
-                lbl_feedback.setText("El monto debe ser mayor a 0 y no superar el total del pedido.")
-                lbl_feedback.setVisible(True)
-                return
-            try:
-                if hasattr(self, 'controller') and hasattr(self.controller, 'generar_factura_por_pedido'):
-                    self.controller.generar_factura_por_pedido(pedido[0], monto, forma_pago)
-                    self.mostrar_feedback("Factura generada correctamente.", tipo="exito")
-                    dialog.accept()
-                    # Refrescar tablas tras éxito
-                    if hasattr(self, 'controller') and hasattr(self.controller, 'actualizar_tabla_balance'):
-                        self.controller.actualizar_tabla_balance()
-                else:
-                    self.mostrar_feedback("No se implementó la lógica de generación de factura.", tipo="error")
-            except Exception as e:
-                lbl_feedback.setText(f"Error: {e}")
-                lbl_feedback.setVisible(True)
-        btn_guardar.clicked.connect(guardar)
-        btn_cancelar.clicked.connect(dialog.reject)
-        dialog.exec()
-
-    def abrir_dialogo_registrar_pago(self):
-        """
-        Abre un diálogo modal robusto para registrar un pago sobre una factura pendiente.
-        Cumple checklist: validación visual/backend, feedback, accesibilidad, tooltips, cierre solo en éxito.
-        """
-        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QComboBox, QDoubleSpinBox, QPushButton, QHBoxLayout, QLabel
-        dialog = QDialog(self)
-        dialog.setWindowTitle("Registrar Pago de Factura")
-        dialog.setModal(True)
-        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
-        layout = QVBoxLayout(dialog)
-        layout.setContentsMargins(24, 20, 24, 20)
-        layout.setSpacing(16)
-        form = QFormLayout()
-        form.setContentsMargins(0, 0, 0, 0)
-        form.setSpacing(12)
-        # --- Combo de facturas pendientes ---
-        combo_facturas = QComboBox()
-        combo_facturas.setToolTip("Seleccionar factura pendiente")
-        combo_facturas.setAccessibleName("Selector de factura pendiente")
-        facturas = []
-        if hasattr(self, 'controller') and hasattr(self.controller, 'obtener_facturas_pendientes'):
-            facturas = self.controller.obtener_facturas_pendientes()
-        for factura in facturas:
-            # factura: (id, descripcion, saldo)
-            combo_facturas.addItem(f"ID {factura[0]} - {factura[1]} (${factura[2]:,.2f})", factura)
-        form.addRow("Factura:", combo_facturas)
-        # --- Monto (máximo saldo de la factura) ---
-        spin_monto = QDoubleSpinBox()
-        spin_monto.setMinimum(0.01)
-        spin_monto.setMaximum(99999999)
-        spin_monto.setDecimals(2)
-        spin_monto.setToolTip("Monto a pagar (máximo el saldo de la factura)")
-        spin_monto.setAccessibleName("Monto a pagar")
-        if facturas:
-            spin_monto.setValue(float(facturas[0][2]))
-            spin_monto.setMaximum(float(facturas[0][2]))
-        def actualizar_monto():
-            factura = combo_facturas.currentData()
-            if factura:
-                spin_monto.setValue(float(factura[2]))
-                spin_monto.setMaximum(float(factura[2]))
-        combo_facturas.currentIndexChanged.connect(actualizar_monto)
-        form.addRow("Monto:", spin_monto)
-        # --- Forma de pago ---
-        combo_forma_pago = QComboBox()
-        combo_forma_pago.addItems(["Efectivo", "Transferencia", "Cheque"])
-        combo_forma_pago.setToolTip("Seleccionar forma de pago")
-        combo_forma_pago.setAccessibleName("Forma de pago")
-        form.addRow("Forma de pago:", combo_forma_pago)
-        # --- Feedback campo ---
-        lbl_feedback = QLabel()
-        lbl_feedback.setStyleSheet("color: #b91c1c; font-size: 12px;")
-        lbl_feedback.setVisible(False)
-        form.addRow("", lbl_feedback)
-        layout.addLayout(form)
-        # --- Botones ---
-        btns = QHBoxLayout()
-        btn_guardar = QPushButton()
-        btn_guardar.setIcon(QIcon("resources/icons/finish-check.svg"))
-        btn_guardar.setToolTip("Registrar pago")
-        btn_guardar.setAccessibleName("Registrar pago")
-        estilizar_boton_icono(btn_guardar)
-        btn_cancelar = QPushButton()
-        btn_cancelar.setIcon(QIcon("resources/icons/close.svg"))
-        btn_cancelar.setToolTip("Cancelar y cerrar ventana")
-        btn_cancelar.setAccessibleName("Cancelar")
-        estilizar_boton_icono(btn_cancelar)
-        btns.addStretch()
-        btns.addWidget(btn_guardar)
-        btns.addWidget(btn_cancelar)
-        layout.addLayout(btns)
-        # --- Acción guardar ---
-        def guardar():
-            factura = combo_facturas.currentData()
-            monto = spin_monto.value()
-            forma_pago = combo_forma_pago.currentText()
-            if not factura:
-                lbl_feedback.setText("Seleccione una factura válida.")
-                lbl_feedback.setVisible(True)
-                return
-            if monto < 0.01 or monto > float(factura[2]):
-                lbl_feedback.setText("El monto debe ser mayor a 0 y no superar el saldo de la factura.")
-                lbl_feedback.setVisible(True)
-                return
-            try:
-                if hasattr(self, 'controller') and hasattr(self.controller, 'registrar_pago'):
-                    self.controller.registrar_pago(factura[0], monto, forma_pago)
-                    self.mostrar_feedback("Pago registrado correctamente.", tipo="exito")
-                    dialog.accept()
-                    if hasattr(self, 'controller') and hasattr(self.controller, 'actualizar_tabla_balance'):
-                        self.controller.actualizar_tabla_balance()
-                else:
-                    self.mostrar_feedback("No se implementó la lógica de registrar pago.", tipo="error")
-            except Exception as e:
-                lbl_feedback.setText(f"Error: {e}")
-                lbl_feedback.setVisible(True)
-        btn_guardar.clicked.connect(guardar)
-        btn_cancelar.clicked.connect(dialog.reject)
-        dialog.exec()
-
-    def abrir_dialogo_detalle_factura(self, id_factura):
-        """
-        Abre un diálogo modal robusto para mostrar el detalle de una factura: ítems, pagos, saldo, estado.
-        Cumple checklist: feedback, accesibilidad, tooltips, cierre solo en éxito.
-        """
-        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QFormLayout, QTableWidget, QTableWidgetItem, QPushButton, QHBoxLayout
-        dialog = QDialog(self)
-        dialog.setWindowTitle(f"Detalle de Factura ID {id_factura}")
-        dialog.setModal(True)
-        dialog.setStyleSheet("QDialog { background: #f1f5f9; border-radius: 12px; }")
-        layout = QVBoxLayout(dialog)
-        layout.setContentsMargins(24, 20, 24, 20)
-        layout.setSpacing(16)
-        # --- Obtener datos de la factura ---
-        factura = None
-        pagos = []
-        items = []
-        if hasattr(self, 'controller') and hasattr(self.controller, 'obtener_detalle_factura'):
-            detalle = self.controller.obtener_detalle_factura(id_factura)
-            factura = detalle.get('factura')
-            pagos = detalle.get('pagos', [])
-            items = detalle.get('items', [])
-        # --- Resumen principal ---
-        form = QFormLayout()
-        form.setContentsMargins(0, 0, 0, 0)
-        form.setSpacing(12)
-        if factura:
-            form.addRow("Estado:", QLabel(factura.get('estado', 'N/A')))
-            form.addRow("Saldo:", QLabel(f"${factura.get('saldo', 0):,.2f}"))
-        else:
-            form.addRow("Factura:", QLabel("No encontrada"))
-        layout.addLayout(form)
-        # --- Tabla de ítems ---
-        if items:
-            label_items = QLabel("Ítems de la factura:")
-            label_items.setAccessibleName("Título ítems factura")
-            layout.addWidget(label_items)
-            tabla_items = QTableWidget(len(items), 3)
-            tabla_items.setHorizontalHeaderLabels(["Descripción", "Cantidad", "Precio"])
-            for row, item in enumerate(items):
-                tabla_items.setItem(row, 0, QTableWidgetItem(str(item.get('descripcion', ''))))
-                tabla_items.setItem(row, 1, QTableWidgetItem(str(item.get('cantidad', ''))))
-                tabla_items.setItem(row, 2, QTableWidgetItem(f"${item.get('precio', 0):,.2f}"))
-            tabla_items.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-            tabla_items.setToolTip("Ítems facturados")
-            layout.addWidget(tabla_items)
-        # --- Tabla de pagos ---
-        if pagos:
-            label_pagos = QLabel("Pagos realizados:")
-            label_pagos.setAccessibleName("Título pagos factura")
-            layout.addWidget(label_pagos)
-            tabla_pagos = QTableWidget(len(pagos), 2)
-            tabla_pagos.setHorizontalHeaderLabels(["Fecha", "Monto"])
-            for row, pago in enumerate(pagos):
-                tabla_pagos.setItem(row, 0, QTableWidgetItem(str(pago.get('fecha', ''))))
-                tabla_pagos.setItem(row, 1, QTableWidgetItem(f"${pago.get('monto', 0):,.2f}"))
-            tabla_pagos.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-            tabla_pagos.setToolTip("Pagos realizados sobre la factura")
-            layout.addWidget(tabla_pagos)
-        # --- Botón cerrar ---
-        btns = QHBoxLayout()
-        btn_cerrar = QPushButton()
-        btn_cerrar.setIcon(QIcon("resources/icons/close.svg"))
-        btn_cerrar.setToolTip("Cerrar ventana")
-        estilizar_boton_icono(btn_cerrar)
-        btns.addStretch()
-        btns.addWidget(btn_cerrar)
-        layout.addLayout(btns)
-        btn_cerrar.clicked.connect(dialog.accept)
-        dialog.exec()
-

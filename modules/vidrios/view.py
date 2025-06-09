@@ -54,7 +54,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
         # --- TABS PRINCIPALES (MEJORADO: paddings, márgenes, alineación, consistencia visual) ---
         self.tabs = QTabWidget()
         self.tabs.setObjectName("tabs_vidrios")
-        self.tabs.setStyleSheet("QTabWidget::pane { border-radius: 12px; background: #fff9f3; margin: 0 0 0 0; } QTabBar::tab { min-width: 180px; min-height: 36px; font-size: 13px; padding: 10px 24px; border-radius: 8px; background: #e3f6fd; margin-right: 8px; } QTabBar::tab:selected { background: #fff; color: #2563eb; border: 2px solid #2563eb; }")
+        # Eliminar setStyleSheet embebido, migrar a QSS global
+        # self.tabs.setStyleSheet(...)
         self.main_layout.addWidget(self.tabs)
 
         # Pestaña 1: Obras sin pedido de vidrios (mejorada)
@@ -736,9 +737,19 @@ class VidriosView(QWidget, TableResponsiveMixin):
                 layout.addWidget(QLabel(f"{campo}: {valor}"))
         else:
             layout.addWidget(QLabel("No se encontró detalle para este pedido."))
-        btn_cerrar = QPushButton("Cerrar")
+        btn_cerrar = QPushButton()
+        btn_cerrar.setObjectName("boton_cerrar_dialogo_detalle_vidrios")
+        btn_cerrar.setIcon(QIcon("resources/icons/close.svg"))
+        btn_cerrar.setToolTip("Cerrar ventana")
+        btn_cerrar.setAccessibleName("Botón cerrar diálogo detalle vidrios")
+        estilizar_boton_icono(btn_cerrar)
+        sombra_cerrar = QGraphicsDropShadowEffect()
+        sombra_cerrar.setBlurRadius(10)
+        sombra_cerrar.setColor(QColor(37, 99, 235, 60))
+        sombra_cerrar.setOffset(0, 4)
+        btn_cerrar.setGraphicsEffect(sombra_cerrar)
         btn_cerrar.clicked.connect(dialog.accept)
-        layout.addWidget(btn_cerrar)
+        layout.addWidget(btn_cerrar, alignment=Qt.AlignmentFlag.AlignRight)
         dialog.setLayout(layout)
         dialog.exec()
 

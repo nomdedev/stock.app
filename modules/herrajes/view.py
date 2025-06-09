@@ -44,7 +44,9 @@ class FeedbackBanner(QWidget):
         self.close_btn.setToolTip("Cerrar mensaje de feedback")
         self.close_btn.setAccessibleName("Cerrar feedback visual")
         self.close_btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.close_btn.setStyleSheet("border:none;background:transparent;font-size:18px;")
+        self.close_btn.setObjectName("btn_cerrar_feedback_banner")
+        # Eliminar setStyleSheet embebido, migrar a QSS global
+        # self.close_btn.setStyleSheet("border:none;background:transparent;font-size:18px;")
         self.close_btn.clicked.connect(self.hide)
         self.h_layout.addWidget(self.close_btn)
         self._timer = None
@@ -53,7 +55,7 @@ class FeedbackBanner(QWidget):
         color = self.COLORES.get(tipo, self.COLORES["info"])
         self.icon_label.setPixmap(QPixmap(icon_path).scaled(24, 24, Qt.AspectRatioMode.KeepAspectRatio))
         self.text_label.setText(mensaje)
-        self.setStyleSheet(f"background:{color};border-radius:8px;font-size:15px;")
+        self.setStyleSheet("")  # Eliminar cualquier styleSheet embebido, usar solo QSS global
         self.setVisible(True)
         self.setAccessibleDescription(mensaje)
         self.text_label.setAccessibleDescription(mensaje)
@@ -857,7 +859,8 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         # --- Feedback visual ---
         lbl_feedback = QLabel("")
         lbl_feedback.setObjectName("label_feedback_pedido")
-        lbl_feedback.setStyleSheet("font-size: 13px; color: #ef4444; padding: 4px 0;")
+        # Eliminar setStyleSheet embebido, migrar a QSS global
+        # lbl_feedback.setStyleSheet("font-size: 13px; color: #ef4444; padding: 4px 0;")
         lbl_feedback.setVisible(False)
         layout.addWidget(lbl_feedback)
         # --- Botones ---
