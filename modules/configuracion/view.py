@@ -118,6 +118,9 @@ class ConfiguracionView(QMainWindow):
         btn_row.addWidget(self.btn_guardar_conexion)
         layout_conexion.addLayout(btn_row)
         self.label_estado_conexion = QLabel()
+        self.label_estado_conexion.setObjectName("label_feedback")
+        self.label_estado_conexion.setVisible(False)
+        self.label_estado_conexion.setAccessibleName("Estado de la conexión")
         layout_conexion.addWidget(self.label_estado_conexion)
         self.tab_conexion.setLayout(layout_conexion)
         # Eventos
@@ -398,9 +401,12 @@ class ConfiguracionView(QMainWindow):
                 f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={servidor};DATABASE={database};UID={usuario};PWD={password};TrustServerCertificate=yes;"
             )
             with pyodbc.connect(conn_str, timeout=timeout):
-                self.label_estado_conexion.setText("<span style='color:#22c55e;'>✅ Conexión exitosa</span>")
+                self.label_estado_conexion.setProperty("feedback_tipo", "exito")
+                self.label_estado_conexion.setText("✅ Conexión exitosa")
         except Exception as e:
-            self.label_estado_conexion.setText(f"<span style='color:#ef4444;'>❌ Error: {e}</span>")
+            self.label_estado_conexion.setProperty("feedback_tipo", "error")
+            self.label_estado_conexion.setText(f"❌ Error: {e}")
+        self.label_estado_conexion.setVisible(True)
 
     def _guardar_configuracion_conexion(self):
         data = {
@@ -412,9 +418,13 @@ class ConfiguracionView(QMainWindow):
         }
         errores = ConfigManager.validate(data)
         if errores:
-            self.label_estado_conexion.setText("<span style='color:#ef4444;'>❌ " + ", ".join(errores.values()) + "</span>")
+            self.label_estado_conexion.setProperty("feedback_tipo", "error")
+            self.label_estado_conexion.setText("❌ " + ", ".join(errores.values()))
+            self.label_estado_conexion.setVisible(True)
             return
         for k, v in data.items():
             ConfigManager.set(k, v)
-        self.label_estado_conexion.setText("<span style='color:#22c55e;'>✅ Configuración guardada correctamente</span>")
+        self.label_estado_conexion.setProperty("feedback_tipo", "exito")
+        self.label_estado_conexion.setText("✅ Configuración guardada correctamente")
+        self.label_estado_conexion.setVisible(True)
         # Opcional: recargar conexión global aquí

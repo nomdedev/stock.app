@@ -94,6 +94,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
         except Exception as e:
             print(f"Error aplicando QSS global: {e}")
+        self._asignar_nombres_accesibles()
 
     def mostrar_feedback(self, mensaje, tipo="info"):
         if not hasattr(self, "label_feedback") or self.label_feedback is None:
@@ -153,6 +154,17 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
         except Exception as e:
             self.mostrar_feedback(f"Error cargando tema: {e}", "error")
+
+    def _asignar_nombres_accesibles(self):
+        """Asigna accessibleName a botones y combos si falta."""
+        for btn in self.findChildren(QPushButton):
+            if not btn.accessibleName():
+                texto = btn.toolTip() or btn.text() or btn.objectName() or "Botón"
+                btn.setAccessibleName(texto)
+        for combo in self.findChildren(QComboBox):
+            if not combo.accessibleName():
+                texto = combo.toolTip() or combo.objectName() or "Selector"
+                combo.setAccessibleName(texto)
 
     def _init_tabs(self):
         self.tabs = QTabWidget()
