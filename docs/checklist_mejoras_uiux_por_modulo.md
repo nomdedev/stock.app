@@ -25,7 +25,7 @@ Este documento resume sugerencias específicas para mejorar la experiencia de us
 - [x] Añadir validación visual al probar conexión de base de datos.
 ### Prioridad media
 - [ ] Guardar la configuración de tema y recargar la vista al aplicar cambios.
-- [ ] Incluir mensajes de éxito/error en `label_feedback`.
+- [x] Incluir mensajes de éxito/error en `label_feedback`.
 
 ## Contabilidad
 ### Prioridad alta

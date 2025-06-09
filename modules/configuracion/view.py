@@ -117,11 +117,7 @@ class ConfiguracionView(QMainWindow):
         btn_row.addWidget(self.btn_probar_conexion)
         btn_row.addWidget(self.btn_guardar_conexion)
         layout_conexion.addLayout(btn_row)
-        self.label_estado_conexion = QLabel()
-        self.label_estado_conexion.setObjectName("label_feedback")
-        self.label_estado_conexion.setVisible(False)
-        self.label_estado_conexion.setAccessibleName("Estado de la conexión")
-        layout_conexion.addWidget(self.label_estado_conexion)
+        # Reutilizar label_feedback para mostrar resultados de conexión
         self.tab_conexion.setLayout(layout_conexion)
         # Eventos
         self.btn_probar_conexion.clicked.connect(self._probar_conexion)
@@ -401,12 +397,9 @@ class ConfiguracionView(QMainWindow):
                 f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={servidor};DATABASE={database};UID={usuario};PWD={password};TrustServerCertificate=yes;"
             )
             with pyodbc.connect(conn_str, timeout=timeout):
-                self.label_estado_conexion.setProperty("feedback_tipo", "exito")
-                self.label_estado_conexion.setText("✅ Conexión exitosa")
+                self.mostrar_feedback("Conexión exitosa", "exito")
         except Exception as e:
-            self.label_estado_conexion.setProperty("feedback_tipo", "error")
-            self.label_estado_conexion.setText(f"❌ Error: {e}")
-        self.label_estado_conexion.setVisible(True)
+            self.mostrar_feedback(f"Error: {e}", "error")
 
     def _guardar_configuracion_conexion(self):
         data = {
@@ -418,13 +411,9 @@ class ConfiguracionView(QMainWindow):
         }
         errores = ConfigManager.validate(data)
         if errores:
-            self.label_estado_conexion.setProperty("feedback_tipo", "error")
-            self.label_estado_conexion.setText("❌ " + ", ".join(errores.values()))
-            self.label_estado_conexion.setVisible(True)
+            self.mostrar_feedback(", ".join(errores.values()), "error")
             return
         for k, v in data.items():
             ConfigManager.set(k, v)
-        self.label_estado_conexion.setProperty("feedback_tipo", "exito")
-        self.label_estado_conexion.setText("✅ Configuración guardada correctamente")
-        self.label_estado_conexion.setVisible(True)
+        self.mostrar_feedback("Configuración guardada correctamente", "exito")
         # Opcional: recargar conexión global aquí
