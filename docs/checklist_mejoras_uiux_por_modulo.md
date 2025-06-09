@@ -43,7 +43,7 @@ Este documento resume sugerencias específicas para mejorar la experiencia de us
 
 ## Inventario
 ### Prioridad alta
-- [ ] Verificar que todos los headers de tablas sigan el estándar (fondo `#f8fafc`, radio `4px`, fuente `10px`).
+- [x] Verificar que todos los headers de tablas sigan el estándar (fondo `#f8fafc`, radio `4px`, fuente `10px`).
 - [ ] Mejorar el feedback cuando falla la conexión a la base de datos.
 ### Prioridad media
 - [ ] Incorporar un buscador global de items en la parte superior.

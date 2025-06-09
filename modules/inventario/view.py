@@ -113,7 +113,8 @@ class InventarioView(QWidget, TableResponsiveMixin):
         h_header = self.tabla_inventario.horizontalHeader()
         if h_header is not None:
             # QSS global: el estilo de header se define en themes/light.qss y dark.qss
-            h_header.setProperty("header", True)
+            # Se usa objectName para aplicar la misma regla que otros módulos
+            h_header.setObjectName("header_inventario")
             h_header.setHighlightSections(False)
             # Corregir: usar QHeaderView.ResizeMode.Stretch en vez de QHeaderView.Stretch
             h_header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)

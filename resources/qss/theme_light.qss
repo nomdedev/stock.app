@@ -105,6 +105,15 @@ QHeaderView#header_logistica {
     border: 1px solid #e3e3e3;
     font-weight: 400;
 }
+QHeaderView#header_inventario {
+    background-color: #e3f6fd;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+    font-weight: 400;
+}
 QLineEdit#input_logistica,
 QLineEdit#input_logistica_prop {
     font-size: 12px;
