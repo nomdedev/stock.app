@@ -13843,3 +13843,80 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-08 18:39:54,716 - INFO - Aplicación iniciada
 2025-06-08 18:58:17,417 - INFO - Aplicación iniciada
 2025-06-08 18:58:21,715 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-09 09:29:42,723 - INFO - Aplicación iniciada
+2025-06-09 09:29:49,152 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-09 11:32:38,243 - INFO - Aplicación iniciada
+2025-06-09 11:32:43,195 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-09 11:32:51,459 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:51,459 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:52,954 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:52,954 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:52,954 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:54,333 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:54,333 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:54,333 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:54,333 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:58,276 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:58,276 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:58,276 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:58,276 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:58,276 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:59,512 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:59,512 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:59,512 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:59,512 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:59,512 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:32:59,512 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,489 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,489 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,489 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,489 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,489 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,489 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,489 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,863 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,863 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,863 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,863 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,863 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,863 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,863 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:08,863 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:12,430 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:12,430 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:12,430 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:12,430 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:12,430 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:12,430 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:12,430 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:12,430 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:12,430 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:18,724 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:18,724 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:18,724 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:18,724 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:18,724 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:18,724 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:18,724 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:18,724 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:18,724 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:18,724 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:25,013 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:25,013 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:25,013 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:25,013 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:25,013 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:25,013 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:25,013 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:25,013 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:25,013 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:25,013 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:33:25,013 - ERROR - Error: 'pos' no es un objeto QPoint
+2025-06-09 11:42:37,003 - INFO - Aplicación iniciada
+2025-06-09 11:42:41,267 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-09 11:54:54,846 - INFO - Aplicación iniciada
+2025-06-09 11:54:59,695 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-09 12:01:19,806 - INFO - Aplicación iniciada
+2025-06-09 12:01:24,432 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-09 12:04:11,629 - INFO - Aplicación iniciada
+2025-06-09 12:04:17,150 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']

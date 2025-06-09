@@ -464,3 +464,51 @@ if text is not None:
 En algunos entornos, los tests automáticos que mockean `QMessageBox.information` pueden fallar aunque el patch esté correcto. Si la UI muestra el feedback visual esperado, considerar el fallo del test como falso negativo. Ver detalles en `docs/estandares_feedback.md` y en el propio test.
 
 ---
+
+## Unificación visual y UX: reglas obligatorias (2025-06)
+
+### 1. Títulos de los módulos
+- Usar siempre un QLabel con setObjectName estándar (ej: label_titulo, label_titulo_pedidos, label_titulo_usuarios, titulo_label_logistica).
+- Color, tamaño, peso y fuente definidos solo en QSS global.
+- Ubicación: siempre arriba a la izquierda del módulo, antes de la tabla principal.
+- Prohibido setStyleSheet embebido para títulos.
+
+### 2. Botones principales y secundarios
+- Usar QPushButton con setObjectName específico (ej: boton_agregar, boton_nuevo_compras, etc.).
+- Color de fondo, borde, radio, fuente y sombra definidos en QSS global.
+- Animación visual de click y hover solo por QSS.
+- Bordes redondeados iguales en todos los botones.
+- Ubicación: siempre arriba a la derecha de la tabla principal, en un QHBoxLayout junto al título.
+- Prohibido setStyleSheet embebido para botones.
+
+### 3. Feedback visual y errores
+- Usar QLabel con setObjectName("label_feedback") para feedback visual.
+- Colores y estilos de feedback (info, éxito, error, advertencia) definidos en QSS global.
+- Ubicación: debajo del título o arriba de la tabla.
+- Prohibido setStyleSheet embebido para feedback.
+
+### 4. Tablas y headers
+- Todas las tablas deben tener el mismo estilo visual (color de fondo, bordes, radio, fuente, selección, etc.) definido en QSS global.
+- Todos los headers de tabla deben tener el mismo formato y color.
+- Usar setObjectName en cada tabla y header para aplicar el QSS global.
+- Prohibido setStyleSheet embebido para tablas y headers.
+
+### 5. Accesibilidad y tooltips
+- Todos los botones y campos deben tener setToolTip y/o setAccessibleName descriptivo.
+- Orden de tabulación lógico y consistente.
+- Documentar en este archivo cualquier excepción.
+
+### 6. Bordes, paddings y márgenes
+- Unificar bordes, paddings y márgenes en todos los componentes principales (títulos, botones, tablas, feedback) solo por QSS global.
+
+### 7. Ubicación de elementos
+- Título: arriba a la izquierda.
+- Botones principales: arriba a la derecha.
+- Feedback: debajo del título o arriba de la tabla.
+- Tabla: siempre debajo del título y botones.
+
+### 8. Excepciones y justificaciones
+- Documentar aquí cualquier excepción visual o justificación de estilos distintos.
+- [ ] (Ninguna excepción activa al 2025-06-09)
+
+---

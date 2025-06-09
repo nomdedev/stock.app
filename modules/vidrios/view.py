@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QDateEdit, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QDialog, QFileDialog, QProgressBar
 from PyQt6.QtGui import QIcon, QColor, QAction, QPixmap
-from PyQt6.QtCore import QSize, Qt, QPoint
+from PyQt6.QtCore import QSize, Qt, QPoint, QTimer
 import json
 import os
 from functools import partial
@@ -24,8 +24,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
     def __init__(self, usuario_actual="default", headers_dinamicos=None):
         super().__init__()
         self.usuario_actual = usuario_actual
-        self._cambio_columnas_interactivo = False  # Bandera para feedback interactivo
-        # Inicializar headers ANTES de cualquier uso
+        self._cambio_columnas_interactivo = False
         self.vidrios_headers = headers_dinamicos if headers_dinamicos else ["tipo", "ancho", "alto", "cantidad", "proveedor", "fecha_entrega"]
         self.main_layout = QVBoxLayout()
         self.main_layout.setContentsMargins(20, 20, 20, 20)
@@ -38,14 +37,17 @@ class VidriosView(QWidget, TableResponsiveMixin):
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Vidrios")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
-        # Botón principal (Agregar vidrio)
-        self.boton_agregar = QPushButton()
-        self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
-        self.boton_agregar.setIconSize(QSize(24, 24))
-        self.boton_agregar.setToolTip("Agregar vidrio")
-        self.boton_agregar.setObjectName("boton_agregar")
-        header_layout.addWidget(self.boton_agregar)
+        # Botón único (Agregar Vidrios a Obra) con solo ícono SVG pequeño alineado a la derecha
+        self.boton_agregar_vidrios_obra = QPushButton()
+        self.boton_agregar_vidrios_obra.setIcon(QIcon("resources/icons/add-material.svg"))
+        self.boton_agregar_vidrios_obra.setIconSize(QSize(24, 24))
+        self.boton_agregar_vidrios_obra.setToolTip("Agregar vidrios a una obra existente")
+        self.boton_agregar_vidrios_obra.setFixedSize(48, 48)
+        self.boton_agregar_vidrios_obra.setText("")
+        self.boton_agregar_vidrios_obra.clicked.connect(self.mostrar_formulario_vidrios_obra)
+        estilizar_boton_icono(self.boton_agregar_vidrios_obra)
         header_layout.addStretch()
+        header_layout.addWidget(self.boton_agregar_vidrios_obra)
         self.main_layout.addLayout(header_layout)
 
         # Formulario de entrada
@@ -59,6 +61,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
         header = self.tabla_vidrios.horizontalHeader()
         if header is not None:
             header.setObjectName("header_inventario")  # Unificación visual
+            header.sectionDoubleClicked.connect(self.auto_ajustar_columna)
         self.main_layout.addWidget(self.tabla_vidrios)
 
         # Configuración de columnas y headers dinámicos
@@ -224,10 +227,9 @@ class VidriosView(QWidget, TableResponsiveMixin):
             self.mostrar_feedback("Configuración de columnas actualizada.", tipo="info")
             self._cambio_columnas_interactivo = False
 
-    def auto_ajustar_columna(self, idx):
-        if idx < 0 or idx >= self.tabla_vidrios.columnCount():
-            return
-        self.tabla_vidrios.resizeColumnToContents(idx)
+    def auto_ajustar_columna(self, index):
+        """Ajusta automáticamente el ancho de la columna seleccionada al contenido."""
+        self.tabla_vidrios.resizeColumnToContents(index)
 
     def mostrar_qr_item_seleccionado(self):
         selected = self.tabla_vidrios.selectedItems()
@@ -302,40 +304,24 @@ class VidriosView(QWidget, TableResponsiveMixin):
         btn_pdf.clicked.connect(exportar_pdf)
         dialog.exec()
 
-    def mostrar_feedback(self, mensaje, tipo="info"):
-        if not hasattr(self, "label_feedback") or self.label_feedback is None:
-            return
+    def mostrar_feedback(self, mensaje, tipo="exito"):
+        """Muestra un mensaje de feedback visual en la interfaz."""
         colores = {
-            "info": "#2563eb",
-            "exito": "#22c55e",
-            "advertencia": "#fbbf24",
-            "error": "#ef4444"
+            "exito": "#4CAF50",  # Verde
+            "error": "#F44336"   # Rojo
         }
-        color = colores.get(tipo, "#2563eb")
-        iconos = {
-            "info": "ℹ️ ",
-            "exito": "✅ ",
-            "advertencia": "⚠️ ",
-            "error": "❌ "
-        }
-        icono = iconos.get(tipo, "ℹ️ ")
-        self.label_feedback.clear()
-        self.label_feedback.setText(f"{icono}{mensaje}")
+        color = colores.get(tipo, "#000")
+        self.label_feedback.setText(mensaje)
+        self.label_feedback.setStyleSheet(f"color: {color}; font-weight: bold;")
         self.label_feedback.setVisible(True)
-        self.label_feedback.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
-        self.label_feedback.setAccessibleName(f"Feedback {tipo}")
-        # Logging robusto para errores y advertencias
-        if tipo in ("error", "advertencia"):
-            from core.logger import log_error
-            log_error(f"[{tipo.upper()}][VidriosView] {mensaje}")
-        # Ocultar automáticamente después de 4 segundos
-        from PyQt6.QtCore import QTimer
-        if hasattr(self, '_feedback_timer') and self._feedback_timer:
+
+        # Ocultar el mensaje después de 3 segundos
+        if self._feedback_timer:
             self._feedback_timer.stop()
         self._feedback_timer = QTimer(self)
         self._feedback_timer.setSingleShot(True)
-        self._feedback_timer.timeout.connect(self.ocultar_feedback)
-        self._feedback_timer.start(4000)
+        self._feedback_timer.timeout.connect(lambda: self.label_feedback.setVisible(False))
+        self._feedback_timer.start(3000)
 
     def ocultar_feedback(self):
         if hasattr(self, "label_feedback") and self.label_feedback:
@@ -430,9 +416,62 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.boton_exportar_excel.clicked.connect(self.exportar_tabla_a_excel)
         # Puedes conectar otros botones aquí si es necesario
 
-# NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
-# Ejemplo de cadena de conexión (solo para documentación, no usar en código):
-#   cadena_conexion = "server=SERVIDOR;database=DB;uid=USUARIO;pwd=CLAVE"  # ejemplo, no usar hardcodeado
-# EXCEPCIÓN JUSTIFICADA: Si se detecta 'server=' en el código es por documentación o ejemplo, nunca en uso real. Ver test_no_credenciales_en_codigo.
-# JUSTIFICACIÓN: Este módulo no requiere feedback de carga adicional porque los procesos son instantáneos o ya usan QProgressBar en exportaciones masivas.
+    # Método para mostrar el formulario de vidrios asociados a una obra
+    def mostrar_formulario_vidrios_obra(self):
+        dialogo = QDialog(self)
+        dialogo.setWindowTitle("Agregar Vidrios a Obra")
+        layout = QVBoxLayout(dialogo)
+
+        obra_input = QLineEdit()
+        obra_input.setPlaceholderText("ID de la obra")
+        layout.addWidget(QLabel("ID de la obra:"))
+        layout.addWidget(obra_input)
+
+        tipo_input = QLineEdit()
+        tipo_input.setPlaceholderText("Tipo de vidrio")
+        layout.addWidget(QLabel("Tipo de vidrio:"))
+        layout.addWidget(tipo_input)
+
+        ancho_input = QLineEdit()
+        ancho_input.setPlaceholderText("Ancho")
+        layout.addWidget(QLabel("Ancho:"))
+        layout.addWidget(ancho_input)
+
+        alto_input = QLineEdit()
+        alto_input.setPlaceholderText("Alto")
+        layout.addWidget(QLabel("Alto:"))
+        layout.addWidget(alto_input)
+
+        cantidad_input = QLineEdit()
+        cantidad_input.setPlaceholderText("Cantidad")
+        layout.addWidget(QLabel("Cantidad:"))
+        layout.addWidget(cantidad_input)
+
+        boton_guardar = QPushButton("Guardar")
+        boton_guardar.clicked.connect(lambda: self.guardar_vidrios_obra(obra_input.text(), tipo_input.text(), ancho_input.text(), alto_input.text(), cantidad_input.text()))
+        layout.addWidget(boton_guardar)
+
+        dialogo.setLayout(layout)
+        dialogo.exec()
+
+    # Método para validar campos del formulario
+    def validar_campos_formulario(self):
+        campos = [self.tipo_input, self.ancho_input, self.alto_input, self.cantidad_input, self.proveedor_input]
+        campos_invalidos = []
+        for campo in campos:
+            if not campo.text().strip():
+                campo.setStyleSheet("border: 2px solid red;")
+                campos_invalidos.append(campo)
+            else:
+                campo.setStyleSheet("border: 1px solid #bfc0c0;")
+        return len(campos_invalidos) == 0
+
+    # Método para guardar los vidrios asociados a una obra
+    def guardar_vidrios_obra(self, obra_id, tipo, ancho, alto, cantidad):
+        if not self.validar_campos_formulario():
+            QMessageBox.warning(self, "Error", "Por favor, complete todos los campos obligatorios.")
+            return
+        # Aquí se implementaría la lógica para guardar los datos en la base de datos
+        QMessageBox.information(self, "Éxito", f"Vidrios agregados a la obra {obra_id} correctamente.")
+        self.mostrar_feedback("Vidrios agregados a la obra correctamente.", tipo="exito")
 

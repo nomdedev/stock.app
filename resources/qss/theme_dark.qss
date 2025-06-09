@@ -8,7 +8,8 @@ QLabel, QTableWidget, QHeaderView::section {
     color: #fff;
     font-size: 14px;
 }
-QLabel#label_feedback {
+/* --- FEEDBACK GENERAL Y LABELS DE MÓDULOS --- */
+QLabel#label_feedback { /* Feedback global y de módulos (Obras, Herrajes, Vidrios, etc.) */
     background: #2d3748;
     color: #90cdf4;
     font-weight: bold;
@@ -16,7 +17,8 @@ QLabel#label_feedback {
     border-radius: 8px;
     padding: 8px;
 }
-QPushButton {
+/* --- BOTONES GENERALES Y DE ACCIÓN --- */
+QPushButton { /* Botones generales en toda la app (todos los módulos) */
     background: #2563eb;
     color: #fff;
     border-radius: 8px;
@@ -30,7 +32,8 @@ QPushButton:disabled {
 QPushButton:hover {
     background: #1e40af;
 }
-QTableWidget {
+/* --- TABLAS Y HEADERS UNIFICADOS --- */
+QTableWidget { /* Tablas principales de todos los módulos */
     background: #23272e;
     color: #60a5fa;
     border-radius: 10px;
@@ -41,7 +44,7 @@ QTableWidget {
     selection-color: #fff;
     border: 1.5px solid #334155;
 }
-QTableWidget QHeaderView::section, QHeaderView::section {
+QTableWidget QHeaderView::section, QHeaderView::section { /* Header de todas las tablas por defecto (todos los módulos) */
     background: #1e293b;
     color: #60a5fa;
     border-radius: 8px;
@@ -96,4 +99,14 @@ QToolTip {
     border-radius: 6px;
     padding: 6px 12px;
     font-size: 12px;
+}
+/* --- TITULOS DE MÓDULOS (UNIFICAR EN TODOS LOS MÓDULOS) --- */
+QLabel#titulo_label_logistica, QLabel#label, QLabel#label_titulo_pedidos, QLabel#label_titulo, QLabel#label_titulo_usuarios {
+    /* Título principal de cada módulo. Unificar color, tamaño y peso en todos los módulos. */
+    color: #90cdf4;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
 }

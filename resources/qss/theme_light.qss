@@ -1,10 +1,6 @@
 /* theme_light.qss - Solo reglas para modo claro */
-QWidget {
-    background: #fff;
-    color: #222;
-    font-family: 'Segoe UI', 'Roboto', sans-serif;
-}
-QLabel#label_feedback {
+/* --- FEEDBACK GENERAL Y LABELS DE MÓDULOS --- */
+QLabel#label_feedback { /* Feedback global y de módulos (Obras, Herrajes, Vidrios, etc.) */
     background: #f1f5f9;
     color: #2563eb;
     font-weight: bold;
@@ -12,28 +8,14 @@ QLabel#label_feedback {
     border-radius: 8px;
     padding: 8px;
 }
-QPushButton {
+/* --- BOTONES GENERALES Y DE ACCIÓN --- */
+QPushButton { /* Botones generales en toda la app (todos los módulos) */
     background: #e3f6fd;
     border-radius: 8px;
     font-size: 12px;
     font-weight: 600;
 }
-QTableWidget QHeaderView::section {
-    background: #f8fafc;
-    color: #2563eb;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: 400;
-}
-QLabel#label_titulo_pedidos {
-    font-size: 2.2rem;
-    font-weight: bold;
-    color: #2563eb;
-    margin-top: 18px;
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-}
-QPushButton#boton_agregar_pedidos {
+QPushButton#boton_agregar_pedidos { /* Botón agregar en módulo Pedidos (Compras) */
     border-radius: 12px;
     background: #e3f6fd;
     color: #2563eb;
@@ -44,7 +26,7 @@ QPushButton#boton_agregar_pedidos {
 QPushButton#boton_nuevo_compras,
 QPushButton#boton_add-entrega,
 QPushButton#boton_search_icon,
-QPushButton#boton_excel_icon {
+QPushButton#boton_excel_icon { /* Botones principales de Compras y Pedidos (barra superior) */
     border-radius: 12px;
     background: #f1f5f9;
     color: #2563eb;
@@ -56,12 +38,30 @@ QPushButton:focus {
     outline: 2px solid #2563eb;
     border: 2px solid #2563eb;
 }
+/* --- TITULOS DE MÓDULOS (UNIFICAR EN TODOS LOS MÓDULOS) --- */
+QLabel#titulo_label_logistica, QLabel#label, QLabel#label_titulo_pedidos, QLabel#label_titulo, QLabel#label_titulo_usuarios {
+    /* Título principal de cada módulo. Unificar color, tamaño y peso en todos los módulos. */
+    color: #222;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+/* --- TABLAS Y HEADERS UNIFICADOS --- */
+QTableWidget QHeaderView::section { /* Header de todas las tablas por defecto (todos los módulos) */
+    background: #f8fafc;
+    color: #2563eb;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 400;
+}
 QTableWidget#tabla_comparacion,
-QTableWidget#tabla_pedidos {
+QTableWidget#tabla_pedidos { /* Tablas principales de Compras y Pedidos */
     font-size: 13px;
 }
 QHeaderView#header_comparacion,
-QHeaderView#header_pedidos {
+QHeaderView#header_pedidos { /* Header específico de tablas de comparación y pedidos (Compras) */
     background-color: #e3f6fd;
     color: #2563eb;
     border-radius: 8px;
@@ -70,7 +70,7 @@ QHeaderView#header_pedidos {
     border: 1px solid #e3e3e3;
     font-weight: 400;
 }
-QHeaderView#header_vidrios, QHeaderView#header_produccion {
+QHeaderView#header_vidrios, QHeaderView#header_produccion { /* Header de tablas de Vidrios y Producción */
     background-color: #e3f6fd;
     color: #2563eb;
     border-radius: 8px;
@@ -79,13 +79,7 @@ QHeaderView#header_vidrios, QHeaderView#header_produccion {
     border: 1px solid #e3e3e3;
     font-weight: 400;
 }
-QLabel#titulo_label_logistica {
-    color: #2563eb;
-    font-size: 22px;
-    font-weight: 600;
-    padding-left: 4px;
-}
-QPushButton#boton_agregar_logistica {
+QPushButton#boton_agregar_logistica { /* Botón agregar en Logística */
     border-radius: 12px;
     background: #e3f6fd;
     color: #2563eb;
@@ -93,10 +87,10 @@ QPushButton#boton_agregar_logistica {
     min-height: 48px;
     margin-left: 16px;
 }
-QTableWidget#tabla_logistica {
+QTableWidget#tabla_logistica { /* Tabla principal de Logística */
     font-size: 13px;
 }
-QHeaderView#header_logistica {
+QHeaderView#header_logistica { /* Header de tabla de Logística */
     background-color: #e3f6fd;
     color: #2563eb;
     border-radius: 8px;
@@ -283,6 +277,8 @@ QLineEdit#nombre_input_herrajes[error="false"], QLineEdit#nombre_input_herrajes 
     background: #fff;
 }
 /* --- Fin herrajes feedback y error input --- */
+
+
 /* --- Obras feedback visual y error input --- */
 QLabel#label_feedback[feedback_tipo="info"] {
     background: #e3f6fd;

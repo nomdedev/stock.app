@@ -61,46 +61,18 @@ class AltaObraDialog(QDialog):
         self.boton_guardar.clicked.connect(self.guardar_obra)
         self.boton_cancelar.clicked.connect(self.reject)
 
-        # Mejorar estética del formulario de alta de obra
-        self.setStyleSheet("""
-            QDialog {
-                background: #f9fafb;
-                border-radius: 14px;
-            }
-            QLabel {
-                font-size: 15px;
-                color: #22223b;
-                margin-bottom: 2px;
-            }
-            QLineEdit, QDateEdit {
-                padding: 7px 10px;
-                border: 1px solid #bfc0c0;
-                border-radius: 7px;
-                font-size: 15px;
-                margin-bottom: 10px;
-            }
-            QPushButton {
-                min-width: 90px;
-                min-height: 36px;
-                border-radius: 7px;
-                font-size: 15px;
-                margin-top: 8px;
-            }
-            QPushButton#boton_guardar {
-                background: #2563eb;
-                color: white;
-            }
-            QPushButton#boton_cancelar {
-                background: #e0e1dd;
-                color: #22223b;
-            }
-        """)
-        self.boton_guardar.setObjectName("boton_guardar")
-        self.boton_cancelar.setObjectName("boton_cancelar")
-        # Centrar y espaciar mejor los botones
-        botones_layout.setSpacing(18)
-        layout.setSpacing(14)
-        layout.setContentsMargins(28, 22, 28, 18)
+        # Migrar estilos embebidos a QSS global
+        # Se eliminan los estilos embebidos de los diálogos y se aplican estilos globales desde el archivo QSS.
+        self.setStyleSheet("")
+        aplicar_qss_global_y_tema(self)
+
+    def validar_campos(self):
+        campos = [self.nombre_input, self.cliente_input]
+        for campo in campos:
+            if not campo.text().strip():
+                campo.setStyleSheet("border: 2px solid red;")
+            else:
+                campo.setStyleSheet("border: 1px solid #bfc0c0;")
 
     def guardar_obra(self):
         """
@@ -172,42 +144,10 @@ class EditObraDialog(QDialog):
         if self.datos_obra:
             self.cargar_datos()
 
-        # Mejorar estética del formulario de edición de obra
-        self.setStyleSheet("""
-            QDialog {
-                background: #f9fafb;
-                border-radius: 14px;
-            }
-            QLabel {
-                font-size: 15px;
-                color: #22223b;
-                margin-bottom: 2px;
-            }
-            QLineEdit, QDateEdit {
-                padding: 7px 10px;
-                border: 1px solid #bfc0c0;
-                border-radius: 7px;
-                font-size: 15px;
-                margin-bottom: 10px;
-            }
-            QPushButton {
-                min-width: 90px;
-                min-height: 36px;
-                border-radius: 7px;
-                font-size: 15px;
-                margin-top: 8px;
-            }
-            QPushButton#boton_guardar {
-                background: #2563eb;
-                color: white;
-            }
-            QPushButton#boton_cancelar {
-                background: #e0e1dd;
-                color: #22223b;
-            }
-        """)
-        self.boton_guardar.setObjectName("boton_guardar")
-        self.boton_cancelar.setObjectName("boton_cancelar")
+        # Migrar estilos embebidos a QSS global
+        # Se eliminan los estilos embebidos de los diálogos y se aplican estilos globales desde el archivo QSS.
+        self.setStyleSheet("")
+        aplicar_qss_global_y_tema(self)
         botones_layout.setSpacing(18)
         layout.setSpacing(14)
         layout.setContentsMargins(28, 22, 28, 18)
@@ -248,36 +188,176 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.main_layout = QVBoxLayout(self)
         self.setLayout(self.main_layout)
 
-        # Título
+        # Título (estándar visual global: ver docs/estandares_visuales.md)
         self.label = QLabel("Gestión de Obras")
+        self.label.setObjectName("label_titulo")  # Unificación visual: todos los títulos usan este objectName
         self.label.setAccessibleName("Título de módulo Obras")
         self.label.setAccessibleDescription("Encabezado principal de la vista de obras")
-        self.main_layout.addWidget(self.label)
-
+        # Layout horizontal para título y botón
+        titulo_layout = QHBoxLayout()
+        titulo_layout.addWidget(self.label)
+        titulo_layout.addStretch()
         # Botón principal de acción (Agregar obra)
-        botones_layout = QHBoxLayout()
         self.boton_agregar = QPushButton()
+        self.boton_agregar.setObjectName("boton_agregar")  # Unificación visual: todos los botones principales usan este objectName
         self.boton_agregar.setIcon(QIcon("resources/icons/plus_icon.svg"))
-        self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar nueva obra")
         self.boton_agregar.setAccessibleName("Botón agregar obra")
-        self.boton_agregar.setAccessibleDescription("Botón principal para agregar una nueva obra")
-        self.boton_agregar.setText("")
-        self.boton_agregar.setFixedSize(48, 48)
-        sombra = QGraphicsDropShadowEffect()
-        sombra.setBlurRadius(15)
-        sombra.setXOffset(0)
-        sombra.setYOffset(4)
-        sombra.setColor(QColor(0, 0, 0, 50))
-        self.boton_agregar.setGraphicsEffect(sombra)
-        estilizar_boton_icono(self.boton_agregar)
-        self.boton_agregar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        botones_layout.addWidget(self.boton_agregar)
-        botones_layout.addStretch()
-        botones_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
-        self.main_layout.addLayout(botones_layout)
+        titulo_layout.addWidget(self.boton_agregar)
+        self.main_layout.addLayout(titulo_layout)
 
         # Buscador de obras por nombre o cliente
         search_layout = QHBoxLayout()
         self.search_bar = QLineEdit()
-        self.search_bar.setPlaceholderText("Buscar obra...")
+        self.search_bar.setPlaceholderText("Buscar obra por nombre o cliente...")
+        self.search_bar.setFixedHeight(40)
+        search_layout.addWidget(self.search_bar)
+        search_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.addLayout(search_layout)
+
+        # Tabla de obras
+        self.tabla_obras = QTableWidget()
+        self.tabla_obras.setColumnCount(4)
+        self.tabla_obras.setHorizontalHeaderLabels(["Nombre", "Cliente", "Fecha Medición", "Fecha Entrega"])
+        header = self.tabla_obras.horizontalHeader()
+        if header is not None:
+            header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+            header.sectionDoubleClicked.connect(self.auto_ajustar_columna)
+        else:
+            QMessageBox.critical(self, "Error", "El encabezado horizontal de la tabla no está inicializado.")
+
+        self.tabla_obras.setAlternatingRowColors(True)
+        self.tabla_obras.setStyleSheet("""
+            QTableWidget {
+                background-color: #ffffff;
+                border-radius: 10px;
+                padding: 5px;
+            }
+            QTableWidget::item {
+                padding: 8px;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            QHeaderView::section {
+                background-color: #f2f2f2;
+                padding: 10px;
+                border: none;
+            }
+        """)
+        self.main_layout.addWidget(self.tabla_obras)
+
+        # Conectar señales de los botones
+        self.boton_agregar.clicked.connect(self.mostrar_dialogo_alta)
+
+        # Conectar búsqueda con filtro en tabla
+        self.search_bar.textChanged.connect(self.filtrar_tabla)
+
+        # Establecer controlador (si es necesario)
+        self.controller = None
+
+    def set_controller(self, controller):
+        """Asigna el controlador a la vista."""
+        self.controller = controller
+
+    def agregar_obra_a_tabla(self, datos_obra):
+        """Agrega una obra a la tabla sin generar ni mostrar un ID."""
+        row = self.tabla_obras.rowCount()
+        self.tabla_obras.insertRow(row)
+        self.establecer_texto_item(row, 0, datos_obra.get('nombre', ''))
+        self.establecer_texto_item(row, 1, datos_obra.get('cliente', ''))
+        self.establecer_texto_item(row, 2, datos_obra.get('fecha_medicion', ''))
+        self.establecer_texto_item(row, 3, datos_obra.get('fecha_entrega', ''))
+
+    def mostrar_dialogo_alta(self):
+        dialogo = AltaObraDialog(self)
+        if dialogo.exec():
+            datos_obra = {
+                'nombre': dialogo.nombre_input.text().strip(),
+                'cliente': dialogo.cliente_input.text().strip(),
+                'fecha_medicion': dialogo.fecha_medicion_input.date().toString("yyyy-MM-dd"),
+                'fecha_entrega': dialogo.fecha_entrega_input.date().toString("yyyy-MM-dd")
+            }
+            self.agregar_obra_a_tabla(datos_obra)
+            self.obra_agregada.emit(datos_obra)
+
+    def mostrar_dialogo_edicion(self):
+        fila_actual = self.tabla_obras.currentRow()
+        if fila_actual < 0:
+            QMessageBox.warning(self, "Selección inválida", "Por favor, seleccione una obra para editar.")
+            return
+        datos_obra = {
+            'nombre': self.obtener_texto_item(fila_actual, 0),
+            'cliente': self.obtener_texto_item(fila_actual, 1),
+            'fecha_medicion': self.obtener_texto_item(fila_actual, 2),
+            'fecha_entrega': self.obtener_texto_item(fila_actual, 3)
+        }
+        dialogo = EditObraDialog(self, datos_obra)
+        if dialogo.exec():
+            for col, key in enumerate(['nombre', 'cliente', 'fecha_medicion', 'fecha_entrega']):
+                self.establecer_texto_item(fila_actual, col, dialogo.datos_obra[key])
+
+    def eliminar_obra(self):
+        fila_actual = self.tabla_obras.currentRow()
+        if fila_actual < 0:
+            QMessageBox.warning(self, "Selección inválida", "Por favor, seleccione una obra para eliminar.")
+            return
+        nombre_obra = self.obtener_texto_item(fila_actual, 0)
+        confirmacion = QMessageBox.question(self, "Confirmar eliminación", f"¿Está seguro de eliminar la obra '{nombre_obra}'?",
+                                             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if confirmacion == QMessageBox.StandardButton.Yes:
+            self.tabla_obras.removeRow(fila_actual)
+
+    def generar_reporte(self):
+        fila_actual = self.tabla_obras.currentRow()
+        if fila_actual < 0:
+            QMessageBox.warning(self, "Selección inválida", "Por favor, seleccione una obra para generar el reporte.")
+            return
+        datos_obra = {
+            'nombre': self.obtener_texto_item(fila_actual, 0),
+            'cliente': self.obtener_texto_item(fila_actual, 1),
+            'fecha_medicion': self.obtener_texto_item(fila_actual, 2),
+            'fecha_entrega': self.obtener_texto_item(fila_actual, 3)
+        }
+        # Aquí se debería agregar la lógica para generar el reporte (por ejemplo, exportar a PDF)
+
+    def filtrar_tabla(self, texto):
+        """Filtra las filas de la tabla según el texto de búsqueda."""
+        texto = texto.lower()
+        for fila in range(self.tabla_obras.rowCount()):
+            for col in range(self.tabla_obras.columnCount()):
+                if self.tabla_obras.item(fila, col) is None:
+                    self.tabla_obras.setItem(fila, col, QTableWidgetItem())
+            item_nombre = self.obtener_texto_item(fila, 0).lower()
+            item_cliente = self.obtener_texto_item(fila, 1).lower()
+            if texto in item_nombre or texto in item_cliente:
+                self.tabla_obras.showRow(fila)
+            else:
+                self.tabla_obras.hideRow(fila)
+
+    def obtener_texto_item(self, fila, columna):
+        """Obtiene el texto de un elemento de la tabla, inicializándolo si es necesario."""
+        item = self.tabla_obras.item(fila, columna)
+        if item is None:
+            item = QTableWidgetItem()
+            self.tabla_obras.setItem(fila, columna, item)
+        return item.text()
+
+    def establecer_texto_item(self, fila, columna, texto):
+        """Establece el texto de un elemento de la tabla, inicializándolo si es necesario."""
+        item = self.tabla_obras.item(fila, columna)
+        if item is None:
+            item = QTableWidgetItem()
+            self.tabla_obras.setItem(fila, columna, item)
+        item.setText(texto)
+
+    def auto_ajustar_columna(self, index):
+        """Ajusta automáticamente el ancho de la columna seleccionada al contenido."""
+        self.tabla_obras.resizeColumnToContents(index)
+
+class TestObrasViewHeaders:
+    def test_headers_correctos(self):
+        from PyQt6.QtWidgets import QApplication
+        import sys
+        app = QApplication.instance() or QApplication(sys.argv)
+        view = ObrasView()
+        headers = [view.tabla_obras.horizontalHeaderItem(i).text() if view.tabla_obras.horizontalHeaderItem(i) else '' for i in range(view.tabla_obras.columnCount())]
+        assert headers == ["Nombre", "Cliente", "Fecha Medición", "Fecha Entrega"], f"Headers incorrectos: {headers}"

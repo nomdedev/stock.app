@@ -1,3 +1,27 @@
+# Checklist de Unificación Visual y UX por Módulo
+
+**Leyenda:**
+- ✅ Unificado y documentado
+- ⚠️ Parcial o pendiente de unificación
+- ❌ No implementado
+
+| Módulo      | Título de módulo | Headers de tabla | Botones (sombra/color) | Feedback visual | Accesibilidad/tooltips | Documentación QSS | Bordes/Paddings/Márgenes |
+|-------------|------------------|------------------|------------------------|-----------------|-----------------------|-------------------|--------------------------|
+| Obras       | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Vidrios     | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Compras     | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Pedidos     | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Logística   | ✅ (usa setObjectName y QSS)        | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Producción  | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Usuarios    | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+
+## Pendientes generales
+- Aplicar setObjectName a los títulos de módulo en todos los view.py para que tomen el QSS unificado.
+- Verificar y aplicar sombra en todos los botones principales/secundarios.
+- Mejorar y documentar accesibilidad/tooltips en todos los módulos.
+- Revisar y documentar bordes, paddings y márgenes en QSS.
+- Documentar cualquier excepción visual en los QSS.
+
 # Checklist de mejoras UI/UX por módulo
 
 Este documento resume sugerencias específicas para mejorar la experiencia de usuario y la interfaz en cada módulo del ERP. Está basado en la revisión del repositorio a fecha 2025‑06‑08 y en las guías existentes en `docs/` y los checklists previos.
