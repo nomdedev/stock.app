@@ -520,14 +520,18 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             del self._ultima_accion
 
     # --- Métodos stub para evitar errores de atributos faltantes ---
+    #
+    # ADVERTENCIA: El orden de los botones principales en las barras de acción de esta vista debe seguir el estándar definido en InventarioView.
+    # Cualquier cambio en el orden, visibilidad o accesibilidad de los botones principales debe ser justificado y documentado explícitamente en este archivo y en checklist_botones_accion.txt.
+    # Última revisión: 2025-06-08. Si modifica el orden, registre el motivo y la fecha en checklist_botones_accion.txt.
+    # Esta advertencia es obligatoria para trazabilidad y coherencia visual/accesibilidad.
+    #
     def exportar_tabla_pedidos_a_excel(self):
         self.mostrar_feedback("Funcionalidad de exportar a Excel en desarrollo.", "info")
     def exportar_tabla_pedidos_a_pdf(self):
         self.mostrar_feedback("Funcionalidad de exportar a PDF en desarrollo.", "info")
     def abrir_detalle_pedido_herrajes(self, *args, **kwargs):
         self.mostrar_feedback("Funcionalidad de detalle de pedido en desarrollo.", "info")
-    def filtrar_tabla_pedidos(self, *args, **kwargs):
-        self.mostrar_feedback("Funcionalidad de filtros en desarrollo.", "info")
 
     def accion_editar_pedido(self, fila):
         self.mostrar_feedback(f"Acción: editar pedido en fila {fila}", "info")

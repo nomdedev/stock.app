@@ -1,5 +1,5 @@
 import json
-from PyQt6.QtWidgets import QTableWidgetItem, QDialog, QVBoxLayout, QTableWidget, QFormLayout, QLineEdit, QHBoxLayout, QPushButton, QMessageBox
+from PyQt6.QtWidgets import QTableWidgetItem, QDialog, QVBoxLayout, QTableWidget, QFormLayout, QLineEdit, QHBoxLayout, QPushButton, QMessageBox, QLabel
 from PyQt6 import QtGui
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
@@ -330,8 +330,10 @@ class InventarioController:
                 id_item_input = QLineEdit()
                 cantidad_input = QLineEdit()
                 motivo_input = QLineEdit()
-                form_layout.addRow("ID de material:", id_item_input)
-                form_layout.addRow("Cantidad a ajustar (+/-):", cantidad_input)
+                stock_actual_label = QLabel("")
+                form_layout.addRow("ID o código de material:", id_item_input)
+                form_layout.addRow("Stock actual:", stock_actual_label)
+                form_layout.addRow("Nuevo stock (valor absoluto):", cantidad_input)
                 form_layout.addRow("Motivo del ajuste:", motivo_input)
                 layout.addLayout(form_layout)
                 botones_layout = QHBoxLayout()
@@ -341,6 +343,21 @@ class InventarioController:
                 botones_layout.addWidget(cancelar_button)
                 layout.addLayout(botones_layout)
                 dialog.setLayout(layout)
+
+                def actualizar_stock_label():
+                    id_item = id_item_input.text().strip()
+                    if not id_item:
+                        stock_actual_label.setText("")
+                        return
+                    item_row = self.model.obtener_item_por_codigo(id_item) if not id_item.isdigit() else self.model.db.ejecutar_query("SELECT id, codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr, imagen_referencia FROM inventario_perfiles WHERE id = ?", (id_item,))
+                    if item_row and len(item_row) > 0:
+                        stock_actual = item_row[0][5]
+                        stock_actual_label.setText(str(stock_actual))
+                    else:
+                        stock_actual_label.setText("No encontrado")
+
+                id_item_input.editingFinished.connect(actualizar_stock_label)
+
                 def on_ajustar():
                     id_item = id_item_input.text().strip()
                     cantidad = cantidad_input.text().strip()
@@ -350,20 +367,21 @@ class InventarioController:
                         self._registrar_evento_auditoria('ajuste_stock', "Campos incompletos para ajuste", exito=False)
                         return
                     try:
-                        cantidad_int = int(cantidad)
+                        nueva_cantidad = int(cantidad)
                     except Exception:
-                        self._feedback("Ingrese un número válido para la cantidad.", tipo='warning')
+                        self._feedback("Ingrese un número válido para el nuevo stock.", tipo='warning')
                         self._registrar_evento_auditoria('ajuste_stock', "Cantidad no numérica", exito=False)
                         return
-                    item_row = self.model.obtener_item_por_codigo(id_item) if not id_item.isdigit() else self.model.db.ejecutar_query("SELECT * FROM inventario_perfiles WHERE id = ?", (id_item,))
+                    item_row = self.model.obtener_item_por_codigo(id_item) if not id_item.isdigit() else self.model.db.ejecutar_query("SELECT id, codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr, imagen_referencia FROM inventario_perfiles WHERE id = ?", (id_item,))
                     if not item_row:
                         self._feedback("No se encontró el material especificado.", tipo='warning')
                         self._registrar_evento_auditoria('ajuste_stock', f"Material no encontrado: {id_item}", exito=False)
                         return
+                    id_perfil = item_row[0][0]
                     try:
-                        self.model.ajustar_stock(id_item, cantidad_int, motivo)
-                        self._registrar_evento_auditoria('ajuste_stock', f"Ajuste de stock: {id_item} cantidad {cantidad_int} motivo {motivo}")
-                        self._feedback(f"Stock ajustado correctamente para material {id_item}.", tipo='success')
+                        self.model.ajustar_stock_perfil(id_perfil, nueva_cantidad, self.usuario_actual, self.view)
+                        self._registrar_evento_auditoria('ajuste_stock', f"Ajuste de stock: {id_perfil} nuevo valor {nueva_cantidad} motivo {motivo}")
+                        self._feedback(f"Stock ajustado correctamente para material {id_perfil}.", tipo='success')
                         self.actualizar_inventario()
                         dialog.accept()
                     except Exception as e:
@@ -372,7 +390,6 @@ class InventarioController:
                         self._registrar_evento_auditoria('error', f"Error al ajustar stock: {e}", exito=False)
                 ajustar_button.clicked.connect(on_ajustar)
                 cancelar_button.clicked.connect(dialog.reject)
-                dialog.setLayout(layout)
                 dialog.exec()
             except Exception as e:
                 log_error(f"Error al abrir la ventana de ajuste de stock: {e}")

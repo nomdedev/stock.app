@@ -13783,3 +13783,13 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-08 16:54:29,971 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
 2025-06-08 16:56:37,772 - ERROR - Error en ver: 'InventarioView' object has no attribute 'label'
 2025-06-08 16:56:37,772 - ERROR - Error en ver: 'InventarioView' object has no attribute 'label'
+2025-06-08 17:08:05,927 - INFO - Aplicación iniciada
+2025-06-08 17:08:10,061 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-08 17:17:25,267 - INFO - Aplicación iniciada
+2025-06-08 17:17:29,451 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-08 17:24:09,785 - INFO - Aplicación iniciada
+2025-06-08 17:24:14,691 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-08 18:39:09,401 - INFO - Aplicación iniciada
+2025-06-08 18:39:54,716 - INFO - Aplicación iniciada
+2025-06-08 18:58:17,417 - INFO - Aplicación iniciada
+2025-06-08 18:58:21,715 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']

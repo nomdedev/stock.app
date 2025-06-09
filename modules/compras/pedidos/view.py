@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QScrollArea, QFrame, QTableWidget, QTableWidgetItem, QPushButton, QSizePolicy, QHBoxLayout, QMenu, QFileDialog, QDialog
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QFormLayout, QScrollArea, QFrame, QTableWidget, QTableWidgetItem, QPushButton, QSizePolicy, QHBoxLayout, QMenu, QFileDialog, QDialog, QHeaderView
 from PyQt6.QtCore import Qt, QSize, QPoint
 from PyQt6 import QtGui, QtCore
 from PyQt6.QtGui import QPixmap, QAction, QIcon
@@ -24,8 +24,8 @@ class PedidosView(QWidget, TableResponsiveMixin):
     def __init__(self):
         super().__init__()
         main_layout = QVBoxLayout(self)
-        main_layout.setContentsMargins(20, 20, 20, 20)
-        main_layout.setSpacing(20)
+        main_layout.setContentsMargins(32, 32, 32, 32)  # Igual que InventarioView
+        main_layout.setSpacing(16)
 
         # Cargar el stylesheet visual moderno para Pedidos según el tema activo
         try:
@@ -38,18 +38,29 @@ class PedidosView(QWidget, TableResponsiveMixin):
         except Exception as e:
             print(f"No se pudo cargar el archivo de estilos de Pedidos según el tema: {e}")
 
-        # HEADER VISUAL MODERNO: título y botones alineados
+        # HEADER VISUAL MODERNO: título y barra de botones alineados arriba a la derecha
         header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(24)
         self.label_titulo = QLabel("Pedidos de Compras")
-        self.label_titulo.setObjectName("label_titulo_pedidos")  # Para QSS global
-        # self.label_titulo.setStyleSheet("color: #2563eb; font-size: 18px; font-weight: bold; padding: 0 0 0 0;")  # Migrado a QSS global
+        self.label_titulo.setObjectName("label_titulo_pedidos")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         header_layout.addStretch()
-        # Crear botones principales como atributos de la clase
+        # --- ORDEN DE BOTONES DE ACCIÓN EN PEDIDOSVIEW ---
+        # El orden y estructura de la barra de botones debe mantenerse igual a InventarioView para coherencia visual.
+        # Si se modifica, actualizar también en checklist_botones_accion.txt y documentar el cambio aquí con fecha y motivo.
+        # Última revisión: 08/06/2025. Orden actual:
+        # 1. Crear nuevo pedido
+        # 2. Ver detalles del pedido
+        # 3. Cargar presupuesto
+        # 4. Emitir remito
+        #
+        # NOTA: El orden de los botones principales está documentado aquí y en checklist_botones_accion.txt.
+        # No modificar sin actualizar ambos lugares y dejar comentario de justificación y fecha.
+        icon_dir = os.path.join(os.path.dirname(__file__), '../../resources/icons')
         self.boton_crear = QPushButton()
         self.boton_ver_detalles = QPushButton()
         self.boton_cargar_presupuesto = QPushButton()
-        # Botón EMITIR REMITO
         self.boton_emitir_remito = QPushButton()
         botones = [
             (self.boton_crear, "add-entrega.svg", "Crear nuevo pedido"),
@@ -57,59 +68,63 @@ class PedidosView(QWidget, TableResponsiveMixin):
             (self.boton_cargar_presupuesto, "excel_icon.svg", "Cargar presupuesto"),
             (self.boton_emitir_remito, "factura.svg", "Emitir remito")
         ]
+        # El orden de los botones está documentado arriba y en checklist_botones_accion.txt para evitar cambios accidentales.
         for boton, icono, tooltip in botones:
-            boton.setObjectName(f"boton_{icono.split('.')[0]}")  # Para QSS global
-            # boton.setStyleSheet("border-radius: 12px; background: #f1f5f9; color: #2563eb; min-width: 48px; min-height: 48px; margin-left: 16px;")  # Migrado a QSS global
+            boton.setObjectName(f"boton_{icono.split('.')[0]}")
+            icon_path = os.path.join(icon_dir, icono)
+            boton.setIcon(QIcon(icon_path))
+            boton.setIconSize(QSize(24, 24))
+            boton.setToolTip(tooltip)
+            boton.setText("")
             estilizar_boton_icono(boton)
             header_layout.addWidget(boton, alignment=Qt.AlignmentFlag.AlignVCenter)
         main_layout.insertLayout(0, header_layout)
 
-        # Tabla principal de pedidos (si existe)
+        # Tabla principal de pedidos
+        self.pedidos_headers = ["id", "proveedor", "fecha", "estado", "total"]
         self.tabla_pedidos = QTableWidget()
-        self.tabla_pedidos.setObjectName("tabla_pedidos")  # Para QSS global
+        self.tabla_pedidos.setObjectName("tabla_pedidos")
+        self.tabla_pedidos.setColumnCount(len(self.pedidos_headers))
+        self.tabla_pedidos.setHorizontalHeaderLabels(self.pedidos_headers)
         self.make_table_responsive(self.tabla_pedidos)
+        self.tabla_pedidos.setAlternatingRowColors(True)
+
+        # Configuración de columnas visibles (debe ir antes de conectar señales que usan columnas_visibles_pedidos)
+        self.config_path_pedidos = f"config_compras_pedidos_columns.json"
+        self.columnas_visibles_pedidos = self.cargar_config_columnas(self.config_path_pedidos, self.pedidos_headers)
+
+        self.tabla_pedidos.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.tabla_pedidos.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        v_header = self.tabla_pedidos.verticalHeader()
+        if v_header is not None:
+            v_header.setVisible(False)
+        h_header = self.tabla_pedidos.horizontalHeader()
+        if h_header is not None:
+            h_header.setProperty("header", True)
+            h_header.setHighlightSections(False)
+            h_header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
+            h_header.setMinimumSectionSize(80)
+            h_header.setDefaultSectionSize(120)
+            h_header.setSectionsMovable(True)
+            h_header.setSectionsClickable(True)
+            h_header.setObjectName("header_pedidos")
+            h_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            h_header.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos, self.config_path_pedidos))
+            h_header.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_pedidos))
+            h_header.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos, self.config_path_pedidos))
+        self.tabla_pedidos.setMinimumHeight(520)
+        self.tabla_pedidos.setMaximumHeight(900)
         main_layout.addWidget(self.tabla_pedidos)
+        main_layout.addStretch()
 
-        # Si tienes una tabla principal, aplica el patrón universal
-        if hasattr(self, 'tabla_pedidos'):
-            self.make_table_responsive(self.tabla_pedidos)
-            col_count = self.tabla_pedidos.columnCount()
-            self.pedidos_headers = []
-            for i in range(col_count):
-                header_item = self.tabla_pedidos.horizontalHeaderItem(i)
-                if header_item is not None and hasattr(header_item, 'text'):
-                    self.pedidos_headers.append(header_item.text())
-                else:
-                    self.pedidos_headers.append(f"Columna {i+1}")
-            if not self.pedidos_headers or any(h is None for h in self.pedidos_headers):
-                self.pedidos_headers = ["id", "proveedor", "fecha", "estado", "total"]
-                self.tabla_pedidos.setColumnCount(len(self.pedidos_headers))
-                self.tabla_pedidos.setHorizontalHeaderLabels(self.pedidos_headers)
-            self.config_path_pedidos = f"config_compras_pedidos_columns.json"
-            self.columnas_visibles_pedidos = self.cargar_config_columnas(self.config_path_pedidos, self.pedidos_headers)
-            self.aplicar_columnas_visibles(self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos)
-            header_pedidos = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
-            if header_pedidos is not None:
-                try:
-                    header_pedidos.setObjectName("header_pedidos")  # Para QSS global
-                    # header_pedidos.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")  # Migrado a QSS global
-                except Exception:
-                    pass
-                header_pedidos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-                header_pedidos.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos, self.config_path_pedidos))
-                header_pedidos.sectionDoubleClicked.connect(partial(self.auto_ajustar_columna, self.tabla_pedidos))
-                header_pedidos.setSectionsMovable(True)
-                header_pedidos.setSectionsClickable(True)
-                header_pedidos.sectionClicked.connect(partial(self.mostrar_menu_columnas_header, self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos, self.config_path_pedidos))
-                self.tabla_pedidos.setHorizontalHeader(header_pedidos)
-            self.tabla_pedidos.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_pedidos))
-        self.setLayout(main_layout)
+        self.aplicar_columnas_visibles(self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos)
+        self.tabla_pedidos.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.tabla_pedidos.customContextMenuRequested.connect(partial(self.mostrar_menu_columnas, self.tabla_pedidos, self.pedidos_headers, self.columnas_visibles_pedidos, self.config_path_pedidos))
+        self.tabla_pedidos.itemSelectionChanged.connect(partial(self.mostrar_qr_item_seleccionado, self.tabla_pedidos))
 
-        # Refuerzo de accesibilidad en botones principales
+        # Accesibilidad y estilos de botones y labels
         for btn in [self.boton_crear, self.boton_ver_detalles, self.boton_cargar_presupuesto, self.boton_emitir_remito]:
-            # btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")  # Migrado a QSS global
             btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
             font = btn.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
@@ -118,25 +133,19 @@ class PedidosView(QWidget, TableResponsiveMixin):
                 btn.setToolTip("Botón de acción")
             if not btn.accessibleName():
                 btn.setAccessibleName("Botón de acción de pedidos")
-        # Refuerzo de accesibilidad en tabla principal
         self.tabla_pedidos.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        # self.tabla_pedidos.setStyleSheet(self.tabla_pedidos.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")  # Migrado a QSS global
         self.tabla_pedidos.setToolTip("Tabla de pedidos")
         self.tabla_pedidos.setAccessibleName("Tabla principal de pedidos")
-        h_header = self.tabla_pedidos.horizontalHeader() if hasattr(self.tabla_pedidos, 'horizontalHeader') else None
-        if h_header is not None:
-            # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; font-weight: bold; border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #e3e3e3;")  # Migrado a QSS global
-            pass
-        # Refuerzo de accesibilidad en QLabel
         for widget in self.findChildren(QLabel):
             font = widget.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
             widget.setFont(font)
-        # Márgenes y padding en layouts según estándar
-        main_layout.setContentsMargins(24, 20, 24, 20)
-        main_layout.setSpacing(16)
-        # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
+
+        # Márgenes y padding en layouts según estándar (ya aplicados arriba)
+        # main_layout.setContentsMargins(32, 32, 32, 32)
+        # main_layout.setSpacing(16)
+        # No hay buscador en la vista principal
 
     def resaltar_items_bajo_stock(self, items):
         for item in items:
