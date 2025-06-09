@@ -1,5 +1,13 @@
+# --- TESTS DE CONFIGURACIÓN: USO SEGURO Y AISLADO, SIN CREDENCIALES REALES ---
+# Todos los tests usan MockDBConnection, nunca una base real ni credenciales.
+# Si se detecta un test que intenta conectar a una base real, debe ser refactorizado o migrado a integración.
+# Si necesitas integración real, usa variables de entorno y archivos de configuración fuera del repo.
+# --- FIN DE NOTA DE SEGURIDAD ---
+
 import unittest
 from modules.configuracion.model import ConfiguracionModel
+from modules.configuracion.view import ConfiguracionView
+from PyQt6.QtWidgets import QApplication
 
 class MockDBConnection:
     def __init__(self):
@@ -19,6 +27,7 @@ class MockDBConnection:
 
     def ejecutar_query(self, query, params=None):
         self.execute(query, params)
+        return self.query_result
 
 class TestConfiguracionModel(unittest.TestCase):
 
@@ -55,6 +64,16 @@ class TestConfiguracionModel(unittest.TestCase):
         self.config_model.actualizar_estado_notificaciones(True)
         self.assertEqual(self.mock_db.last_query, "UPDATE configuracion_sistema SET valor = ? WHERE clave = 'notificaciones_activas'")
         self.assertEqual(self.mock_db.last_params, ("True",))
+
+class TestConfiguracionView(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # Inicializa QApplication solo una vez para todos los tests de la vista
+        cls._app = QApplication.instance() or QApplication([])
+
+    def test_boton_activar_offline_existe(self):
+        view = ConfiguracionView()
+        self.assertTrue(hasattr(view, "boton_activar_offline"), "El botón 'boton_activar_offline' no está definido.")
 
 if __name__ == "__main__":
     unittest.main()

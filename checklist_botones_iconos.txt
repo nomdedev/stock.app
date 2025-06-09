@@ -1,0 +1,65 @@
+# Checklist de botones con y sin ícono SVG/PNG
+# Actualizado: 08/06/2025
+
+## Formato:
+# [X] = Tiene ícono SVG/PNG correcto
+# [ ] = Falta ícono SVG/PNG o no es el formato estándar
+# (ruta o nombre del botón) - (ícono asignado o "FALTA") - (descripción de la acción)
+
+# --- VIDRIOS ---
+[X] boton_agregar - add-material.svg - Agregar vidrio nuevo
+[X] boton_buscar - search_icon.svg - Buscar vidrio en la tabla
+[X] boton_exportar_excel - excel_icon.svg - Exportar listado de vidrios a Excel
+[X] btn_guardar (Guardar QR como imagen) - guardar-qr.svg - Guardar QR generado como imagen PNG
+[X] btn_pdf (Exportar QR a PDF) - pdf.svg - Exportar QR generado a PDF
+
+# --- USUARIOS ---
+[X] boton_agregar - agregar-user.svg - Agregar usuario nuevo
+[X] boton_guardar_permisos - save.svg - Guardar cambios en permisos de usuario
+[X] boton_refrescar_resumen - actualizar.svg - Refrescar resumen de permisos
+
+# --- PEDIDOS ---
+[X] boton_agregar - add-material.svg - Agregar pedido nuevo
+[X] btn_guardar - guardar-qr.svg - Guardar QR generado como imagen
+[X] btn_pdf - pdf.svg - Exportar QR a PDF
+[X] btn_confirmar - finish-check.svg - Confirmar pedido
+[X] btn_cancelar - close.svg - Cancelar acción o cerrar diálogo
+
+# --- AUDITORÍA ---
+[X] boton_agregar - add-material.svg - Agregar registro de auditoría
+[X] boton_ver_logs - search_icon.svg - Ver logs de auditoría
+[X] btn_guardar - guardar-qr.svg - Guardar QR de auditoría
+[X] btn_pdf - pdf.svg - Exportar QR de auditoría a PDF
+[X] btn_cerrar - close.svg - Cerrar diálogo de auditoría
+
+# --- NOTIFICACIONES ---
+[X] boton_agregar - plus_icon.svg - Agregar notificación
+[X] boton_marcar_leido - finish-check.svg - Marcar notificación como leída
+
+# --- SIDEBAR PRINCIPAL ---
+[X] Todos los módulos principales usan íconos SVG/PNG según icon_map y carpeta resources/icons
+
+# --- OTROS ---
+[ ] Revisar botones secundarios, modales y helpers personalizados
+[X] HelpButton (core/ui_components.py) - help.svg - Botón de ayuda contextual (muestra mensaje o documentación relevante)
+
+# --- INVENTARIO ---
+[X] btn_ajustar_stock - ajustar-stock.svg - Ajustar stock de inventario
+[X] btn_buscar - search_icon.svg - Buscar ítem de inventario
+[X] btn_obras_pendientes - viewdetails.svg - Ver obras pendientes de material
+[X] btn_reservar_lote - reserve-stock.svg - Reservar lote de perfiles
+[X] btn_qr - qr_icon.svg - Generar código QR de inventario
+[X] btn_nuevo_item - add-material.svg - Agregar nuevo ítem de inventario
+[X] btn_excel - excel_icon.svg - Exportar inventario a Excel
+[X] btn_pdf - pdf_icon.svg - Exportar inventario a PDF
+
+# --- FIN INVENTARIO ---
+
+# --- ÍCONOS ESTÁNDAR DE FACTURACIÓN Y PAGOS ---
+[X] factura.svg - Ícono de factura/recibo (lucide-receipt). Usar en botones de generación de factura, recibo, comprobante, etc.
+[X] pago.svg - Ícono de pago/billete (lucide-banknote). Usar en botones de registrar pago, abonar, cobrar, etc.
+# Uso recomendado: get_icon("factura"), get_icon("pago") en todos los botones principales y secundarios relacionados.
+
+# --- FIN ÍCONOS ESTÁNDAR DE FACTURACIÓN Y PAGOS ---
+
+# Para cada botón nuevo, actualizar este checklist y crear el ícono SVG/PNG si falta. Incluir siempre la descripción de la acción para elegir el ícono adecuado.

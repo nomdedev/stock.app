@@ -1,5 +1,3 @@
-import os
-
 def verificar_iconos():
     # Lista de íconos esperados
     iconos_esperados = {

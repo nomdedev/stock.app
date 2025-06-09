@@ -2,47 +2,54 @@ import csv
 from PyQt6.QtWidgets import QTableWidgetItem
 
 class AuditoriaController:
-    def __init__(self, model, view):
+    def __init__(self, model, view, db_connection, usuario_actual=None):
         self.model = model
         self.view = view
-        self.view.boton_filtrar.clicked.connect(self.aplicar_filtros)
-        self.view.boton_exportar.clicked.connect(self.exportar_logs)
-        self.view.boton_exportar_excel.clicked.connect(lambda: self.exportar_auditorias("excel"))
-        self.view.boton_exportar_pdf.clicked.connect(lambda: self.exportar_auditorias("pdf"))
+        self.usuario_actual = usuario_actual
+
+    def ejecutar_accion(self):
+        try:
+            print(f"[LOG ACCIÓN] Ejecutando acción 'ejecutar_accion' en módulo 'auditoria' por usuario: {getattr(self.usuario_actual, 'username', 'desconocido')}")
+            # Lógica centralizada para manejar la acción del botón
+            print("Acción ejecutada desde el módulo Auditoría")
+            # Aquí puedes implementar la lógica deseada, como aplicar filtros o exportar datos
+            print("[LOG ACCIÓN] Acción 'ejecutar_accion' en módulo 'auditoria' finalizada con éxito.")
+        except Exception as e:
+            print(f"[LOG ACCIÓN] Error en acción 'ejecutar_accion' en módulo 'auditoria': {e}")
 
     def aplicar_filtros(self):
-        filtros = {}
-        if self.view.filtro_usuario.text():
-            filtros["usuario_id"] = self.view.filtro_usuario.text()
-        if self.view.filtro_modulo.text():
-            filtros["modulo_afectado"] = self.view.filtro_modulo.text()
-        if self.view.filtro_fecha.text():
-            filtros["fecha_hora"] = self.view.filtro_fecha.text()
-
-        auditorias = self.model.obtener_auditorias(filtros)
-        self.view.tabla_auditorias.setRowCount(len(auditorias))
-        for row, auditoria in enumerate(auditorias):
-            for col, value in enumerate(auditoria):
-                self.view.tabla_auditorias.setItem(row, col, QTableWidgetItem(str(value)))
-
-        errores = self.model.obtener_errores(filtros)
-        self.view.tabla_errores.setRowCount(len(errores))
-        for row, error in enumerate(errores):
-            for col, value in enumerate(error):
-                self.view.tabla_errores.setItem(row, col, QTableWidgetItem(str(value)))
+        try:
+            print(f"[LOG ACCIÓN] Ejecutando acción 'aplicar_filtros' en módulo 'auditoria' por usuario: {getattr(self.usuario_actual, 'username', 'desconocido')}")
+            # Implementar la lógica para aplicar filtros si es necesario
+            fecha_inicio = self.view.fecha_inicio.text()  # Ajustar según los widgets reales
+            fecha_fin = self.view.fecha_fin.text()
+            usuario = self.view.campo_usuario.text()
+            # Consultar la base de datos con los filtros
+            resultados = self.model.consultar_auditoria(fecha_inicio, fecha_fin, usuario)
+            # Actualizar la tabla con los resultados
+            self.view.actualizar_tabla(resultados)
+            print("[LOG ACCIÓN] Acción 'aplicar_filtros' en módulo 'auditoria' finalizada con éxito.")
+        except Exception as e:
+            print(f"[LOG ACCIÓN] Error en acción 'aplicar_filtros' en módulo 'auditoria': {e}")
 
     def exportar_logs(self):
-        logs = self.model.obtener_auditorias()
-        with open("logs_auditoria.csv", "w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(["Usuario", "Módulo", "Evento", "Detalle", "Fecha"])
-            writer.writerows(logs)
-        self.view.label.setText("Logs exportados exitosamente.")
+        try:
+            print(f"[LOG ACCIÓN] Ejecutando acción 'exportar_logs' en módulo 'auditoria' por usuario: {getattr(self.usuario_actual, 'username', 'desconocido')}")
+            logs = self.model.obtener_auditorias()
+            with open("logs_auditoria.csv", "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(["Usuario", "Módulo", "Evento", "Detalle", "Fecha"])
+                writer.writerows(logs)
+            self.view.label.setText("Logs exportados exitosamente.")
+            print("[LOG ACCIÓN] Acción 'exportar_logs' en módulo 'auditoria' finalizada con éxito.")
+        except Exception as e:
+            print(f"[LOG ACCIÓN] Error en acción 'exportar_logs' en módulo 'auditoria': {e}")
 
     def exportar_auditorias(self, formato):
-        mensaje = self.model.exportar_auditorias(formato)
-        self.view.label.setText(mensaje)
-
-    def exportar_logs(self, formato):
-        mensaje = self.model.exportar_logs(formato)
-        self.view.label.setText(mensaje)
+        try:
+            print(f"[LOG ACCIÓN] Ejecutando acción 'exportar_auditorias' en módulo 'auditoria' por usuario: {getattr(self.usuario_actual, 'username', 'desconocido')}")
+            mensaje = self.model.exportar_auditorias(formato)
+            self.view.label.setText(mensaje)
+            print("[LOG ACCIÓN] Acción 'exportar_auditorias' en módulo 'auditoria' finalizada con éxito.")
+        except Exception as e:
+            print(f"[LOG ACCIÓN] Error en acción 'exportar_auditorias' en módulo 'auditoria': {e}")

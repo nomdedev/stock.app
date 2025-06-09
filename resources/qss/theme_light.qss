@@ -1,0 +1,461 @@
+/* theme_light.qss - Solo reglas para modo claro */
+/* --- FEEDBACK GENERAL Y LABELS DE MÓDULOS --- */
+QLabel#label_feedback { /* Feedback global y de módulos (Obras, Herrajes, Vidrios, etc.) */
+    background: #f1f5f9;
+    color: #2563eb;
+    font-weight: bold;
+    font-size: 13px;
+    border-radius: 8px;
+    padding: 8px;
+}
+/* --- BOTONES GENERALES Y DE ACCIÓN --- */
+QPushButton { /* Botones generales en toda la app (todos los módulos) */
+    background: #e3f6fd;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+QPushButton#boton_agregar_pedidos { /* Botón agregar en módulo Pedidos (Compras) */
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+QPushButton#boton_nuevo_compras,
+QPushButton#boton_add-entrega,
+QPushButton#boton_search_icon,
+QPushButton#boton_excel_icon { /* Botones principales de Compras y Pedidos (barra superior) */
+    border-radius: 12px;
+    background: #f1f5f9;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+QPushButton:focus {
+    outline: 2px solid #2563eb;
+    border: 2px solid #2563eb;
+}
+/* --- TITULOS DE MÓDULOS (UNIFICAR EN TODOS LOS MÓDULOS) --- */
+QLabel#titulo_label_logistica, QLabel#label, QLabel#label_titulo_pedidos, QLabel#label_titulo, QLabel#label_titulo_usuarios {
+    /* Título principal de cada módulo. Unificar color, tamaño y peso en todos los módulos. */
+    color: #222;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+/* --- TABLAS Y HEADERS UNIFICADOS --- */
+QTableWidget QHeaderView::section { /* Header de todas las tablas por defecto (todos los módulos) */
+    background: #f8fafc;
+    color: #2563eb;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 400;
+}
+QTableWidget#tabla_comparacion,
+QTableWidget#tabla_pedidos { /* Tablas principales de Compras y Pedidos */
+    font-size: 13px;
+}
+QHeaderView#header_comparacion,
+QHeaderView#header_pedidos { /* Header específico de tablas de comparación y pedidos (Compras) */
+    background-color: #e3f6fd;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+    font-weight: 400;
+}
+QHeaderView#header_vidrios, QHeaderView#header_produccion { /* Header de tablas de Vidrios y Producción */
+    background-color: #e3f6fd;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+    font-weight: 400;
+}
+QPushButton#boton_agregar_logistica { /* Botón agregar en Logística */
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+QTableWidget#tabla_logistica { /* Tabla principal de Logística */
+    font-size: 13px;
+}
+QHeaderView#header_logistica { /* Header de tabla de Logística */
+    background-color: #e3f6fd;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+    font-weight: 400;
+}
+QLineEdit#input_logistica,
+QLineEdit#input_logistica_prop {
+    font-size: 12px;
+}
+QLineEdit#input_logistica:focus,
+QLineEdit#input_logistica_prop:focus {
+    outline: 2px solid #2563eb;
+    border: 2px solid #2563eb;
+}
+QProgressBar#progress_bar_logistica {
+    border-radius: 8px;
+    height: 18px;
+    background: #e3f6fd;
+}
+QProgressBar#progress_bar_logistica::chunk {
+    background: #2563eb;
+    border-radius: 8px;
+}
+QFrame#login_card {
+    background: #f3f4f6;
+    border-radius: 28px;
+    padding: 0px;
+}
+QLabel#label_titulo_usuarios {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #2563eb;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+QLabel#icono {
+    margin-top: 32px;
+    margin-bottom: 8px;
+}
+QLabel#subtitulo {
+    color: #374151;
+    font-size: 1.1rem;
+    margin-bottom: 18px;
+}
+QLineEdit#usuario_input,
+QLineEdit#password_input {
+    background: #fff;
+    color: #1e293b;
+    border: 2px solid #d1d5db;
+    border-radius: 14px;
+    padding: 12px;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+QLineEdit#usuario_input:focus,
+QLineEdit#password_input:focus {
+    border: 2px solid #2563eb;
+    background: #f3f4f6;
+    color: #1e293b;
+}
+QLineEdit#usuario_input::placeholder,
+QLineEdit#password_input::placeholder {
+    color: #bdbdbd;
+    font-style: italic;
+}
+QPushButton#boton_login {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #2563eb, stop:1 #60a5fa);
+    color: #fff;
+    border-radius: 14px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 14px;
+    margin-top: 18px;
+    margin-bottom: 8px;
+}
+QPushButton#boton_login:hover {
+    background: #1d4ed8;
+}
+QLabel#error {
+    color: #ef4444;
+    font-size: 1rem;
+    margin-top: 8px;
+}
+QPushButton#boton_agregar_usuarios {
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+QTableWidget#tabla_usuarios {
+    font-size: 13px;
+}
+QPushButton#boton_agregar {
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+QPushButton#boton_agregar:focus {
+    outline: 2px solid #2563eb;
+    border: 2px solid #2563eb;
+}
+QTableWidget#tabla_tareas,
+QTableWidget#tabla_notificaciones,
+QTableWidget#tabla_vidrios {
+    font-size: 13px;
+}
+QHeaderView#header_tareas,
+QHeaderView#header_notificaciones {
+    background-color: #e3f6fd;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+    font-weight: 400;
+}
+QWidget#cronograma_view {
+    background: #fff;
+    border-radius: 10px;
+}
+QLabel#cronograma_label {
+    color: #2563eb;
+    font-weight: bold;
+}
+QPushButton#boton_produccion {
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 14px;
+    font-weight: 600;
+}
+QPushButton#boton_produccion:focus {
+    outline: 2px solid #2563eb;
+    border: 2px solid #2563eb;
+}
+QTableWidget#tabla_produccion {
+    font-size: 13px;
+}
+QLabel#tarjeta_kanban {
+    background: #e0f2fe;
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid #2563eb;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #2563eb;
+}
+/* --- Herrajes feedback y error input --- */
+QLabel#label_feedback[feedback_tipo="info"] {
+    background: #e3f6fd;
+    color: #2563eb;
+}
+QLabel#label_feedback[feedback_tipo="exito"] {
+    background: #d1f7e7;
+    color: #15803d;
+}
+QLabel#label_feedback[feedback_tipo="error"] {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+QLabel#label_feedback[feedback_tipo="advertencia"] {
+    background: #fef9c3;
+    color: #b45309;
+}
+QLineEdit#nombre_input_herrajes[error="true"] {
+    border: 2px solid #b91c1c;
+    background: #fee2e2;
+}
+QLineEdit#nombre_input_herrajes[error="false"], QLineEdit#nombre_input_herrajes {
+    border: 1px solid #e3e3e3;
+    background: #fff;
+}
+/* --- Fin herrajes feedback y error input --- */
+
+
+/* --- Obras feedback visual y error input --- */
+QLabel#label_feedback[feedback_tipo="info"] {
+    background: #e3f6fd;
+    color: #2563eb;
+}
+QLabel#label_feedback[feedback_tipo="exito"] {
+    background: #d1f7e7;
+    color: #15803d;
+}
+QLabel#label_feedback[feedback_tipo="error"] {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+QLabel#label_feedback[feedback_tipo="advertencia"] {
+    background: #fef9c3;
+    color: #b45309;
+}
+QLineEdit#nombre_input_obra[error="true"],
+QLineEdit#cliente_input_obra[error="true"],
+QDateEdit#fecha_entrega_input_obra[error="true"] {
+    border: 2px solid #ef4444;
+    background: #fee2e2;
+}
+QLineEdit#nombre_input_obra[error="false"], QLineEdit#nombre_input_obra,
+QLineEdit#cliente_input_obra[error="false"], QLineEdit#cliente_input_obra,
+QDateEdit#fecha_entrega_input_obra[error="false"], QDateEdit#fecha_entrega_input_obra {
+    border: 1px solid #e3e3e3;
+    background: #fff;
+}
+QLabel#label_titulo_dialogo_obra {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+QLabel#label_usuario_dialogo_obra {
+    font-size: 13px;
+    margin-bottom: 8px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 4px 8px;
+}
+/* --- Fin obras feedback visual y error input --- */
+/* --- Sidebar visual redesign --- */
+QWidget#Sidebar {
+    background: #fff;
+    border-right: 1px solid #e3e3e3;
+    min-width: 220px;
+    max-width: 240px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+QFrame#sidebar-header {
+    background: transparent;
+    margin-bottom: 28px;
+    margin-top: 0;
+}
+QLabel#sidebar-user {
+    /* Eliminado: ya no se muestra bloque de usuario en sidebar */
+    display: none;
+}
+QFrame#sidebar-buttons {
+    background: transparent;
+    margin-bottom: 28px;
+    margin-top: 0;
+    /* spacing de layout ajustado en Python a 24px */
+}
+QPushButton.sidebar-button, QPushButton#botonMenu {
+    background: #fff;
+    color: #1f2937;
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 0 14px;
+    min-width: 160px;
+    max-width: 210px;
+    min-height: 36px;
+    max-height: 40px;
+    margin-bottom: 160px;
+    text-align: left;
+}
+QPushButton.sidebar-button:hover, QPushButton#botonMenu:hover {
+    background: #f3f4f6;
+    color: #2563eb;
+    border: 1.5px solid #2563eb;
+}
+QPushButton.sidebar-button:checked, QPushButton#botonMenu:checked, QPushButton.sidebar-button[active="true"], QPushButton#botonMenu[active="true"] {
+    border: 2px solid #2563eb;
+    border-left: 4px solid #2563eb;
+    color: #2563eb;
+    background: #fff;
+}
+QFrame#sidebar-tools {
+    background: transparent;
+    margin-top: 32px;
+    margin-bottom: 24px;
+}
+QWidget#sidebar-footer {
+    background: transparent;
+    border-top: 1px solid #e3e3e3;
+    margin-top: 40px;
+    padding: 20px 0 0 0;
+}
+QLabel#estadoOnline {
+    background: #dcfce7;
+    color: #15803d;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 0 16px;
+}
+QLabel#estadoOffline {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 0 16px;
+}
+/* --- Fin sidebar visual redesign --- */
+/* --- UNIFICACIÓN DE ESTILO DE TABLAS PARA TODA LA APP --- */
+QTableWidget {
+    background: #fff9f3;
+    color: #2563eb;
+    border-radius: 10px;
+    font-size: 13px;
+    gridline-color: #e3e3e3;
+    alternate-background-color: #f1f5f9;
+    selection-background-color: #e3f6fd;
+    selection-color: #1e293b;
+    border: 1.5px solid #e3e3e3;
+}
+QTableWidget QHeaderView::section, QHeaderView::section {
+    background: #f8fafc;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+}
+QTableWidget::item {
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+QTableWidget::item:selected {
+    background: #e3f6fd;
+    color: #1e293b;
+}
+/* --- FIN UNIFICACIÓN --- */
+
+/* --- VIDRIOS - REGLAS ESPECÍFICAS PARA MÓDULO VIDRIOS --- */
+QHeaderView#header_vidrios { /* Header de tabla de Vidrios (módulo Vidrios) */
+    background-color: #e3f6fd;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+    font-weight: 400;
+}
+QPushButton#boton_agregar_vidrios_obra,
+QPushButton#boton_buscar_vidrios,
+QPushButton#boton_exportar_excel_vidrios { /* Botones principales módulo Vidrios */
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+QLabel#label_titulo_vidrios { /* Título principal módulo Vidrios */
+    color: #222;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+/* --- FIN VIDRIOS --- */

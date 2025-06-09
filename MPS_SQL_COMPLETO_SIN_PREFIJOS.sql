@@ -1,332 +1,231 @@
--- Base de datos: usuarios
-CREATE DATABASE IF NOT EXISTS usuarios;
-\c usuarios;
+-- Script corregido y adaptado para SQL Server (idempotente, sin creación de bases de datos)
+-- Ejecutar en la base de datos correspondiente antes de cada bloque
 
+-- =====================
+-- TABLA usuarios
+-- =====================
+IF OBJECT_ID('usuarios', 'U') IS NOT NULL DROP TABLE usuarios;
 CREATE TABLE usuarios (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(100),
-    apellido VARCHAR(100),
-    email VARCHAR(100) UNIQUE,
-    usuario VARCHAR(50) UNIQUE,
-    password_hash TEXT,
-    rol VARCHAR(50),
-    estado VARCHAR(20),
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    ultima_conexion TIMESTAMP
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
+    apellido NVARCHAR(100),
+    email NVARCHAR(100) UNIQUE,
+    usuario NVARCHAR(50) UNIQUE,
+    password_hash NVARCHAR(255),
+    rol NVARCHAR(50),
+    estado NVARCHAR(20),
+    fecha_creacion DATETIME DEFAULT GETDATE(),
+    ultima_conexion DATETIME
 );
 
-CREATE TABLE roles_permisos (
-    id SERIAL PRIMARY KEY,
-    rol VARCHAR(50),
-    modulo VARCHAR(50),
-    permiso_ver BOOLEAN,
-    permiso_editar BOOLEAN,
-    permiso_aprobar BOOLEAN,
-    permiso_eliminar BOOLEAN
+-- =====================
+-- TABLA permisos_modulos
+-- =====================
+IF OBJECT_ID('permisos_modulos', 'U') IS NOT NULL DROP TABLE permisos_modulos;
+CREATE TABLE permisos_modulos (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    id_usuario INT,
+    modulo VARCHAR(50) NOT NULL,
+    puede_ver BIT DEFAULT 1,
+    puede_modificar BIT DEFAULT 0,
+    puede_aprobar BIT DEFAULT 0,
+    fecha_creacion DATETIME DEFAULT GETDATE(),
+    creado_por INT
 );
 
+-- =====================
+-- TABLA logs_usuarios
+-- =====================
+IF OBJECT_ID('logs_usuarios', 'U') IS NOT NULL DROP TABLE logs_usuarios;
 CREATE TABLE logs_usuarios (
-    id SERIAL PRIMARY KEY,
-    usuario_id INT REFERENCES usuarios(id),
-    accion TEXT,
-    modulo VARCHAR(50),
-    fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    detalle TEXT,
-    ip_origen VARCHAR(100)
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    usuario_id INT,
+    accion NVARCHAR(255),
+    modulo NVARCHAR(50),
+    fecha_hora DATETIME DEFAULT GETDATE(),
+    detalle NVARCHAR(MAX),
+    ip_origen NVARCHAR(100)
 );
 
--- Base de datos: inventario
-CREATE DATABASE IF NOT EXISTS inventario;
-\c inventario;
-
+-- =====================
+-- TABLA inventario_items
+-- =====================
+IF OBJECT_ID('inventario_items', 'U') IS NOT NULL DROP TABLE inventario_items;
 CREATE TABLE inventario_items (
-    id SERIAL PRIMARY KEY,
-    codigo VARCHAR(20) UNIQUE,
-    nombre VARCHAR(100),
-    tipo_material VARCHAR(50),
-    unidad VARCHAR(20),
-    stock_actual DECIMAL,
-    stock_minimo DECIMAL,
-    ubicacion TEXT,
-    descripcion TEXT,
-    qr_code TEXT,
-    imagen_referencia TEXT
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    codigo NVARCHAR(100) UNIQUE NOT NULL,
+    nombre NVARCHAR(100),
+    tipo_material NVARCHAR(50),
+    unidad NVARCHAR(20),
+    stock_actual DECIMAL(18,2) DEFAULT 0,
+    stock_minimo DECIMAL(18,2) DEFAULT 0,
+    ubicacion NVARCHAR(255),
+    descripcion NVARCHAR(MAX),
+    qr_code NVARCHAR(255),
+    imagen_referencia NVARCHAR(255)
 );
 
+-- =====================
+-- TABLA movimientos_stock
+-- =====================
+IF OBJECT_ID('movimientos_stock', 'U') IS NOT NULL DROP TABLE movimientos_stock;
 CREATE TABLE movimientos_stock (
-    id SERIAL PRIMARY KEY,
-    id_item INT REFERENCES inventario_items(id),
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    tipo_movimiento VARCHAR(20),
-    cantidad DECIMAL,
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    id_item INT FOREIGN KEY REFERENCES inventario_items(id) ON DELETE CASCADE,
+    fecha DATETIME DEFAULT GETDATE(),
+    tipo_movimiento NVARCHAR(20) NOT NULL,
+    cantidad DECIMAL(18,2) NOT NULL,
     realizado_por INT,
-    observaciones TEXT,
-    referencia TEXT
+    observaciones NVARCHAR(MAX),
+    referencia NVARCHAR(255)
 );
 
+-- =====================
+-- TABLA reservas_stock
+-- =====================
+IF OBJECT_ID('reservas_stock', 'U') IS NOT NULL DROP TABLE reservas_stock;
 CREATE TABLE reservas_stock (
-    id SERIAL PRIMARY KEY,
-    id_item INT REFERENCES inventario_items(id),
-    fecha_reserva TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    cantidad_reservada DECIMAL,
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    id_item INT FOREIGN KEY REFERENCES inventario_items(id) ON DELETE CASCADE,
+    fecha_reserva DATETIME DEFAULT GETDATE(),
+    cantidad_reservada DECIMAL(18,2) NOT NULL,
     referencia_obra INT,
-    estado VARCHAR(20)
+    estado NVARCHAR(20) DEFAULT 'activa'
 );
 
--- Base de datos: obras
-CREATE DATABASE IF NOT EXISTS obras;
-\c obras;
-
+-- =====================
+-- TABLA obras
+-- =====================
+IF OBJECT_ID('obras', 'U') IS NOT NULL DROP TABLE obras;
 CREATE TABLE obras (
-    id SERIAL PRIMARY KEY,
-    nombre_cliente VARCHAR(100),
-    apellido_cliente VARCHAR(100),
-    telefono VARCHAR(50),
-    email VARCHAR(100),
-    direccion TEXT,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    estado_general VARCHAR(50),
-    observaciones TEXT
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
+    usuario_creador INT,
+    cliente NVARCHAR(100),
+    estado NVARCHAR(30),
+    fecha_medicion DATETIME,
+    fecha_entrega DATETIME
 );
 
+-- =====================
+-- TABLA cronograma_obras
+-- =====================
+IF OBJECT_ID('cronograma_obras', 'U') IS NOT NULL DROP TABLE cronograma_obras;
 CREATE TABLE cronograma_obras (
-    id SERIAL PRIMARY KEY,
-    id_obra INT REFERENCES obras(id),
-    etapa VARCHAR(50),
-    fecha_programada DATE,
-    fecha_realizada DATE,
-    observaciones TEXT,
-    responsable INT,
-    estado VARCHAR(30)
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    id_obra INT FOREIGN KEY REFERENCES obras(id) ON DELETE CASCADE,
+    fecha DATETIME,
+    estado NVARCHAR(30)
 );
 
+-- =====================
+-- TABLA materiales_por_obra
+-- =====================
+IF OBJECT_ID('materiales_por_obra', 'U') IS NOT NULL DROP TABLE materiales_por_obra;
 CREATE TABLE materiales_por_obra (
-    id SERIAL PRIMARY KEY,
-    id_obra INT REFERENCES obras(id),
-    id_item INT,
-    cantidad_necesaria DECIMAL,
-    cantidad_reservada DECIMAL,
-    estado VARCHAR(30)
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    id_obra INT FOREIGN KEY REFERENCES obras(id) ON DELETE CASCADE,
+    id_item INT FOREIGN KEY REFERENCES inventario_items(id) ON DELETE CASCADE,
+    cantidad DECIMAL(18,2),
+    estado NVARCHAR(30)
 );
 
-
--- Base de datos: compras
-CREATE DATABASE IF NOT EXISTS compras;
-\c compras;
-
+-- =====================
+-- TABLA pedidos_compra
+-- =====================
+IF OBJECT_ID('pedidos_compra', 'U') IS NOT NULL DROP TABLE pedidos_compra;
 CREATE TABLE pedidos_compra (
-    id SERIAL PRIMARY KEY,
-    fecha_creacion TIMESTAMP,
-    solicitado_por INT,
-    estado VARCHAR(30),
-    observaciones TEXT,
-    prioridad VARCHAR(20)
-);
-
-CREATE TABLE detalle_pedido (
-    id SERIAL PRIMARY KEY,
-    id_pedido INT REFERENCES pedidos_compra(id),
-    id_item INT,
-    cantidad_solicitada DECIMAL,
-    unidad VARCHAR(20),
-    justificacion TEXT
-);
-
-CREATE TABLE presupuestos (
-    id SERIAL PRIMARY KEY,
-    id_pedido INT REFERENCES pedidos_compra(id),
-    proveedor VARCHAR(100),
-    fecha_recepcion DATE,
-    archivo_adjunto TEXT,
-    comentarios TEXT,
-    precio_total DECIMAL,
-    seleccionado BOOLEAN
-);
-
--- Base de datos: produccion
-CREATE DATABASE IF NOT EXISTS produccion;
-\c produccion;
-
-CREATE TABLE aberturas (
-    id SERIAL PRIMARY KEY,
-    id_obra INT,
-    codigo VARCHAR(100),
-    tipo_abertura VARCHAR(50),
-    descripcion TEXT,
-    estado_general VARCHAR(50),
-    fecha_inicio DATE,
-    fecha_entrega_estimada DATE
-);
-
-CREATE TABLE etapas_fabricacion (
-    id SERIAL PRIMARY KEY,
-    id_abertura INT REFERENCES aberturas(id),
-    etapa VARCHAR(50),
-    fecha_inicio DATE,
-    fecha_fin DATE,
-    realizado_por INT,
-    estado VARCHAR(30),
-    tiempo_estimado INTERVAL,
-    tiempo_real INTERVAL,
-    observaciones TEXT
-);
-
--- Base de datos: logistica
-CREATE DATABASE IF NOT EXISTS logistica;
-\c logistica;
-
-CREATE TABLE entregas_obras (
-    id SERIAL PRIMARY KEY,
-    id_obra INT,
-    fecha_programada DATE,
-    fecha_realizada DATE,
-    estado VARCHAR(30),
-    vehiculo_asignado INT,
-    chofer_asignado INT,
-    observaciones TEXT,
-    firma_receptor TEXT
-);
-
-CREATE TABLE checklist_entrega (
-    id SERIAL PRIMARY KEY,
-    id_entrega INT REFERENCES entregas_obras(id),
-    item TEXT,
-    estado_item VARCHAR(20),
-    observaciones TEXT
-);
-
--- Base de datos: auditoria
-CREATE DATABASE IF NOT EXISTS auditoria;
-\c auditoria;
-
-CREATE TABLE auditorias_sistema (
-    id SERIAL PRIMARY KEY,
-    fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    usuario_id INT,
-    modulo_afectado VARCHAR(50),
-    tipo_evento VARCHAR(30),
-    detalle TEXT,
-    ip_origen VARCHAR(50),
-    device_info TEXT,
-    origen_evento VARCHAR(30)
-);
-
-CREATE TABLE errores_sistema (
-    id SERIAL PRIMARY KEY,
-    fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    usuario_id INT,
-    modulo VARCHAR(50),
-    descripcion_error TEXT,
-    stack_trace TEXT,
-    ip_origen VARCHAR(50),
-    origen_evento VARCHAR(30)
-);
-
-
--- Base de datos: mantenimiento
-CREATE DATABASE IF NOT EXISTS mantenimiento;
-\c mantenimiento;
-
-CREATE TABLE herramientas (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(100),
-    descripcion TEXT,
-    codigo_interno VARCHAR(50),
-    ubicacion TEXT,
-    estado VARCHAR(30),
-    imagen TEXT
-);
-
-CREATE TABLE vehiculos (
-    id SERIAL PRIMARY KEY,
-    patente VARCHAR(20),
-    marca VARCHAR(50),
-    modelo VARCHAR(50),
-    estado_operativo VARCHAR(30),
-    ubicacion_actual TEXT
-);
-
-CREATE TABLE mantenimientos (
-    id SERIAL PRIMARY KEY,
-    tipo_objeto VARCHAR(20),
-    id_objeto INT,
-    tipo_mantenimiento VARCHAR(50),
-    fecha_realizacion DATE,
-    realizado_por INT,
-    observaciones TEXT,
-    firma_digital TEXT
-);
-
-CREATE TABLE checklists_mantenimiento (
-    id SERIAL PRIMARY KEY,
-    id_mantenimiento INT REFERENCES mantenimientos(id),
-    item TEXT,
-    estado VARCHAR(20),
-    observaciones TEXT
-);
-
-CREATE TABLE repuestos_usados (
-    id SERIAL PRIMARY KEY,
-    id_mantenimiento INT REFERENCES mantenimientos(id),
-    id_item INT,
-    cantidad_utilizada DECIMAL
-);
-
-CREATE TABLE tareas_recurrentes (
-    id SERIAL PRIMARY KEY,
-    tipo_objeto VARCHAR(20),
-    id_objeto INT,
-    descripcion TEXT,
-    frecuencia_dias INT,
-    proxima_fecha DATE,
-    responsable INT
-);
-
--- Base de datos: contabilidad
-CREATE DATABASE IF NOT EXISTS contabilidad;
-\c contabilidad;
-
-CREATE TABLE recibos (
-    id SERIAL PRIMARY KEY,
-    fecha_emision DATE,
-    obra_id INT,
-    monto_total DECIMAL,
-    concepto TEXT,
-    destinatario TEXT,
-    firma_digital TEXT,
-    usuario_emisor INT,
-    estado VARCHAR(30),
-    archivo_pdf TEXT
-);
-
-CREATE TABLE movimientos_contables (
-    id SERIAL PRIMARY KEY,
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    prioridad NVARCHAR(20),
     fecha DATE,
-    tipo_movimiento VARCHAR(20),
-    monto DECIMAL,
-    concepto TEXT,
-    referencia_recibo INT,
-    observaciones TEXT
+    estado NVARCHAR(20)
 );
 
--- Base de datos: config
-CREATE DATABASE IF NOT EXISTS config;
-\c config;
-
-CREATE TABLE configuracion_sistema (
-    id SERIAL PRIMARY KEY,
-    clave VARCHAR(100) UNIQUE,
-    valor TEXT,
-    descripcion TEXT,
-    ultima_modificacion TIMESTAMP,
-    modificado_por INT
+-- =====================
+-- TABLA detalle_pedido
+-- =====================
+IF OBJECT_ID('detalle_pedido', 'U') IS NOT NULL DROP TABLE detalle_pedido;
+CREATE TABLE detalle_pedido (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    pedido_id INT FOREIGN KEY REFERENCES pedidos_compra(id) ON DELETE CASCADE,
+    id_item INT FOREIGN KEY REFERENCES inventario_items(id),
+    cantidad DECIMAL(18,2),
+    justificacion NVARCHAR(MAX)
 );
 
-CREATE TABLE apariencia_usuario (
-    id SERIAL PRIMARY KEY,
+-- =====================
+-- TABLA presupuestos
+-- =====================
+IF OBJECT_ID('presupuestos', 'U') IS NOT NULL DROP TABLE presupuestos;
+CREATE TABLE presupuestos (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    pedido_id INT FOREIGN KEY REFERENCES pedidos_compra(id) ON DELETE CASCADE,
+    seleccionado BIT DEFAULT 0,
+    monto DECIMAL(18,2)
+);
+
+-- =====================
+-- TABLA aberturas
+-- =====================
+IF OBJECT_ID('aberturas', 'U') IS NOT NULL DROP TABLE aberturas;
+CREATE TABLE aberturas (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    fecha_entrega_estimada DATE,
+    id_obra INT FOREIGN KEY REFERENCES obras(id)
+);
+
+-- =====================
+-- TABLA etapas_fabricacion
+-- =====================
+IF OBJECT_ID('etapas_fabricacion', 'U') IS NOT NULL DROP TABLE etapas_fabricacion;
+CREATE TABLE etapas_fabricacion (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    id_abertura INT FOREIGN KEY REFERENCES aberturas(id) ON DELETE CASCADE,
+    observaciones NVARCHAR(MAX)
+);
+
+-- =====================
+-- TABLA entregas_obras
+-- =====================
+IF OBJECT_ID('entregas_obras', 'U') IS NOT NULL DROP TABLE entregas_obras;
+CREATE TABLE entregas_obras (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    id_obra INT FOREIGN KEY REFERENCES obras(id) ON DELETE CASCADE,
+    fecha_entrega DATETIME,
+    firma_receptor NVARCHAR(255)
+);
+
+-- =====================
+-- TABLA checklist_entrega
+-- =====================
+IF OBJECT_ID('checklist_entrega', 'U') IS NOT NULL DROP TABLE checklist_entrega;
+CREATE TABLE checklist_entrega (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    id_entrega INT FOREIGN KEY REFERENCES entregas_obras(id) ON DELETE CASCADE,
+    observaciones NVARCHAR(MAX)
+);
+
+-- =====================
+-- TABLA auditorias_sistema
+-- =====================
+IF OBJECT_ID('auditorias_sistema', 'U') IS NOT NULL DROP TABLE auditorias_sistema;
+CREATE TABLE auditorias_sistema (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    origen_evento NVARCHAR(30),
+    fecha DATETIME DEFAULT GETDATE(),
     usuario_id INT,
-    modo_color VARCHAR(20),
-    idioma_preferido VARCHAR(10),
-    mostrar_notificaciones BOOLEAN,
-    tamaño_fuente VARCHAR(10)
+    descripcion NVARCHAR(MAX)
 );
+
+-- =====================
+-- TABLA errores_sistema
+-- =====================
+IF OBJECT_ID('errores_sistema', 'U') IS NOT NULL DROP TABLE errores_sistema;
+CREATE TABLE errores_sistema (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    origen_evento NVARCHAR(30),
+    fecha DATETIME DEFAULT GETDATE(),
+    descripcion NVARCHAR(MAX)
+);
+
+-- Fin del script

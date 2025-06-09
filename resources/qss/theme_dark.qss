@@ -1,0 +1,145 @@
+/* theme_dark.qss - Solo reglas para modo oscuro */
+QWidget {
+    background: #232b36;
+    color: #f3f4f6;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+QLabel, QTableWidget, QHeaderView::section {
+    color: #fff;
+    font-size: 14px;
+}
+/* --- FEEDBACK GENERAL Y LABELS DE MÓDULOS --- */
+QLabel#label_feedback { /* Feedback global y de módulos (Obras, Herrajes, Vidrios, etc.) */
+    background: #2d3748;
+    color: #90cdf4;
+    font-weight: bold;
+    font-size: 13px;
+    border-radius: 8px;
+    padding: 8px;
+}
+/* --- BOTONES GENERALES Y DE ACCIÓN --- */
+QPushButton { /* Botones generales en toda la app (todos los módulos) */
+    background: #2563eb;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+QPushButton:disabled {
+    color: #a0aec0;
+    background: #334155;
+}
+QPushButton:hover {
+    background: #1e40af;
+}
+/* --- TABLAS Y HEADERS UNIFICADOS --- */
+QTableWidget { /* Tablas principales de todos los módulos */
+    background: #23272e;
+    color: #60a5fa;
+    border-radius: 10px;
+    font-size: 13px;
+    gridline-color: #334155;
+    alternate-background-color: #1e293b;
+    selection-background-color: #2563eb;
+    selection-color: #fff;
+    border: 1.5px solid #334155;
+}
+QTableWidget QHeaderView::section, QHeaderView::section { /* Header de todas las tablas por defecto (todos los módulos) */
+    background: #1e293b;
+    color: #60a5fa;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border: 1px solid #334155;
+}
+QTableWidget::item {
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+QTableWidget::item:selected {
+    background: #2563eb;
+    color: #fff;
+}
+QHeaderView::section {
+    background: #1e293b;
+    color: #60a5fa;
+    font-weight: bold;
+    border-bottom: 2px solid #2563eb;
+    font-size: 13px;
+}
+QLineEdit, QComboBox, QSpinBox, QDateEdit {
+    background: #1e293b;
+    color: #fff;
+    border: 1.5px solid #334155;
+    border-radius: 6px;
+}
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDateEdit:focus {
+    border: 2px solid #2563eb;
+}
+SidebarButton[selected="true"] {
+    background: #334155;
+    color: #fff;
+    font-weight: bold;
+    border-left: 4px solid #2563eb;
+}
+SidebarButton:hover {
+    background: #2563eb;
+    color: #fff;
+}
+/* Separadores y líneas sutiles */
+QFrame, QSplitter::handle {
+    background: #334155;
+}
+/* Mejorar contraste de tooltips */
+QToolTip {
+    background: #1e293b;
+    color: #fff;
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+/* --- TITULOS DE MÓDULOS (UNIFICAR EN TODOS LOS MÓDULOS) --- */
+QLabel#titulo_label_logistica, QLabel#label, QLabel#label_titulo_pedidos, QLabel#label_titulo, QLabel#label_titulo_usuarios {
+    /* Título principal de cada módulo. Unificar color, tamaño y peso en todos los módulos. */
+    color: #90cdf4;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+/* QHeaderView#header_vidrios { Header de tabla de Vidrios (módulo Vidrios) } */
+QHeaderView#header_vidrios {
+    background: #1e293b;
+    color: #60a5fa;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border: 1px solid #334155;
+}
+
+/* QPushButton#boton_agregar_vidrios_obra, QPushButton#boton_buscar_vidrios, QPushButton#boton_exportar_excel_vidrios { Botones principales módulo Vidrios } */
+QPushButton#boton_agregar_vidrios_obra,
+QPushButton#boton_buscar_vidrios,
+QPushButton#boton_exportar_excel_vidrios {
+    border-radius: 12px;
+    background: #2563eb;
+    color: #fff;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+
+/* QLabel#label_titulo_vidrios { Título principal módulo Vidrios } */
+QLabel#label_titulo_vidrios {
+    color: #fff;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}

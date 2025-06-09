@@ -1,0 +1,16 @@
+{
+  "default_theme": "light",
+  "themes": [
+    {
+      "name": "Claro",
+      "id": "light",
+      "qss": "resources/qss/theme_light.qss"
+    },
+    {
+      "name": "Oscuro",
+      "id": "dark",
+      "qss": "resources/qss/theme_dark.qss"
+    }
+  ],
+  "allow_user_theme_selection": true
+}

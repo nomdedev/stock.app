@@ -3,6 +3,10 @@ from fpdf import FPDF
 import hashlib
 
 class ContabilidadModel:
+    """
+    Modelo de Contabilidad. Debe recibir una instancia de ContabilidadDatabaseConnection (o hija de BaseDatabaseConnection) como parámetro db_connection.
+    No crear conexiones nuevas internamente. Usar siempre la conexión persistente y unificada.
+    """
     def __init__(self, db_connection):
         self.db = db_connection
 
@@ -40,23 +44,41 @@ class ContabilidadModel:
         query = "UPDATE recibos SET estado = 'anulado' WHERE id = ?"
         self.db.ejecutar_query(query, (id_recibo,))
 
-    def exportar_balance(self, formato, datos_balance):
+    def exportar_balance(self, formato: str, datos_balance) -> str:
+        """
+        Exporta el balance contable en el formato solicitado ('excel' o 'pdf').
+        Si no hay datos, retorna un mensaje de advertencia.
+        Si ocurre un error, retorna un mensaje de error.
+        El nombre del archivo incluye fecha y hora para evitar sobrescritura.
+        """
+        if not datos_balance:
+            return "No hay datos de balance para exportar."
+        formato = (formato or '').lower().strip()
+        if formato not in ("excel", "pdf"):
+            return "Formato no soportado. Use 'excel' o 'pdf'."
+        fecha_str = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
+        columnas = ["Fecha", "Tipo", "Monto", "Concepto", "Referencia", "Observaciones"]
         if formato == "excel":
-            df = pd.DataFrame(datos_balance, columns=["Fecha", "Tipo", "Monto", "Concepto", "Referencia", "Observaciones"])
-            df.to_excel("balance_contable.xlsx", index=False)
-            return "Balance exportado a Excel."
-
+            nombre_archivo = f"balance_contable_{fecha_str}.xlsx"
+            try:
+                df = pd.DataFrame(datos_balance, columns=columnas)
+                df.to_excel(nombre_archivo, index=False)
+                return f"Balance exportado a Excel: {nombre_archivo}"
+            except Exception as e:
+                return f"Error al exportar a Excel: {e}"
         elif formato == "pdf":
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt="Balance Contable", ln=True, align="C")
-            for row in datos_balance:
-                pdf.cell(200, 10, txt=str(row), ln=True)
-            pdf.output("balance_contable.pdf")
-            return "Balance exportado a PDF."
-
-        return "Formato no soportado."
+            nombre_archivo = f"balance_contable_{fecha_str}.pdf"
+            try:
+                pdf = FPDF()
+                pdf.add_page()
+                pdf.set_font("Arial", size=12)
+                pdf.cell(200, 10, "Balance Contable", ln=True, align="C")
+                for row in datos_balance:
+                    pdf.cell(200, 10, str(row), ln=True)
+                pdf.output(nombre_archivo)
+                return f"Balance exportado a PDF: {nombre_archivo}"
+            except Exception as e:
+                return f"Error al exportar a PDF: {e}"
 
     def generar_recibo_pdf(self, id_recibo):
         query = """
@@ -72,13 +94,13 @@ class ContabilidadModel:
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", size=12)
-        pdf.cell(200, 10, txt=f"Recibo - ID {id_recibo}", ln=True, align="C")
-        pdf.cell(200, 10, txt=f"Fecha de Emisión: {recibo[0]}", ln=True)
-        pdf.cell(200, 10, txt=f"Obra ID: {recibo[1]}", ln=True)
-        pdf.cell(200, 10, txt=f"Monto Total: {recibo[2]}", ln=True)
-        pdf.cell(200, 10, txt=f"Concepto: {recibo[3]}", ln=True)
-        pdf.cell(200, 10, txt=f"Destinatario: {recibo[4]}", ln=True)
-        pdf.cell(200, 10, txt=f"Firma Digital: {recibo[5]}", ln=True)
+        pdf.cell(200, 10, f"Recibo - ID {id_recibo}", ln=True, align="C")
+        pdf.cell(200, 10, f"Fecha de Emisión: {recibo[0]}", ln=True)
+        pdf.cell(200, 10, f"Obra ID: {recibo[1]}", ln=True)
+        pdf.cell(200, 10, f"Monto Total: {recibo[2]}", ln=True)
+        pdf.cell(200, 10, f"Concepto: {recibo[3]}", ln=True)
+        pdf.cell(200, 10, f"Destinatario: {recibo[4]}", ln=True)
+        pdf.cell(200, 10, f"Firma Digital: {recibo[5]}", ln=True)
 
         pdf.output(f"recibo_{id_recibo}.pdf")
         return f"Recibo exportado como recibo_{id_recibo}.pdf."
@@ -115,3 +137,42 @@ class ContabilidadModel:
     def obtener_balance(self, fecha_inicio, fecha_fin):
         query = "SELECT * FROM movimientos_contables WHERE fecha BETWEEN ? AND ?"
         return self.db.ejecutar_query(query, (fecha_inicio, fecha_fin))
+
+    # --- PAGOS POR PEDIDO (INTEGRACIÓN PEDIDOS-OBRAS-MÓDULOS) ---
+    # Cada pago se asocia a un pedido de Inventario, Vidrios o Herrajes, y a una obra.
+    # Tabla sugerida: pagos_pedidos (id, id_pedido, modulo, obra_id, monto, fecha, usuario, estado, comprobante, observaciones)
+    # Documentar cualquier excepción en docs/estandares_visuales.md
+
+    def registrar_pago_pedido(self, id_pedido, modulo, obra_id, monto, fecha, usuario, estado, comprobante=None, observaciones=None):
+        query = '''
+        INSERT INTO pagos_pedidos (id_pedido, modulo, obra_id, monto, fecha, usuario, estado, comprobante, observaciones)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        '''
+        self.db.ejecutar_query(query, (id_pedido, modulo, obra_id, monto, fecha, usuario, estado, comprobante, observaciones))
+
+    def actualizar_estado_pago(self, id_pago, nuevo_estado):
+        query = "UPDATE pagos_pedidos SET estado = ? WHERE id = ?"
+        self.db.ejecutar_query(query, (nuevo_estado, id_pago))
+
+    def obtener_pagos_por_pedido(self, id_pedido, modulo):
+        query = "SELECT * FROM pagos_pedidos WHERE id_pedido = ? AND modulo = ?"
+        return self.db.ejecutar_query(query, (id_pedido, modulo))
+
+    def obtener_pagos_por_obra(self, obra_id, modulo=None):
+        if modulo:
+            query = "SELECT * FROM pagos_pedidos WHERE obra_id = ? AND modulo = ?"
+            return self.db.ejecutar_query(query, (obra_id, modulo))
+        else:
+            query = "SELECT * FROM pagos_pedidos WHERE obra_id = ?"
+            return self.db.ejecutar_query(query, (obra_id,))
+
+    def obtener_estado_pago_pedido(self, id_pedido, modulo):
+        query = "SELECT estado FROM pagos_pedidos WHERE id_pedido = ? AND modulo = ? ORDER BY fecha DESC LIMIT 1"
+        res = self.db.ejecutar_query(query, (id_pedido, modulo))
+        return res[0][0] if res else None
+
+    def obtener_pagos_por_usuario(self, usuario):
+        query = "SELECT * FROM pagos_pedidos WHERE usuario = ?"
+        return self.db.ejecutar_query(query, (usuario,))
+
+    # --- FIN PAGOS POR PEDIDO ---
