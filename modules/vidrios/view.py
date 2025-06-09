@@ -111,6 +111,29 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None
 
+        # --- Inicialización robusta de tabla_pedido, boton_guardar_pedido y label_formulario ---
+        self.tabla_pedido = QTableWidget()
+        self.tabla_pedido.setObjectName("tabla_pedido_vidrios")
+        self.tabla_pedido.setColumnCount(5)
+        self.tabla_pedido.setHorizontalHeaderLabels(["Tipología", "Ancho x Alto", "Color", "Cantidad", "Acción"])
+        self.tabla_pedido.setAlternatingRowColors(True)
+        self.tabla_pedido.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.tabla_pedido.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        # Pestaña de pedidos de usuario
+        self.tab_pedidos = QWidget()
+        tab_pedidos_layout = QVBoxLayout(self.tab_pedidos)
+        tab_pedidos_layout.setContentsMargins(24, 20, 24, 20)
+        tab_pedidos_layout.setSpacing(18)
+        self.label_formulario = QLabel("Formulario de pedido de vidrios")
+        tab_pedidos_layout.addWidget(self.label_formulario)
+        self.boton_guardar_pedido = QPushButton("Guardar pedido")
+        self.boton_guardar_pedido.setObjectName("boton_guardar_pedido_vidrios")
+        estilizar_boton_icono(self.boton_guardar_pedido)
+        tab_pedidos_layout.addWidget(self.boton_guardar_pedido)
+        tab_pedidos_layout.addWidget(self.tabla_pedido)
+        self.tab_pedidos.setLayout(tab_pedidos_layout)
+        self.tabs.addTab(self.tab_pedidos, "Pedido de vidrios para obra")
+
         self.setLayout(self.main_layout)
 
         # Configuración de columnas y headers dinámicos
