@@ -343,6 +343,6 @@ class PedidosView(QWidget):
         btn_cancelar.clicked.connect(dialog.reject)
         dialog.exec()
 
-# NOTA: No debe haber credenciales ni cadenas de conexión hardcodeadas como 'server=' en este archivo. Usar variables de entorno o archivos de configuración seguros.
+# NOTA: Evitar credenciales o cadenas de conexión incrustadas de forma directa en este archivo.
 # Si necesitas una cadena de conexión, obténla de un archivo seguro o variable de entorno, nunca hardcodeada.
 # En los flujos de error, asegúrate de usar log_error y/o registrar_evento para cumplir el estándar de feedback visual y logging.
