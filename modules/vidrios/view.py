@@ -11,6 +11,7 @@ from reportlab.lib.pagesizes import letter
 from core.table_responsive_mixin import TableResponsiveMixin
 from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
 from core.event_bus import event_bus
+from core.logger import log_error
 
 class VidriosView(QWidget, TableResponsiveMixin):
     """
@@ -228,6 +229,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
                 with open(self.config_path, "r", encoding="utf-8") as f:
                     return json.load(f)
             except Exception as e:
+                log_error(str(e))
                 QMessageBox.warning(self, "Error de configuración", f"No se pudo cargar la configuración de columnas: {e}")
         return {header: True for header in self.vidrios_headers}
 
@@ -237,6 +239,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
                 json.dump(self.columnas_visibles, f, ensure_ascii=False, indent=2)
             # Eliminado: No mostrar ningún mensaje de configuración guardada
         except Exception as e:
+            log_error(str(e))
             QMessageBox.critical(self, "Error al guardar", f"No se pudo guardar la configuración: {e}")
 
     # Refactor: Métodos para operar sobre la tabla de la pestaña activa
@@ -303,6 +306,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
             else:
                 self.mostrar_feedback("No se puede mostrar el menú de columnas: header no disponible o incompleto", "error")
         except Exception as e:
+            log_error(str(e))
             self.mostrar_feedback(f"Error al mostrar menú de columnas: {e}", "error")
 
     def toggle_columna(self, tabla, idx, header, columnas_visibles, checked):
@@ -344,6 +348,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
                 from PIL import Image
                 img = img.get_image()
         except Exception as e:
+            log_error(str(e))
             QMessageBox.critical(self, "Error al generar QR", f"No se pudo generar el código QR: {e}")
             return
         try:
@@ -353,6 +358,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
                 tmp_path = tmp.name
                 pixmap = QPixmap(tmp_path)
         except Exception as e:
+            log_error(str(e))
             QMessageBox.critical(self, "Error de imagen", f"No se pudo crear la imagen temporal: {e}")
             return
         dialog = QDialog(self)
@@ -380,6 +386,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
                     with open(tmp_path, "rb") as src, open(file_path, "wb") as dst:
                         dst.write(src.read())
             except Exception as e:
+                log_error(str(e))
                 QMessageBox.critical(dialog, "Error al guardar", f"No se pudo guardar la imagen: {e}")
         def exportar_pdf():
             try:
@@ -389,6 +396,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
                     c.drawInlineImage(tmp_path, 100, 500, 200, 200)
                     c.save()
             except Exception as e:
+                log_error(str(e))
                 QMessageBox.critical(dialog, "Error al exportar PDF", f"No se pudo exportar el QR a PDF: {e}")
         btn_guardar.clicked.connect(guardar)
         btn_pdf.clicked.connect(exportar_pdf)
@@ -500,6 +508,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
             QMessageBox.information(self, "Exportación exitosa", f"Datos exportados correctamente a:\n{file_path}")
             self.mostrar_feedback(f"Datos exportados correctamente a {file_path}", tipo="exito")
         except Exception as e:
+            log_error(str(e))
             QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
             self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
 
