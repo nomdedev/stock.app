@@ -45,7 +45,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.label_feedback.setObjectName("label_feedback")
         # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
-        self.label_feedback.setAccessibleName("Mensaje de feedback de inventario")
+        self.label_feedback.setAccessibleName("Feedback visual de Inventario")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None

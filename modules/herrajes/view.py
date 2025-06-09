@@ -109,7 +109,15 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         from PyQt6.QtWidgets import QHBoxLayout
         self.feedback_banner = FeedbackBanner(self)
         self.main_layout.addWidget(self.feedback_banner)
-        # El label_feedback antiguo se elimina
+        # Label de feedback para compatibilidad con tests de accesibilidad
+        self.label_feedback = QLabel()
+        self.label_feedback.setObjectName("label_feedback")
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Feedback visual de Herrajes")
+        self.label_feedback.setAccessibleDescription(
+            "Mensaje de feedback visual y accesible para el usuario en Herrajes"
+        )
+        self.main_layout.addWidget(self.label_feedback)
         # --- Header visual moderno
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 0, 0)
@@ -336,9 +344,17 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         tipo: info, exito, error, advertencia
         """
         self.feedback_banner.show_feedback(mensaje, tipo, duracion)
+        if hasattr(self, "label_feedback") and self.label_feedback:
+            self.label_feedback.setText(mensaje)
+            self.label_feedback.setAccessibleDescription(mensaje)
+            self.label_feedback.setVisible(True)
 
     def ocultar_feedback(self):
         self.feedback_banner.hide()
+        if hasattr(self, "label_feedback") and self.label_feedback:
+            self.label_feedback.setVisible(False)
+            self.label_feedback.clear()
+            self.label_feedback.setAccessibleDescription("")
 
     def mostrar_feedback_carga(self, mensaje="Cargando...", minimo=0, maximo=0):
         """Muestra un feedback visual de carga usando QProgressBar modal."""
