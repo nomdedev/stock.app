@@ -9,6 +9,8 @@ Este proyecto utiliza una estructura de documentación modular. Todos los están
 - [Estándares de seguridad y manejo de datos sensibles](docs/estandares_seguridad.md)
 - [Estándares de feedback visual y procedimientos de carga](docs/estandares_feedback.md)
 - [Estándares de auditoría y registro de acciones](docs/estandares_auditoria.md)
+- [Checklist de mejoras UI/UX por módulo](docs/checklist_mejoras_uiux_por_modulo.md)
+- [Checklist de mejoras de UI generales](docs/checklist_mejoras_ui_general.md)
 
 Lee y respeta cada estándar antes de modificar o agregar código. Cualquier excepción debe estar documentada en el archivo correspondiente y en el código.
 
