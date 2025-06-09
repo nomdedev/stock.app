@@ -1,5 +1,38 @@
 # Flujo de carga y gestión de obras, pedidos de material y vidrios
 
+# ---
+# INTEGRACIÓN Y TRAZABILIDAD DE PEDIDOS POR OBRA (ERP)
+#
+# Este checklist y documentación aplica a todos los módulos involucrados en la trazabilidad de pedidos por obra:
+# - Inventario: gestión de materiales/perfiles por obra, estado de pedidos, integración con Obras y Contabilidad.
+# - Vidrios: pedidos de vidrios por obra, estado y auditoría.
+# - Herrajes: pedidos de herrajes por obra, estado y auditoría.
+# - Obras: visualización del estado de pedidos de todos los módulos por obra.
+# - Producción: consulta de si todos los pedidos están realizados y pagados para habilitar fabricación.
+# - Contabilidad: registro y actualización de pagos de pedidos, seguimiento de fechas de acreditación.
+# - Logística: consulta de obras listas para fabricar/entregar y asignación a colocador.
+#
+# Checklist de integración y pendientes (actualizado al 2025-06-09):
+#
+# [x] Vidrios: registrar y actualizar pedidos por obra y usuario, estado y auditoría.
+# [x] Vidrios: mostrar pedidos por usuario y detalle de cada pedido.
+# [x] Inventario: pestañas para perfiles y obras con estado de pedidos de material.
+# [ ] Inventario: lógica para impedir pedidos a obras inexistentes (validar contra módulo Obras).
+# [ ] Inventario: registrar y actualizar pedidos de material por obra, estado y auditoría.
+# [ ] Inventario: exponer métodos para consultar estado de pedidos por obra (para Obras y Producción).
+# [ ] Herrajes: unificar lógica de pedidos por obra, estado y auditoría.
+# [ ] Herrajes: exponer métodos para consultar estado de pedidos por obra.
+# [ ] Obras: mostrar estado de pedidos de todos los módulos por obra (vidrios, inventario, herrajes).
+# [ ] Obras: impedir pedidos a obras inexistentes desde otros módulos.
+# [ ] Producción: exponer método para saber si todos los pedidos están realizados y pagados.
+# [ ] Contabilidad: registrar y actualizar pagos de pedidos, exponer estado de pago por pedido.
+# [ ] Logística: consultar obras listas para fabricar/entregar y asignar colocador.
+# [ ] Documentar excepciones y justificaciones en docs/estandares_visuales.md y docs/flujo_obras_material_vidrios.md.
+# [x] Implementar tests automáticos de integración y feedback visual.
+#
+# Ver también: docs/flujo_obras_material_vidrios.md y docs/checklist_mejoras_uiux_por_modulo.md
+# ---
+
 ## Objetivo
 
 Describir paso a paso el proceso completo para garantizar que:

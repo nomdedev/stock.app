@@ -243,3 +243,25 @@ class ContabilidadController(BaseController):
                 self.auditoria_model.registrar_evento(usuario_id, 'contabilidad', accion, detalle, ip)
         except Exception as e:
             log_error(f"Error registrando evento auditoría: {e}")
+
+    # --- INTEGRACIÓN DE PAGOS POR PEDIDO (expuestos para otros módulos y la UI) ---
+    @permiso_auditoria_contabilidad('registrar_pago_pedido')
+    def registrar_pago_pedido(self, id_pedido, modulo, obra_id, monto, fecha, usuario, estado, comprobante=None, observaciones=None):
+        return self.model.registrar_pago_pedido(id_pedido, modulo, obra_id, monto, fecha, usuario, estado, comprobante, observaciones)
+
+    @permiso_auditoria_contabilidad('actualizar_estado_pago')
+    def actualizar_estado_pago(self, id_pago, nuevo_estado):
+        return self.model.actualizar_estado_pago(id_pago, nuevo_estado)
+
+    def obtener_pagos_por_pedido(self, id_pedido, modulo):
+        return self.model.obtener_pagos_por_pedido(id_pedido, modulo)
+
+    def obtener_pagos_por_obra(self, obra_id, modulo=None):
+        return self.model.obtener_pagos_por_obra(obra_id, modulo)
+
+    def obtener_estado_pago_pedido(self, id_pedido, modulo):
+        return self.model.obtener_estado_pago_pedido(id_pedido, modulo)
+
+    def obtener_pagos_por_usuario(self, usuario):
+        return self.model.obtener_pagos_por_usuario(usuario)
+    # --- FIN INTEGRACIÓN DE PAGOS POR PEDIDO ---

@@ -429,3 +429,33 @@ QTableWidget::item:selected {
     color: #1e293b;
 }
 /* --- FIN UNIFICACIÓN --- */
+
+/* --- VIDRIOS - REGLAS ESPECÍFICAS PARA MÓDULO VIDRIOS --- */
+QHeaderView#header_vidrios { /* Header de tabla de Vidrios (módulo Vidrios) */
+    background-color: #e3f6fd;
+    color: #2563eb;
+    border-radius: 8px;
+    font-size: 10px;
+    padding: 8px 12px;
+    border: 1px solid #e3e3e3;
+    font-weight: 400;
+}
+QPushButton#boton_agregar_vidrios_obra,
+QPushButton#boton_buscar_vidrios,
+QPushButton#boton_exportar_excel_vidrios { /* Botones principales módulo Vidrios */
+    border-radius: 12px;
+    background: #e3f6fd;
+    color: #2563eb;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+QLabel#label_titulo_vidrios { /* Título principal módulo Vidrios */
+    color: #222;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+/* --- FIN VIDRIOS --- */

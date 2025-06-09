@@ -122,3 +122,42 @@ class HerrajesController:
             self.view.label.setText(f"Error al agregar material: {e}")
             self._registrar_evento_auditoria('agregar_material', f"error: {e}", 'error')
             log_error(f"Error en agregar_material: {e}")
+
+    def validar_obra_existente(self, id_obra, obras_model):
+        """
+        Valida que la obra exista en el sistema antes de permitir registrar un pedido de herrajes.
+        Retorna True si existe, False si no.
+        """
+        if not id_obra:
+            return False
+        try:
+            # El modelo de obras debe tener un método obtener_obra_por_id
+            obra = obras_model.obtener_obra_por_id(id_obra)
+            return obra is not None
+        except Exception as e:
+            print(f"[ERROR] No se pudo validar existencia de obra: {e}")
+            return False
+
+    def guardar_pedido_herrajes(self, datos, obras_model=None):
+        """
+        Guarda el pedido de herrajes solo si la obra existe (validación cruzada).
+        Si obras_model es None, no valida (para compatibilidad).
+        """
+        id_obra = datos.get('id_obra') if isinstance(datos, dict) else None
+        if obras_model is not None and not self.validar_obra_existente(id_obra, obras_model):
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"No se puede registrar el pedido: la obra {id_obra} no existe.", tipo='error')
+            return
+        self.model.guardar_pedido_herrajes(datos)
+        self.auditoria_model.registrar_evento(
+            usuario_id=self.usuario_actual,
+            modulo="Herrajes",
+            tipo_evento="Guardar pedido herrajes",
+            detalle=f"Guardó pedido de herrajes: {datos}",
+            ip_origen="127.0.0.1"
+        )
+        # Refrescar la tabla de pedidos si existe el método en la vista
+        if hasattr(self.view, 'mostrar_resumen_obras'):
+            self.view.mostrar_resumen_obras(self.model.obtener_obras_con_estado_pedido())
+        elif hasattr(self.view, 'mostrar_pedidos_usuario'):
+            self.view.mostrar_pedidos_usuario(self.model.obtener_pedidos_por_usuario(self.usuario_actual))

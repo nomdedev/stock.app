@@ -109,3 +109,17 @@ class HerrajesModel:
             if usuario:
                 self.db.ejecutar_query("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", (usuario, "Herrajes", f"Ajustó stock del herraje {id_herraje} de {stock_anterior} a {nueva_cantidad}",))
         return True
+
+    def obtener_estado_pedido_por_obra(self, id_obra):
+        """
+        Devuelve el estado del pedido de herrajes para una obra dada.
+        Retorna un string: 'pendiente', 'pedido', 'en proceso', 'entregado', etc.
+        """
+        try:
+            query = "SELECT estado FROM pedidos_herrajes WHERE id_obra = ? ORDER BY fecha DESC LIMIT 1"
+            resultado = self.db.ejecutar_query(query, (id_obra,))
+            if resultado and resultado[0]:
+                return resultado[0][0]
+            return 'pendiente'
+        except Exception as e:
+            return f"Error: {e}"

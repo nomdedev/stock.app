@@ -110,3 +110,36 @@ QLabel#titulo_label_logistica, QLabel#label, QLabel#label_titulo_pedidos, QLabel
     margin-bottom: 8px;
     letter-spacing: 1px;
 }
+
+/* QHeaderView#header_vidrios { Header de tabla de Vidrios (módulo Vidrios) } */
+QHeaderView#header_vidrios {
+    background: #1e293b;
+    color: #60a5fa;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border: 1px solid #334155;
+}
+
+/* QPushButton#boton_agregar_vidrios_obra, QPushButton#boton_buscar_vidrios, QPushButton#boton_exportar_excel_vidrios { Botones principales módulo Vidrios } */
+QPushButton#boton_agregar_vidrios_obra,
+QPushButton#boton_buscar_vidrios,
+QPushButton#boton_exportar_excel_vidrios {
+    border-radius: 12px;
+    background: #2563eb;
+    color: #fff;
+    min-width: 48px;
+    min-height: 48px;
+    margin-left: 16px;
+}
+
+/* QLabel#label_titulo_vidrios { Título principal módulo Vidrios } */
+QLabel#label_titulo_vidrios {
+    color: #fff;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}

@@ -7,13 +7,15 @@
 
 | Módulo      | Título de módulo | Headers de tabla | Botones (sombra/color) | Feedback visual | Accesibilidad/tooltips | Documentación QSS | Bordes/Paddings/Márgenes |
 |-------------|------------------|------------------|------------------------|-----------------|-----------------------|-------------------|--------------------------|
-| Obras       | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
-| Vidrios     | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Obras       | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
+| Vidrios     | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubic., accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
 | Compras     | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
 | Pedidos     | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
 | Logística   | ✅ (usa setObjectName y QSS)        | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
 | Producción  | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
 | Usuarios    | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Inventario  | ✅ (setObjectName, layout y QSS global OK, pestañas) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes, pestañas) |
+| Herrajes    | ⚠️ (falta unificar lógica de pedidos por obra y exponer estado) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
 
 ## Pendientes generales
 - Aplicar setObjectName a los títulos de módulo en todos los view.py para que tomen el QSS unificado.
@@ -21,6 +23,12 @@
 - Mejorar y documentar accesibilidad/tooltips en todos los módulos.
 - Revisar y documentar bordes, paddings y márgenes en QSS.
 - Documentar cualquier excepción visual en los QSS.
+- Unificar lógica de pedidos por obra en Inventario y Herrajes, y exponer estado de pedidos para consulta cruzada.
+- Impedir pedidos a obras inexistentes desde cualquier módulo (validar contra Obras).
+- Mostrar en Obras el estado de pedidos de todos los módulos (vidrios, inventario, herrajes).
+- Integrar Producción y Logística para que solo se habilite fabricación/entrega si todos los pedidos están realizados y pagados.
+- Registrar y actualizar pagos de pedidos en Contabilidad, y exponer estado de pago por pedido.
+- Implementar tests automáticos de integración y feedback visual.
 
 # Checklist de mejoras UI/UX por módulo
 
@@ -127,3 +135,27 @@ Este documento resume sugerencias específicas para mejorar la experiencia de us
 ---
 
 Mantener este checklist actualizado y marcar cada punto una vez implementado. Todas las mejoras deben seguir los estándares definidos en `docs/estandares_visuales.md` y `docs/estandares_feedback.md`.
+
+### Cambios recientes
+#### Logística
+- [x] Visualización de estado y fecha de pago de colocación en la tabla y modal.
+- [x] Diálogo modal para registrar/editar pagos de colocación.
+- [x] Lógica de backend para registrar, editar y consultar pagos (integración con Contabilidad).
+- [x] Registro de excepciones de colocación sin pago y feedback visual inmediato.
+- [x] Cumplimiento de estándares visuales y de accesibilidad en todos los formularios y tablas.
+- [x] Tests automáticos de integración y feedback visual para pagos y trazabilidad implementados y validados (09/06/2025).
+- [x] Validación de habilitación de colocación solo si el pago está realizado (test).
+- [x] Registro de excepción y feedback visual si se realiza colocación sin pago (test).
+- [x] Visualización de estado y fecha de pago (test).
+- [x] Interacción con Contabilidad para consultar pagos (test).
+- [x] Feedback visual inmediato en la UI (test).
+
+#### Contabilidad
+- [x] Métodos para registrar, editar y consultar pagos por pedido/obra/módulo.
+- [x] Exposición de estado de pago para otros módulos.
+- [x] Visualización de pagos en la UI y feedback visual robusto.
+
+#### General
+- [x] Documentación de estándar visual y selectores QSS en docs/estandares_visuales.md.
+- [x] Checklist actualizado con integración de pagos y feedback visual.
+- [ ] Tests automáticos de integración y feedback visual pendientes de ejecutar.

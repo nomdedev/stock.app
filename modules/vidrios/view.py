@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QDateEdit, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QDialog, QFileDialog, QProgressBar
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QFormLayout, QTableWidget, QTableWidgetItem, QDateEdit, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QDialog, QFileDialog, QProgressBar, QTabWidget, QInputDialog
 from PyQt6.QtGui import QIcon, QColor, QAction, QPixmap
 from PyQt6.QtCore import QSize, Qt, QPoint, QTimer
 import json
@@ -36,33 +36,81 @@ class VidriosView(QWidget, TableResponsiveMixin):
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Vidrios")
+        self.label_titulo.setObjectName("label_titulo_vidrios")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
-        # Botón único (Agregar Vidrios a Obra) con solo ícono SVG pequeño alineado a la derecha
         self.boton_agregar_vidrios_obra = QPushButton()
+        self.boton_agregar_vidrios_obra.setObjectName("boton_agregar_vidrios_obra")
         self.boton_agregar_vidrios_obra.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar_vidrios_obra.setIconSize(QSize(24, 24))
         self.boton_agregar_vidrios_obra.setToolTip("Agregar vidrios a una obra existente")
+        self.boton_agregar_vidrios_obra.setAccessibleName("Agregar vidrios a obra")
         self.boton_agregar_vidrios_obra.setFixedSize(48, 48)
         self.boton_agregar_vidrios_obra.setText("")
-        self.boton_agregar_vidrios_obra.clicked.connect(self.mostrar_formulario_vidrios_obra)
         estilizar_boton_icono(self.boton_agregar_vidrios_obra)
         header_layout.addStretch()
         header_layout.addWidget(self.boton_agregar_vidrios_obra)
         self.main_layout.addLayout(header_layout)
 
-        # Formulario de entrada
-        self.form_layout = self.create_form_layout()
-        self.main_layout.addLayout(self.form_layout)
+        # --- TABS PRINCIPALES (MEJORADO: paddings, márgenes, alineación, consistencia visual) ---
+        self.tabs = QTabWidget()
+        self.tabs.setObjectName("tabs_vidrios")
+        self.tabs.setStyleSheet("QTabWidget::pane { border-radius: 12px; background: #fff9f3; margin: 0 0 0 0; } QTabBar::tab { min-width: 180px; min-height: 36px; font-size: 13px; padding: 10px 24px; border-radius: 8px; background: #e3f6fd; margin-right: 8px; } QTabBar::tab:selected { background: #fff; color: #2563eb; border: 2px solid #2563eb; }")
+        self.main_layout.addWidget(self.tabs)
 
-        # Tabla para mostrar los vidrios
-        self.tabla_vidrios = self.create_table()
-        self.tabla_vidrios.setObjectName("tabla_vidrios")  # Unificación visual
-        self.make_table_responsive(self.tabla_vidrios)
-        header = self.tabla_vidrios.horizontalHeader()
-        if header is not None:
-            header.setObjectName("header_inventario")  # Unificación visual
-            header.sectionDoubleClicked.connect(self.auto_ajustar_columna)
-        self.main_layout.addWidget(self.tabla_vidrios)
+        # Pestaña 1: Obras sin pedido de vidrios (mejorada)
+        self.tab_obras = QWidget()
+        tab_obras_layout = QVBoxLayout(self.tab_obras)
+        tab_obras_layout.setContentsMargins(24, 20, 24, 20)
+        tab_obras_layout.setSpacing(18)
+        self.tabla_obras = QTableWidget()
+        self.tabla_obras.setObjectName("tabla_obras_vidrios")
+        self.tabla_obras.setColumnCount(4)
+        self.tabla_obras.setHorizontalHeaderLabels(["ID Obra", "Nombre", "Cliente", "Fecha Entrega"])
+        header_obras = self.tabla_obras.horizontalHeader()
+        if header_obras is not None:
+            header_obras.setObjectName("header_obras_vidrios")
+            self.tabla_obras.setHorizontalHeader(header_obras)
+        self.tabla_obras.setAlternatingRowColors(True)
+        self.tabla_obras.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.tabla_obras.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        tab_obras_layout.addWidget(self.tabla_obras)
+        self.boton_iniciar_pedido = QPushButton("Iniciar pedido de vidrios para obra seleccionada")
+        self.boton_iniciar_pedido.setObjectName("boton_iniciar_pedido_vidrios")
+        self.boton_iniciar_pedido.setToolTip("Iniciar pedido de vidrios para la obra seleccionada")
+        tab_obras_layout.addWidget(self.boton_iniciar_pedido)
+        self.tab_obras.setLayout(tab_obras_layout)
+        self.tabs.addTab(self.tab_obras, "Obras y estado de pedidos")
+
+        # Pestaña 2: Pedidos realizados por el usuario (mejorada)
+        self.tab_pedidos_usuario = QWidget()
+        tab_pedidos_usuario_layout = QVBoxLayout(self.tab_pedidos_usuario)
+        tab_pedidos_usuario_layout.setContentsMargins(24, 20, 24, 20)
+        tab_pedidos_usuario_layout.setSpacing(18)
+        self.tabla_pedidos_usuario = QTableWidget()
+        self.tabla_pedidos_usuario.setObjectName("tabla_pedidos_usuario_vidrios")
+        self.tabla_pedidos_usuario.setColumnCount(5)
+        self.tabla_pedidos_usuario.setHorizontalHeaderLabels(["ID Pedido", "Obra", "Fecha", "Estado", "Detalle"])
+        header_pedidos = self.tabla_pedidos_usuario.horizontalHeader()
+        if header_pedidos is not None:
+            header_pedidos.setObjectName("header_pedidos_usuario_vidrios")
+            self.tabla_pedidos_usuario.setHorizontalHeader(header_pedidos)
+        self.tabla_pedidos_usuario.setAlternatingRowColors(True)
+        self.tabla_pedidos_usuario.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.tabla_pedidos_usuario.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        tab_pedidos_usuario_layout.addWidget(self.tabla_pedidos_usuario)
+        self.tab_pedidos_usuario.setLayout(tab_pedidos_usuario_layout)
+        self.tabs.addTab(self.tab_pedidos_usuario, "Pedidos realizados por usuario")
+
+        # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
+        self.label_feedback = QLabel()
+        self.label_feedback.setObjectName("label_feedback")
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Mensaje de feedback de vidrios")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
+        self.main_layout.addWidget(self.label_feedback)
+        self._feedback_timer = None
+
+        self.setLayout(self.main_layout)
 
         # Configuración de columnas y headers dinámicos
         self.config_path = f"config_vidrios_columns_{self.usuario_actual}.json"
@@ -70,7 +118,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.aplicar_columnas_visibles()
 
         # Menú contextual en el header (robusto)
-        header = self.tabla_vidrios.horizontalHeader()
+        header = self.tabla_obras.horizontalHeader()
         if header is not None:
             header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             if hasattr(header, 'customContextMenuRequested'):
@@ -93,9 +141,11 @@ class VidriosView(QWidget, TableResponsiveMixin):
         # Botones principales como iconos (con sombra real)
         botones_layout = QHBoxLayout()
         self.boton_buscar = QPushButton()
+        self.boton_buscar.setObjectName("boton_buscar_vidrios")  # Unificación visual y QSS global
         self.boton_buscar.setIcon(QIcon("resources/icons/search_icon.svg"))
         self.boton_buscar.setIconSize(QSize(20, 20))
         self.boton_buscar.setToolTip("Buscar vidrio")
+        self.boton_buscar.setAccessibleName("Buscar vidrio")
         self.boton_buscar.setText("")
         self.boton_buscar.setFixedSize(48, 48)
         sombra2 = QGraphicsDropShadowEffect()
@@ -104,9 +154,11 @@ class VidriosView(QWidget, TableResponsiveMixin):
         sombra2.setOffset(0, 2)
         self.boton_buscar.setGraphicsEffect(sombra2)
         self.boton_exportar_excel = QPushButton()
+        self.boton_exportar_excel.setObjectName("boton_exportar_excel_vidrios")  # Unificación visual y QSS global
         self.boton_exportar_excel.setIcon(QIcon("resources/icons/excel_icon.svg"))
         self.boton_exportar_excel.setIconSize(QSize(24, 24))
         self.boton_exportar_excel.setToolTip("Exportar vidrios a Excel")
+        self.boton_exportar_excel.setAccessibleName("Exportar vidrios a Excel")
         self.boton_exportar_excel.setText("")
         self.boton_exportar_excel.setFixedSize(48, 48)
         sombra3 = QGraphicsDropShadowEffect()
@@ -134,10 +186,16 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None
 
-        self.tabla_vidrios.itemSelectionChanged.connect(self.mostrar_qr_item_seleccionado)
+        # Eliminar referencias a self.tabla_vidrios.horizontalHeader() y self.tabla_vidrios.itemSelectionChanged.connect(...)
+        # Si se requiere menú contextual, usar self.tabla_obras o self.tabla_pedido según la pestaña activa.
 
         # Suscribirse a la señal global de integración en tiempo real
         event_bus.obra_agregada.connect(self.actualizar_por_obra)
+
+        # Conectar señales de las tablas a métodos específicos
+        self.tabla_obras.cellDoubleClicked.connect(self.editar_estado_pedido)
+        self.tabla_obras.itemSelectionChanged.connect(self.actualizar_detalle_pedido)
+        self.tabla_pedido.cellDoubleClicked.connect(self.editar_detalle_pedido)
 
         self.setLayout(self.main_layout)
 
@@ -181,62 +239,94 @@ class VidriosView(QWidget, TableResponsiveMixin):
         except Exception as e:
             QMessageBox.critical(self, "Error al guardar", f"No se pudo guardar la configuración: {e}")
 
-    def aplicar_columnas_visibles(self):
-        for idx, header in enumerate(self.vidrios_headers):
-            visible = self.columnas_visibles.get(header, True)
-            self.tabla_vidrios.setColumnHidden(idx, not visible)
+    # Refactor: Métodos para operar sobre la tabla de la pestaña activa
+    def get_tabla_activa(self):
+        idx = self.tabs.currentIndex()
+        if idx == 0:
+            return self.tabla_obras
+        elif idx == 1:
+            return self.tabla_pedido
+        return None
 
-    def mostrar_menu_columnas(self, pos):
-        self._cambio_columnas_interactivo = True  # Activar bandera de interacción
+    def aplicar_columnas_visibles(self, tabla=None, headers=None, columnas_visibles=None):
+        # Por defecto, usa la tabla de la pestaña activa
+        if tabla is None:
+            tabla = self.get_tabla_activa()
+        if headers is None:
+            headers = self.vidrios_headers
+        if columnas_visibles is None:
+            columnas_visibles = self.columnas_visibles
+        if tabla is not None:
+            for idx, header in enumerate(headers):
+                visible = columnas_visibles.get(header, True)
+                tabla.setColumnHidden(idx, not visible)
+
+    def mostrar_menu_columnas(self, pos, tabla=None, headers=None, columnas_visibles=None):
+        self._cambio_columnas_interactivo = True
+        if tabla is None:
+            tabla = self.get_tabla_activa()
+        if headers is None:
+            headers = self.vidrios_headers
+        if columnas_visibles is None:
+            columnas_visibles = self.columnas_visibles
         menu = QMenu(self)
-        for idx, header in enumerate(self.vidrios_headers):
+        for idx, header in enumerate(headers):
             accion = QAction(header, self)
             accion.setCheckable(True)
-            accion.setChecked(self.columnas_visibles.get(header, True))
-            accion.toggled.connect(partial(self.toggle_columna, idx, header))
+            accion.setChecked(columnas_visibles.get(header, True))
+            accion.toggled.connect(partial(self.toggle_columna, tabla, idx, header, columnas_visibles))
             menu.addAction(accion)
-        header = self.tabla_vidrios.horizontalHeader()
+        header = self.get_safe_horizontal_header(tabla)
         if header is not None and hasattr(header, 'mapToGlobal'):
             menu.exec(header.mapToGlobal(pos))
         else:
             menu.exec(pos)
-        self._cambio_columnas_interactivo = False  # Desactivar bandera al cerrar menú
+        self._cambio_columnas_interactivo = False
 
-    def mostrar_menu_columnas_header(self, idx):
+    def mostrar_menu_columnas_header(self, idx, tabla=None, headers=None, columnas_visibles=None):
+        if tabla is None:
+            tabla = self.get_tabla_activa()
+        if headers is None:
+            headers = self.vidrios_headers
+        if columnas_visibles is None:
+            columnas_visibles = self.columnas_visibles
         from PyQt6.QtCore import QPoint
-        header = self.tabla_vidrios.horizontalHeader()
+        header = self.get_safe_horizontal_header(tabla)
         try:
             if header is not None and all(hasattr(header, m) for m in ['sectionPosition', 'mapToGlobal', 'sectionViewportPosition']):
-                if idx < 0 or idx >= self.tabla_vidrios.columnCount():
+                if idx < 0 or idx >= self.get_safe_column_count(tabla):
                     self.mostrar_feedback("Índice de columna fuera de rango", "error")
                     return
                 pos = header.sectionPosition(idx)
                 global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
-                self.mostrar_menu_columnas(global_pos)
+                self.mostrar_menu_columnas(global_pos, tabla, headers, columnas_visibles)
             else:
                 self.mostrar_feedback("No se puede mostrar el menú de columnas: header no disponible o incompleto", "error")
         except Exception as e:
             self.mostrar_feedback(f"Error al mostrar menú de columnas: {e}", "error")
 
-    def toggle_columna(self, idx, header, checked):
-        self.columnas_visibles[header] = checked
-        self.tabla_vidrios.setColumnHidden(idx, not checked)
+    def toggle_columna(self, tabla, idx, header, columnas_visibles, checked):
+        columnas_visibles[header] = checked
+        tabla.setColumnHidden(idx, not checked)
         self.guardar_config_columnas()
-        # Mostrar feedback solo si la acción es interactiva
         if getattr(self, '_cambio_columnas_interactivo', False):
             self.mostrar_feedback("Configuración de columnas actualizada.", tipo="info")
             self._cambio_columnas_interactivo = False
 
-    def auto_ajustar_columna(self, index):
-        """Ajusta automáticamente el ancho de la columna seleccionada al contenido."""
-        self.tabla_vidrios.resizeColumnToContents(index)
+    def auto_ajustar_columna(self, idx, tabla=None):
+        if tabla is None:
+            tabla = self.get_tabla_activa()
+        if tabla is not None:
+            tabla.resizeColumnToContents(idx)
 
-    def mostrar_qr_item_seleccionado(self):
-        selected = self.tabla_vidrios.selectedItems()
+    def mostrar_qr_item_seleccionado(self, tabla=None):
+        if tabla is None:
+            tabla = self.get_tabla_activa()
+        selected = self.get_safe_selected_items(tabla)
         if not selected:
             return
         row = selected[0].row()
-        item_codigo = self.tabla_vidrios.item(row, 0)
+        item_codigo = self.get_safe_item(tabla, row, 0)
         if item_codigo is None:
             QMessageBox.warning(self, "Error de selección", "No se pudo obtener el código para el QR.")
             return
@@ -359,52 +449,56 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.mostrar_feedback(f"Nueva obra agregada: {datos_obra.get('nombre','')} (vidrios actualizados)", tipo="info")
 
     def refrescar_por_obra(self, datos_obra):
-        # Lógica para refrescar la tabla de vidrios tras una nueva obra
-        if hasattr(self, 'tabla_vidrios'):
-            self.tabla_vidrios.setRowCount(0)  # Limpia la tabla para forzar recarga visual
-            print(f"[INFO] Refrescado visual de vidrios tras obra agregada: {datos_obra}")
+        # Lógica para refrescar la tabla de obras tras una nueva obra
+        if hasattr(self, 'tabla_obras'):
+            self.tabla_obras.setRowCount(0)
+            print(f"[INFO] Refrescado visual de obras tras obra agregada: {datos_obra}")
         else:
-            print("[WARN] No se pudo refrescar vidrios tras obra agregada.")
+            print("[WARN] No se pudo refrescar obras tras obra agregada.")
 
-    def exportar_tabla_a_excel(self):
+    def exportar_tabla_a_excel(self, tabla=None):
         """
-        Exporta la tabla de vidrios a un archivo Excel, con confirmación y feedback modal robusto.
+        Exporta la tabla activa a un archivo Excel, con confirmación y feedback modal robusto.
         """
+        if tabla is None:
+            tabla = self.get_tabla_activa()
+        if tabla is None:
+            self.mostrar_feedback("No hay tabla activa para exportar.", tipo="error")
+            return
         from PyQt6.QtWidgets import QFileDialog, QMessageBox
         import pandas as pd
-        # Confirmación previa
         confirm = QMessageBox.question(
             self,
             "Confirmar exportación",
-            "¿Desea exportar la tabla de vidrios a Excel?",
+            "¿Desea exportar la tabla a Excel?",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
         if confirm != QMessageBox.StandardButton.Yes:
             self.mostrar_feedback("Exportación cancelada por el usuario.", tipo="advertencia")
             return
-        # Diálogo para elegir ubicación
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             "Exportar a Excel",
-            "vidrios.xlsx",
+            "tabla.xlsx",
             "Archivos Excel (*.xlsx)"
         )
         if not file_path:
             self.mostrar_feedback("Exportación cancelada.", tipo="advertencia")
             return
-        # Obtener datos de la tabla
         data = []
-        for row in range(self.tabla_vidrios.rowCount()):
+        for row in range(tabla.rowCount()):
             row_data = {}
-            for col, header in enumerate(self.vidrios_headers):
-                item = self.tabla_vidrios.item(row, col)
+            for col in range(tabla.columnCount()):
+                header_item = tabla.horizontalHeaderItem(col)
+                header = header_item.text() if header_item is not None else f"Col {col+1}"
+                item = tabla.item(row, col)
                 row_data[header] = item.text() if item else ""
             data.append(row_data)
         df = pd.DataFrame(data)
         try:
             df.to_excel(file_path, index=False)
-            QMessageBox.information(self, "Exportación exitosa", f"Vidrios exportados correctamente a:\n{file_path}")
-            self.mostrar_feedback(f"Vidrios exportados correctamente a {file_path}", tipo="exito")
+            QMessageBox.information(self, "Exportación exitosa", f"Datos exportados correctamente a:\n{file_path}")
+            self.mostrar_feedback(f"Datos exportados correctamente a {file_path}", tipo="exito")
         except Exception as e:
             QMessageBox.critical(self, "Error de exportación", f"No se pudo exportar: {e}")
             self.mostrar_feedback(f"No se pudo exportar: {e}", tipo="error")
@@ -474,4 +568,218 @@ class VidriosView(QWidget, TableResponsiveMixin):
         # Aquí se implementaría la lógica para guardar los datos en la base de datos
         QMessageBox.information(self, "Éxito", f"Vidrios agregados a la obra {obra_id} correctamente.")
         self.mostrar_feedback("Vidrios agregados a la obra correctamente.", tipo="exito")
+
+    # Método para editar el estado del pedido en la tabla de obras
+    def editar_estado_pedido(self, row, column):
+        tabla = self.get_tabla_activa()
+        if tabla is None:
+            return
+        item = tabla.item(row, column)
+        if item is None:
+            return
+        # Lógica para editar el estado del pedido (por ejemplo, cambiar texto o color)
+        nuevo_estado = "Pedido Enviado" if item.text() != "Pedido Enviado" else "Pendiente"
+        item.setText(nuevo_estado)
+        color = QColor(76, 175, 80) if nuevo_estado == "Pedido Enviado" else QColor(255, 87, 34)
+        self.set_safe_background(tabla, row, column, color)
+        self.mostrar_feedback(f"Estado del pedido actualizado a '{nuevo_estado}'", tipo="exito")
+
+    # Método para actualizar el detalle del pedido en la interfaz
+    def actualizar_detalle_pedido(self):
+        tabla = self.get_tabla_activa()
+        if tabla is None:
+            return
+        # Lógica para mostrar el detalle del pedido en los campos correspondientes
+        fila_seleccionada = tabla.currentRow()
+        if fila_seleccionada < 0:
+            return
+        item_codigo = tabla.item(fila_seleccionada, 0)
+        if item_codigo is not None:
+            self.codigo_pedido_actual = item_codigo.text()
+        # Aquí se puede agregar más lógica para cargar el detalle completo del pedido
+
+    # Método para editar el detalle de un pedido en la tabla de pedidos
+    def editar_detalle_pedido(self, row, column):
+        tabla = self.get_tabla_activa()
+        if tabla is None:
+            return
+        item = tabla.item(row, column)
+        if item is None:
+            return
+        # Lógica para editar el detalle del pedido (por ejemplo, abrir un formulario)
+        nuevo_valor, ok = QInputDialog.getText(self, "Editar detalle de pedido", "Nuevo valor:", text=item.text())
+        if ok and nuevo_valor:
+            item.setText(nuevo_valor)
+            self.mostrar_feedback("Detalle de pedido actualizado.", tipo="exito")
+
+    def inicializar_vinculos_controlador(self, controller):
+        """
+        Conecta los eventos de la UI con los métodos del controlador de Vidrios.
+        """
+        self.controller = controller
+        # Pestaña 1: cargar resumen de obras
+        self.tabs.currentChanged.connect(self._on_tab_changed)
+        self.boton_iniciar_pedido.clicked.connect(self._iniciar_pedido_para_obra)
+        # Pestaña 2: cargar pedidos del usuario
+        self.boton_guardar_pedido.clicked.connect(self._guardar_pedido_vidrios)
+        self.tabla_obras.cellClicked.connect(self._on_tabla_obras_cell_clicked)
+        self.tabla_pedido.cellClicked.connect(self._on_tabla_pedido_cell_clicked)
+        # Cargar datos iniciales
+        self._on_tab_changed(0)
+
+    def _on_tab_changed(self, idx):
+        if idx == 0 and hasattr(self, 'controller'):
+            self.controller.cargar_resumen_obras()
+        elif idx == 1 and hasattr(self, 'controller'):
+            self.controller.cargar_pedidos_usuario(self.usuario_actual)
+
+    def mostrar_resumen_obras(self, obras):
+        self.tabla_obras.setRowCount(0)
+        for row, obra in enumerate(obras):
+            self.tabla_obras.insertRow(row)
+            for col, key in enumerate([0, 1, 2, 3]):  # id, nombre, cliente, fecha_entrega
+                item = QTableWidgetItem(str(obra[col]) if obra[col] is not None else "")
+                self.tabla_obras.setItem(row, col, item)
+            # Estado de pedido
+            estado = obra[4] if len(obra) > 4 else ""
+            item_estado = QTableWidgetItem(str(estado))
+            self.tabla_obras.setItem(row, 4, item_estado)
+            # Botón editar estado
+            btn_editar = QPushButton("Editar estado")
+            btn_editar.clicked.connect(lambda _, r=row: self._editar_estado_pedido(r))
+            self.tabla_obras.setCellWidget(row, 5, btn_editar)
+        self.tabla_obras.setColumnCount(6)
+        self.tabla_obras.setHorizontalHeaderLabels(["ID Obra", "Nombre", "Cliente", "Fecha Entrega", "Estado pedido", "Acción"])
+
+    def _editar_estado_pedido(self, row):
+        if not hasattr(self, 'controller'):
+            return
+        item_id = self.get_safe_item(self.tabla_obras, row, 0)
+        item_estado = self.get_safe_item(self.tabla_obras, row, 4)
+        if item_id is None or item_estado is None:
+            self.mostrar_feedback("No se pudo obtener la obra o el estado actual.", tipo="error")
+            return
+        id_obra = item_id.text()
+        estado_actual = item_estado.text()
+        nuevo_estado, ok = QInputDialog.getText(self, "Editar estado de pedido", "Nuevo estado:", text=estado_actual)
+        if ok and nuevo_estado and nuevo_estado != estado_actual:
+            self.controller.actualizar_estado_pedido(id_obra, nuevo_estado)
+            self.mostrar_feedback(f"Estado de pedido actualizado a '{nuevo_estado}'", tipo="exito")
+            self.controller.cargar_resumen_obras()
+
+    def _iniciar_pedido_para_obra(self):
+        row = self.tabla_obras.currentRow()
+        if row < 0:
+            self.mostrar_feedback("Seleccione una obra para iniciar pedido.", tipo="error")
+            return
+        item_id_obra = self.get_safe_item(self.tabla_obras, row, 0)
+        id_obra = item_id_obra.text() if item_id_obra else ""
+        if not id_obra:
+            self.mostrar_feedback("No se pudo obtener el ID de la obra.", tipo="error")
+            return
+        # Cambiar a la pestaña de pedido y preparar formulario
+        self.tabs.setCurrentIndex(1)
+        self.label_formulario.setText(f"Formulario de pedido de vidrios para obra {id_obra}")
+        # Limpiar tabla de pedido
+        self.tabla_pedido.setRowCount(0)
+        # Aquí podrías poblar la tabla con datos de la obra si es necesario
+
+    def _guardar_pedido_vidrios(self):
+        if not hasattr(self, 'controller'):
+            return
+        datos = []
+        for row in range(self.get_safe_row_count(self.tabla_pedido)):
+            fila = []
+            for col in range(self.get_safe_column_count(self.tabla_pedido)):
+                item = self.get_safe_item(self.tabla_pedido, row, col)
+                fila.append(item.text() if item else "")
+            datos.append(fila)
+        self.controller.guardar_pedido_vidrios(datos)
+        self.mostrar_feedback("Pedido de vidrios guardado correctamente.", tipo="exito")
+        self.controller.cargar_pedidos_usuario(self.usuario_actual)
+
+    def mostrar_pedidos_usuario(self, pedidos):
+        self.tabla_pedido.setRowCount(0)
+        for row, pedido in enumerate(pedidos):
+            self.tabla_pedido.insertRow(row)
+            # tipología, ancho x alto, color, cantidad, id_obra, id_vidrio
+            for col, idx in enumerate([4, 5, 6, 8]):
+                item = QTableWidgetItem(str(pedido[idx]) if pedido[idx] is not None else "")
+                self.tabla_pedido.setItem(row, col, item)
+            # Botón ver detalle
+            btn_detalle = QPushButton("Ver detalle")
+            btn_detalle.clicked.connect(lambda _, r=row: self._ver_detalle_pedido(r))
+            self.tabla_pedido.setCellWidget(row, 4, btn_detalle)
+        self.tabla_pedido.setColumnCount(5)
+        self.tabla_pedido.setHorizontalHeaderLabels(["Tipología", "Ancho x Alto", "Color", "Cantidad", "Acción"])
+
+    def _ver_detalle_pedido(self, row):
+        if not hasattr(self, 'controller'):
+            return
+        item_id_obra = self.get_safe_item(self.tabla_pedido, row, 0)
+        item_id_vidrio = self.get_safe_item(self.tabla_pedido, row, 1)
+        if item_id_obra is None or item_id_vidrio is None:
+            self.mostrar_feedback("No se pudo obtener el pedido seleccionado.", tipo="error")
+            return
+        id_obra = item_id_obra.text()
+        id_vidrio = item_id_vidrio.text()
+        self.controller.mostrar_detalle_pedido(id_obra, id_vidrio)
+
+    def mostrar_detalle_pedido(self, detalle):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Detalle del pedido de vidrios")
+        layout = QVBoxLayout(dialog)
+        campos = ["Tipo", "Ancho", "Alto", "Color", "Cantidad reservada", "Estado", "Fecha pedido"]
+        if detalle and len(detalle) > 0:
+            for idx, campo in enumerate(campos):
+                valor = detalle[0][idx] if len(detalle[0]) > idx else ""
+                layout.addWidget(QLabel(f"{campo}: {valor}"))
+        else:
+            layout.addWidget(QLabel("No se encontró detalle para este pedido."))
+        btn_cerrar = QPushButton("Cerrar")
+        btn_cerrar.clicked.connect(dialog.accept)
+        layout.addWidget(btn_cerrar)
+        dialog.setLayout(layout)
+        dialog.exec()
+
+    def _on_tabla_obras_cell_clicked(self, row, col):
+        # Permitir doble clic en estado para editar
+        if col == 4:
+            self._editar_estado_pedido(row)
+
+    def _on_tabla_pedido_cell_clicked(self, row, col):
+        # Permitir clic en acción para ver detalle
+        if col == 4:
+            self._ver_detalle_pedido(row)
+
+    # --- Corrección de robustez para tablas ---
+    def get_safe_item(self, tabla, row, col):
+        if tabla is not None and 0 <= row < tabla.rowCount() and 0 <= col < tabla.columnCount():
+            return tabla.item(row, col)
+        return None
+
+    def get_safe_selected_items(self, tabla):
+        if tabla is not None:
+            return tabla.selectedItems()
+        return []
+
+    def get_safe_horizontal_header(self, tabla):
+        if tabla is not None:
+            return tabla.horizontalHeader()
+        return None
+
+    def get_safe_column_count(self, tabla):
+        if tabla is not None:
+            return tabla.columnCount()
+        return 0
+
+    def get_safe_row_count(self, tabla):
+        if tabla is not None:
+            return tabla.rowCount()
+        return 0
+
+    def set_safe_background(self, tabla, row, column, color):
+        item = self.get_safe_item(tabla, row, column)
+        if item is not None:
+            item.setBackground(color)
 

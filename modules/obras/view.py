@@ -217,32 +217,21 @@ class ObrasView(QWidget, TableResponsiveMixin):
 
         # Tabla de obras
         self.tabla_obras = QTableWidget()
-        self.tabla_obras.setColumnCount(4)
-        self.tabla_obras.setHorizontalHeaderLabels(["Nombre", "Cliente", "Fecha Medición", "Fecha Entrega"])
+        self.tabla_obras.setObjectName("tabla_obras")  # Unificación visual: todas las tablas usan este objectName
+        columnas_base = ["Nombre", "Cliente", "Fecha Medición", "Fecha Entrega"]
+        columnas_pedidos = ["Estado Materiales", "Estado Vidrios", "Estado Herrajes"]
+        self.tabla_obras.setColumnCount(len(columnas_base) + len(columnas_pedidos))
+        self.tabla_obras.setHorizontalHeaderLabels(columnas_base + columnas_pedidos)
         header = self.tabla_obras.horizontalHeader()
         if header is not None:
             header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+            header.setObjectName("header_obras")  # Unificación visual: todos los headers usan este objectName
             header.sectionDoubleClicked.connect(self.auto_ajustar_columna)
         else:
             QMessageBox.critical(self, "Error", "El encabezado horizontal de la tabla no está inicializado.")
-
         self.tabla_obras.setAlternatingRowColors(True)
-        self.tabla_obras.setStyleSheet("""
-            QTableWidget {
-                background-color: #ffffff;
-                border-radius: 10px;
-                padding: 5px;
-            }
-            QTableWidget::item {
-                padding: 8px;
-                border-bottom: 1px solid #e0e0e0;
-            }
-            QHeaderView::section {
-                background-color: #f2f2f2;
-                padding: 10px;
-                border: none;
-            }
-        """)
+        # Eliminar cualquier styleSheet embebido, usar solo QSS global
+        self.tabla_obras.setStyleSheet("")
         self.main_layout.addWidget(self.tabla_obras)
 
         # Conectar señales de los botones
@@ -253,6 +242,14 @@ class ObrasView(QWidget, TableResponsiveMixin):
 
         # Establecer controlador (si es necesario)
         self.controller = None
+
+        # Feedback visual (estándar visual global)
+        self.label_feedback = QLabel()
+        self.label_feedback.setObjectName("label_feedback")
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Feedback visual de Obras")
+        self.label_feedback.setAccessibleDescription("Muestra mensajes de éxito, error o advertencia para el usuario")
+        self.main_layout.addWidget(self.label_feedback)
 
     def set_controller(self, controller):
         """Asigna el controlador a la vista."""

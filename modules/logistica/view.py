@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTableWidget, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QTabWidget, QTextEdit, QTableWidgetItem, QProgressBar
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QTableWidget, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QTabWidget, QTextEdit, QTableWidgetItem, QProgressBar, QDialog, QFormLayout, QDateEdit, QFileDialog
 from PyQt6.QtGui import QIcon, QColor, QAction
-from PyQt6.QtCore import QSize, Qt, QPoint
+from PyQt6.QtCore import QSize, Qt, QPoint, QDate
 import json
 import os
 from functools import partial
@@ -774,3 +774,59 @@ pip install PyQt6-WebEngine
         self.tabla_envios.repaint()
 
 # [editado 07/06/2025] Botón Ver Detalle Envío: Modal robusto, feedback, accesibilidad, tooltips, cierre modal solo en éxito. Cumple checklist UI/UX y accesibilidad.
+
+class DialogoPagoColocacion(QDialog):
+    """
+    Diálogo modal para registrar o editar un pago de colocación.
+    """
+    def __init__(self, parent=None, datos_pago=None):
+        super().__init__(parent)
+        self.setWindowTitle("Registrar/Editar Pago de Colocación")
+        self.setMinimumWidth(420)
+        layout = QFormLayout(self)
+        self.monto_edit = QLineEdit()
+        self.fecha_edit = QDateEdit()
+        self.fecha_edit.setCalendarPopup(True)
+        self.fecha_edit.setDate(QDate.currentDate())
+        self.comprobante_edit = QLineEdit()
+        self.estado_edit = QLineEdit()
+        self.observaciones_edit = QTextEdit()
+        layout.addRow("Monto:", self.monto_edit)
+        layout.addRow("Fecha:", self.fecha_edit)
+        layout.addRow("Comprobante:", self.comprobante_edit)
+        layout.addRow("Estado:", self.estado_edit)
+        layout.addRow("Observaciones:", self.observaciones_edit)
+        self.btn_guardar = QPushButton("Guardar pago")
+        self.btn_cancelar = QPushButton("Cancelar")
+        btns = QHBoxLayout()
+        btns.addWidget(self.btn_guardar)
+        btns.addWidget(self.btn_cancelar)
+        layout.addRow(btns)
+        self.btn_cancelar.clicked.connect(self.reject)
+        self.btn_guardar.clicked.connect(self.accept)
+        if datos_pago:
+            self.monto_edit.setText(str(datos_pago.get('monto', '')))
+            self.fecha_edit.setDate(QDate.fromString(datos_pago.get('fecha', ''), 'yyyy-MM-dd'))
+            self.comprobante_edit.setText(str(datos_pago.get('comprobante', '')))
+            self.estado_edit.setText(str(datos_pago.get('estado', '')))
+            self.observaciones_edit.setPlainText(str(datos_pago.get('observaciones', '')))
+    def get_datos(self):
+        return {
+            'monto': self.monto_edit.text(),
+            'fecha': self.fecha_edit.date().toString('yyyy-MM-dd'),
+            'comprobante': self.comprobante_edit.text(),
+            'estado': self.estado_edit.text(),
+            'observaciones': self.observaciones_edit.toPlainText()
+        }
+
+    def mostrar_dialogo_pago_colocacion(self, datos_pago=None):
+        dlg = DialogoPagoColocacion(self, datos_pago)
+        if dlg.exec() == QDialog.DialogCode.Accepted:
+            return dlg.get_datos()
+        return None
+
+    def mostrar_estado_pago_colocacion(self, estado, fecha):
+        msg = f"Pago colocación: {estado or 'Pendiente'}"
+        if fecha:
+            msg += f" | Fecha: {fecha}"
+        QMessageBox.information(self, "Estado de pago de colocación", msg)

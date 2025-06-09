@@ -7,6 +7,11 @@
 | 2025-05-27  | Refuerzo de permisos: solo admin puede modificar roles/permisos; feedback visual robusto.     |
 | 2025-05-27  | Refuerzo de feedback visual en importación de inventario y gestión de usuarios.               |
 | 2025-05-27  | Actualización de tests automáticos y documentación para reflejar nuevos estándares visuales.   |
+| 2024-06-08  | Unificación y documentación completa de estilos en módulo Vidrios: setObjectName en título, header y botones principales; reglas QSS globales y comentarios agregados en theme_light.qss y theme_dark.qss. Todos los botones principales tienen tooltip y accessibleName. Cumple estándar visual y de accesibilidad. |
+| 2025-06-09  | Unificación visual aplicada en módulo Obras: título, botón principal, feedback visual y tabla con setObjectName estándar y QSS global. Cumple con el estándar visual unificado. |
+| 2025-06-09  | Unificación visual aplicada en módulo Inventario: título, botones principales, feedback visual y tabla con setObjectName estándar y QSS global. Cumple con el estándar visual unificado. |
+| 2025-06-09  | Unificación visual aplicada en módulo Herrajes: título, botones principales, feedback visual y tabla con setObjectName estándar y QSS global. Cumple con el estándar visual unificado. |
+| 2025-06-09  | Documentación de estándar visual y de integración de pagos para Logística y Contabilidad, incluyendo selectores QSS y reglas de feedback. |
 
 ---
 
@@ -512,3 +517,133 @@ En algunos entornos, los tests automáticos que mockean `QMessageBox.information
 - [ ] (Ninguna excepción activa al 2025-06-09)
 
 ---
+
+## [2025-06-09] Unificación visual aplicada en módulo Obras
+
+- El título del módulo usa siempre un QLabel con setObjectName("label_titulo") y está documentado en QSS global.
+- El botón principal (Agregar obra) usa setObjectName("boton_agregar") y está ubicado arriba a la derecha, en un QHBoxLayout junto al título.
+- El feedback visual usa QLabel con setObjectName("label_feedback") y estilos QSS globales.
+- La tabla principal usa setObjectName("tabla_obras") y el header, si aplica, setObjectName("header_obras").
+- Todos los estilos visuales (colores, bordes, paddings, márgenes, feedback, etc.) se definen solo en QSS global.
+- Accesibilidad: todos los botones y campos tienen setToolTip y setAccessibleName descriptivo.
+- Prohibido el uso de setStyleSheet embebido para títulos, botones, feedback y tablas.
+- Cualquier excepción visual debe documentarse aquí y en el código fuente.
+
+### Ejemplo de implementación (ObrasView):
+```python
+self.label = QLabel("Gestión de Obras")
+self.label.setObjectName("label_titulo")
+self.boton_agregar = QPushButton()
+self.boton_agregar.setObjectName("boton_agregar")
+self.label_feedback = QLabel()
+self.label_feedback.setObjectName("label_feedback")
+self.tabla_obras = QTableWidget()
+self.tabla_obras.setObjectName("tabla_obras")
+header = self.tabla_obras.horizontalHeader()
+header.setObjectName("header_obras")
+```
+
+Este estándar es obligatorio y debe replicarse en todos los módulos nuevos y existentes.
+
+---
+
+## [2025-06-09] Cumplimiento total de unificación visual en módulo Obras
+
+- Título, botón principal, feedback visual, tabla y header usan setObjectName estándar y QSS global.
+- No quedan estilos embebidos activos en la vista.
+- Accesibilidad y tooltips documentados y aplicados.
+- El módulo Obras cumple 100% el estándar visual global y sirve de referencia para otros módulos.
+
+### Ejemplo de implementación final:
+```python
+self.label = QLabel("Gestión de Obras")
+self.label.setObjectName("label_titulo")
+self.boton_agregar = QPushButton()
+self.boton_agregar.setObjectName("boton_agregar")
+self.label_feedback = QLabel()
+self.label_feedback.setObjectName("label_feedback")
+self.tabla_obras = QTableWidget()
+self.tabla_obras.setObjectName("tabla_obras")
+header = self.tabla_obras.horizontalHeader()
+header.setObjectName("header_obras")
+```
+
+---
+
+## [2025-06-09] Unificación visual aplicada en módulo Inventario
+
+- El título del módulo usa QLabel con setObjectName("label_titulo") y está documentado en QSS global.
+- Todos los botones principales usan setObjectName específico, ícono SVG, helper estilizar_boton_icono y tooltip/accesibilidad.
+- El feedback visual usa QLabel con setObjectName("label_feedback") y estilos QSS globales.
+- La tabla principal usa setObjectName("tabla_inventario") y el header setObjectName("header_inventario").
+- Todos los estilos visuales (colores, bordes, paddings, márgenes, feedback, etc.) se definen solo en QSS global.
+- Accesibilidad: todos los botones y campos tienen setToolTip y setAccessibleName descriptivo.
+- Prohibido el uso de setStyleSheet embebido para títulos, botones, feedback y tablas.
+- Cualquier excepción visual debe documentarse aquí y en el código fuente.
+
+### Ejemplo de implementación (InventarioView):
+```python
+self.label_titulo = QLabel("Gestión de Inventario")
+self.label_titulo.setObjectName("label_titulo")
+btn.setObjectName("boton_agregar_item")
+self.label_feedback = QLabel()
+self.label_feedback.setObjectName("label_feedback")
+self.tabla_inventario = QTableWidget()
+self.tabla_inventario.setObjectName("tabla_inventario")
+h_header = self.tabla_inventario.horizontalHeader()
+h_header.setObjectName("header_inventario")
+```
+
+Este estándar es obligatorio y debe replicarse en todos los módulos nuevos y existentes.
+
+---
+
+## [2025-06-09] Unificación visual aplicada en módulo Herrajes
+
+- El título del módulo usa QLabel con setObjectName("label_titulo") y está documentado en QSS global.
+- Todos los botones principales usan setObjectName específico, ícono SVG, helper estilizar_boton_icono y tooltip/accesibilidad.
+- El feedback visual usa FeedbackBanner (QWidget) con setObjectName("feedback_banner") y estilos QSS globales.
+- La tabla principal usa setObjectName("tabla_herrajes") y el header setObjectName("header_herrajes").
+- Todos los estilos visuales (colores, bordes, paddings, márgenes, feedback, etc.) se definen solo en QSS global.
+- Accesibilidad: todos los botones y campos tienen setToolTip y setAccessibleName descriptivo.
+- Prohibido el uso de setStyleSheet embebido para títulos, botones, feedback y tablas.
+- Cualquier excepción visual debe documentarse aquí y en el código fuente.
+
+### Ejemplo de implementación (HerrajesView):
+```python
+self.label_titulo = QLabel("Gestión de Herrajes")
+self.label_titulo.setObjectName("label_titulo")
+btn_ajustar_stock.setObjectName("boton_ajustar_stock")
+self.feedback_banner = FeedbackBanner(self)
+self.feedback_banner.setObjectName("feedback_banner")
+self.tabla_herrajes = QTableWidget()
+self.tabla_herrajes.setObjectName("tabla_herrajes")
+h_header = self.tabla_herrajes.horizontalHeader()
+h_header.setObjectName("header_herrajes")
+```
+
+Este estándar es obligatorio y debe replicarse en todos los módulos nuevos y existentes.
+
+---
+
+## Integración visual y de UX para pagos y trazabilidad en Logística y Contabilidad
+
+- Todos los diálogos de registro/edición de pagos usan padding 20px vertical y 24px horizontal, bordes redondeados 10px, fuente Segoe UI/Roboto 13-14px, y colores de feedback según la paleta principal.
+- El diálogo de pago de colocación en Logística sigue el mismo estándar visual que los formularios de Contabilidad.
+- Los botones de acción (Guardar, Cancelar) tienen mínimo 80px de ancho, padding horizontal 16px, y color de fondo #2563eb para acción principal.
+- El feedback visual tras registrar/editar pago es inmediato y modal, usando QMessageBox con colores y estilos definidos.
+- Las tablas de Logística y Contabilidad muestran el estado y fecha de pago en columnas dedicadas, con íconos y colores según estado (pagado, pendiente, excepción).
+- Cualquier excepción visual o justificación de estilos debe documentarse aquí y en el QSS global.
+
+### Selectores QSS relevantes
+- QDialog[pago-colocacion-dialog], QPushButton[accion-principal], QTableWidget[tabla-pagos-logistica], QLabel[titulo_label_logistica], QLineEdit, QTextEdit, QDateEdit.
+- Documentar en el QSS a qué módulo pertenece cada selector.
+
+---
+
+### [Logística]
+- El feedback visual de habilitación de colocación y registro de excepción por falta de pago debe ser inmediato, usando los colores y estilos definidos en QSS global.
+- Los mensajes de error y éxito deben ser breves, claros y con iconografía adecuada.
+- El estado de pago y fecha deben mostrarse en la UI de Logística con contraste alto y tipografía estándar.
+- Cualquier excepción visual debe documentarse aquí y en el código fuente.
+- Los tests automáticos de feedback visual y validación de pago están implementados (ver tests/test_logistica_integracion.py).

@@ -703,3 +703,48 @@ class ObrasController:
                 self.view.mostrar_mensaje(f"Error al editar la obra: {e}", tipo="error", titulo_personalizado="Editar Obra")
             self._registrar_evento_auditoria('editar', f"Error edición obra {id_obra}: {e}", exito=False)
             raise
+
+    def obtener_estado_pedidos_por_obra(self, id_obra, inventario_controller=None, vidrios_controller=None, herrajes_controller=None):
+        """
+        Devuelve un resumen del estado de pedidos de todos los módulos para una obra dada.
+        Retorna un diccionario: {'inventario': estado, 'vidrios': estado, 'herrajes': estado}
+        Cada estado puede ser: 'pendiente', 'pedido', 'en proceso', 'entregado', etc.
+        Si el controller correspondiente es None, omite ese módulo.
+        """
+        estado = {}
+        if inventario_controller is not None:
+            try:
+                estado['inventario'] = inventario_controller.model.obtener_estado_pedido_por_obra(id_obra)
+            except Exception as e:
+                estado['inventario'] = f"Error: {e}"
+        if vidrios_controller is not None:
+            try:
+                estado['vidrios'] = vidrios_controller.model.obtener_estado_pedido_por_obra(id_obra)
+            except Exception as e:
+                estado['vidrios'] = f"Error: {e}"
+        if herrajes_controller is not None:
+            try:
+                estado['herrajes'] = herrajes_controller.model.obtener_estado_pedido_por_obra(id_obra)
+            except Exception as e:
+                estado['herrajes'] = f"Error: {e}"
+        return estado
+
+    def mostrar_estado_pedidos_en_tabla(self, inventario_controller=None, vidrios_controller=None, herrajes_controller=None):
+        """
+        Agrega columnas de estado de pedidos de cada módulo en la tabla de obras.
+        Llama a obtener_estado_pedidos_por_obra para cada obra y actualiza la vista.
+        """
+        obras = self.model.obtener_datos_obras()
+        if not hasattr(self.view, 'tabla_obras'):
+            return
+        self.view.tabla_obras.setRowCount(len(obras))
+        for fila, obra in enumerate(obras):
+            id_obra = obra[0] if isinstance(obra, (list, tuple)) else obra.get('id')
+            # Rellenar columnas base
+            for col, valor in enumerate(obra[:4]):
+                self.view.tabla_obras.setItem(fila, col, QTableWidgetItem(str(valor)))
+            estados = self.obtener_estado_pedidos_por_obra(id_obra, inventario_controller, vidrios_controller, herrajes_controller)
+            # Suponiendo que las columnas extra están al final
+            for idx, modulo in enumerate(['inventario', 'vidrios', 'herrajes']):
+                valor = estados.get(modulo, '-')
+                self.view.tabla_obras.setItem(fila, 4 + idx, QTableWidgetItem(str(valor)))

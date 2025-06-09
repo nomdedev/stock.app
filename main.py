@@ -665,6 +665,17 @@ class MainWindow(QMainWindow):
         # Conectar la señal pageChanged del sidebar al cambio de vista en el stack
         self.sidebar.pageChanged.connect(self._on_sidebar_page_changed)
 
+        # --- INTEGRACIÓN VISUAL DE ESTADO DE PEDIDOS EN OBRAS ---
+        # Al inicializar la UI, poblar la tabla de obras con el estado de pedidos de Inventario, Vidrios y Herrajes
+        try:
+            self.obras_controller.mostrar_estado_pedidos_en_tabla(
+                inventario_controller=self.inventario_controller,
+                vidrios_controller=self.vidrios_controller,
+                herrajes_controller=self.herrajes_controller
+            )
+        except Exception as e:
+            self.logger.error(f"[INTEGRACIÓN] Error al poblar estado de pedidos en Obras: {e}")
+
     def _on_sidebar_page_changed(self, idx):
         self.module_stack.setCurrentIndex(idx)
 

@@ -1,7 +1,7 @@
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
-from PyQt6.QtWidgets import QLabel
+from PyQt6.QtWidgets import QLabel, QTableWidgetItem
 from core.logger import log_error
 
 class PermisoAuditoria:
@@ -168,3 +168,71 @@ class LogisticaController:
             log_error(f"Error en actualizar_por_cambio_estado_obra: {e}")
             if hasattr(self.view, 'label'):
                 self.view.label.setText(f"Error al actualizar estado de obra: {e}")
+
+    def validar_pago_colocacion(self, id_pedido, obra_id, contabilidad_controller, modulo="logistica"):
+        """
+        Verifica si el pago de la colocación está realizado. Si no, requiere justificación para continuar.
+        Retorna True si se puede continuar, False si debe bloquearse.
+        """
+        estado_pago = contabilidad_controller.obtener_estado_pago_pedido(id_pedido, modulo)
+        if estado_pago == "pagado":
+            return True
+        # Si no está pagado, solicitar justificación
+        from PyQt6.QtWidgets import QInputDialog, QMessageBox
+        justificacion, ok = QInputDialog.getText(self.view, "Colocación sin pago registrado", "Ingrese motivo/justificación para continuar:")
+        if ok and justificacion.strip():
+            self.registrar_excepcion_colocacion_sin_pago(id_pedido, obra_id, justificacion, self.usuario_actual)
+            QMessageBox.warning(self.view, "Advertencia", "Se registró la colocación sin pago. Justificación guardada.")
+            return True
+        else:
+            QMessageBox.critical(self.view, "Acción bloqueada", "No se puede realizar la colocación sin pago o justificación.")
+            return False
+
+    def registrar_excepcion_colocacion_sin_pago(self, id_pedido, obra_id, justificacion, usuario):
+        """
+        Registra en auditoría y/o en la base de datos la excepción de colocación sin pago.
+        """
+        detalle = f"Colocación sin pago | Pedido: {id_pedido} | Obra: {obra_id} | Usuario: {usuario.get('usuario', '')} | Motivo: {justificacion}"
+        self._registrar_evento_auditoria('colocacion_sin_pago', detalle_extra=detalle, estado="excepcion")
+        # Opcional: guardar en tabla de excepciones si existe
+
+    def mostrar_y_editar_pago_colocacion(self, id_pedido, obra_id, contabilidad_controller, usuario_actual):
+        """
+        Muestra el estado de pago y permite registrar/editar pago de colocación desde Logística.
+        """
+        pagos = contabilidad_controller.obtener_pagos_por_pedido(id_pedido, modulo="logistica")
+        datos_pago = None
+        if pagos:
+            pago = pagos[-1]  # Tomar el último pago registrado
+            datos_pago = {
+                'monto': pago[4],
+                'fecha': pago[5],
+                'comprobante': pago[8],
+                'estado': pago[7],
+                'observaciones': pago[9]
+            }
+        datos_nuevos = self.view.mostrar_dialogo_pago_colocacion(datos_pago)
+        if datos_nuevos:
+            contabilidad_controller.registrar_pago_pedido(
+                id_pedido=id_pedido,
+                modulo="logistica",
+                obra_id=obra_id,
+                monto=datos_nuevos['monto'],
+                fecha=datos_nuevos['fecha'],
+                usuario=usuario_actual['usuario'],
+                estado=datos_nuevos['estado'],
+                comprobante=datos_nuevos['comprobante'],
+                observaciones=datos_nuevos['observaciones']
+            )
+            self.view.mostrar_estado_pago_colocacion(datos_nuevos['estado'], datos_nuevos['fecha'])
+
+    def mostrar_estado_pago_colocacion_en_tabla(self, id_pedido, contabilidad_controller, fila, tabla):
+        pagos = contabilidad_controller.obtener_pagos_por_pedido(id_pedido, modulo="logistica")
+        if pagos:
+            pago = pagos[-1]
+            estado = pago[7]
+            fecha = pago[5]
+        else:
+            estado = "Pendiente"
+            fecha = ""
+        tabla.setItem(fila, tabla.columnCount()-1, QTableWidgetItem(f"{estado} | {fecha}"))

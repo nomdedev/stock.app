@@ -114,16 +114,20 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
+        # Título (estándar visual global: ver docs/estandares_visuales.md)
         self.label_titulo = QLabel("Gestión de Herrajes")
+        self.label_titulo.setObjectName("label_titulo")  # Unificación visual: todos los títulos usan este objectName
+        self.label_titulo.setAccessibleName("Título de módulo Herrajes")
         self.label_titulo.setAccessibleDescription("Título principal de la vista de Herrajes")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
-        # --- Barra de botones principales ---
+        # --- Barra de botones principales (estándar visual global) ---
         top_btns_layout = QHBoxLayout()
         top_btns_layout.addStretch()
         # 1. Ajustar stock
         btn_ajustar_stock = QPushButton()
+        btn_ajustar_stock.setObjectName("boton_ajustar_stock")
         btn_ajustar_stock.setIcon(QIcon("resources/icons/guardar-permisos.svg"))
         btn_ajustar_stock.setIconSize(QSize(24, 24))
         btn_ajustar_stock.setToolTip("Ajustar stock de herrajes")
@@ -133,6 +137,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         top_btns_layout.addWidget(btn_ajustar_stock)
         # 2. Buscar herraje
         btn_buscar = QPushButton()
+        btn_buscar.setObjectName("boton_search_icon")
         btn_buscar.setIcon(QIcon("resources/icons/search_icon.svg"))
         btn_buscar.setIconSize(QSize(24, 24))
         btn_buscar.setToolTip("Buscar herraje")
@@ -142,6 +147,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         top_btns_layout.addWidget(btn_buscar)
         # 3. Generar QR
         btn_qr = QPushButton()
+        btn_qr.setObjectName("boton_qr_icon")
         btn_qr.setIcon(QIcon("resources/icons/qr_icon.svg"))
         btn_qr.setIconSize(QSize(24, 24))
         btn_qr.setToolTip("Generar código QR de herraje")
@@ -175,8 +181,9 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.tab_herrajes = QWidget()
         tab_herrajes_layout = QVBoxLayout(self.tab_herrajes)
         self.herrajes_headers = ["ID", "Nombre", "Cantidad", "Proveedor", "Ubicación", "Stock mínimo"]
+        # Tabla principal de herrajes (estándar visual global)
         self.tabla_herrajes = QTableWidget()
-        self.tabla_herrajes.setObjectName("tabla_herrajes")
+        self.tabla_herrajes.setObjectName("tabla_herrajes")  # Unificación visual: todas las tablas usan este objectName
         self.tabla_herrajes.setColumnCount(len(self.herrajes_headers))
         self.tabla_herrajes.setHorizontalHeaderLabels(self.herrajes_headers)
         self.make_table_responsive(self.tabla_herrajes)
@@ -252,6 +259,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         # El estilo de foco y fuente se define ahora en el QSS global/tema
         h_header = self.tabla_herrajes.horizontalHeader() if hasattr(self.tabla_herrajes, 'horizontalHeader') else None
         if h_header is not None:
+            h_header.setObjectName("header_herrajes")  # Unificación visual: todos los headers usan este objectName
             try:
                 # QSS global: el estilo de header se gestiona en themes/light.qss y dark.qss
                 # h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")

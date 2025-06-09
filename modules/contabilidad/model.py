@@ -137,3 +137,42 @@ class ContabilidadModel:
     def obtener_balance(self, fecha_inicio, fecha_fin):
         query = "SELECT * FROM movimientos_contables WHERE fecha BETWEEN ? AND ?"
         return self.db.ejecutar_query(query, (fecha_inicio, fecha_fin))
+
+    # --- PAGOS POR PEDIDO (INTEGRACIÓN PEDIDOS-OBRAS-MÓDULOS) ---
+    # Cada pago se asocia a un pedido de Inventario, Vidrios o Herrajes, y a una obra.
+    # Tabla sugerida: pagos_pedidos (id, id_pedido, modulo, obra_id, monto, fecha, usuario, estado, comprobante, observaciones)
+    # Documentar cualquier excepción en docs/estandares_visuales.md
+
+    def registrar_pago_pedido(self, id_pedido, modulo, obra_id, monto, fecha, usuario, estado, comprobante=None, observaciones=None):
+        query = '''
+        INSERT INTO pagos_pedidos (id_pedido, modulo, obra_id, monto, fecha, usuario, estado, comprobante, observaciones)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        '''
+        self.db.ejecutar_query(query, (id_pedido, modulo, obra_id, monto, fecha, usuario, estado, comprobante, observaciones))
+
+    def actualizar_estado_pago(self, id_pago, nuevo_estado):
+        query = "UPDATE pagos_pedidos SET estado = ? WHERE id = ?"
+        self.db.ejecutar_query(query, (nuevo_estado, id_pago))
+
+    def obtener_pagos_por_pedido(self, id_pedido, modulo):
+        query = "SELECT * FROM pagos_pedidos WHERE id_pedido = ? AND modulo = ?"
+        return self.db.ejecutar_query(query, (id_pedido, modulo))
+
+    def obtener_pagos_por_obra(self, obra_id, modulo=None):
+        if modulo:
+            query = "SELECT * FROM pagos_pedidos WHERE obra_id = ? AND modulo = ?"
+            return self.db.ejecutar_query(query, (obra_id, modulo))
+        else:
+            query = "SELECT * FROM pagos_pedidos WHERE obra_id = ?"
+            return self.db.ejecutar_query(query, (obra_id,))
+
+    def obtener_estado_pago_pedido(self, id_pedido, modulo):
+        query = "SELECT estado FROM pagos_pedidos WHERE id_pedido = ? AND modulo = ? ORDER BY fecha DESC LIMIT 1"
+        res = self.db.ejecutar_query(query, (id_pedido, modulo))
+        return res[0][0] if res else None
+
+    def obtener_pagos_por_usuario(self, usuario):
+        query = "SELECT * FROM pagos_pedidos WHERE usuario = ?"
+        return self.db.ejecutar_query(query, (usuario,))
+
+    # --- FIN PAGOS POR PEDIDO ---

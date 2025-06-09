@@ -54,27 +54,30 @@ class InventarioView(QWidget, TableResponsiveMixin):
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
+        # Título (estándar visual global: ver docs/estandares_visuales.md)
         self.label_titulo = QLabel("Gestión de Inventario")
+        self.label_titulo.setObjectName("label_titulo")  # Unificación visual: todos los títulos usan este objectName
+        self.label_titulo.setAccessibleName("Título de módulo Inventario")
+        self.label_titulo.setAccessibleDescription("Encabezado principal de la vista de inventario")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         header_layout.addStretch()
-        # --- BARRA DE BOTONES PRINCIPALES (orden documentado, NO CAMBIAR) ---
-        # ORDEN FIJO: [Ajuste de stock, Pedido de material para obra, Agregar ítem, Exportar Excel, Exportar PDF, Buscar, QR, Ver obras pendientes, Reservar lote]
-        # Este orden fue definido por requerimiento funcional y NO debe modificarse salvo decisión documentada en checklist_botones_accion.txt
+        # --- BARRA DE BOTONES PRINCIPALES (estándar visual global) ---
         btns = []
         icon_dir = os.path.join(os.path.dirname(__file__), '../../resources/icons')
         botones = [
-            ("ajustar-stock.svg", "Ajustar stock", self.ajustar_stock_signal),
-            ("pedido-material.svg", "Pedido de material para obra", self.abrir_reserva_lote_perfiles),
-            ("add-material.svg", "Agregar nuevo ítem", self.nuevo_item_signal),
-            ("excel_icon.svg", "Exportar a Excel", self.exportar_excel_signal),
-            ("pdf_icon.svg", "Exportar a PDF", self.exportar_pdf_signal),
-            ("search_icon.svg", "Buscar ítem", self.buscar_signal),
-            ("qr_icon.svg", "Generar código QR", self.generar_qr_signal),
-            ("viewdetails.svg", "Ver obras pendientes", self.ver_obras_pendientes_material),
-            ("reserve-stock.svg", "Reservar lote de perfiles", self.abrir_reserva_lote_perfiles),
+            ("ajustar-stock.svg", "Ajustar stock", self.ajustar_stock_signal, "boton_ajustar_stock"),
+            ("pedido-material.svg", "Pedido de material para obra", self.abrir_reserva_lote_perfiles, "boton_pedido_material"),
+            ("add-material.svg", "Agregar nuevo ítem", self.nuevo_item_signal, "boton_agregar_item"),
+            ("excel_icon.svg", "Exportar a Excel", self.exportar_excel_signal, "boton_excel_icon"),
+            ("pdf_icon.svg", "Exportar a PDF", self.exportar_pdf_signal, "boton_pdf_icon"),
+            ("search_icon.svg", "Buscar ítem", self.buscar_signal, "boton_search_icon"),
+            ("qr_icon.svg", "Generar código QR", self.generar_qr_signal, "boton_qr_icon"),
+            ("viewdetails.svg", "Ver obras pendientes", self.ver_obras_pendientes_material, "boton_ver_obras"),
+            ("reserve-stock.svg", "Reservar lote de perfiles", self.abrir_reserva_lote_perfiles, "boton_reservar_lote"),
         ]
-        for icono, tooltip, signal in botones:
+        for icono, tooltip, signal, object_name in botones:
             btn = QPushButton()
+            btn.setObjectName(object_name)
             icon_path = os.path.join(icon_dir, icono)
             btn.setIcon(QIcon(icon_path))
             btn.setIconSize(QSize(24, 24))
@@ -100,7 +103,19 @@ class InventarioView(QWidget, TableResponsiveMixin):
 
         # Obtener headers desde la base de datos
         self.inventario_headers = self.obtener_headers_desde_db("inventario_perfiles")
+        # --- TABS PRINCIPALES (layout moderno y consistente con Vidrios) ---
+        self.tabs = QTabWidget()
+        self.tabs.setObjectName("tabs_inventario")
+        self.tabs.setStyleSheet("QTabWidget::pane { border-radius: 12px; background: #fff9f3; margin: 0 0 0 0; } QTabBar::tab { min-width: 180px; min-height: 36px; font-size: 13px; padding: 10px 24px; border-radius: 8px; background: #e3f6fd; margin-right: 8px; } QTabBar::tab:selected { background: #fff; color: #2563eb; border: 2px solid #2563eb; }")
+        self.main_layout.addWidget(self.tabs)
+
+        # Pestaña 1: Todos los perfiles/materiales
+        self.tab_perfiles = QWidget()
+        tab_perfiles_layout = QVBoxLayout(self.tab_perfiles)
+        tab_perfiles_layout.setContentsMargins(24, 20, 24, 20)
+        tab_perfiles_layout.setSpacing(18)
         self.tabla_inventario = QTableWidget()
+        self.tabla_inventario.setObjectName("tabla_inventario")
         self.tabla_inventario.setColumnCount(len(self.inventario_headers))
         self.tabla_inventario.setHorizontalHeaderLabels(self.inventario_headers)
         self.make_table_responsive(self.tabla_inventario)
@@ -112,10 +127,9 @@ class InventarioView(QWidget, TableResponsiveMixin):
             v_header.setVisible(False)
         h_header = self.tabla_inventario.horizontalHeader()
         if h_header is not None:
-            # QSS global: el estilo de header se define en themes/light.qss y dark.qss
+            h_header.setObjectName("header_inventario")
             h_header.setProperty("header", True)
             h_header.setHighlightSections(False)
-            # Corregir: usar QHeaderView.ResizeMode.Stretch en vez de QHeaderView.Stretch
             h_header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
             if hasattr(h_header, 'sectionDoubleClicked'):
                 h_header.sectionDoubleClicked.connect(self.autoajustar_columna)
@@ -129,13 +143,31 @@ class InventarioView(QWidget, TableResponsiveMixin):
             h_header.setDefaultSectionSize(120)
         self.tabla_inventario.cellClicked.connect(self.toggle_expandir_fila)
         self.filas_expandidas = set()
-        
-        # Hacer la tabla más alta
         self.tabla_inventario.setMinimumHeight(600)
         self.tabla_inventario.setMaximumHeight(1000)
-        self.main_layout.addWidget(self.tabla_inventario)
+        tab_perfiles_layout.addWidget(self.tabla_inventario)
+        self.tab_perfiles.setLayout(tab_perfiles_layout)
+        self.tabs.addTab(self.tab_perfiles, "Perfiles y materiales")
 
-        self.main_layout.addStretch()  # Asegura que la tabla se vea correctamente
+        # Pestaña 2: Obras y estado de pedidos de material
+        self.tab_obras_material = QWidget()
+        tab_obras_material_layout = QVBoxLayout(self.tab_obras_material)
+        tab_obras_material_layout.setContentsMargins(24, 20, 24, 20)
+        tab_obras_material_layout.setSpacing(18)
+        self.tabla_obras_material = QTableWidget()
+        self.tabla_obras_material.setObjectName("tabla_obras_material_inventario")
+        self.tabla_obras_material.setColumnCount(5)
+        self.tabla_obras_material.setHorizontalHeaderLabels(["ID Obra", "Nombre Obra", "Cliente", "Estado pedido material", "Detalle"])
+        header_obras_material = self.tabla_obras_material.horizontalHeader()
+        if header_obras_material is not None:
+            header_obras_material.setObjectName("header_obras_material_inventario")
+            self.tabla_obras_material.setHorizontalHeader(header_obras_material)
+        self.tabla_obras_material.setAlternatingRowColors(True)
+        self.tabla_obras_material.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.tabla_obras_material.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        tab_obras_material_layout.addWidget(self.tabla_obras_material)
+        self.tab_obras_material.setLayout(tab_obras_material_layout)
+        self.tabs.addTab(self.tab_obras_material, "Obras y pedidos de material")
 
         # Cargar configuración de columnas visibles
         # --- NOTA: La cadena de conexión SQL se construye dinámicamente usando variables de configuración.

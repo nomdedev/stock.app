@@ -484,6 +484,20 @@ class InventarioModel:
             logger.error(mensaje)
             _registrar_evento_auditoria(usuario, "Inventario", f"Error ajuste stock perfil: {e}")
             raise
+
+    def obtener_estado_pedido_por_obra(self, id_obra):
+        """
+        Devuelve el estado del pedido de material para una obra dada.
+        Retorna un string: 'pendiente', 'pedido', 'en proceso', 'entregado', etc.
+        """
+        try:
+            query = "SELECT estado FROM pedidos_material WHERE id_obra = ? ORDER BY fecha DESC LIMIT 1"
+            resultado = self.db.ejecutar_query(query, (id_obra,))
+            if resultado and resultado[0]:
+                return resultado[0][0]
+            return 'pendiente'
+        except Exception as e:
+            return f"Error: {e}"
     # NOTA: Si se detectan errores en los tests relacionados con la cantidad de columnas, tipos de retorno o mensajes,
     # revisar los mocks y la estructura de datos simulados. Los tests automáticos pueden requerir workarounds específicos
     # para compatibilidad con los datos de prueba.
