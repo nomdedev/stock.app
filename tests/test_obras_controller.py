@@ -240,3 +240,119 @@ def test_flujo_completo_obra_y_pedidos():
     # 8. Feedback visual y auditoría
     assert any("actualizado" in m[0] for m in view.mensajes)
     assert auditoria_model.registrar_evento.called
+
+def test_editar_fecha_entrega_dialog_integration():
+    """
+    Test de integración: edición de fecha de entrega desde la UI (diálogo), validando feedback visual,
+    validación de fechas, refresco de tabla y registro en auditoría. No depende de base de datos real.
+    """
+    from datetime import datetime, timedelta
+    # Dummy para simular la vista y capturar feedback visual
+    class DummyView:
+        def __init__(self):
+            self.mensajes = []
+            self.tabla_refrescada = False
+            self.ultima_fecha = None
+        def mostrar_mensaje(self, mensaje, tipo=None, **kwargs):
+            self.mensajes.append((mensaje, tipo))
+        def cargar_tabla_obras(self, obras):
+            self.tabla_refrescada = True
+        def get_selected_obra_id(self):
+            return 4
+    # DummyModel con una obra existente
+    class DummyModel:
+        def __init__(self):
+            self.obras = [{
+                "id": 4,
+                "nombre": "ObraTest",
+                "cliente": "ClienteTest",
+                "estado": "Medición",
+                "fecha": "2024-01-01",
+                "fecha_entrega": "2024-01-10",
+                "fecha_medicion": "2024-01-01",
+                "rowversion": 1
+            }]
+        def obtener_obra_por_id(self, id_obra):
+            for o in self.obras:
+                if o["id"] == id_obra:
+                    return o
+            return None
+        def editar_obra(self, id_obra, datos, rowversion_orig):
+            for o in self.obras:
+                if o["id"] == id_obra:
+                    if rowversion_orig != o["rowversion"]:
+                        raise Exception("Conflicto de rowversion")
+                    if "fecha_entrega" in datos:
+                        o["fecha_entrega"] = datos["fecha_entrega"]
+                        o["rowversion"] += 1
+                        return o["rowversion"]
+            raise Exception("Obra no encontrada")
+        def obtener_headers_obras(self):
+            return ["id", "nombre", "cliente", "estado", "fecha", "fecha_entrega"]
+        def obtener_datos_obras(self):
+            return [[o[h] for h in self.obtener_headers_obras()] for o in self.obras]
+    # Instancias dummy
+    model = DummyModel()
+    view = DummyView()
+    usuarios_model = MagicMock()
+    usuarios_model.tiene_permiso.return_value = True
+    auditoria_model = MagicMock()
+    usuario_actual = {"id": 1, "username": "testuser", "ip": "127.0.0.1"}
+    controller = ObrasController(model, view, None, usuarios_model, usuario_actual, auditoria_model=auditoria_model)
+
+    # --- Simulación de edición válida ---
+    # Monkeypatch QDialog y QDateEdit para simular interacción
+    with patch("modules.obras.controller.QDialog") as MockDialog, \
+         patch("modules.obras.controller.QDateEdit") as MockDateEdit:
+        # Simular diálogo aceptado y fecha válida
+        instance_dialog = MockDialog.return_value
+        instance_dialog.exec.return_value = 1  # QDialog.DialogCode.Accepted
+        instance_dateedit = MockDateEdit.return_value
+        # Nueva fecha válida: posterior a medición
+        nueva_fecha = "2024-01-15"
+        instance_dateedit.date.return_value.toString.return_value = nueva_fecha
+        # Simular llamada
+        controller.editar_fecha_entrega_dialog(4)
+        # Verifica feedback visual de éxito
+        assert any(nueva_fecha in m[0] and m[1] == "exito" for m in view.mensajes)
+        # Verifica refresco de tabla
+        assert view.tabla_refrescada
+        # Verifica registro en auditoría
+        assert auditoria_model.registrar_evento.called
+
+    # --- Simulación de edición inválida (fecha anterior a medición) ---
+    with patch("modules.obras.controller.QDialog") as MockDialog, \
+         patch("modules.obras.controller.QDateEdit") as MockDateEdit:
+        instance_dialog = MockDialog.return_value
+        instance_dialog.exec.return_value = 1  # QDialog.DialogCode.Accepted
+        instance_dateedit = MockDateEdit.return_value
+        # Fecha inválida: anterior a medición
+        fecha_invalida = "2023-12-31"
+        instance_dateedit.date.return_value.toString.return_value = fecha_invalida
+        # Limpiar mensajes
+        view.mensajes.clear()
+        # Simular llamada
+        controller.editar_fecha_entrega_dialog(4)
+        # Verifica feedback visual de error
+        assert any("anterior a la de medición" in m[0] and m[1] == "error" for m in view.mensajes)
+
+    # --- Simulación de obra inexistente ---
+    with patch("modules.obras.controller.QDialog") as MockDialog, \
+         patch("modules.obras.controller.QDateEdit") as MockDateEdit:
+        instance_dialog = MockDialog.return_value
+        instance_dialog.exec.return_value = 1
+        instance_dateedit = MockDateEdit.return_value
+        # Cambiar id a uno inexistente
+        view.mensajes.clear()
+        controller.editar_fecha_entrega_dialog(999)
+        assert any("Obra no encontrada" in m[0] and m[1] == "error" for m in view.mensajes)
+
+    # --- Simulación de cancelación de diálogo ---
+    with patch("modules.obras.controller.QDialog") as MockDialog, \
+         patch("modules.obras.controller.QDateEdit") as MockDateEdit:
+        instance_dialog = MockDialog.return_value
+        instance_dialog.exec.return_value = 0  # QDialog.DialogCode.Rejected
+        view.mensajes.clear()
+        controller.editar_fecha_entrega_dialog(4)
+        # No debe haber feedback de éxito ni error
+        assert not view.mensajes

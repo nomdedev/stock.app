@@ -183,7 +183,8 @@ class ObrasController:
         try:
             headers = self.model.obtener_headers_obras()
             # Quitar columnas técnicas si es necesario (ejemplo: id, usuario_creador)
-            headers_visibles = [h for h in headers if h not in ("usuario_creador",)]
+            headers_visibles = [h for h in headers if h not in ("id", "usuario_creador")]
+            self._headers_visibles = headers_visibles  # Guardar para uso en cargar_datos_obras_tabla
             if hasattr(self.view, 'cargar_headers'):
                 self.view.cargar_headers(headers_visibles)
         except Exception as e:
@@ -197,19 +198,24 @@ class ObrasController:
     def cargar_datos_obras_tabla(self):
         try:
             datos = self.model.obtener_datos_obras()
+            headers_visibles = getattr(self, '_headers_visibles', None)
+            if not headers_visibles:
+                headers_visibles = [h for h in self.model.obtener_headers_obras() if h not in ("id", "usuario_creador")]
             # Adaptar a lista de dicts para la tabla visual
             obras = []
             for d in datos:
                 obra = dict(zip(self.model.obtener_headers_obras(), d))
                 obras.append(obra)
             if hasattr(self.view, 'cargar_tabla_obras'):
-                self.view.cargar_tabla_obras(obras)
+                # Solo pasar los campos visibles
+                obras_visibles = [{k: o.get(k, '') for k in headers_visibles} for o in obras]
+                self.view.cargar_tabla_obras(obras_visibles)
             # Para los tests: asegurarse de que setItem se llama
             if hasattr(self.view, 'tabla_obras') and hasattr(self.view.tabla_obras, 'setItem'):
                 self.view.tabla_obras.setRowCount(len(obras))
-                self.view.tabla_obras.setColumnCount(len(self.model.obtener_headers_obras()))
+                self.view.tabla_obras.setColumnCount(len(headers_visibles))
                 for row, obra in enumerate(obras):
-                    for col, header in enumerate(self.model.obtener_headers_obras()):
+                    for col, header in enumerate(headers_visibles):
                         self.view.tabla_obras.setItem(row, col, QTableWidgetItem(str(obra.get(header, ''))))
         except Exception as e:
             mensaje = f"Error al cargar datos: {e}"
