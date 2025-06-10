@@ -161,3 +161,46 @@ class HerrajesController:
             self.view.mostrar_resumen_obras(self.model.obtener_obras_con_estado_pedido())
         elif hasattr(self.view, 'mostrar_pedidos_usuario'):
             self.view.mostrar_pedidos_usuario(self.model.obtener_pedidos_por_usuario(self.usuario_actual))
+
+    def reservar_herraje(self, usuario, id_obra, id_herraje, cantidad):
+        """
+        Reserva herraje para una obra, validando que la obra exista antes de registrar el pedido.
+        """
+        from modules.obras.model import ObrasModel
+        obras_model = ObrasModel(self.model.db)
+        if not obras_model.existe_obra_por_id(id_obra):
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje("No existe una obra con ese ID. No se puede reservar herraje.", tipo='error')
+            self.auditoria_model.registrar_evento(
+                usuario.get('id') if usuario else None, "Herrajes", "reserva_herraje", f"Intento de reserva a obra inexistente: {id_obra}", usuario.get('ip', '') if usuario else ''
+            )
+            return False
+        return self.model.reservar_herraje(usuario, id_obra, id_herraje, cantidad)
+
+    def obtener_pedidos_por_obra(self, id_obra):
+        """
+        Devuelve la lista de pedidos de herrajes asociados a una obra, con feedback visual y registro en auditoría.
+        """
+        try:
+            pedidos = self.model.obtener_pedidos_por_obra(id_obra)
+            self._registrar_evento_auditoria('consultar_pedidos_por_obra', f'Obra: {id_obra}', 'éxito')
+            return pedidos
+        except Exception as e:
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error al consultar pedidos: {e}", tipo='error')
+            self._registrar_evento_auditoria('consultar_pedidos_por_obra', f'error: {e}', 'error')
+            return []
+
+    def obtener_estado_pedidos_por_obra(self, id_obra):
+        """
+        Devuelve el estado del pedido de herrajes para una obra, con feedback visual y registro en auditoría.
+        """
+        try:
+            estado = self.model.obtener_estado_pedido_por_obra(id_obra)
+            self._registrar_evento_auditoria('consultar_estado_pedidos_por_obra', f'Obra: {id_obra}', 'éxito')
+            return estado
+        except Exception as e:
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error al consultar estado de pedidos: {e}", tipo='error')
+            self._registrar_evento_auditoria('consultar_estado_pedidos_por_obra', f'error: {e}', 'error')
+            return 'error'

@@ -123,3 +123,13 @@ class VidriosModel:
             return 'pendiente'
         except Exception as e:
             return f"Error: {e}"
+
+    def obtener_pedidos_por_obra(self, id_obra):
+        """
+        Devuelve todos los pedidos de vidrios asociados a una obra, con su estado y detalle.
+        """
+        try:
+            query = "SELECT id, id_vidrio, cantidad, estado, fecha, usuario FROM pedidos_vidrios WHERE id_obra = ? ORDER BY fecha DESC"
+            return self.db.ejecutar_query(query, (id_obra,)) or []
+        except Exception as e:
+            return f"Error: {e}"

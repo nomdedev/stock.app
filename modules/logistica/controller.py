@@ -129,6 +129,43 @@ class LogisticaController:
             if hasattr(self.view, 'label'):
                 self.view.label.setText(f"Error al reprogramar entrega: {e}")
 
+    @permiso_auditoria_logistica('consultar')
+    def consultar_obras_listas_para_entrega(self, obras_model, inventario_model, vidrios_model, herrajes_model, contabilidad_model):
+        """
+        Consulta y muestra las obras listas para fabricar/entregar (todos los pedidos realizados y pagados).
+        Feedback visual y registro en auditoría.
+        """
+        try:
+            obras_listas = self.model.obtener_obras_listas_para_entrega(
+                obras_model, inventario_model, vidrios_model, herrajes_model, contabilidad_model
+            )
+            if hasattr(self.view, 'mostrar_obras_listas_para_entrega'):
+                self.view.mostrar_obras_listas_para_entrega(obras_listas)
+            self._registrar_evento_auditoria('consultar_obras_listas_para_entrega', estado='éxito')
+            return obras_listas
+        except Exception as e:
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error al consultar obras listas: {e}", tipo='error')
+            self._registrar_evento_auditoria('consultar_obras_listas_para_entrega', estado=f'error: {e}')
+            return []
+
+    @permiso_auditoria_logistica('asignar')
+    def asignar_colocador_a_obra(self, id_obra, colocador):
+        """
+        Asigna un colocador a una obra lista para entrega y registra la acción en auditoría.
+        """
+        try:
+            query = "UPDATE entregas_obras SET colocador_asignado = ? WHERE id_obra = ?"
+            self.model.db.ejecutar_query(query, (colocador, id_obra))
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Colocador '{colocador}' asignado a la obra {id_obra}.", tipo='info')
+            self._registrar_evento_auditoria('asignar_colocador', f'id_obra={id_obra}, colocador={colocador}', estado='éxito')
+        except Exception as e:
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error al asignar colocador: {e}", tipo='error')
+            self._registrar_evento_auditoria('asignar_colocador', f'id_obra={id_obra}, colocador={colocador}', estado=f'error: {e}')
+
+
     def actualizar_por_cambio_estado_obra(self, id_obra, nuevo_estado):
         from datetime import datetime, timedelta
         usuario = getattr(self, 'usuario_actual', None)

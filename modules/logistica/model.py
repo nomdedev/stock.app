@@ -17,11 +17,17 @@ FLUJO PASO A PASO DEL MÓDULO LOGÍSTICA
 
 import pandas as pd
 from fpdf import FPDF
-from core.database import InventarioDatabaseConnection  # Importar la clase correcta
 
 class LogisticaModel:
-    def __init__(self, db_connection):
-        self.db = db_connection
+    def __init__(self, db_connection=None):
+        if db_connection is None:
+            # Permitir inicialización sin base de datos real para tests
+            class DummyDB:
+                def ejecutar_query(self, *args, **kwargs):
+                    return []
+            self.db = DummyDB()
+        else:
+            self.db = db_connection
 
     def obtener_datos_entregas(self):
         """Obtiene los datos de la tabla de entregas desde la base de datos."""
@@ -212,3 +218,24 @@ class LogisticaModel:
         except Exception as e:
             print(f"Error al agregar entrega: {e}")
             raise
+
+    def obtener_obras_listas_para_entrega(self, obras_model, inventario_model, vidrios_model, herrajes_model, contabilidad_model):
+        """
+        Devuelve la lista de obras listas para fabricar/entregar:
+        - Todos los pedidos de material, vidrios y herrajes deben estar realizados y pagados.
+        - Integra con los modelos de Inventario, Vidrios, Herrajes y Contabilidad.
+        """
+        obras = obras_model.obtener_todas_las_obras()
+        obras_listas = []
+        for obra in obras:
+            id_obra = obra['id'] if isinstance(obra, dict) else obra[0]
+            estado_mat = inventario_model.obtener_estado_pedidos_por_obra(id_obra)
+            estado_vid = vidrios_model.obtener_estado_pedidos_por_obra(id_obra)
+            estado_her = herrajes_model.obtener_estado_pedido_por_obra(id_obra)
+            pagos_mat = contabilidad_model.obtener_estado_pago_pedido_por_obra(id_obra, modulo="inventario")
+            pagos_vid = contabilidad_model.obtener_estado_pago_pedido_por_obra(id_obra, modulo="vidrios")
+            pagos_her = contabilidad_model.obtener_estado_pago_pedido_por_obra(id_obra, modulo="herrajes")
+            if (estado_mat == 'entregado' and estado_vid == 'entregado' and estado_her == 'entregado' and
+                pagos_mat == 'pagado' and pagos_vid == 'pagado' and pagos_her == 'pagado'):
+                obras_listas.append(obra)
+        return obras_listas

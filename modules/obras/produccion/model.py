@@ -70,3 +70,35 @@ class ProduccionModel:
     def eliminar_etapa_fabricacion(self, id_etapa):
         query = "DELETE FROM etapas_fabricacion WHERE id = ?"
         self.db.ejecutar_query(query, (id_etapa,))
+
+    def pedidos_realizados_y_pagados(self, id_obra):
+        """
+        Devuelve True si todos los pedidos de Inventario, Vidrios y Herrajes para la obra están realizados y pagados.
+        """
+        from modules.inventario.model import InventarioModel
+        from modules.vidrios.model import VidriosModel
+        from modules.herrajes.model import HerrajesModel
+        from modules.contabilidad.model import ContabilidadModel
+        inventario_model = InventarioModel(self.db)
+        vidrios_model = VidriosModel(self.db)
+        herrajes_model = HerrajesModel(self.db)
+        contabilidad_model = ContabilidadModel(self.db)
+        pedidos_inv = inventario_model.obtener_pedidos_por_obra(id_obra) or []
+        pedidos_vid = vidrios_model.obtener_pedidos_por_obra(id_obra) if hasattr(vidrios_model, 'obtener_pedidos_por_obra') else []
+        pedidos_her = herrajes_model.obtener_pedidos_por_obra(id_obra) or []
+        for pedido in pedidos_inv:
+            id_pedido = pedido[0]
+            estado_pago = contabilidad_model.obtener_estado_pago_pedido(id_pedido, 'Inventario')
+            if estado_pago != 'pagado':
+                return False
+        for pedido in pedidos_vid:
+            id_pedido = pedido[0]
+            estado_pago = contabilidad_model.obtener_estado_pago_pedido(id_pedido, 'Vidrios')
+            if estado_pago != 'pagado':
+                return False
+        for pedido in pedidos_her:
+            id_pedido = pedido[0]
+            estado_pago = contabilidad_model.obtener_estado_pago_pedido(id_pedido, 'Herrajes')
+            if estado_pago != 'pagado':
+                return False
+        return True

@@ -498,6 +498,35 @@ class InventarioModel:
             return 'pendiente'
         except Exception as e:
             return f"Error: {e}"
+
+    def registrar_pedido_material(self, id_obra, id_item, cantidad, estado, usuario=None):
+        """
+        Registra un pedido de material asociado a una obra, con estado y auditoría.
+        """
+        try:
+            query = """
+            INSERT INTO pedidos_material (id_obra, id_item, cantidad, estado, fecha, usuario)
+            VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
+            """
+            self.db.ejecutar_query(query, (id_obra, id_item, cantidad, estado, usuario or ""))
+            # Registrar en auditoría
+            from modules.auditoria.helpers import _registrar_evento_auditoria
+            _registrar_evento_auditoria(usuario, "Inventario", f"Pedido material: {cantidad} de {id_item} para obra {id_obra} (estado: {estado})")
+            return True
+        except Exception as e:
+            from core.logger import log_error
+            log_error(f"Error al registrar pedido de material: {e}")
+            return False
+
+    def obtener_pedidos_por_obra(self, id_obra):
+        """
+        Devuelve todos los pedidos de material asociados a una obra, con su estado y detalle.
+        """
+        try:
+            query = "SELECT id, id_item, cantidad, estado, fecha, usuario FROM pedidos_material WHERE id_obra = ? ORDER BY fecha DESC"
+            return self.db.ejecutar_query(query, (id_obra,)) or []
+        except Exception as e:
+            return f"Error: {e}"
     # NOTA: Si se detectan errores en los tests relacionados con la cantidad de columnas, tipos de retorno o mensajes,
     # revisar los mocks y la estructura de datos simulados. Los tests automáticos pueden requerir workarounds específicos
     # para compatibilidad con los datos de prueba.

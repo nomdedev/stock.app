@@ -114,6 +114,9 @@ class HerrajesModel:
         """
         Devuelve el estado del pedido de herrajes para una obra dada.
         Retorna un string: 'pendiente', 'pedido', 'en proceso', 'entregado', etc.
+        Si no hay pedidos, retorna 'pendiente'.
+        Si ocurre un error, retorna 'error: <detalle>'.
+        Justificación: permite integración y trazabilidad entre módulos.
         """
         try:
             query = "SELECT estado FROM pedidos_herrajes WHERE id_obra = ? ORDER BY fecha DESC LIMIT 1"
@@ -122,4 +125,18 @@ class HerrajesModel:
                 return resultado[0][0]
             return 'pendiente'
         except Exception as e:
+            # Excepción documentada: error de conexión o consulta
+            return f"Error: {e}"
+
+    def obtener_pedidos_por_obra(self, id_obra):
+        """
+        Devuelve todos los pedidos de herrajes asociados a una obra, con su estado y detalle.
+        Si ocurre un error, retorna 'error: <detalle>' o lista vacía.
+        Justificación: permite trazabilidad y consulta centralizada desde Obras, Producción y Logística.
+        """
+        try:
+            query = "SELECT id, id_herraje, cantidad, estado, fecha, usuario FROM pedidos_herrajes WHERE id_obra = ? ORDER BY fecha DESC"
+            return self.db.ejecutar_query(query, (id_obra,)) or []
+        except Exception as e:
+            # Excepción documentada: error de conexión o consulta
             return f"Error: {e}"

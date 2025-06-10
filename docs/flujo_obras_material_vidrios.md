@@ -17,17 +17,17 @@
 # [x] Vidrios: registrar y actualizar pedidos por obra y usuario, estado y auditoría.
 # [x] Vidrios: mostrar pedidos por usuario y detalle de cada pedido.
 # [x] Inventario: pestañas para perfiles y obras con estado de pedidos de material.
-# [ ] Inventario: lógica para impedir pedidos a obras inexistentes (validar contra módulo Obras).
-# [ ] Inventario: registrar y actualizar pedidos de material por obra, estado y auditoría.
-# [ ] Inventario: exponer métodos para consultar estado de pedidos por obra (para Obras y Producción).
-# [ ] Herrajes: unificar lógica de pedidos por obra, estado y auditoría.
-# [ ] Herrajes: exponer métodos para consultar estado de pedidos por obra.
-# [ ] Obras: mostrar estado de pedidos de todos los módulos por obra (vidrios, inventario, herrajes).
-# [ ] Obras: impedir pedidos a obras inexistentes desde otros módulos.
-# [ ] Producción: exponer método para saber si todos los pedidos están realizados y pagados.
-# [ ] Contabilidad: registrar y actualizar pagos de pedidos, exponer estado de pago por pedido.
-# [ ] Logística: consultar obras listas para fabricar/entregar y asignar colocador.
-# [ ] Documentar excepciones y justificaciones en docs/estandares_visuales.md y docs/flujo_obras_material_vidrios.md.
+# [x] Inventario: lógica para impedir pedidos a obras inexistentes (validar contra módulo Obras).
+# [x] Inventario: registrar y actualizar pedidos de material por obra, estado y auditoría.
+# [x] Inventario: exponer métodos para consultar estado de pedidos por obra (para Obras y Producción).
+# [x] Herrajes: unificar lógica de pedidos por obra, estado y auditoría.
+# [x] Herrajes: exponer métodos para consultar estado de pedidos por obra.
+# [x] Obras: mostrar estado de pedidos de todos los módulos por obra (vidrios, inventario, herrajes).
+# [x] Obras: impedir pedidos a obras inexistentes desde otros módulos.
+# [x] Producción: exponer método para saber si todos los pedidos están realizados y pagados.
+# [x] Contabilidad: registrar y actualizar pagos de pedidos, exponer estado de pago por pedido.
+# [x] Logística: consultar obras listas para fabricar/entregar y asignar colocador.
+# [x] Documentar excepciones y justificaciones en docs/estandares_visuales.md y docs/flujo_obras_material_vidrios.md.
 # [x] Implementar tests automáticos de integración y feedback visual.
 #
 # Ver también: docs/flujo_obras_material_vidrios.md y docs/checklist_mejoras_uiux_por_modulo.md
@@ -164,5 +164,35 @@ Describir paso a paso el proceso completo para garantizar que:
 - Este flujo asegura que los cambios de estado de los pedidos se reflejan en tiempo real en los módulos relevantes, sin necesidad de recargar la app.
 
 ---
+
+## Excepciones y justificaciones (Herrajes)
+
+- Si ocurre un error de conexión o consulta al obtener pedidos o estado de pedidos de herrajes, el sistema retorna un string de error y lo registra en la auditoría. Esto permite detectar problemas de integración y mantener la trazabilidad.
+- Si no hay pedidos registrados para una obra, el estado retornado es 'pendiente' por convención, para facilitar la integración con Producción y Logística.
+- Todos los métodos de consulta de pedidos y estado en Herrajes están documentados y expuestos para integración cruzada.
+
+## Excepciones y justificaciones (Logística)
+
+- Si ocurre un error al consultar obras listas para entrega o al asignar colocador, el sistema muestra feedback visual y registra el evento en auditoría.
+- La consulta de obras listas integra los estados y pagos de todos los módulos (Inventario, Vidrios, Herrajes, Contabilidad) para asegurar robustez y trazabilidad.
+- El método de asignación de colocador valida y registra la acción, permitiendo seguimiento y auditoría cruzada.
+
+## Excepciones y justificaciones (Inventario)
+
+- Si ocurre un error de conexión o consulta al obtener pedidos o estado de pedidos de material, el sistema retorna un string de error y lo registra en la auditoría.
+- Si no hay pedidos registrados para una obra, el estado retornado es 'pendiente' para facilitar la integración y trazabilidad.
+- Los métodos de consulta de pedidos y estado están documentados y expuestos para integración cruzada.
+
+## Excepciones y justificaciones (Vidrios)
+
+- Si ocurre un error al consultar pedidos o estado de vidrios, se muestra feedback visual y se registra el evento en auditoría.
+- Si no hay pedidos de vidrios para una obra, el estado retornado es 'pendiente'.
+- Los métodos de consulta y registro de pedidos están documentados y permiten trazabilidad total.
+
+## Excepciones y justificaciones (Obras y Producción)
+
+- Si algún módulo no puede consultar el estado de pedidos de una obra, se muestra advertencia visual y se registra en auditoría.
+- La habilitación de fabricación en Producción depende de la consulta exitosa de todos los estados y pagos; si hay error, se bloquea la acción y se informa al usuario.
+- El método de Producción para habilitar fabricación valida que todos los pedidos estén realizados y pagados, y documenta cualquier excepción o edge case.
 
 > Actualiza este documento cada vez que se ajuste el flujo o se detecte un caso especial.

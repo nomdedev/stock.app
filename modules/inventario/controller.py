@@ -298,11 +298,12 @@ class InventarioController:
                         return
                     # Validación cruzada: impedir reservas a obras inexistentes
                     id_obra = obra if obra.isdigit() else None
-                    if id_obra is not None:
-                        if not self.obras_model.existe_obra_por_id(int(id_obra)):
-                            self._feedback("No existe una obra con el ID especificado. No se puede reservar material.", tipo='error')
-                            self._registrar_evento_auditoria('reserva_material', f"Intento de reserva a obra inexistente: {obra}", exito=False)
-                            return
+                    from modules.obras.model import ObrasModel
+                    obras_model = ObrasModel(self.db_connection)
+                    if id_obra is not None and not obras_model.existe_obra_por_id(int(id_obra)):
+                        self._feedback("No existe una obra con ese ID. No se puede reservar material.", tipo='error')
+                        self._registrar_evento_auditoria('reserva_material', f"Intento de reserva a obra inexistente: {id_obra}", exito=False)
+                        return
                     # Si se usa nombre, se podría agregar validación adicional aquí
                     try:
                         self.model.db.ejecutar_query(
@@ -311,6 +312,14 @@ class InventarioController:
                             VALUES (?, ?, ?, ?, 'activa')
                             """,
                             (obra, id_item, cantidad_int, codigo_reserva)
+                        )
+                        # Registrar pedido de material y auditar
+                        self.model.registrar_pedido_material(
+                            id_obra=int(id_obra) if id_obra is not None else None,
+                            id_item=int(id_item),
+                            cantidad=cantidad_int,
+                            estado='reservado',
+                            usuario=self.usuario_actual.get('nombre', '') if self.usuario_actual else None
                         )
                         self._registrar_evento_auditoria('reserva_material', f"Reserva creada: {codigo_reserva} para obra {obra} y material {id_item}")
                         self._feedback(f"Reserva creada correctamente para obra {obra} y material {id_item}.", tipo='success')

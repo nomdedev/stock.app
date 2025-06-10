@@ -122,6 +122,21 @@ class VidriosController:
         )
         self.cargar_pedidos_usuario(self.usuario_actual)
 
+    def reservar_vidrio(self, usuario, id_obra, id_vidrio, cantidad):
+        """
+        Reserva vidrio para una obra, validando que la obra exista antes de registrar el pedido.
+        """
+        from modules.obras.model import ObrasModel
+        obras_model = ObrasModel(self.model.db)
+        if not obras_model.existe_obra_por_id(id_obra):
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje("No existe una obra con ese ID. No se puede reservar vidrio.", tipo='error')
+            self.auditoria_model.registrar_evento(
+                usuario, "Vidrios", "reserva_vidrio", f"Intento de reserva a obra inexistente: {id_obra}", "error"
+            )
+            return False
+        return self.model.reservar_vidrio(usuario, id_obra, id_vidrio, cantidad)
+
 # Nota: Para integración en tiempo real, conectar así desde el controlador principal:
 # self.obras_view.obra_agregada.connect(self.vidrios_controller.actualizar_por_obra)
 # Esto permitirá que al agregar una obra, la tabla de vidrios se refresque automáticamente.

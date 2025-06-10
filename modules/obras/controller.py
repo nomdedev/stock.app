@@ -748,3 +748,24 @@ class ObrasController:
             for idx, modulo in enumerate(['inventario', 'vidrios', 'herrajes']):
                 valor = estados.get(modulo, '-')
                 self.view.tabla_obras.setItem(fila, 4 + idx, QTableWidgetItem(str(valor)))
+
+    def mostrar_estado_pedidos_por_obra(self, id_obra):
+        """
+        Consulta y muestra el estado de pedidos de Inventario, Vidrios y Herrajes para la obra indicada.
+        """
+        from modules.inventario.model import InventarioModel
+        from modules.vidrios.model import VidriosModel
+        from modules.herrajes.model import HerrajesModel
+        inventario_model = InventarioModel(self.model.db_connection)
+        vidrios_model = VidriosModel(self.model.db_connection)
+        herrajes_model = HerrajesModel(self.model.db_connection)
+        pedidos_inventario = inventario_model.obtener_pedidos_por_obra(id_obra)
+        pedidos_vidrios = vidrios_model.obtener_pedidos_por_obra(id_obra) if hasattr(vidrios_model, 'obtener_pedidos_por_obra') else []
+        pedidos_herrajes = herrajes_model.obtener_pedidos_por_obra(id_obra)
+        # Mostrar en la vista (puede ser en un panel lateral, modal o sección de la obra)
+        if hasattr(self.view, 'mostrar_estado_pedidos'):
+            self.view.mostrar_estado_pedidos(pedidos_inventario, pedidos_vidrios, pedidos_herrajes)
+        else:
+            print(f"Pedidos Inventario: {pedidos_inventario}")
+            print(f"Pedidos Vidrios: {pedidos_vidrios}")
+            print(f"Pedidos Herrajes: {pedidos_herrajes}")
