@@ -176,4 +176,17 @@
 
 ---
 
+## Guardado seguro y recarga dinámica de la configuración de conexión
+
+- La edición de IP, usuario, contraseña, base y timeout se realiza desde la UI (Configuración > Base de Datos).
+- Al guardar, la app valida y prueba la conexión. Si es exitosa, sobrescribe el archivo `config/privado/.env` (nunca el código fuente).
+- La recarga es inmediata: la app usa la nueva configuración sin reiniciar.
+- Todo cambio queda registrado en auditoría.
+- Solo usuarios administradores pueden modificar estos valores.
+- Si usas IP, asegúrate de que SQL Server acepte conexiones remotas y el puerto esté abierto.
+
+> Ver README y este documento para ejemplos y advertencias.
+
+---
+
 > Esta guía debe mantenerse actualizada ante cualquier cambio en la lógica de configuración o UI. Para ampliaciones (perfiles, export/import, historial, permisos granulares), ver la hoja de ruta técnica y sugerencias en este mismo documento.

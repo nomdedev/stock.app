@@ -4,6 +4,26 @@ from modules.obras.model import ObrasModel, OptimisticLockError
 from modules.obras.controller import ObrasController
 from modules.auditoria.model import AuditoriaModel
 
+# ---
+# TEST DE INTEGRACIÓN REAL: Gestión de Obras y Pedidos
+# Este archivo contiene tests de integración que pueden ejecutarse contra la base de datos real.
+# REQUIERE entorno configurado y archivo .env con las credenciales correctas.
+# Por defecto, usa una base en memoria y mocks para evitar modificar datos reales.
+# Para ejecutar contra la base real:
+#   1. Renombrar este archivo a test_obras_controller_integracion_real.py (opcional, pero recomendado para distinguirlo).
+#   2. Modificar los fixtures db_conn/model/controller para usar la conexión real (ver ejemplo abajo).
+#   3. Asegurarse de tener backup de la base de datos antes de correr los tests.
+#   4. Ejecutar manualmente: pytest tests/obras/test_obras_controller_integracion.py
+#   5. Revisar y documentar cualquier diferencia, bug o hallazgo en docs/ESTANDARES_Y_CHECKLISTS.md y test_results/.
+#
+# NOTA: No ejecutar en CI ni en entornos productivos. Solo para QA manual y validación de integración.
+#
+# Para alternar entre modo dummy y real, modificar el fixture db_conn:
+#   - Dummy (por defecto): sqlite3.connect(":memory:")
+#   - Real: sqlite3.connect("ruta_a_tu_base_real.db") o usar el conector real del proyecto.
+#
+# ---
+
 @pytest.fixture
 def db_conn():
     conn = sqlite3.connect(":memory:")

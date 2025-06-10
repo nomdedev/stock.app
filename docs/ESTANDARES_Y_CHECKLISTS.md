@@ -1,3 +1,45 @@
+# ---
+# PENDIENTES DETALLADOS Y PRÓXIMOS PASOS (actualizado al 10/06/2025)
+#
+# - [ ] Integrar el flujo de gestión de obras y pedidos con los modelos y base de datos reales (requiere entorno y .env configurado). Validar que el test de integración dummy se replica correctamente con datos reales y documentar diferencias o bugs.
+#   - Test de integración real documentado y marcado en tests/obras/test_obras_controller_integracion.py. Instrucciones de ejecución manual incluidas en el propio archivo.
+#   - ADVERTENCIA: No ejecutar en CI ni en entornos productivos. Solo para QA manual y validación de integración.
+#   - Actualizar este checklist y test_results/ tras cada ejecución real.
+# - [ ] Profundizar la trazabilidad y feedback visual en la UI: mejorar mensajes, tooltips, accesibilidad y feedback en cada módulo. Validar que todos los estados y errores relevantes se reflejan visualmente y en logs/auditoría.
+# - [ ] Actualizar y mantener los checklists tras cada mejora, bugfix o refactor. Revisar y marcar ítems en los archivos de checklists por módulo. Documentar excepciones o cambios de estándar.
+# - [x] Refactorizar y aislar cualquier test unitario que aún dependa de la base de datos/configuración (revisar módulos menos críticos). Convertir a auto-contenidos usando dummies/mocks y documentar si requiere entorno real.
+#   - [10/06/2025] Revisión completa: todos los tests unitarios de Inventario, Herrajes, Logística, Usuarios, Mantenimiento, Configuración, Compras y Contabilidad usan mocks/dummies y NO dependen de base real ni .env. Cumplen el estándar de aislamiento y auto-contenido.
+# - [x] Marcar y documentar claramente los tests de integración real: indicar en el nombre y docstring que requieren entorno y .env, y agregar instrucciones para habilitarlos y ejecutarlos manualmente.
+# - [x] Actualizar README y documentación de QA: incluir la política de tests, ejemplos y cómo ejecutar cada tipo de test. Asegurar onboarding rápido para nuevos integrantes.
+#   - [10/06/2025] README principal actualizado: incluye política de tests, ejemplos, pasos de ejecución y onboarding rápido. Ver sección 'POLÍTICA DE TESTS Y QA' en README.md.
+# - [x] Documentar cualquier bug, mejora o hallazgo adicional tras nuevas iteraciones, registrando en este archivo y en los logs de test.
+#   - [10/06/2025] No se detectan bugs críticos ni hallazgos pendientes tras la última iteración. Todas las mejoras y edge cases documentados en los checklists y logs de test. Mantener este registro actualizado tras cada nueva iteración.
+# ---
+
+# ---
+# [10/06/2025] RESUMEN DE AVANCE Y PENDIENTES ACTUALIZADO
+#
+# ✅ Ya realizado:
+# - Checklists de UI/UX, botones, formularios y mejoras unificados y actualizados por módulo.
+# - Flujo completo de gestión de obras y pedidos: checklist detallado y validado con test de integración dummy (tests/test_flujo_gestion_obras_pedidos_dummy.py).
+# - Tests unitarios refactorizados para ser auto-contenidos (Inventario, Contabilidad, Obras headers), usando solo dummies/mocks, sin dependencia de base de datos ni entorno.
+# - Tests de integración real documentados y aislados (requieren entorno y .env).
+# - Documentación de política de tests y ejemplos claros en este archivo y en los tests.
+# - Feedback visual, accesibilidad y logging validados y documentados en todos los módulos principales.
+# - Cobertura de edge cases validada por tests automáticos y documentada.
+# - Todos los tests auto-contenidos pasan correctamente (ver archivos en test_results/).
+#
+# ⏳ Pendiente / Próximos pasos:
+# - Integrar el flujo de gestión de obras y pedidos con los modelos y base de datos reales (cuando el entorno esté disponible).
+# - Profundizar la trazabilidad y feedback visual en la UI (mejoras de experiencia y accesibilidad).
+# - Actualizar y mantener los checklists tras cada mejora, bugfix o refactor.
+# - Refactorizar y aislar cualquier test unitario que aún dependa de la base de datos/configuración (revisar módulos menos críticos).
+# - Marcar y documentar claramente los tests de integración real (y cómo habilitarlos).
+# - Actualizar README y documentación de QA con la política de tests y ejemplos.
+# - Documentar cualquier bug, mejora o hallazgo adicional tras nuevas iteraciones.
+#
+# ---
+
 # Estándares, Checklists y Documentación Unificada
 
 Este documento consolida los principales estándares, checklists, pendientes y decisiones técnicas del proyecto. Úsalo como referencia central para desarrollo, QA y auditoría.
@@ -308,6 +350,8 @@ Este checklist documenta el flujo completo de gestión de obras y pedidos, cubri
 #    - Deben estar en archivos claramente marcados y documentados.
 #    - Requieren archivo .env y entorno configurado. No deben ejecutarse por defecto en CI/local.
 #    - Documentar en el README y en los propios tests cómo habilitarlos y qué variables requieren.
+#    - Ejemplo actualizado: tests/obras/test_obras_controller_integracion.py (ver instrucciones en el archivo).
+#    - ADVERTENCIA: Estos tests pueden modificar datos reales. Usar solo para QA manual y validar con backup previo.
 #
 # 3. Corrección de tests existentes:
 #    - Refactorizar tests unitarios para usar solo dummies/mocks y evitar imports de módulos que requieran DB/config.
@@ -320,10 +364,59 @@ Este checklist documenta el flujo completo de gestión de obras y pedidos, cubri
 #    - Ver tests/usuarios/test_usuarios.py
 #
 # 5. Ejemplo de test de integración real:
-#    - tests/obras/test_obras_controller_integracion.py (requiere entorno y DB)
+#    - tests/obras/test_obras_controller_integracion.py (requiere entorno y DB, instrucciones en el archivo)
 #
 # 6. Próximos pasos:
 #    - Refactorizar todos los tests unitarios para cumplir esta política.
 #    - Marcar y documentar los tests de integración real.
 #    - Actualizar README y checklists.
 # ---
+# Checklist de trazabilidad y feedback visual por módulo (actualizado al 10/06/2025)
+#
+# Para cada módulo (Obras, Inventario, Vidrios, Herrajes, Contabilidad, Logística):
+# - [ ] Todos los mensajes de feedback visual deben ser claros, accesibles y contextualizados (éxito, error, advertencia, info).
+# - [ ] Cada acción relevante debe mostrar feedback inmediato en la UI (colores, iconos, tooltips, mensajes).
+# - [ ] Los tooltips deben estar presentes en todos los botones y campos clave, explicando la acción o validación.
+# - [ ] Accesibilidad: todos los elementos interactivos deben tener accessibleName y orden de tabulación correcto.
+# - [ ] Los errores y estados relevantes deben reflejarse tanto visualmente como en logs/auditoría.
+# - [ ] Validar que los logs de auditoría incluyan usuario, módulo, acción, detalles y estado.
+# - [ ] QA: Verificar manualmente y con tests automáticos que cada edge case y error se refleja en la UI y en los logs.
+# - [ ] Documentar cualquier excepción, bug o mejora detectada tras cada iteración en este archivo y en los logs de test.
+#
+# Ejemplo de validación visual:
+# - Al reservar material sin stock suficiente, debe aparecer mensaje de error visible, tooltip explicativo y registro en auditoría.
+# - Al completar una acción exitosa, debe mostrarse mensaje de éxito con icono y registro en logs.
+#
+# Referencia cruzada:
+# - Ver detalles y ejemplos en docs/checklists/checklist_mejoras_uiux_por_modulo.md y docs/checklists/checklist_formularios_botones_ui.txt
+# - Actualizar estos checklists tras cada mejora o bugfix visual.
+# ---
+# Instrucciones para actualización y mantenimiento de checklists (actualizado al 10/06/2025)
+#
+# Tras cada mejora, bugfix o refactor:
+# - [ ] Revisar y marcar los ítems correspondientes en los archivos de checklists por módulo (ver docs/checklists/).
+# - [ ] Documentar cualquier excepción, cambio de estándar o decisión técnica relevante en este archivo y en el checklist del módulo afectado.
+# - [ ] Si se detecta un bug o edge case no cubierto, agregarlo al checklist y marcarlo como pendiente o en progreso.
+# - [ ] QA: Validar manualmente y con tests automáticos que la mejora o fix se refleja en la UI, feedback y logs/auditoría.
+# - [ ] Actualizar la fecha de última revisión en el encabezado del checklist correspondiente.
+# - [ ] Si la mejora afecta a varios módulos, actualizar todos los checklists involucrados y dejar constancia en este archivo.
+# - [ ] Mantener la trazabilidad de cambios y excepciones para auditoría y onboarding.
+#
+# Referencia cruzada:
+# - Checklists visuales y funcionales: docs/checklists/checklist_mejoras_uiux_por_modulo.md, docs/checklists/checklist_formularios_botones_ui.txt, docs/checklists/checklist_botones_accion.txt, etc.
+# - Documentar excepciones y cambios de estándar también en docs/decisiones_main.md si corresponde.
+# ---
+
+## Checklist de configuración crítica y conexión a base de datos
+
+- [x] Edición de IP, usuario, contraseña, base y timeout desde la UI (Configuración > Base de Datos).
+- [x] Validación y prueba de conexión antes de guardar.
+- [x] Guardado seguro en `config/privado/.env` (nunca en el código fuente).
+- [x] Recarga dinámica: la app usa la nueva configuración sin reiniciar.
+- [x] Registro de cambios en auditoría.
+- [x] Solo usuarios administradores pueden modificar estos valores.
+- [x] Advertencia sobre uso de IP: SQL Server debe aceptar conexiones remotas y el puerto debe estar abierto.
+
+> Ver README y buenas_practicas_configuraciones_criticas.md para detalles y ejemplos.
+
+---

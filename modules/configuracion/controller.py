@@ -1,5 +1,6 @@
 from utils.theme_manager import aplicar_tema, guardar_modo_tema, set_theme
 from core.config import DEFAULT_THEME
+from core.config_manager import ConfigManager
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
@@ -221,20 +222,27 @@ class ConfiguracionController:
                 if not valor.strip():
                     self.mostrar_mensaje(f"El campo '{nombre}' es obligatorio.", tipo="error", destino="resultado_conexion_label")
                     return
-            datos = {
-                "servidor": self._get_text('server_input'),
-                "usuario": self._get_text('username_input'),
-                "contraseña": self._get_text('password_input'),
-                "puerto": self._get_text('port_input'),
-                "base_predeterminada": self._get_text('default_db_input'),
-                "timeout": self._get_text('timeout_input'),
+            # Mapear a claves reales del .env
+            data_env = {
+                "DB_SERVER": self._get_text('server_input'),
+                "DB_USERNAME": self._get_text('username_input'),
+                "DB_PASSWORD": self._get_text('password_input'),
+                "DB_DEFAULT_DATABASE": self._get_text('default_db_input'),
+                "DB_TIMEOUT": self._get_text('timeout_input') or '5',
+                "DB_DRIVER": "ODBC Driver 17 for SQL Server",
             }
+            puerto = self._get_text('port_input')
+            if puerto:
+                # Si el usuario ingresa IP y puerto separados, concatenar
+                if ',' not in data_env["DB_SERVER"] and puerto != '1433':
+                    data_env["DB_SERVER"] = f"{data_env['DB_SERVER']},{puerto}"
             resultado = self.probar_conexion_bd(retornar_resultado=True)
             if not (resultado and resultado.get('exito')):
                 mensaje = resultado.get('mensaje') if resultado else 'Error desconocido.'
                 self.mostrar_mensaje(f"No se puede guardar: {mensaje}", tipo="error", destino="resultado_conexion_label")
                 return
-            self.model.guardar_configuracion_conexion(datos)
+            ConfigManager.save_env(data_env)
+            ConfigManager.load_env()  # Recarga en memoria
             self.mostrar_mensaje("Configuración guardada correctamente", tipo="exito", destino="resultado_conexion_label")
         except Exception as e:
             self.mostrar_mensaje(f"Error al guardar: {str(e)}", tipo="error", destino="resultado_conexion_label")

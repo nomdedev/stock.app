@@ -1,9 +1,13 @@
 import os
 from dotenv import load_dotenv
 
-# Cargar variables desde .env usando ruta absoluta para máxima compatibilidad
-DOTENV_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env'))
-load_dotenv(dotenv_path=DOTENV_PATH, override=True)
+# Buscar primero en config/privado/.env, luego fallback a .env en raíz
+PRIVADO_DOTENV_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'config', 'privado', '.env'))
+ROOT_DOTENV_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env'))
+if os.path.exists(PRIVADO_DOTENV_PATH):
+    load_dotenv(dotenv_path=PRIVADO_DOTENV_PATH, override=True)
+else:
+    load_dotenv(dotenv_path=ROOT_DOTENV_PATH, override=True)
 
 # Configuración de conexión a la base de datos
 DB_SERVER = os.getenv("DB_SERVER", "")

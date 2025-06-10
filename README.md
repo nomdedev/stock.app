@@ -635,12 +635,28 @@ El sistema ahora utiliza `pyodbc` para conectarse a SQL Server. Asegúrate de qu
 5. Probar la conexión con el botón correspondiente.
 6. Si la conexión es exitosa, guardar los cambios. La configuración quedará guardada y se usará en los próximos inicios.
 
-### Notas técnicas
+### Guardado y recarga dinámica de la configuración
 
-- El sistema utiliza una única conexión persistente por base de datos, inyectada en los modelos.
-- Si la conexión falla, la app muestra un aviso y permite navegación básica en modo offline.
-- Todas las acciones relevantes quedan registradas en auditoría.
-- Los tests de conexión y guardado de configuración están cubiertos en los tests automáticos.
+A partir de la versión 2025-06, la configuración de conexión (servidor/IP, usuario, contraseña, base, timeout) se guarda y recarga automáticamente en el archivo seguro `config/privado/.env`.
+
+- **Edición desde la app:**
+  1. Ve a Configuración > Base de Datos.
+  2. Edita el campo "Servidor" con la nueva IP y puerto (ejemplo: `192.168.1.100,1433`).
+  3. Ingresa usuario, contraseña y base de datos si es necesario.
+  4. Haz clic en "Probar conexión". Si es exitosa, haz clic en "Guardar".
+  5. La app usará la nueva configuración de inmediato y los cambios quedarán guardados para futuros inicios.
+
+- **¿Dónde se guarda?**
+  - En `config/privado/.env` (nunca en el código fuente ni en la base de datos por defecto).
+  - Solo usuarios administradores pueden modificar estos valores.
+
+- **¿Qué ocurre al guardar?**
+  - Se valida y prueba la conexión antes de guardar.
+  - Si es exitosa, se sobrescribe el `.env` seguro y la app recarga la configuración en memoria.
+  - No es necesario reiniciar la app.
+  - Todo cambio queda registrado en auditoría.
+
+> **Nota:** Si usas IP, asegúrate de que SQL Server acepte conexiones remotas y el puerto esté abierto.
 
 ---
 
@@ -940,120 +956,43 @@ Desde mayo 2025, la gestión de usuarios y la pestaña de permisos por usuario s
 
 ---
 
-## Recursos y temas visuales
+# POLÍTICA DE TESTS Y QA (actualizado al 10/06/2025)
 
-- Los archivos QSS de temas deben estar en `resources/qss/`.
-- Los íconos deben estar en `resources/icons/`.
-- Los scripts de base de datos deben estar en `scripts/db/`.
-- Los archivos PDF y Excel de auditoría/documentación deben estar en `docs/auditoria/`.
-- Si existen archivos QSS en `themes/`, deben eliminarse si ya están en `resources/qss/` y no son requeridos por compatibilidad.
-- El código debe apuntar a las rutas de recursos centralizadas.
+## Tipos de tests
 
-Ejemplo de carga de tema:
-```python
-qss_path = os.path.join('resources', 'qss', 'theme_light.qss')
-```
+- **Tests unitarios**: No dependen de base de datos real ni servicios externos. Usan mocks y dummies. Se ubican en las subcarpetas de `tests/` por módulo (ej: `tests/obras/`, `tests/inventario/`, etc.).
+- **Tests de integración**: Verifican la interacción real con la base de datos u otros servicios. Se ubican en archivos con sufijo `_integracion.py` o en subcarpetas específicas. Solo deben ejecutarse en entornos preparados y con `.env` configurado.
+- **Tests de QA manual**: Flujos completos, validación visual y feedback, ejecución manual siguiendo los checklists de `docs/`.
 
----
+## Ejecución de tests
 
-## Convención de tests: unitarios vs integración
-
-- **Tests unitarios**: No dependen de base de datos real ni servicios externos. Usan mocks y stubs. Se ubican en las subcarpetas de `tests/` por módulo (ej: `tests/obras/`, `tests/inventario/`, etc.).
-- **Tests de integración**: Verifican la interacción real con la base de datos u otros servicios. Se ubican en archivos con sufijo `_integracion.py` o en subcarpetas específicas. Solo deben ejecutarse en entornos preparados.
-- Los tests que requieren concurrencia, transacciones reales o validación de integridad (ej: optimistic lock) deben migrarse a integración y no ejecutarse como unitarios.
-- Para agregar un nuevo test:
-  1. Si es unitario, usa mocks y colócalo en la subcarpeta del módulo.
-  2. Si requiere base real, colócalo en un archivo `*_integracion.py` y documenta los prerequisitos.
-- Ejecuta todos los tests unitarios con:
+- Ejecuta todos los tests unitarios:
   ```powershell
   pytest tests/ --maxfail=5 --disable-warnings -v
   ```
-- Ejecuta solo los de integración cuando el entorno esté preparado:
+- Ejecuta solo los de integración (requieren entorno y .env):
   ```powershell
-  pytest tests/obras/test_obras_optimistic_lock_integracion.py
+  pytest tests/obras/test_obras_controller_integracion.py
   ```
+- Para QA manual, sigue los checklists de `docs/ESTANDARES_Y_CHECKLISTS.md` y los archivos en `docs/checklists/`.
 
----
+## Ejemplos y convenciones
 
-## Configuración y seguridad
+- Los tests unitarios deben usar solo mocks/dummies y estar marcados como auto-contenidos.
+- Los tests de integración deben estar claramente documentados, con instrucciones para habilitarlos y advertencias sobre el entorno.
+- Ver ejemplos en:
+  - `tests/test_flujo_gestion_obras_pedidos_dummy.py` (unitario auto-contenido)
+  - `tests/obras/test_obras_controller_integracion.py` (integración real)
 
-- Todas las variables sensibles y de entorno deben definirse en un archivo `.env` (no versionado).
-- Ejemplo de archivo: `.env.example2` (renómbralo a `.env` y completa los valores).
-- El archivo `core/config.py` carga automáticamente las variables usando `python-dotenv`.
-- Nunca subas `.env` real ni credenciales al repositorio.
-- Si agregas una nueva variable de configuración, documenta su propósito en `.env.example2` y en este README.
+## Onboarding rápido para nuevos integrantes
 
----
+1. Lee `docs/ESTANDARES_Y_CHECKLISTS.md` y los archivos de checklists por módulo.
+2. Ejecuta los tests unitarios para validar tu entorno.
+3. Si necesitas validar integración real, configura `.env` y ejecuta los tests de integración manualmente.
+4. Consulta los resultados en la carpeta `test_results/`.
+5. Documenta cualquier bug, mejora o hallazgo en los archivos de checklist y en los logs.
 
-## Configuración y seguridad de variables de entorno (.env)
-
-La aplicación utiliza un archivo `.env` para gestionar todas las variables sensibles y de entorno. Nunca subas tus credenciales reales al repositorio.
-
-- Usa el archivo `.env.example` como plantilla: cópialo y renómbralo a `.env` en la raíz del proyecto.
-- Completa los valores según tu entorno (servidor, usuario, contraseña, etc.).
-- Todas las variables requeridas están documentadas en `.env.example` y son leídas automáticamente por la app.
-- El archivo `.env` debe estar en `.gitignore` y nunca debe compartirse ni subirse a ningún repositorio.
-- Si necesitas compartir la configuración, usa solo `.env.example` (sin datos reales).
-
-### Variables principales
-
-- `DB_SERVER`, `DB_USERNAME`, `DB_PASSWORD`, `DB_PORT`, `DB_DEFAULT_DATABASE`, etc.
-- Consulta y edita el archivo `.env.example` para ver todas las variables soportadas.
-
-### Seguridad
-
-- Nunca dejes credenciales hard-coded en el código fuente ni en notebooks.
-- Si encuentras datos sensibles en el código, reemplázalos por variables de entorno y actualiza `.env.example`.
-- El sistema carga automáticamente las variables usando `python-dotenv`.
-
----
-
-## Organización de tests y fixtures
-
-- Los tests están organizados en subcarpetas por módulo dentro de `tests/` (ej: `tests/obras/`, `tests/inventario/`, etc.).
-- Los datos de prueba reutilizables (fixtures) se encuentran en `tests/fixtures/`.
-- Cada módulo puede tener su propio README en la subcarpeta de tests para explicar casos especiales.
-- Los tests unitarios usan mocks y datos de fixtures; los de integración pueden requerir base real y deben estar claramente separados.
-- Consulta y edita `tests/fixtures/README.md` para ver la convención de fixtures y cómo usarlos en los tests.
-
----
-
-## Estilos visuales y QSS
-
-- Todos los estilos visuales de la app están centralizados en dos archivos QSS:
-  - `resources/qss/theme_light.qss`
-  - `resources/qss/theme_dark.qss`
-- **No se permite** el uso de `setStyleSheet` embebido en widgets/componentes, excepto para aplicar el theme global o personalizar dialogs (ejemplo: QMessageBox, QDialog), debidamente documentado.
-- Si encuentras un uso de `setStyleSheet` fuera de estos casos, repórtalo y migra el estilo al QSS global.
-- Consulta `docs/estandares_visuales.md` para detalles y excepciones documentadas.
-
----
-
-## Cobertura de tests
-
-![Cobertura](https://img.shields.io/badge/coverage-11%25-red)
-
-Para ver el reporte de cobertura actualizado, ejecuta:
-
-```powershell
-pytest tests/ --disable-warnings --cov=modules --cov-report=term-missing
-```
-
-Más detalles en `README_TESTS.md`.
-
----
-
-## Documentación de cumplimiento de estándares
-
-- [x] Formulario Recepción Pedido (Pedidos): Modal robusto, feedback, accesibilidad, validación visual/backend, logging y auditoría. COMPLETO 07/06/2025.
-- [08/06/2025] Formulario Editar Envío (Logística): Implementado modal robusto, validación visual/backend, feedback accesible, tooltips, cierre solo en éxito, integración con controller, logging/auditoría, refresco de tabla. Cumple checklist UI/UX, accesibilidad y feedback.
-- [08/06/2025] Formulario Eliminar Envío (Logística): Implementado modal robusto, confirmación accesible, feedback visual, tooltips, cierre solo en éxito, logging/auditoría, refresco de tabla. Cumple checklist UI/UX, accesibilidad y feedback.
-- [08/06/2025] Botón Filtrar Auditoría (Auditoría): Implementado modal robusto, feedback accesible, tooltips, cierre solo en éxito, integración con controller, logging/auditoría, refresco de tabla, validación visual/backend, cobertura de tests. Cumple checklist UI/UX, accesibilidad y feedback.
-- [08/06/2025] Botón Exportar a Excel (Auditoría): Implementado modal robusto, confirmación accesible, feedback visual, tooltips, cierre solo en éxito, logging/auditoría, refresco de tabla, validación visual/backend, integración con controller, cobertura de tests. Cumple checklist UI/UX, accesibilidad y feedback.
-
----
-
-## Checklist de robustez y feedback UI/UX (actualizado 2025-06-07)
-- UsuariosView: COMPLETO. Todos los métodos críticos y formularios robustos contra None/atributo, validación de tipos, feedback visual, edge cases documentados.
-  - Métodos: cargar_resumen_permisos, aplicar_columnas_visibles, mostrar_menu_columnas, mostrar_menu_columnas_header, toggle_columna, feedback, abrir_dialogo_crear_usuario, abrir_dialogo_editar_usuario, abrir_dialogo_editar_permisos, abrir_dialogo_eliminar_usuario.
-  - Cumple estándares de docs/estandares_feedback.md, docs/estandares_visuales.md, checklist_formularios_botones_ui.txt.
+## Referencias
+- Política y ejemplos de tests: `docs/ESTANDARES_Y_CHECKLISTS.md`
+- Checklists visuales y funcionales: `docs/checklists/`
+- Resultados de tests: `test_results/`

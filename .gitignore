@@ -1,0 +1,5 @@
+# Ignorar archivos y carpetas sensibles
+config/privado/
+# Ignorar tests confidenciales
+**/tests/*confidencial*
+**/tests/*privado*

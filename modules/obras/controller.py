@@ -769,3 +769,24 @@ class ObrasController:
             print(f"Pedidos Inventario: {pedidos_inventario}")
             print(f"Pedidos Vidrios: {pedidos_vidrios}")
             print(f"Pedidos Herrajes: {pedidos_herrajes}")
+
+    def editar_fecha_entrega_dialog(self, *args, **kwargs):
+        """
+        Diálogo para editar la fecha de entrega de una obra desde el Gantt/barra visual.
+        Si no está implementado, muestra feedback visual y deja registro en auditoría.
+        """
+        try:
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(
+                    "Funcionalidad de edición de fecha de entrega en desarrollo.",
+                    tipo="advertencia", titulo_personalizado="Editar Fecha de Entrega"
+                )
+            else:
+                QMessageBox.information(None, "Editar Fecha de Entrega", "Funcionalidad en desarrollo.")
+            self._registrar_evento_auditoria("editar_fecha_entrega_dialog", "Intento de editar fecha de entrega (stub)", exito=True)
+        except Exception as e:
+            from core.logger import log_error
+            log_error(f"Error en editar_fecha_entrega_dialog: {e}")
+            if hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Error en editar fecha de entrega: {e}", tipo="error")
+            self._registrar_evento_auditoria("editar_fecha_entrega_dialog", f"Error: {e}", exito=False)
