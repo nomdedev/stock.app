@@ -992,7 +992,17 @@ Desde mayo 2025, la gestión de usuarios y la pestaña de permisos por usuario s
 4. Consulta los resultados en la carpeta `test_results/`.
 5. Documenta cualquier bug, mejora o hallazgo en los archivos de checklist y en los logs.
 
-## Referencias
-- Política y ejemplos de tests: `docs/ESTANDARES_Y_CHECKLISTS.md`
-- Checklists visuales y funcionales: `docs/checklists/`
-- Resultados de tests: `test_results/`
+## Ejemplo de test de integración: edición de fecha de entrega (Obras)
+
+El flujo de edición de fecha de entrega desde la UI está cubierto por el test de integración auto-contenido en `tests/test_obras_controller.py`:
+
+- **Test:** `test_editar_fecha_entrega_dialog_integration`
+- **Cobertura:**
+  - Edición válida (feedback de éxito, refresco de tabla, registro en auditoría)
+  - Edición inválida (fecha anterior a medición, feedback de error)
+  - Obra inexistente (feedback de error)
+  - Cancelación del diálogo (sin feedback)
+- **Aislamiento:** No depende de base de datos real ni entorno externo. Usa dummies y mocks.
+- **Cumple:** Checklist de feedback visual, edge cases, accesibilidad y registro en auditoría.
+
+> Ver detalles y ejemplos en el propio archivo de test y en `docs/ESTANDARES_Y_CHECKLISTS.md`.

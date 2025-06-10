@@ -475,9 +475,10 @@ class ObrasController:
                 )
                 if hasattr(self.view, 'mostrar_mensaje'):
                     self.view.mostrar_mensaje(mensaje, tipo='exito', duracion=9000, titulo_personalizado="Agregar Obra")
-                else:
+                elif hasattr(self.view, 'label'):
                     self.view.label.setText(mensaje)
-                self.cargar_datos_obras()
+                # FIX: refresco robusto de la tabla tras alta de obra
+                self.cargar_datos_obras_tabla()
                 self.mostrar_gantt()
         except Exception as e:
             from core.logger import log_error

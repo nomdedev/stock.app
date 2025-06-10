@@ -451,3 +451,18 @@ Este checklist documenta el flujo completo de gestión de obras y pedidos, cubri
 > Ver README y docs/buenas_practicas_configuraciones_criticas.md para detalles y ejemplos.
 
 ---
+
+## Test de integración: edición de fecha de entrega (Obras)
+
+- **Test:** `test_editar_fecha_entrega_dialog_integration` en `tests/test_obras_controller.py`
+- **Cobertura:**
+  - Edición válida (feedback de éxito, refresco de tabla, registro en auditoría)
+  - Edición inválida (fecha anterior a medición, feedback de error)
+  - Obra inexistente (feedback de error)
+  - Cancelación del diálogo (sin feedback)
+- **Aislamiento:** No depende de base de datos real ni entorno externo. Usa dummies y mocks.
+- **Cumple:** Checklist de feedback visual, edge cases, accesibilidad y registro en auditoría.
+
+> Mantener este registro actualizado tras cada mejora o refactor del flujo de edición de fecha de entrega.
+
+---
