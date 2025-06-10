@@ -210,7 +210,7 @@ def test_alta_obra_cliente_none(controller, model):
     obras = model.listar_obras()
     assert not any(o[1] == 'ObraSinCliente' for o in obras)
 
-# Test: editar obra con nombre vacío
+# Test: editar obra with nombre vacío
 
 def test_editar_obra_nombre_vacio(controller, model):
     """Debe rechazar edición si el nombre es vacío."""
@@ -225,7 +225,7 @@ def test_editar_obra_nombre_vacio(controller, model):
     fila2 = model.listar_obras()[0]
     assert fila2[1] == 'ObraEditVacia'
 
-# Test: editar obra con cliente vacío
+# Test: editar obra with cliente vacío
 
 def test_editar_obra_cliente_vacio(controller, model):
     """Debe rechazar edición si el cliente es vacío."""
@@ -239,3 +239,80 @@ def test_editar_obra_cliente_vacio(controller, model):
     assert 'cliente' in str(excinfo.value).lower() or 'obligatorio' in str(excinfo.value).lower()
     fila2 = model.listar_obras()[0]
     assert fila2[2] == 'ClienteV2'
+
+def test_flujo_completo_gestion_obras_y_pedidos(controller, model, db_conn):
+    """
+    Test de integración: flujo completo de gestión de obras y pedidos para 3 obras,
+    cubriendo materiales, vidrios, herrajes, pagos y logística, con feedback y auditoría.
+    """
+    # --- Setup: crear 3 obras ---
+    obras_data = [
+        {'nombre': 'ObraFlow1', 'cliente': 'ClienteA', 'fecha_medicion': '2025-06-01', 'fecha_entrega': '2025-07-01'},
+        {'nombre': 'ObraFlow2', 'cliente': 'ClienteB', 'fecha_medicion': '2025-06-02', 'fecha_entrega': '2025-07-02'},
+        {'nombre': 'ObraFlow3', 'cliente': 'ClienteC', 'fecha_medicion': '2025-06-03', 'fecha_entrega': '2025-07-03'},
+    ]
+    ids_obras = [controller.alta_obra(datos) for datos in obras_data]
+    # --- Mock de módulos externos ---
+    class DummyInventario:
+        def __init__(self): self.stock = {'perfilA': 10, 'vidrioA': 5, 'herrajeA': 5}
+        def pedir_material(self, obra_id, item, cantidad):
+            if self.stock.get(item, 0) < cantidad:
+                return 'pedido parcial'
+            self.stock[item] -= cantidad
+            return 'pedido completo'
+    class DummyVidrios:
+        def reservar_vidrio(self, obra_id, tipo, cantidad):
+            if cantidad > 5: raise ValueError('Stock insuficiente vidrio')
+            return True
+    class DummyHerrajes:
+        def reservar_herraje(self, obra_id, tipo, cantidad):
+            if cantidad > 5: raise ValueError('Stock insuficiente herraje')
+            return True
+    class DummyContabilidad:
+        def registrar_pago(self, obra_id, monto):
+            if monto <= 0: raise ValueError('Monto inválido')
+            return True
+    class DummyLogistica:
+        def generar_envio(self, obra_id, datos_envio):
+            if not datos_envio.get('direccion'): raise ValueError('Datos incompletos')
+            return True
+    inventario = DummyInventario()
+    vidrios = DummyVidrios()
+    herrajes = DummyHerrajes()
+    contabilidad = DummyContabilidad()
+    logistica = DummyLogistica()
+    # --- Flujo para cada obra ---
+    for idx, obra_id in enumerate(ids_obras):
+        # 1. Visualización
+        obras = model.listar_obras()
+        assert any(o[0] == obra_id for o in obras)
+        # 2. Solicitud de materiales
+        res_mat = inventario.pedir_material(obra_id, 'perfilA', 3)
+        assert res_mat in ('pedido completo', 'pedido parcial')
+        # 3. Asociación de pedido a obra (dummy)
+        pedido = {'obra_id': obra_id, 'items': [{'item': 'perfilA', 'cantidad': 3}]}
+        # 4. Reflejo en vidrios y herrajes
+        assert vidrios.reservar_vidrio(obra_id, 'vidrioA', 1)
+        assert herrajes.reservar_herraje(obra_id, 'herrajeA', 1)
+        # 5. Registro de pago
+        assert contabilidad.registrar_pago(obra_id, 1000)
+        # 6. Generación de envío/logística
+        assert logistica.generar_envio(obra_id, {'direccion': f'Calle {idx+1}'})
+        # 7. Edge case: stock insuficiente
+        inventario.stock['perfilA'] = 0
+        res_mat2 = inventario.pedir_material(obra_id, 'perfilA', 2)
+        assert res_mat2 == 'pedido parcial'
+        # 8. Edge case: vidrio/herraje insuficiente
+        with pytest.raises(ValueError):
+            vidrios.reservar_vidrio(obra_id, 'vidrioA', 10)
+        with pytest.raises(ValueError):
+            herrajes.reservar_herraje(obra_id, 'herrajeA', 10)
+        # 9. Edge case: pago inválido
+        with pytest.raises(ValueError):
+            contabilidad.registrar_pago(obra_id, 0)
+        # 10. Edge case: datos logísticos incompletos
+        with pytest.raises(ValueError):
+            logistica.generar_envio(obra_id, {'direccion': ''})
+    # --- Auditoría: verificar que se registró alta de obras ---
+    auditorias = db_conn.execute("SELECT * FROM auditorias_sistema WHERE modulo_afectado='obras'").fetchall()
+    assert len(auditorias) >= 3

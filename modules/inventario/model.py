@@ -87,9 +87,34 @@ class InventarioModel:
             # print(f"Error al obtener ítem por código: {e}")
             return None
 
-    def actualizar_stock(self, id_item, cantidad):
-        query = "UPDATE inventario_perfiles SET stock_actual = stock_actual + ? WHERE id = ?"
-        self.db.ejecutar_query(query, (cantidad, id_item))
+    def actualizar_stock(self, id_item, cantidad, usuario=None, view=None):
+        """
+        Actualiza el stock sumando/restando la cantidad indicada.
+        Bloquea si el resultado sería negativo. Registra auditoría y feedback visual.
+        """
+        from core.logger import Logger
+        from modules.auditoria.helpers import _registrar_evento_auditoria
+        logger = Logger()
+        # Obtener stock actual
+        stock_actual = self.obtener_stock_item(id_item)
+        nuevo_stock = stock_actual + cantidad
+        if nuevo_stock < 0:
+            mensaje = f"No se puede actualizar el stock: la operación dejaría stock negativo (actual: {stock_actual}, cambio: {cantidad})."
+            if view and hasattr(view, 'mostrar_mensaje'):
+                view.mostrar_mensaje(mensaje, tipo='error')
+            logger.error(mensaje)
+            _registrar_evento_auditoria(usuario, "Inventario", f"Intento de stock negativo en item {id_item}: {mensaje}")
+            raise ValueError("Stock negativo no permitido.")
+        # Actualizar stock
+        query = "UPDATE inventario_perfiles SET stock_actual = ? WHERE id = ?"
+        self.db.ejecutar_query(query, (nuevo_stock, id_item))
+        # Registrar movimiento
+        tipo_mov = 'Ingreso' if cantidad > 0 else 'Egreso'
+        self.db.ejecutar_query(
+            "INSERT INTO movimientos_stock (id_perfil, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)",
+            (id_item, tipo_mov, abs(cantidad), usuario or "")
+        )
+        _registrar_evento_auditoria(usuario, "Inventario", f"Stock actualizado para item {id_item}: {stock_actual} -> {nuevo_stock}")
 
     def obtener_items_bajo_stock(self):
         try:
@@ -371,6 +396,8 @@ class InventarioModel:
                 if not stock or stock[0][0] is None:
                     raise ValueError("Perfil no encontrado.")
                 stock_actual, stock_minimo = stock[0]
+                if stock_actual < 0:
+                    raise ValueError("Stock actual negativo: revise el inventario antes de reservar.")
                 if cantidad > stock_actual:
                     raise ValueError("Stock insuficiente para reservar.")
                 # Actualizar stock y reservas

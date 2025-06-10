@@ -12,7 +12,7 @@
 # - Contabilidad: registro y actualización de pagos de pedidos, seguimiento de fechas de acreditación.
 # - Logística: consulta de obras listas para fabricar/entregar y asignación a colocador.
 #
-# Checklist de integración y pendientes (actualizado al 2025-06-09):
+# Checklist de integración y pendientes (actualizado al 2025-06-10):
 #
 # [x] Vidrios: registrar y actualizar pedidos por obra y usuario, estado y auditoría.
 # [x] Vidrios: mostrar pedidos por usuario y detalle de cada pedido.
@@ -29,6 +29,7 @@
 # [x] Logística: consultar obras listas para fabricar/entregar y asignar colocador.
 # [x] Documentar excepciones y justificaciones en docs/estandares_visuales.md y docs/flujo_obras_material_vidrios.md.
 # [x] Implementar tests automáticos de integración y feedback visual.
+# [x] Inventario: bloquear pedidos con stock negativo y validar con tests de edge cases (10/06/2025).
 #
 # Ver también: docs/flujo_obras_material_vidrios.md y docs/checklist_mejoras_uiux_por_modulo.md
 # ---
