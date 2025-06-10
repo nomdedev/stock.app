@@ -4,6 +4,7 @@ from PyQt6 import QtGui
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from modules.inventario.view import InventarioView
+from modules.obras.model import ObrasModel
 from functools import wraps
 from core.logger import log_error
 
@@ -84,6 +85,8 @@ class InventarioController:
         self.usuarios_model = UsuariosModel(db_connection)
         self.auditoria_model = AuditoriaModel(db_connection)
         self.db_connection = db_connection
+        from modules.obras.model import ObrasModel
+        self.obras_model = ObrasModel(db_connection)
 
         # Integración en tiempo real con ObrasView
         # Se debe conectar la señal 'obra_agregada' de ObrasView a este controlador:
@@ -293,6 +296,14 @@ class InventarioController:
                         self._feedback("Ya existe una reserva activa para este material y obra, o el código ya está en uso.", tipo='warning')
                         self._registrar_evento_auditoria('reserva_material', f"Reserva duplicada para {id_item} obra {obra}", exito=False)
                         return
+                    # Validación cruzada: impedir reservas a obras inexistentes
+                    id_obra = obra if obra.isdigit() else None
+                    if id_obra is not None:
+                        if not self.obras_model.existe_obra_por_id(int(id_obra)):
+                            self._feedback("No existe una obra con el ID especificado. No se puede reservar material.", tipo='error')
+                            self._registrar_evento_auditoria('reserva_material', f"Intento de reserva a obra inexistente: {obra}", exito=False)
+                            return
+                    # Si se usa nombre, se podría agregar validación adicional aquí
                     try:
                         self.model.db.ejecutar_query(
                             """
@@ -491,7 +502,7 @@ class InventarioController:
             return
         codigo = item["codigo"]
         qr_code = f"QR-{codigo}"
-        self.model.actualizar_qr_code(id_item, qr_code)
+        self.model.actualizacion_qr_code(id_item, qr_code)
         QMessageBox.information(self.view, "QR asociado", f"QR '{qr_code}' asociado al perfil con código '{codigo}'.")
         self.actualizar_inventario()
 

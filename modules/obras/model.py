@@ -471,3 +471,12 @@ class ObrasModel:
             logger.warning(f"Error al crear obra: {e}")
             _registrar_evento_auditoria(usuario, "Obras", f"Error alta obra: {e}")
             raise
+
+    def existe_obra_por_id(self, id_obra):
+        """
+        Verifica si existe una obra con el id dado.
+        Devuelve True si existe, False si no.
+        """
+        query = "SELECT COUNT(*) FROM obras WHERE id = ?"
+        resultado = self.db_connection.ejecutar_query(query, (id_obra,))
+        return resultado and resultado[0][0] > 0
