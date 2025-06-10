@@ -164,7 +164,7 @@ Este documento consolida los principales estándares, checklists, pendientes y d
 | Obras         | Ver Detalle obra             | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  |      |
 | Auditoría     | Filtrar Auditoría             | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Modal robusto, feedback accesible, tooltips, cierre solo en éxito, integración controller, logging/auditoría, refresco de tabla, validación visual/backend, cobertura de tests (08/06/2025) |
 | Auditoría     | Exportar a Excel              | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Modal robusto, confirmación accesible, feedback visual, tooltips, cierre solo en éxito, logging/auditoría, refresco de tabla, validación visual/backend, integración controller, cobertura de tests (08/06/2025) |
-| Usuarios       | Todos los botones y formularios principales (crear, editar, eliminar, editar permisos, feedback, columnas) | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Robustez contra None/atributo, validación de tipos, feedback visual, edge cases documentados. Cumple estándares docs/estandares_feedback.md y docs/estandares_visuales.md. |
+| Usuarios       | Todos los botones y formularios principales (crear, editar, eliminar, editar permisos, feedback, columnas) | ✔️           | ✔️            | ✔️            | ✔️            | COMPLETO  | Robustez contra None/atributo, validación de tipos, feedback visual, edge cases documentados. Cumple el estándar de aislamiento y auto-contenido.
 # ...agregar más según módulos y botones principales...
 ```
 
@@ -418,5 +418,36 @@ Este checklist documenta el flujo completo de gestión de obras y pedidos, cubri
 - [x] Advertencia sobre uso de IP: SQL Server debe aceptar conexiones remotas y el puerto debe estar abierto.
 
 > Ver README y buenas_practicas_configuraciones_criticas.md para detalles y ejemplos.
+
+---
+
+## CHECKLIST DE VALIDACIÓN VISUAL Y FUNCIONAL (actualizado 10/06/2025)
+
+1. Ir a Configuración > Base de Datos
+   - Editar un campo (IP, usuario, etc) y guardar.
+   - Verificar feedback visual inmediato (éxito/error), recarga dinámica y registro en auditoría.
+   - Solo usuarios admin pueden editar.
+
+2. Cargar una nueva obra
+   - Completar campos obligatorios y guardar.
+   - Verificar feedback visual y aparición en la tabla principal.
+
+3. Cargar materiales, herrajes y vidrios
+   - Asignar materiales y verificar generación automática de pedido.
+   - Repetir con herrajes y vidrios. Verificar feedback y pedidos en módulos.
+
+4. Integración con Contabilidad, Logística y Producción
+   - Cambiar estado de la obra (ej: “en producción”, “entrega”).
+   - Verificar que los módulos pueden operar sobre la obra y feedback visual.
+
+5. Edge cases y robustez
+   - Probar guardar configuración inválida y verificar feedback de error.
+   - Probar alta/edición de obra con datos inválidos o duplicados.
+   - Probar edición de configuración como usuario no admin (debe bloquear).
+
+6. Auditoría y trazabilidad
+   - Verificar en la sección de auditoría que todos los cambios y acciones quedan registrados.
+
+> Ver README y docs/buenas_practicas_configuraciones_criticas.md para detalles y ejemplos.
 
 ---

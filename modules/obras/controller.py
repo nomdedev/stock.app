@@ -770,20 +770,76 @@ class ObrasController:
             print(f"Pedidos Vidrios: {pedidos_vidrios}")
             print(f"Pedidos Herrajes: {pedidos_herrajes}")
 
-    def editar_fecha_entrega_dialog(self, *args, **kwargs):
+    def editar_fecha_entrega_dialog(self, id_obra=None, *args, **kwargs):
         """
-        Diálogo para editar la fecha de entrega de una obra desde el Gantt/barra visual.
-        Si no está implementado, muestra feedback visual y deja registro en auditoría.
+        Diálogo real para editar la fecha de entrega de una obra desde el Gantt/barra visual.
+        Permite seleccionar nueva fecha, valida, guarda y registra en auditoría.
         """
         try:
-            if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(
-                    "Funcionalidad de edición de fecha de entrega en desarrollo.",
-                    tipo="advertencia", titulo_personalizado="Editar Fecha de Entrega"
-                )
-            else:
-                QMessageBox.information(None, "Editar Fecha de Entrega", "Funcionalidad en desarrollo.")
-            self._registrar_evento_auditoria("editar_fecha_entrega_dialog", "Intento de editar fecha de entrega (stub)", exito=True)
+            # Obtener datos de la obra
+            if id_obra is None:
+                if hasattr(self.view, 'get_selected_obra_id'):
+                    id_obra = self.view.get_selected_obra_id()
+                else:
+                    if hasattr(self.view, 'mostrar_mensaje'):
+                        self.view.mostrar_mensaje("No se pudo determinar la obra a editar.", tipo="error")
+                    return
+            obra = self.model.obtener_obra_por_id(id_obra)
+            if not obra:
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje("Obra no encontrada.", tipo="error")
+                return
+            fecha_actual = obra.get("fecha_entrega") if isinstance(obra, dict) else obra["fecha_entrega"]
+            from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QDateEdit, QPushButton, QHBoxLayout
+            from PyQt6.QtCore import QDate
+            from datetime import datetime
+            dialog = QDialog(self.view)
+            dialog.setWindowTitle("Editar fecha de entrega")
+            layout = QVBoxLayout(dialog)
+            layout.addWidget(QLabel(f"Fecha de entrega actual: {fecha_actual if fecha_actual else '-'}"))
+            date_edit = QDateEdit()
+            date_edit.setCalendarPopup(True)
+            # Setear fecha actual
+            try:
+                if fecha_actual:
+                    y, m, d = map(int, fecha_actual.split("-"))
+                    date_edit.setDate(QDate(y, m, d))
+                else:
+                    date_edit.setDate(QDate.currentDate())
+            except Exception:
+                date_edit.setDate(QDate.currentDate())
+            layout.addWidget(QLabel("Nueva fecha de entrega:"))
+            layout.addWidget(date_edit)
+            btns = QHBoxLayout()
+            btn_guardar = QPushButton("Guardar")
+            btn_cancelar = QPushButton("Cancelar")
+            btn_guardar.clicked.connect(dialog.accept)
+            btn_cancelar.clicked.connect(dialog.reject)
+            btns.addWidget(btn_guardar)
+            btns.addWidget(btn_cancelar)
+            layout.addLayout(btns)
+            dialog.setLayout(layout)
+            if dialog.exec() == QDialog.DialogCode.Accepted:
+                nueva_fecha = date_edit.date().toString("yyyy-MM-dd")
+                # Validar nueva fecha
+                fecha_medicion = obra.get("fecha_medicion") if isinstance(obra, dict) else obra["fecha_medicion"]
+                try:
+                    fecha_nueva_dt = datetime.strptime(nueva_fecha, "%Y-%m-%d").date()
+                    fecha_med_dt = datetime.strptime(fecha_medicion, "%Y-%m-%d").date() if fecha_medicion else None
+                except Exception:
+                    if hasattr(self.view, 'mostrar_mensaje'):
+                        self.view.mostrar_mensaje("Fechas inválidas.", tipo="error")
+                    return
+                if fecha_med_dt and fecha_nueva_dt < fecha_med_dt:
+                    if hasattr(self.view, 'mostrar_mensaje'):
+                        self.view.mostrar_mensaje("La fecha de entrega no puede ser anterior a la de medición.", tipo="error")
+                    return
+                # Actualizar en modelo
+                self.model.editar_obra(id_obra, {"fecha_entrega": nueva_fecha}, obra.get("rowversion", 1))
+                self.cargar_datos_obras_tabla()
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje(f"Fecha de entrega actualizada a {nueva_fecha}.", tipo="exito")
+                self._registrar_evento_auditoria("editar_fecha_entrega", f"Editó fecha de entrega de obra {id_obra} a {nueva_fecha}", exito=True)
         except Exception as e:
             from core.logger import log_error
             log_error(f"Error en editar_fecha_entrega_dialog: {e}")

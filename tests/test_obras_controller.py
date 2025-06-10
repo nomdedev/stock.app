@@ -72,6 +72,12 @@ class DummyModel:
             if o["id"] == id_obra:
                 return o
         return None
+    def actualizar_estado_obra(self, id_obra, nuevo_estado):
+        for o in self.obras:
+            if o["id"] == id_obra:
+                o["estado"] = nuevo_estado
+                return True
+        return False
 
 class DummyView:
     def __init__(self):

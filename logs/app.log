@@ -14142,3 +14142,356 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-10 16:43:21,077 - INFO - Obra creada correctamente (ID: 4).
 2025-06-10 16:43:21,077 - INFO - Obra creada correctamente (ID: 4).
 2025-06-10 16:43:21,077 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,188 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,196 - WARNING - Alta obra fallida por validación: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:55:05,196 - WARNING - Alta obra fallida por validación: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:55:05,198 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:55:05,198 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:55:05,202 - ERROR - Error en alta: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:55:05,202 - ERROR - Error en alta: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:55:05,202 - ERROR - Error en alta: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:55:05,212 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,212 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,212 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,212 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,213 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,213 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,213 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,213 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,217 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,217 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,217 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,217 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,217 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:55:05,224 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,224 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,224 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,224 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,224 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,224 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,229 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,229 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,229 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,229 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,229 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,229 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,229 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,231 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,231 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,231 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,231 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,231 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,231 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,231 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,235 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,235 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,235 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,235 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,235 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,235 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,235 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,235 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:55:05,243 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,243 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,243 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,243 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,243 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,243 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,243 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,243 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,243 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,249 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:55:05,249 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:55:05,249 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:55:05,249 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:55:05,249 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:55:05,249 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:55:05,249 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:55:05,249 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:55:05,249 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:55:05,249 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:55:05,257 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,257 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,257 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,257 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,257 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,257 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,257 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,257 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,257 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,257 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,257 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,260 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,264 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,274 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,279 - ERROR - Error en alta: DB error
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,291 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,309 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:55:05,317 - ERROR - Error en cambiar_estado: 'DummyModel' object has no attribute 'actualizar_estado_obra'
+2025-06-10 18:56:57,012 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,018 - WARNING - Alta obra fallida por validación: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:56:57,018 - WARNING - Alta obra fallida por validación: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:56:57,019 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:56:57,019 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:56:57,020 - ERROR - Error en alta: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:56:57,020 - ERROR - Error en alta: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:56:57,020 - ERROR - Error en alta: Errores en los datos: Faltan campos obligatorios
+2025-06-10 18:56:57,027 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,027 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,027 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,027 - WARNING - Alta obra fallida por validación: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,028 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,028 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,028 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,028 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,029 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,029 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,029 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,029 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,029 - ERROR - Error en alta: Errores en los datos: La fecha de entrega no puede ser anterior a la fecha de medición
+2025-06-10 18:56:57,033 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,033 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,033 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,033 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,033 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,033 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,036 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,036 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,036 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,036 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,036 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,036 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,036 - WARNING - Alta obra fallida por validación: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,037 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,037 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,037 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,037 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,037 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,037 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,037 - ERROR - Error inesperado al dar de alta la obra: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,039 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,039 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,039 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,039 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,039 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,039 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,039 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,039 - ERROR - Error en alta: Errores en los datos: Obra duplicada
+2025-06-10 18:56:57,043 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,043 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,043 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,043 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,043 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,043 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,043 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,043 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,043 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,045 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:56:57,045 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:56:57,045 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:56:57,045 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:56:57,045 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:56:57,045 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:56:57,045 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:56:57,045 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:56:57,045 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:56:57,045 - INFO - Obra 4 editada correctamente.
+2025-06-10 18:56:57,051 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,051 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,051 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,051 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,051 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,051 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,051 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,051 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,051 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,051 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,051 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,053 - ERROR - Error al editar obra: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,056 - ERROR - Error en editar: Conflicto de rowversion
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,061 - ERROR - Error inesperado al dar de alta la obra: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,064 - ERROR - Error en alta: DB error
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,070 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
+2025-06-10 18:56:57,083 - INFO - Obra creada correctamente (ID: 4).
