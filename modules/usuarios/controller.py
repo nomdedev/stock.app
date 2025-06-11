@@ -218,7 +218,8 @@ class UsuariosController(BaseController):
                 self.view.tabla_usuarios.setItem(row, col, QTableWidgetItem(str(dato)))
             # Botones de acción
             btn_edit = QPushButton("Editar")
-            btn_edit.clicked.connect(lambda _, u=usuario: self.editar_usuario(u))
+            # Al hacer clic, abrir diálogo de edición y luego llamar a editar_usuario con los datos editados
+            btn_edit.clicked.connect(lambda _, u=usuario: self.abrir_dialogo_editar_usuario(u))
             self.view.tabla_usuarios.setCellWidget(row, 7, btn_edit)
             btn_susp = QPushButton("Susp/Act")
             btn_susp.clicked.connect(lambda _, u_id=usuario[0], est=usuario[7]: self.cambiar_estado_usuario(u_id, est))
@@ -229,31 +230,54 @@ class UsuariosController(BaseController):
         self.view.tabla_usuarios.resizeColumnsToContents()
 
     @permiso_auditoria_usuarios('editar')
-    def editar_usuario(self, usuario):
-        # usuario es una tupla o dict, obtener id y datos
-        id_usuario = usuario[0] if isinstance(usuario, (list, tuple)) else usuario.get('id')
-        # Prevenir edición del admin por otros usuarios
+    def editar_usuario_con_permiso(self, id_usuario, datos):
+        """
+        Edita un usuario de forma robusta:
+        - Previene edición del admin por usuarios no admin.
+        - Llama al modelo para editar el usuario.
+        - Propaga excepciones del modelo.
+        - Refresca la vista si corresponde.
+        - Feedback visual y registro en auditoría.
+        """
+        # Prevención robusta: solo admin puede editar admin
         if id_usuario == 1 and (not self.usuario_actual or self.usuario_actual.get('id_rol', None) != 1):
             raise PermissionError("Solo el admin puede editar al usuario admin.")
-        dialog = QDialog()
-        dialog.setWindowTitle("Editar Usuario")
-        layout = QVBoxLayout(dialog)
-        layout.addWidget(QLabel(f"Editar usuario: {id_usuario}"))
-        dialog.exec()
+        if hasattr(self.model, 'editar_usuario'):
+            resultado = self.model.editar_usuario(id_usuario, datos)
+            if hasattr(self, 'cargar_usuarios'):
+                self.cargar_usuarios()
+            if hasattr(self, 'view') and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Usuario con ID {id_usuario} editado exitosamente.", tipo="exito")
+            return resultado
+        else:
+            raise NotImplementedError("No se encuentra un método editar_usuario compatible.")
 
     @permiso_auditoria_usuarios('eliminar')
     def eliminar_usuario(self, usuario_id):
         """
-        Implementa la lógica real de eliminación de usuario: llama al modelo y refresca la vista si corresponde.
-        Si el modelo lanza excepción, la propaga (para compatibilidad con los tests).
+        Elimina un usuario de forma robusta:
+        - Llama al modelo para eliminar el usuario.
+        - Previene la eliminación del usuario admin (id=1 o username='admin').
+        - Propaga excepciones del modelo.
+        - Refresca la vista si corresponde.
+        - Feedback visual y registro en auditoría.
         """
+        # Prevención robusta: no permitir eliminar admin
+        usuario = None
+        if hasattr(self.model, 'usuarios'):
+            usuario = next((u for u in self.model.usuarios if u.get('id') == usuario_id or u.get('username') == 'admin'), None)
+        if usuario and (usuario.get('id') == 1 or usuario.get('username') == 'admin'):
+            raise ValueError("No se puede eliminar el usuario admin")
+        # Lógica real de eliminación
         if hasattr(self.model, 'eliminar_usuario'):
             resultado = self.model.eliminar_usuario(usuario_id)
             if hasattr(self, 'cargar_usuarios'):
                 self.cargar_usuarios()
+            if hasattr(self, 'view') and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Usuario con ID {usuario_id} eliminado exitosamente.", tipo="exito")
             return resultado
         else:
-            raise NotImplementedError("No se encuentra un método eliminar_usuario compatible con los tests.")
+            raise NotImplementedError("No se encuentra un método eliminar_usuario compatible.")
 
     @permiso_auditoria_usuarios('cambiar_estado')
     def cambiar_estado_usuario(self, usuario_id, estado_actual):
@@ -262,6 +286,56 @@ class UsuariosController(BaseController):
         self.view.label.setText(f"Estado del usuario con ID {usuario_id} cambiado a {nuevo_estado}.")
         self.cargar_usuarios()
         self._registrar_evento_auditoria('cambiar_estado', estado="éxito")
+
+    def abrir_dialogo_editar_usuario(self, usuario):
+        """
+        Abre un diálogo robusto para editar un usuario.
+        - Carga los datos actuales.
+        - Valida campos obligatorios.
+        - Llama a editar_usuario con los datos editados.
+        - Feedback visual y refresco de tabla.
+        """
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QLineEdit, QComboBox, QPushButton, QLabel, QMessageBox
+        dialogo = QDialog(self.view)
+        dialogo.setWindowTitle(f"Editar usuario: {usuario[1]} {usuario[2]}")
+        layout = QVBoxLayout(dialogo)
+        form = QFormLayout()
+        # Campos de edición
+        nombre_input = QLineEdit(usuario[1])
+        email_input = QLineEdit(usuario[3])
+        rol_input = QComboBox()
+        roles = [r[0] for r in self.model.obtener_roles()] if hasattr(self.model, 'obtener_roles') else []
+        rol_input.addItems(roles)
+        rol_input.setCurrentText(usuario[6])
+        form.addRow("Nombre:", nombre_input)
+        form.addRow("Email:", email_input)
+        form.addRow("Rol:", rol_input)
+        layout.addLayout(form)
+        feedback = QLabel()
+        feedback.setStyleSheet("color: #b91c1c; font-size: 12px;")
+        feedback.setVisible(False)
+        layout.addWidget(feedback)
+        btn_guardar = QPushButton("Guardar", dialogo)
+        def guardar():
+            nombre = nombre_input.text().strip()
+            email = email_input.text().strip()
+            rol = rol_input.currentText()
+            if not nombre or not email or not rol:
+                feedback.setText("Complete todos los campos obligatorios.")
+                feedback.setVisible(True)
+                return
+            try:
+                self.editar_usuario_con_permiso(usuario[0], {'nombre': nombre, 'email': email, 'rol': rol})
+                dialogo.accept()
+                if hasattr(self.view, 'mostrar_mensaje'):
+                    self.view.mostrar_mensaje("Usuario editado correctamente.", tipo="exito")
+            except Exception as e:
+                feedback.setText(f"Error: {e}")
+                feedback.setVisible(True)
+        btn_guardar.clicked.connect(guardar)
+        layout.addWidget(btn_guardar)
+        dialogo.setLayout(layout)
+        dialogo.exec()
 
     def _mostrar_roles_permisos(self):
         # Carga la tabla de roles y permisos con checkboxes usando permisos_modulos
@@ -439,33 +513,22 @@ class UsuariosController(BaseController):
 
     def editar_usuario(self, id_usuario, datos):
         """
-        Implementa la lógica real de edición de usuario: llama al modelo para editar y refresca la vista si corresponde.
+        Edita un usuario de forma robusta:
+        - Previene edición del admin por usuarios no admin.
+        - Llama al modelo para editar el usuario.
+        - Propaga excepciones del modelo.
+        - Refresca la vista si corresponde.
+        - Feedback visual y registro en auditoría.
         """
+        # Prevención robusta: solo admin puede editar admin
+        if id_usuario == 1 and (not self.usuario_actual or self.usuario_actual.get('id_rol', None) != 1):
+            raise PermissionError("Solo el admin puede editar al usuario admin.")
         if hasattr(self.model, 'editar_usuario'):
             resultado = self.model.editar_usuario(id_usuario, datos)
             if hasattr(self, 'cargar_usuarios'):
                 self.cargar_usuarios()
+            if hasattr(self, 'view') and hasattr(self.view, 'mostrar_mensaje'):
+                self.view.mostrar_mensaje(f"Usuario con ID {id_usuario} editado exitosamente.", tipo="exito")
             return resultado
         else:
-            raise NotImplementedError("No se encuentra un método editar_usuario compatible con los tests.")
-
-    # Alias para compatibilidad con tests automáticos (no interfiere con la UI)
-    def editar_usuario_test(self, id_usuario, datos):
-        if hasattr(self.model, 'editar_usuario'):
-            return self.model.editar_usuario(id_usuario, datos)
-        else:
-            raise NotImplementedError("No se encuentra un método editar_usuario compatible con los tests.")
-
-    # Mantener el método editar_usuario original de la UI debajo, sin cambios
-    @permiso_auditoria_usuarios('editar')
-    def editar_usuario(self, usuario):
-        # usuario es una tupla o dict, obtener id y datos
-        id_usuario = usuario[0] if isinstance(usuario, (list, tuple)) else usuario.get('id')
-        # Prevenir edición del admin por otros usuarios
-        if id_usuario == 1 and (not self.usuario_actual or self.usuario_actual.get('id_rol', None) != 1):
-            raise PermissionError("Solo el admin puede editar al usuario admin.")
-        dialog = QDialog()
-        dialog.setWindowTitle("Editar Usuario")
-        layout = QVBoxLayout(dialog)
-        layout.addWidget(QLabel(f"Editar usuario: {id_usuario}"))
-        dialog.exec()
+            raise NotImplementedError("No se encuentra un método editar_usuario compatible.")

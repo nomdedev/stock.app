@@ -466,3 +466,73 @@ Este checklist documenta el flujo completo de gestión de obras y pedidos, cubri
 > Mantener este registro actualizado tras cada mejora o refactor del flujo de edición de fecha de entrega.
 
 ---
+
+## Checklist y estándar: Personalización de columnas en tablas
+
+- [x] Permitir al usuario mostrar/ocultar columnas desde menú contextual en el header de la tabla (Obras, Inventario, etc.).
+- [x] Guardar la selección de columnas por usuario en un único archivo JSON por módulo (ej: `config_obras_columns.json`).
+- [x] Restaurar automáticamente la configuración al iniciar la vista.
+- [x] Feedback visual inmediato al cambiar visibilidad de columnas.
+- [x] Test automatizado que valida mostrar/ocultar, persistencia y restauración (`tests/test_obras_view_columnas.py`).
+- [x] Documentar la política y ejemplo en README.md y aquí.
+- [ ] Replicar la lógica en todos los módulos con tablas configurables.
+
+**Nota:** No se generan miles de archivos, la persistencia es eficiente y escalable.
+
+---
+
+## Dinámica y estándar: Cronograma visual (Gantt) de Obras
+
+- Cada obra se visualiza como una barra en el cronograma (pestaña 2), desde la fecha de medición hasta la fecha de colocación.
+- El color de la barra indica el estado actual de la obra:
+  - Azul: Medición
+  - Amarillo: En fabricación
+  - Verde: Lista para colocar
+  - Rojo: Demorada (si se venció la etapa y no se actualizó el estado)
+- Los usuarios pueden actualizar el estado de la obra desde la UI. Al hacerlo, la barra cambia de color automáticamente.
+- Si se supera la fecha límite de una etapa y no se actualizó el estado, el sistema solicita automáticamente un descargo al usuario responsable (motivo del atraso, justificación, etc.).
+- Todos los descargos quedan registrados para estadísticas y auditoría.
+- El flujo y la política de colores/estados están documentados en el README y aquí.
+
+**Recomendación:** Mantener la lógica desacoplada para poder reutilizar el componente Gantt y la política de descargos en otros módulos si es necesario.
+
+---
+
+# ---
+# SECCIÓN DE EXCEPCIONES VISUALES Y QSS
+#
+# Todas las excepciones visuales (por ejemplo, estilos embebidos justificados, casos donde no se puede aplicar QSS global, o widgets que requieren estilos particulares por limitaciones técnicas) deben documentarse aquí y en el archivo `docs/estandares_visuales.md`.
+#
+# Ejemplo de excepción:
+# - El módulo Obras utiliza un QProgressBar embebido solo en operaciones largas, justificado en el propio código y en la documentación.
+# - Si un test automático de estándares falla por líneas comentadas o ejemplos, se considera falso positivo y debe estar documentado aquí y en el docstring del archivo afectado.
+#
+# Instrucciones:
+# - Cada vez que se detecte una excepción visual, agregar una breve descripción, el motivo y el archivo/línea afectada.
+# - Si se elimina la excepción, actualizar esta sección y el archivo correspondiente.
+#
+# Ejemplo de registro:
+# - [Obras/view.py] No requiere feedback de carga adicional porque los procesos son instantáneos o ya usan QProgressBar (ver línea 10 y docs/estandares_visuales.md).
+#
+# ---
+
+## Mantenimiento y actualización de estándares y checklists
+
+- Tras cada mejora, bugfix o refactor que afecte la UI/UX, accesibilidad o feedback visual, se debe:
+  1. Actualizar este archivo y los checklists generales y por módulo (`docs/checklists/checklist_mejoras_ui_general.md`, `docs/checklists/checklist_mejoras_uiux_por_modulo.md`).
+  2. Documentar cualquier excepción visual nueva o eliminada en la sección anterior.
+  3. Extender los tests automáticos de integración y UI para cubrir los nuevos estándares o edge cases.
+  4. Registrar el avance en la tabla de checklist por módulo y marcar los ítems correspondientes.
+  5. Si se detecta un bug visual o de accesibilidad, documentar el hallazgo y la solución en este archivo y en los logs de test.
+
+- Referencia rápida de checklists:
+  - Checklist general de UI/UX: `docs/checklists/checklist_mejoras_ui_general.md`
+  - Checklist por módulo: `docs/checklists/checklist_mejoras_uiux_por_modulo.md`
+  - Checklist de botones/iconos: `docs/checklists/checklist_botones_iconos.txt`
+  - Checklist de formularios y acciones: `docs/checklists/checklist_formularios_botones_ui.txt`
+
+- Para detalles de estilos, colores, tipografías y layout, ver `docs/estandares_visuales.md`.
+- Para feedback visual y mensajes, ver `docs/estandares_feedback.md`.
+- Para logging y auditoría, ver `docs/estandares_logging.md` y `docs/estandares_auditoria.md`.
+
+---

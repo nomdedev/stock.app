@@ -1006,3 +1006,31 @@ El flujo de edición de fecha de entrega desde la UI está cubierto por el test 
 - **Cumple:** Checklist de feedback visual, edge cases, accesibilidad y registro en auditoría.
 
 > Ver detalles y ejemplos en el propio archivo de test y en `docs/ESTANDARES_Y_CHECKLISTS.md`.
+
+---
+
+## Personalización de columnas en tablas (Obras, Inventario, etc.)
+
+El sistema permite a cada usuario personalizar qué columnas ver en las tablas principales (Obras, Inventario, etc.) mediante un menú contextual en el encabezado. La selección se guarda automáticamente y se restaura al volver a ingresar.
+
+- La configuración se almacena en un único archivo JSON por módulo (ej: `config_obras_columns.json`), con un diccionario por usuario.
+- El menú contextual permite mostrar/ocultar columnas de forma rápida y visual.
+- El feedback visual informa cada cambio de visibilidad.
+- La persistencia es automática y escalable, sin crear miles de archivos.
+
+### Ejemplo de test automatizado
+
+El archivo `tests/test_obras_view_columnas.py` valida:
+- Mostrar/ocultar columnas desde el menú.
+- Persistencia de la selección por usuario.
+- Restauración automática tras reinicio de la vista.
+
+Puedes ejecutar el test con:
+
+```bash
+pytest tests/test_obras_view_columnas.py -v
+```
+
+**Recomendación:** Mantén la lógica de personalización desacoplada y reutilizable para todos los módulos con tablas configurables.
+
+---

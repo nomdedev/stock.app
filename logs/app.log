@@ -14668,3 +14668,20 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-10 22:21:07,651 - INFO - Obra creada correctamente (ID: 4).
 2025-06-10 22:21:07,651 - INFO - Obra creada correctamente (ID: 4).
 2025-06-10 22:21:07,651 - INFO - Obra creada correctamente (ID: 4).
+2025-06-11 08:24:17,037 - INFO - Aplicación iniciada
+2025-06-11 08:24:20,607 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-11 08:24:20,608 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'
+2025-06-11 08:38:05,866 - INFO - Aplicación iniciada
+2025-06-11 08:38:09,191 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-11 08:38:09,193 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'
+2025-06-11 08:38:18,671 - ERROR - Error al agregar obra: name 'usuario' is not defined
+2025-06-11 08:38:18,671 - ERROR - Error al agregar obra: name 'usuario' is not defined
+2025-06-11 08:38:18,682 - ERROR - Error al agregar obra: name 'usuario' is not defined
+2025-06-11 08:38:18,682 - ERROR - Error al agregar obra: name 'usuario' is not defined
+2025-06-11 08:38:18,682 - ERROR - Error al agregar obra: name 'usuario' is not defined
+2025-06-11 11:14:22,604 - INFO - Aplicación iniciada
+2025-06-11 11:14:26,176 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-11 11:14:26,178 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'
+2025-06-11 16:40:08,419 - INFO - Aplicación iniciada
+2025-06-11 16:40:12,053 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-11 16:40:12,055 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'

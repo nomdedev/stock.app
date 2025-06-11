@@ -296,9 +296,18 @@ class ObrasController:
     @permiso_auditoria_obras('agregar')
     def agregar_obra_dialog(self, *args, **kwargs):
         """Abre un diálogo para cargar los datos clave de la obra y la registra."""
+        # Protección: evitar abrir más de un diálogo de alta de obra a la vez
+        if hasattr(self, '_dialogo_alta_obra') and self._dialogo_alta_obra is not None:
+            try:
+                if self._dialogo_alta_obra.isVisible():
+                    self._dialogo_alta_obra.raise_()
+                    self._dialogo_alta_obra.activateWindow()
+                    return
+            except Exception:
+                pass
+        dialog = QDialog(self.view)
+        self._dialogo_alta_obra = dialog
         try:
-            usuario = self.usuario_actual
-            dialog = QDialog(self.view)
             dialog.setWindowTitle("Agregar nueva obra")
             dialog.setFixedSize(600, 600)
             layout = QVBoxLayout(dialog)
@@ -308,6 +317,7 @@ class ObrasController:
             layout.addWidget(label)
 
             # Usuario actual visible
+            usuario = self.usuario_actual
             if usuario and 'username' in usuario:
                 usuario_label = QLabel(f"<b>Usuario cargando: <span style='color:#2563eb'>{usuario['username']} ({usuario.get('rol','')})</span></b>")
                 usuario_label.setObjectName("label_usuario_dialogo_obra")
@@ -400,7 +410,9 @@ class ObrasController:
             layout.addLayout(btns_layout)
 
             dialog.setLayout(layout)
-            if dialog.exec() == QDialog.DialogCode.Accepted:
+            resultado = dialog.exec()
+            self._dialogo_alta_obra = None  # Liberar referencia al cerrar el diálogo
+            if resultado == QDialog.DialogCode.Accepted:
                 nombre = nombre_input.text().strip()
                 apellido = apellido_input.text().strip()
                 cliente = cliente_input.text().strip()
@@ -481,6 +493,7 @@ class ObrasController:
                 self.cargar_datos_obras_tabla()
                 self.mostrar_gantt()
         except Exception as e:
+            self._dialogo_alta_obra = None  # Asegurar limpieza también en caso de error
             from core.logger import log_error
             log_error(f"Error al agregar obra: {e}")
             if hasattr(self.view, 'mostrar_mensaje'):

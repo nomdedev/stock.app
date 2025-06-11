@@ -159,3 +159,17 @@ Mantener este checklist actualizado y marcar cada punto una vez implementado. To
 - [x] Documentación de estándar visual y selectores QSS en docs/estandares_visuales.md.
 - [x] Checklist actualizado con integración de pagos y feedback visual.
 - [ ] Tests automáticos de integración y feedback visual pendientes de ejecutar.
+
+# ---
+# INSTRUCCIONES DE USO Y ACTUALIZACIÓN
+#
+# - Este checklist debe mantenerse sincronizado con la checklist general de UI/UX (`checklist_mejoras_ui_general.md`).
+# - Tras cada mejora, bugfix o refactor visual, marcar el avance en la tabla y registrar cualquier excepción visual en `ESTANDARES_Y_CHECKLISTS.md`.
+# - Si se detecta un caso especial (por ejemplo, widget que no puede usar QSS global), documentar el motivo en la sección de excepciones del estándar.
+# - Extender los tests automáticos de UI/integración para cubrir los nuevos ítems marcados como completados.
+# - Si se elimina una excepción, actualizar ambos archivos y dejar constancia en el historial de cambios.
+#
+# Para detalles de estilos, colores y layout, ver `docs/estandares_visuales.md`.
+# Para feedback visual y mensajes, ver `docs/estandares_feedback.md`.
+#
+# ---
