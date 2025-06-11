@@ -32,6 +32,9 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         # Inicializar tabs y tabla antes de cualquier uso
         self._init_tabs()
         self._init_tab_usuarios()
+        # Conexión para refresco automático al cambiar de pestaña
+        if hasattr(self, 'tabs') and self.tabs is not None:
+            self.tabs.currentChanged.connect(self._on_tab_changed)
 
         # --- Header visual: título y barra de botones alineados ---
         header_layout = QHBoxLayout()
@@ -94,6 +97,9 @@ class UsuariosView(QWidget, TableResponsiveMixin):
             aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
         except Exception as e:
             print(f"Error aplicando QSS global: {e}")
+
+        if hasattr(self, 'actualizar_tabla_usuarios'):
+            self.actualizar_tabla_usuarios()
 
     def mostrar_feedback(self, mensaje, tipo="info"):
         if not hasattr(self, "label_feedback") or self.label_feedback is None:
@@ -164,6 +170,26 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.tabs.addTab(self.tab_resumen_permisos, "Resumen de permisos")
         self.main_layout.addWidget(self.tabs)
         self._init_tab_resumen_permisos()
+        # --- Refresco automático al cambiar de pestaña ---
+        self.tabs.currentChanged.connect(self._on_tab_changed)
+
+    def _on_tab_changed(self, index):
+        """
+        Refresca automáticamente las tablas de usuarios, permisos y resumen al cambiar de pestaña.
+        """
+        if hasattr(self, 'tabs') and self.tabs is not None:
+            # Refrescar tabla de usuarios
+            if hasattr(self, 'tab_usuarios') and self.tabs.currentWidget() == self.tab_usuarios:
+                if hasattr(self, 'actualizar_tabla_usuarios'):
+                    self.actualizar_tabla_usuarios()
+            # Refrescar tabla de permisos
+            elif hasattr(self, 'tab_permisos') and self.tabs.currentWidget() == self.tab_permisos:
+                if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'cargar_permisos_modulos'):
+                    self.controller.cargar_permisos_modulos()
+            # Refrescar resumen de permisos
+            elif hasattr(self, 'tab_resumen_permisos') and self.tabs.currentWidget() == self.tab_resumen_permisos:
+                if hasattr(self, 'controller') and self.controller and hasattr(self.controller, 'cargar_resumen_permisos'):
+                    self.controller.cargar_resumen_permisos()
 
     def _init_tab_usuarios(self):
         tab_usuarios_layout = QVBoxLayout(self.tab_usuarios)

@@ -21,7 +21,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
     - No usa box-shadow en QSS (usa QGraphicsDropShadowEffect en botones).
     - Exportación QR robusta.
     """
-    def __init__(self, usuario_actual="default", headers_dinamicos=None):
+    def __init__(self, usuario_actual="default", headers_dinamicos=None, controller=None):
         super().__init__()
         self.usuario_actual = usuario_actual
         self._cambio_columnas_interactivo = False
@@ -222,6 +222,13 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.tabla_pedido.cellDoubleClicked.connect(self.editar_detalle_pedido)
 
         self.setLayout(self.main_layout)
+
+        if self.controller:
+            self.controller.cargar_resumen_obras()
+            self.controller.cargar_pedidos_usuario(self.usuario_actual)
+
+        # Conectar el cambio de pestaña a la carga de datos correspondiente
+        self.tabs.currentChanged.connect(self._on_tab_changed)
 
     def create_form_layout(self):
         form_layout = QFormLayout()
@@ -651,11 +658,23 @@ class VidriosView(QWidget, TableResponsiveMixin):
         # Cargar datos iniciales
         self._on_tab_changed(0)
 
-    def _on_tab_changed(self, idx):
-        if idx == 0 and hasattr(self, 'controller'):
-            self.controller.cargar_resumen_obras()
-        elif idx == 1 and hasattr(self, 'controller'):
-            self.controller.cargar_pedidos_usuario(self.usuario_actual)
+    def _on_tab_changed(self, index):
+        """
+        Refresca las tablas de vidrios y pedidos automáticamente al cambiar de pestaña.
+        """
+        if hasattr(self, 'tabs') and self.tabs is not None:
+            # Obras y estado de pedidos
+            if hasattr(self, 'tab_obras') and self.tabs.currentWidget() == self.tab_obras:
+                if self.controller and hasattr(self.controller, 'cargar_resumen_obras'):
+                    self.controller.cargar_resumen_obras()
+            # Pedidos realizados por usuario
+            elif hasattr(self, 'tab_pedidos_usuario') and self.tabs.currentWidget() == self.tab_pedidos_usuario:
+                if self.controller and hasattr(self.controller, 'cargar_pedidos_usuario'):
+                    self.controller.cargar_pedidos_usuario(self.usuario_actual)
+            # Pedido de vidrios para obra
+            elif hasattr(self, 'tab_pedidos') and self.tabs.currentWidget() == self.tab_pedidos:
+                if hasattr(self, 'actualizar_tabla_pedido'):
+                    self.actualizar_tabla_pedido()
 
     def mostrar_resumen_obras(self, obras):
         self.tabla_obras.setRowCount(0)

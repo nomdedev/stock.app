@@ -75,6 +75,7 @@ class HerrajesController:
         # Conexión del botón de nuevo pedido de herrajes con autocompletado
         if hasattr(self.view, '_conectar_nuevo_pedido'):
             self.view._conectar_nuevo_pedido(self)
+        self.refrescar_pedidos()
 
     def _registrar_evento_auditoria(self, accion, detalle_extra="", estado=""):
         usuario = getattr(self, 'usuario_actual', None)
@@ -204,3 +205,15 @@ class HerrajesController:
                 self.view.mostrar_mensaje(f"Error al consultar estado de pedidos: {e}", tipo='error')
             self._registrar_evento_auditoria('consultar_estado_pedidos_por_obra', f'error: {e}', 'error')
             return 'error'
+
+    def refrescar_pedidos(self):
+        """
+        Carga los pedidos de herrajes desde el modelo y los muestra en la vista.
+        """
+        try:
+            pedidos = self.model.obtener_pedidos()
+            if hasattr(self.view, 'cargar_pedidos_herrajes'):
+                self.view.cargar_pedidos_herrajes(pedidos)
+        except Exception as e:
+            if hasattr(self.view, 'mostrar_feedback'):
+                self.view.mostrar_feedback(f"Error al refrescar pedidos: {e}", tipo="error")

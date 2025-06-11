@@ -14448,3 +14448,6 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-10 19:34:50,704 - INFO - Aplicación iniciada
 2025-06-10 19:34:55,085 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
 2025-06-10 19:34:55,086 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'
+2025-06-10 21:23:48,028 - INFO - Aplicación iniciada
+2025-06-10 21:23:51,420 - INFO - [PERMISOS] Sidebar filtrado: ['Obras', 'Inventario', 'Herrajes', 'Vidrios', 'Producción', 'Logística', 'Compras / Pedidos', 'Contabilidad', 'Auditoría', 'Mantenimiento', 'Usuarios', 'Configuración']
+2025-06-10 21:23:51,422 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'

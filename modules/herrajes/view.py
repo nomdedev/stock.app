@@ -96,12 +96,13 @@ class HerrajesView(QWidget, TableResponsiveMixin):
     nuevo_pedido_signal = pyqtSignal()
     actualizar_signal = pyqtSignal()
 
-    def __init__(self, db_connection=None, usuario_actual="default"):
+    def __init__(self, db_connection=None, usuario_actual="default", controller=None):
         self.boton_agregar = None  # Inicialización temprana para evitar AttributeError
         super().__init__()
         self.setObjectName("HerrajesView")
         self.db_connection = db_connection
         self.usuario_actual = usuario_actual
+        self.controller = controller
         self.config_path = os.path.join(os.path.expanduser("~"), "config_herrajes_columns.json")
         self.columnas_visibles = {"ID": True, "Nombre": True, "Cantidad": True, "Proveedor": True, "Ubicación": True, "Stock mínimo": True}
         self.main_layout = QVBoxLayout(self)
@@ -334,6 +335,8 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self._datos_pedidos_cache = []
         self._filtros_recientes_path = os.path.join(os.path.expanduser("~"), "filtros_pedidos_herrajes.json")
         self.cargar_filtros_recientes()
+        if self.controller and hasattr(self.controller, 'refrescar_pedidos'):
+            self.controller.refrescar_pedidos()
     def mostrar_mensaje(self, mensaje, tipo="info", duracion=3500):
         """
         Alias para mostrar_feedback, usado por handlers internos para unificar feedback visual.
@@ -921,3 +924,15 @@ class HerrajesView(QWidget, TableResponsiveMixin):
                     pass
                 w.clicked.connect(lambda: self.abrir_dialogo_pedido_herrajes(controller))
                 break
+
+    def _on_tab_changed(self, index):
+        """
+        Refresca las tablas de herrajes y pedidos automáticamente al cambiar de pestaña.
+        """
+        if hasattr(self, 'tabs') and self.tabs is not None:
+            if hasattr(self, 'tab_herrajes') and self.tabs.currentWidget() == self.tab_herrajes:
+                if self.controller and hasattr(self.controller, 'refrescar_herrajes'):
+                    self.controller.refrescar_herrajes()
+            elif hasattr(self, 'tab_pedidos') and self.tabs.currentWidget() == self.tab_pedidos:
+                if self.controller and hasattr(self.controller, 'refrescar_pedidos'):
+                    self.controller.refrescar_pedidos()

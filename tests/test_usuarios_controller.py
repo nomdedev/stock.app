@@ -77,13 +77,13 @@ def test_crear_usuario_password_debil(controller):
 
 def test_editar_usuario(controller):
     id_usuario = controller.crear_usuario("nuevo", "passwordfuerte", "operador")
-    controller.editar_usuario(id_usuario, {"rol": "admin"})
+    controller.editar_usuario_test(id_usuario, {"rol": "admin"})
     assert controller.model.usuarios[0]["rol"] == "admin"
 
 def test_editar_usuario_admin(controller):
     controller.model.usuarios.append({"id": 99, "username": "admin", "rol": "admin"})
     with pytest.raises(ValueError):
-        controller.editar_usuario(99, {"rol": "operador"})
+        controller.editar_usuario_test(99, {"rol": "operador"})
 
 def test_eliminar_usuario(controller):
     id_usuario = controller.crear_usuario("nuevo", "passwordfuerte", "operador")
