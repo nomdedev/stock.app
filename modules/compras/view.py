@@ -298,12 +298,18 @@ class ComprasView(QWidget, TableResponsiveMixin):
     def buscar_input(self):
         if not hasattr(self, '_buscar_input'):
             self._buscar_input = QLineEdit()
+            self._buscar_input.setObjectName("form_input")
+            self._buscar_input.setToolTip("Buscar producto")
+            self._buscar_input.setAccessibleName("Campo de búsqueda")
         return self._buscar_input
 
     @property
     def id_item_input(self):
         if not hasattr(self, '_id_item_input'):
             self._id_item_input = QLineEdit()
+            self._id_item_input.setObjectName("form_input")
+            self._id_item_input.setToolTip("ID del item")
+            self._id_item_input.setAccessibleName("Identificador de item")
         return self._id_item_input
 
 # Todas las líneas setStyleSheet comentadas corresponden a estilos migrados a QSS global. Ver docs/estandares_visuales.md
