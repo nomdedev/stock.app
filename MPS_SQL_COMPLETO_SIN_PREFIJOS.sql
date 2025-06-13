@@ -30,7 +30,8 @@ CREATE TABLE permisos_modulos (
     puede_modificar BIT DEFAULT 0,
     puede_aprobar BIT DEFAULT 0,
     fecha_creacion DATETIME DEFAULT GETDATE(),
-    creado_por INT
+    creado_por INT,
+    permiso NVARCHAR(50) -- agregado
 );
 
 -- =====================
@@ -77,7 +78,8 @@ CREATE TABLE movimientos_stock (
     cantidad DECIMAL(18,2) NOT NULL,
     realizado_por INT,
     observaciones NVARCHAR(MAX),
-    referencia NVARCHAR(255)
+    referencia NVARCHAR(255),
+    detalle NVARCHAR(255) -- agregado
 );
 
 -- =====================
@@ -90,7 +92,8 @@ CREATE TABLE reservas_stock (
     fecha_reserva DATETIME DEFAULT GETDATE(),
     cantidad_reservada DECIMAL(18,2) NOT NULL,
     referencia_obra INT,
-    estado NVARCHAR(20) DEFAULT 'activa'
+    estado NVARCHAR(20) DEFAULT 'activa',
+    fecha DATETIME -- agregado
 );
 
 -- =====================
@@ -115,7 +118,8 @@ CREATE TABLE cronograma_obras (
     id INT IDENTITY(1,1) PRIMARY KEY,
     id_obra INT FOREIGN KEY REFERENCES obras(id) ON DELETE CASCADE,
     fecha DATETIME,
-    estado NVARCHAR(30)
+    estado NVARCHAR(30),
+    fecha_fin DATE -- agregado
 );
 
 -- =====================
@@ -212,9 +216,11 @@ IF OBJECT_ID('auditorias_sistema', 'U') IS NOT NULL DROP TABLE auditorias_sistem
 CREATE TABLE auditorias_sistema (
     id INT IDENTITY(1,1) PRIMARY KEY,
     origen_evento NVARCHAR(30),
-    fecha DATETIME DEFAULT GETDATE(),
+    fecha DATETIME DEFAULT GETDATE(), -- agregado
     usuario_id INT,
-    descripcion NVARCHAR(MAX)
+    descripcion NVARCHAR(MAX),
+    modulo NVARCHAR(50), -- agregado
+    accion NVARCHAR(50) -- agregado
 );
 
 -- =====================
@@ -225,7 +231,8 @@ CREATE TABLE errores_sistema (
     id INT IDENTITY(1,1) PRIMARY KEY,
     origen_evento NVARCHAR(30),
     fecha DATETIME DEFAULT GETDATE(),
-    descripcion NVARCHAR(MAX)
+    descripcion NVARCHAR(MAX),
+    detalle NVARCHAR(255) -- agregado
 );
 
 -- Fin del script
