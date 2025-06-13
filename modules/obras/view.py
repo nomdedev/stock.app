@@ -22,6 +22,8 @@ class AltaObraDialog(QDialog):
 
         # Layout principal
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(24, 20, 24, 20)  # Márgenes mínimos estándar
+        layout.setSpacing(20)  # Espaciado estándar
 
         # Campos de entrada
         self.nombre_input = QLineEdit(self)
@@ -127,6 +129,8 @@ class EditObraDialog(QDialog):
 
         # Layout principal
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(24, 20, 24, 20)  # Márgenes mínimos estándar
+        layout.setSpacing(20)  # Espaciado estándar
 
         # Campos de entrada
         self.nombre_input = QLineEdit(self)

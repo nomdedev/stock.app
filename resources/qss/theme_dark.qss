@@ -143,3 +143,11 @@ QLabel#label_titulo_vidrios {
     margin-bottom: 8px;
     letter-spacing: 1px;
 }
+
+/* --- DIÁLOGOS MODALES UNIFICADOS (QDialog) --- */
+QDialog {
+    background: #232b36;
+    border-radius: 10px; /* Unificado: entre 8px y 12px */
+    border: 1.5px solid #334155;
+    padding: 8px 12px;
+}

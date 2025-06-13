@@ -389,6 +389,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
         dialog = QDialog(self)
         dialog.setWindowTitle(f"Código QR para {codigo}")
         vbox = QVBoxLayout(dialog)
+        vbox.setContentsMargins(24, 20, 24, 20)
+        vbox.setSpacing(20)
         qr_label = QLabel()
         qr_label.setPixmap(pixmap)
         vbox.addWidget(qr_label)
@@ -456,6 +458,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.dialog_carga = QDialog(self)
         self.dialog_carga.setWindowTitle("Cargando")
         vbox = QVBoxLayout(self.dialog_carga)
+        vbox.setContentsMargins(24, 20, 24, 20)
+        vbox.setSpacing(20)
         label = QLabel(mensaje)
         vbox.addWidget(label)
         self.progress_bar = QProgressBar()
@@ -835,4 +839,13 @@ class VidriosView(QWidget, TableResponsiveMixin):
         item = self.get_safe_item(tabla, row, column)
         if item is not None:
             item.setBackground(color)
+
+    def actualizar_tabla_pedido(self):
+        """
+        Refresca la tabla de pedido de vidrios. Debe ser implementada según la lógica de la aplicación.
+        """
+        # Ejemplo: limpiar la tabla y mostrar un mensaje de feedback
+        if hasattr(self, 'tabla_pedido'):
+            self.tabla_pedido.setRowCount(0)
+            self.mostrar_feedback("Tabla de pedido de vidrios actualizada.", tipo="info")
 

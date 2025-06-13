@@ -19,7 +19,7 @@ El objetivo es unificar la apariencia y la interacción con el usuario.
 - [x] Añadir `setAccessibleName` y `setToolTip` descriptivos.
 
 ## 3. Layout y modales
-- [ ] Mantener márgenes y paddings mínimos de **20 px** vertical y **24 px** horizontal.
+- [x] Mantener márgenes y paddings mínimos de **20 px** vertical y **24 px** horizontal.
 - [ ] Bordes redondeados de diálogos entre **8 px** y **12 px**.
 - [ ] Deshabilitar botones mientras se realiza una acción (evita doble clic) y mostrar feedback de carga.
 
