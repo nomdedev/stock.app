@@ -25,7 +25,9 @@ class AltaObraDialog(QDialog):
 
         # Campos de entrada
         self.nombre_input = QLineEdit(self)
+        self.nombre_input.setObjectName("form_input")
         self.cliente_input = QLineEdit(self)
+        self.cliente_input.setObjectName("form_input")
         self.fecha_medicion_input = QDateEdit(self)
         self.fecha_entrega_input = QDateEdit(self)
         self.fecha_medicion_input.setCalendarPopup(True)
@@ -130,7 +132,9 @@ class EditObraDialog(QDialog):
 
         # Campos de entrada
         self.nombre_input = QLineEdit(self)
+        self.nombre_input.setObjectName("form_input")
         self.cliente_input = QLineEdit(self)
+        self.cliente_input.setObjectName("form_input")
         self.fecha_medicion_input = QDateEdit(self)
         self.fecha_entrega_input = QDateEdit(self)
         self.fecha_medicion_input.setCalendarPopup(True)
@@ -259,6 +263,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
         # Buscador de obras por nombre o cliente
         search_layout = QHBoxLayout()
         self.search_bar = QLineEdit()
+        self.search_bar.setObjectName("form_input")
         self.search_bar.setPlaceholderText("Buscar obra por nombre o cliente...")
         self.search_bar.setFixedHeight(40)
         search_layout.addWidget(self.search_bar)

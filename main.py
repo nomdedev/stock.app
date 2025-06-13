@@ -163,6 +163,7 @@ def _verificar_e_instalar_dependencias():
         instalar_dependencias_criticas()
 
 _verificar_e_instalar_dependencias()
+verificar_dependencias()
 
 def mostrar_mensaje_dependencias(titulo, texto, detalles, tipo="error"):
     from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QVBoxLayout, QPushButton
@@ -328,9 +329,6 @@ from core.config import DEFAULT_THEME
 from functools import partial
 import ctypes
 import sys, os
-
-# Forzar aceleración por software de Qt/OpenGL
-os.environ['QT_OPENGL'] = 'software'
 
 # Configurar el path para importar módulos locales
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -689,7 +687,11 @@ class MainWindow(QMainWindow):
             self._ajustar_sidebar()
 
     def _ajustar_sidebar(self):
-        pass
+        if hasattr(self, "sidebar"):
+            if self.isMaximized() or self.isFullScreen():
+                self.sidebar.setFixedWidth(160)
+            else:
+                self.sidebar.setFixedWidth(200)
 
     def _setup_conexion_checker(self):
         """
@@ -872,7 +874,9 @@ import os
 if __name__ == "__main__":
     print("[LOG 4.1] Iniciando QApplication...")
     app = QApplication(sys.argv)
-    print("[LOG 4.2] Mostrando SplashScreen...")
+    print("[LOG 4.2] Aplicando stylesheet global desde configuración...")
+    set_theme(app, DEFAULT_THEME)
+    print("[LOG 4.3] Mostrando SplashScreen...")
     splash = SplashScreen(message="Cargando módulos y base de datos...", duration=2200)
     # --- APLICAR TEMA AL SPLASHSCREEN ---
     # Detectar modo de tema desde config o theme_manager
@@ -890,8 +894,6 @@ if __name__ == "__main__":
         pass  # Si no existe el método, ignora
     splash.show()
     splash.fade_in.start()
-    print("[LOG 4.3] Aplicando stylesheet global desde configuración...")
-    set_theme(app, DEFAULT_THEME)
 
     # 3. Verificar dependencias críticas y abortar si falta alguna
     chequear_conexion_bd_gui()
@@ -914,7 +916,6 @@ if __name__ == "__main__":
             return
         login_view.close()
         modulos_permitidos = usuarios_model.obtener_modulos_permitidos(user)
-        from main import MainWindow
         main_window = MainWindow(user, modulos_permitidos)
         main_window.actualizar_usuario_label(user)
         main_window.mostrar_mensaje(f"Usuario actual: {user['usuario']} ({user['rol']})", tipo="info", duracion=4000)

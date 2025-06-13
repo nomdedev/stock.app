@@ -68,8 +68,11 @@ class ProduccionView(QWidget):
         # Formulario de entrada
         self.form_layout = QFormLayout()
         self.abertura_input = QLineEdit()
+        self.abertura_input.setObjectName("form_input")
         self.etapa_input = QLineEdit()
+        self.etapa_input.setObjectName("form_input")
         self.estado_input = QLineEdit()
+        self.estado_input.setObjectName("form_input")
         self.form_layout.addRow("Abertura:", self.abertura_input)
         self.form_layout.addRow("Etapa:", self.etapa_input)
         self.form_layout.addRow("Estado:", self.estado_input)

@@ -160,6 +160,21 @@ QLineEdit#password_input::placeholder {
     color: #bdbdbd;
     font-style: italic;
 }
+QLineEdit#form_input,
+QComboBox#form_input,
+QTextEdit#form_input {
+    background: #fff;
+    border: 2px solid #d1d5db;
+    border-radius: 12px;
+    padding: 10px;
+    font-size: 12px;
+}
+QLineEdit#form_input:focus,
+QComboBox#form_input:focus,
+QTextEdit#form_input:focus {
+    border: 2px solid #2563eb;
+    background: #f3f4f6;
+}
 QPushButton#boton_login {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #2563eb, stop:1 #60a5fa);
     color: #fff;

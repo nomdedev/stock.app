@@ -62,6 +62,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
 
         # --- Filtros y búsqueda rápida ---
         self.filtro_balance = QLineEdit()
+        self.filtro_balance.setObjectName("form_input")
         self.filtro_balance.setPlaceholderText("Buscar en movimientos...")
         self.filtro_balance.setToolTip("Filtrar movimientos por cualquier campo")
         self.filtro_balance.textChanged.connect(self.filtrar_tabla_balance)
@@ -90,6 +91,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.tab_pagos_layout = QVBoxLayout()
         self.tab_pagos.setLayout(self.tab_pagos_layout)
         self.filtro_pagos = QLineEdit()
+        self.filtro_pagos.setObjectName("form_input")
         self.filtro_pagos.setPlaceholderText("Buscar pagos por obra, colocador...")
         self.filtro_pagos.setToolTip("Filtrar pagos por cualquier campo")
         self.filtro_pagos.textChanged.connect(self.filtrar_tabla_pagos)
@@ -105,6 +107,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.tab_recibos_layout = QVBoxLayout()
         self.tab_recibos.setLayout(self.tab_recibos_layout)
         self.filtro_recibos = QLineEdit()
+        self.filtro_recibos.setObjectName("form_input")
         self.filtro_recibos.setPlaceholderText("Buscar recibos por obra, concepto, destinatario...")
         self.filtro_recibos.setToolTip("Filtrar recibos por cualquier campo")
         self.filtro_recibos.textChanged.connect(self.filtrar_tabla_recibos)
@@ -150,6 +153,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         controles_layout.addWidget(QLabel("Mes:"))
         controles_layout.addWidget(self.combo_mes)
         self.input_dolar = QLineEdit()
+        self.input_dolar.setObjectName("form_input")
         self.input_dolar.setPlaceholderText("Valor dólar oficial")
         self.input_dolar.setToolTip("Ingrese el valor del dólar para conversión")
         controles_layout.addWidget(QLabel("Dólar:"))

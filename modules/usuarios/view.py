@@ -487,12 +487,14 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         form.setSpacing(12)
         # --- Username ---
         username_input = QLineEdit()
+        username_input.setObjectName("form_input")
         username_input.setPlaceholderText("Nombre de usuario")
         username_input.setToolTip("Ingrese el nombre de usuario")
         username_input.setAccessibleName("Nombre de usuario")
         form.addRow("Usuario:", username_input)
         # --- Contraseña ---
         password_input = QLineEdit()
+        password_input.setObjectName("form_input")
         password_input.setEchoMode(QLineEdit.EchoMode.Password)
         password_input.setPlaceholderText("Contraseña fuerte")
         password_input.setToolTip("Ingrese una contraseña fuerte (mín. 8 caracteres, mayúscula, minúscula, número y símbolo)")
@@ -614,12 +616,14 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         form.setSpacing(12)
         # --- Username (readonly) ---
         username_input = QLineEdit(usuario.get('username',''))
+        username_input.setObjectName("form_input")
         username_input.setReadOnly(True)
         username_input.setToolTip("Nombre de usuario (no editable)")
         username_input.setAccessibleName("Nombre de usuario")
         form.addRow("Usuario:", username_input)
         # --- Contraseña (opcional, solo si se desea cambiar) ---
         password_input = QLineEdit()
+        password_input.setObjectName("form_input")
         password_input.setEchoMode(QLineEdit.EchoMode.Password)
         password_input.setPlaceholderText("Nueva contraseña (opcional)")
         password_input.setToolTip("Ingrese una nueva contraseña fuerte si desea cambiarla")

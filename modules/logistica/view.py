@@ -495,12 +495,14 @@ pip install PyQt6-WebEngine
     def buscar_input(self):
         if not hasattr(self, '_buscar_input'):
             self._buscar_input = QLineEdit()
+            self._buscar_input.setObjectName("form_input")
         return self._buscar_input
 
     @property
     def id_item_input(self):
         if not hasattr(self, '_id_item_input'):
             self._id_item_input = QLineEdit()
+            self._id_item_input.setObjectName("form_input")
         return self._id_item_input
 
     def abrir_formulario_nuevo_envio(self):
@@ -520,21 +522,26 @@ pip install PyQt6-WebEngine
         form.setContentsMargins(0, 0, 0, 0)
         form.setSpacing(12)
         obra_input = QLineEdit()
+        obra_input.setObjectName("form_input")
         obra_input.setPlaceholderText("Obra asociada")
         obra_input.setToolTip("Ingrese el nombre o ID de la obra")
         material_input = QLineEdit()
+        material_input.setObjectName("form_input")
         material_input.setPlaceholderText("Material")
         material_input.setToolTip("Ingrese el material a enviar")
         cantidad_input = QLineEdit()
+        cantidad_input.setObjectName("form_input")
         cantidad_input.setPlaceholderText("Cantidad")
         cantidad_input.setToolTip("Ingrese la cantidad a enviar")
         estado_input = QComboBox()
         estado_input.addItems(["Pendiente", "En tránsito", "Entregado"])
         estado_input.setToolTip("Estado del envío")
         quien_llevo_input = QLineEdit()
+        quien_llevo_input.setObjectName("form_input")
         quien_llevo_input.setPlaceholderText("Quién lo llevó")
         quien_llevo_input.setToolTip("Nombre del responsable del envío")
         vehiculo_input = QLineEdit()
+        vehiculo_input.setObjectName("form_input")
         vehiculo_input.setPlaceholderText("Vehículo")
         vehiculo_input.setToolTip("Vehículo utilizado para el envío")
         for widget in [obra_input, material_input, cantidad_input, quien_llevo_input, vehiculo_input]:
@@ -613,15 +620,20 @@ pip install PyQt6-WebEngine
         form.setContentsMargins(0, 0, 0, 0)
         form.setSpacing(12)
         obra_input = QLineEdit(datos.get("Obra", ""))
+        obra_input.setObjectName("form_input")
         material_input = QLineEdit(datos.get("Material", ""))
+        material_input.setObjectName("form_input")
         cantidad_input = QLineEdit(datos.get("Cantidad", ""))
+        cantidad_input.setObjectName("form_input")
         estado_input = QComboBox()
         estado_input.addItems(["Pendiente", "En tránsito", "Entregado"])
         idx_estado = estado_input.findText(datos.get("Estado", ""))
         if idx_estado >= 0:
             estado_input.setCurrentIndex(idx_estado)
         quien_llevo_input = QLineEdit(datos.get("Quién lo llevó", ""))
+        quien_llevo_input.setObjectName("form_input")
         vehiculo_input = QLineEdit(datos.get("Vehículo", ""))
+        vehiculo_input.setObjectName("form_input")
         for widget in [obra_input, material_input, cantidad_input, quien_llevo_input, vehiculo_input]:
             widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
             font = widget.font()

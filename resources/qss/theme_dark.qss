@@ -74,8 +74,23 @@ QLineEdit, QComboBox, QSpinBox, QDateEdit {
     border: 1.5px solid #334155;
     border-radius: 6px;
 }
+QLineEdit#form_input,
+QComboBox#form_input,
+QTextEdit#form_input {
+    background: #1e293b;
+    color: #fff;
+    border: 1.5px solid #334155;
+    border-radius: 6px;
+    padding: 8px;
+}
 QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDateEdit:focus {
     border: 2px solid #2563eb;
+}
+QLineEdit#form_input:focus,
+QComboBox#form_input:focus,
+QTextEdit#form_input:focus {
+    border: 2px solid #2563eb;
+    background: #1e293b;
 }
 SidebarButton[selected="true"] {
     background: #334155;
