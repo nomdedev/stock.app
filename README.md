@@ -1006,3 +1006,15 @@ El flujo de edición de fecha de entrega desde la UI está cubierto por el test 
 - **Cumple:** Checklist de feedback visual, edge cases, accesibilidad y registro en auditoría.
 
 > Ver detalles y ejemplos en el propio archivo de test y en `docs/ESTANDARES_Y_CHECKLISTS.md`.
+
+---
+
+## Checklist de validación UI/UX y QA (actualizado al 12/06/2025)
+
+- [x] Test de UI automatizado para alta de obra y reflejo en tabla: `tests/obras/test_obras_view_alta_ui.py` (completo, validado 12/06/2025)
+- [x] Cobertura de feedback visual y checklist de QA en docs/checklists/checklist_mejoras_ui_general.md
+- [ ] Layout y modales: márgenes, paddings y bordes redondeados en diálogos principales (pendiente de revisión/ajuste)
+- [ ] Feedback visual: centralización en `label_feedback`, colores estándar y banners cerrables (en progreso)
+- [ ] Accesibilidad: orden de tabulación, atajos de teclado y soporte para lectores de pantalla (en progreso)
+
+> Avance y próximos pasos documentados en el checklist y en este README. Actualizar tras cada mejora o test.
