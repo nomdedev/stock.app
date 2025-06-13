@@ -14640,3 +14640,21 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-13 19:36:37,174 - ERROR - Error al ejecutar la consulta en la base de datos.
 
 ('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-13 20:47:14,184 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+'utf-16-le' codec can't decode bytes in position 14-15: illegal encoding
+2025-06-13 20:47:34,382 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+'utf-16-le' codec can't decode bytes in position 14-15: illegal encoding
+2025-06-13 20:47:34,382 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+'utf-16-le' codec can't decode bytes in position 14-15: illegal encoding
+2025-06-13 20:47:43,968 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+'utf-16-le' codec can't decode bytes in position 14-15: illegal encoding
+2025-06-13 20:47:43,968 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+'utf-16-le' codec can't decode bytes in position 14-15: illegal encoding
+2025-06-13 20:47:43,968 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+'utf-16-le' codec can't decode bytes in position 14-15: illegal encoding

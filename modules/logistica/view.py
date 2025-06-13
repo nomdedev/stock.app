@@ -7,6 +7,7 @@ from functools import partial
 from core.table_responsive_mixin import TableResponsiveMixin
 from core.ui_components import estilizar_boton_icono
 
+# Se ubicó la importación de QWebEngineView al inicio del archivo para evitar errores de importación.
 try:
     from PyQt6.QtWebEngineWidgets import QWebEngineView
     WEBENGINE_AVAILABLE = True

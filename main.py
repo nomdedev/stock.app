@@ -237,7 +237,10 @@ def verificar_dependencias():
         )
     else:
         print("[LOG 2.5] ✅ Todas las dependencias críticas y secundarias están instaladas correctamente.", flush=True)
-
+# Verificar e instalar dependencias críticas
+_verificar_e_instalar_dependencias()
+# Ahora verificar dependencias instaladas y requeridas
+verificar_dependencias()
 import os
 # Refuerzo para evitar errores de OpenGL/Skia/Chromium en Windows
 os.environ['QT_OPENGL'] = 'software'
