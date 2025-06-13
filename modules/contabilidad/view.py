@@ -137,6 +137,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         # Controles para filtros y tipo de gráfico
         controles_layout = QHBoxLayout()
         self.combo_tipo_grafico = QComboBox()
+        self.combo_tipo_grafico.setObjectName("form_input")
         self.combo_tipo_grafico.addItems([
             "Ingresos vs Egresos", "Cobros por Obra", "Pagos por Obra", "Evolución Mensual", "Desglose por Moneda"
         ])
@@ -144,10 +145,12 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         controles_layout.addWidget(QLabel("Tipo de gráfico:"))
         controles_layout.addWidget(self.combo_tipo_grafico)
         self.combo_anio = QComboBox()
+        self.combo_anio.setObjectName("form_input")
         self.combo_anio.setToolTip("Año a analizar")
         controles_layout.addWidget(QLabel("Año:"))
         controles_layout.addWidget(self.combo_anio)
         self.combo_mes = QComboBox()
+        self.combo_mes.setObjectName("form_input")
         self.combo_mes.addItems(["Todos"] + [str(m) for m in range(1, 13)])
         self.combo_mes.setToolTip("Mes a analizar")
         controles_layout.addWidget(QLabel("Mes:"))
@@ -170,6 +173,7 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         controles_layout.addWidget(self.boton_estadistica_personalizada)
         self.boton_estadistica_personalizada.clicked.connect(self.abrir_dialogo_estadistica_personalizada)
         self.combo_estadistica_personalizada = QComboBox()
+        self.combo_estadistica_personalizada.setObjectName("form_input")
         self.combo_estadistica_personalizada.setToolTip("Seleccionar estadística personalizada guardada")
         self.combo_estadistica_personalizada.addItem("(Ninguna personalizada)")
         self.combo_estadistica_personalizada.currentIndexChanged.connect(self.seleccionar_estadistica_personalizada)

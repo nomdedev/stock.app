@@ -184,6 +184,7 @@ class LogisticaView(QWidget, TableResponsiveMixin):
             tab_mapa_layout.addWidget(self.webview)
         else:
             self.mapa_placeholder = QTextEdit()
+            self.mapa_placeholder.setObjectName("form_input")
             self.mapa_placeholder.setReadOnly(True)
             self.mapa_placeholder.setText("""
 [No se puede mostrar el mapa interactivo porque falta PyQt6-WebEngine.]
@@ -534,6 +535,7 @@ pip install PyQt6-WebEngine
         cantidad_input.setPlaceholderText("Cantidad")
         cantidad_input.setToolTip("Ingrese la cantidad a enviar")
         estado_input = QComboBox()
+        estado_input.setObjectName("form_input")
         estado_input.addItems(["Pendiente", "En tránsito", "Entregado"])
         estado_input.setToolTip("Estado del envío")
         quien_llevo_input = QLineEdit()
@@ -626,6 +628,7 @@ pip install PyQt6-WebEngine
         cantidad_input = QLineEdit(datos.get("Cantidad", ""))
         cantidad_input.setObjectName("form_input")
         estado_input = QComboBox()
+        estado_input.setObjectName("form_input")
         estado_input.addItems(["Pendiente", "En tránsito", "Entregado"])
         idx_estado = estado_input.findText(datos.get("Estado", ""))
         if idx_estado >= 0:
@@ -797,12 +800,16 @@ class DialogoPagoColocacion(QDialog):
         self.setMinimumWidth(420)
         layout = QFormLayout(self)
         self.monto_edit = QLineEdit()
+        self.monto_edit.setObjectName("form_input")
         self.fecha_edit = QDateEdit()
         self.fecha_edit.setCalendarPopup(True)
         self.fecha_edit.setDate(QDate.currentDate())
         self.comprobante_edit = QLineEdit()
+        self.comprobante_edit.setObjectName("form_input")
         self.estado_edit = QLineEdit()
+        self.estado_edit.setObjectName("form_input")
         self.observaciones_edit = QTextEdit()
+        self.observaciones_edit.setObjectName("form_input")
         layout.addRow("Monto:", self.monto_edit)
         layout.addRow("Fecha:", self.fecha_edit)
         layout.addRow("Comprobante:", self.comprobante_edit)

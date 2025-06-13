@@ -282,16 +282,20 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         # --- Filtros para la tabla de pedidos de herrajes ---
         self.filtros_pedidos_layout = QHBoxLayout()
         self.filtro_estado = QComboBox()
+        self.filtro_estado.setObjectName("form_input")
         self.filtro_estado.addItem("Todos", None)
         self.filtro_estado.addItems(["pendiente", "entregado", "cancelado"])
         self.filtro_estado.setToolTip("Filtrar por estado del pedido")
         self.filtro_obra = QComboBox()
+        self.filtro_obra.setObjectName("form_input")
         self.filtro_obra.addItem("Todas las obras", None)
         # Obras se llenan dinámicamente en cargar_pedidos_herrajes
         self.filtro_usuario = QComboBox()
+        self.filtro_usuario.setObjectName("form_input")
         self.filtro_usuario.addItem("Todos los usuarios", None)
         # Usuarios se llenan dinámicamente en cargar_pedidos_herrajes
         self.filtro_tipo_herraje = QComboBox()
+        self.filtro_tipo_herraje.setObjectName("form_input")
         self.filtro_tipo_herraje.addItem("Todos los tipos", None)
         # Tipos de herraje se llenan dinámicamente
         self.filtro_fecha_inicio = QLineEdit()
@@ -303,6 +307,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.filtro_fecha_fin.setPlaceholderText("Fecha hasta (AAAA-MM-DD)")
         self.filtro_fecha_fin.setToolTip("Filtrar hasta fecha (inclusive)")
         self.filtro_stock_bajo = QComboBox()
+        self.filtro_stock_bajo.setObjectName("form_input")
         self.filtro_stock_bajo.addItem("Stock: Todos", None)
         self.filtro_stock_bajo.addItem("Solo bajo stock", True)
         self.filtro_busqueda = QLineEdit()
@@ -779,6 +784,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         form.setSpacing(12)
         # --- Combo de obras ---
         cmb_obras = QComboBox()
+        cmb_obras.setObjectName("form_input")
         cmb_obras.setToolTip("Seleccione la obra asociada al pedido")
         cmb_obras.setAccessibleName("Obra para pedido")
         obras = []
@@ -789,10 +795,10 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         form.addRow("Obra:", cmb_obras)
         # --- Autocompletado de herraje ---
         input_codigo = QLineEdit()
+        input_codigo.setObjectName("form_input")
         input_codigo.setPlaceholderText("Código o nombre de herraje")
         input_codigo.setToolTip("Ingrese el código o nombre del herraje")
         input_codigo.setAccessibleName("Código de herraje para pedido")
-        input_codigo.setObjectName("input_codigo_herraje")
         herrajes = []
         if controller and hasattr(controller, 'model') and hasattr(controller.model, 'obtener_herrajes'):
             herrajes = controller.model.obtener_herrajes()

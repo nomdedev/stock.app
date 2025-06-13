@@ -240,6 +240,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         self.label_permisos = QLabel("Asignar módulos permitidos a usuarios normales:")
         tab_permisos_layout.addWidget(self.label_permisos)
         self.combo_usuario = QComboBox()
+        self.combo_usuario.setObjectName("form_input")
         tab_permisos_layout.addWidget(self.combo_usuario)
         self.tabla_permisos_modulos = QTableWidget()
         self.make_table_responsive(self.tabla_permisos_modulos)
@@ -502,6 +503,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         form.addRow("Contraseña:", password_input)
         # --- Rol ---
         combo_rol = QComboBox()
+        combo_rol.setObjectName("form_input")
         combo_rol.setToolTip("Seleccionar rol del usuario")
         combo_rol.setAccessibleName("Rol de usuario")
         roles = []
@@ -631,6 +633,7 @@ class UsuariosView(QWidget, TableResponsiveMixin):
         form.addRow("Contraseña:", password_input)
         # --- Rol ---
         combo_rol = QComboBox()
+        combo_rol.setObjectName("form_input")
         combo_rol.setToolTip("Seleccionar rol del usuario")
         combo_rol.setAccessibleName("Rol de usuario")
         roles = []

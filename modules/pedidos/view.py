@@ -73,6 +73,7 @@ class PedidosView(QWidget):
         # Formulario para nuevo pedido
         self.form_layout = QFormLayout()
         self.obra_combo = QComboBox()
+        self.obra_combo.setObjectName("form_input")
         self.fecha_pedido = QLineEdit()
         self.fecha_pedido.setObjectName("form_input")
         self.fecha_pedido.setToolTip("Fecha del pedido")

@@ -56,6 +56,7 @@ class ConfiguracionView(QMainWindow):
         theme_row = QHBoxLayout()
         theme_label = QLabel("Tema:")
         self.combo_tema = QComboBox()
+        self.combo_tema.setObjectName("form_input")
         self.combo_tema.addItems(["Claro", "Oscuro"])
         self.combo_tema.setCurrentIndex(0)  # Por defecto claro
         self.combo_tema.currentIndexChanged.connect(self._emitir_cambio_tema)
