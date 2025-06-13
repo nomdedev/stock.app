@@ -9,11 +9,11 @@
 |-------------|------------------|------------------|------------------------|-----------------|-----------------------|-------------------|--------------------------|
 | Obras       | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
 | Vidrios     | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubic., accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
-| Compras     | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
-| Pedidos     | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
-| Logística   | ✅ (usa setObjectName y QSS)        | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
-| Producción  | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
-| Usuarios    | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Compras     | ✅ (setObjectName aplicado) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Pedidos     | ✅ (setObjectName aplicado) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Logística   | ✅ (setObjectName aplicado) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Producción  | ✅ (setObjectName aplicado) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Usuarios    | ✅ (setObjectName aplicado) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
 | Inventario  | ✅ (setObjectName, layout y QSS global OK, pestañas) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes, pestañas) |
 | Herrajes    | ⚠️ (falta unificar lógica de pedidos por obra y exponer estado) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
 
