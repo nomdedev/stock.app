@@ -58,6 +58,7 @@ Este documento consolida los principales estándares, checklists, pendientes y d
 9. [Checklists de Mejoras por Módulo](#checklists-de-mejoras-por-modulo)
 10. [Pendientes y Tareas Críticas](#pendientes-y-tareas-criticas)
 11. [Decisiones Técnicas y Justificaciones](#decisiones-tecnicas-y-justificaciones)
+12. [Inventario de Tests por Módulo](INVENTARIO_TESTS_POR_MODULO.md)
 
 ---
 

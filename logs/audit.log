@@ -14618,3 +14618,25 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-10 22:21:07,651 - INFO - Obra creada correctamente (ID: 4).
 2025-06-10 22:21:07,651 - INFO - Obra creada correctamente (ID: 4).
 2025-06-10 22:21:07,651 - INFO - Obra creada correctamente (ID: 4).
+2025-06-13 19:36:37,018 - ERROR - [AUDITORÍA] Evento sin usuario autenticado: modulo='inventario', tipo_evento='alta', detalle='Ítem agregado: 12345 - éxito [usuario no autenticado]'
+2025-06-13 19:36:37,039 - ERROR - Error al ajustar stock de perfil: Cantidad inválida para ajuste.
+2025-06-13 19:36:37,039 - ERROR - Error al ajustar stock de perfil: Cantidad inválida para ajuste.
+2025-06-13 19:36:37,161 - INFO - Conexión establecida con la base de datos 'auditoria' (intento 1).
+2025-06-13 19:36:37,161 - INFO - Conexión establecida con la base de datos 'auditoria' (intento 1).
+2025-06-13 19:36:37,161 - INFO - Conexión establecida con la base de datos 'auditoria' (intento 1).
+2025-06-13 19:36:37,161 - INFO - Conexión establecida con la base de datos 'auditoria' (intento 1).
+2025-06-13 19:36:37,174 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-13 19:36:37,174 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-13 19:36:37,174 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-13 19:36:37,174 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-13 19:36:37,174 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")

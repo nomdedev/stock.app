@@ -162,95 +162,6 @@ def _verificar_e_instalar_dependencias():
         print("Instalando dependencias críticas automáticamente...")
         instalar_dependencias_criticas()
 
-_verificar_e_instalar_dependencias()
-verificar_dependencias()
-
-def mostrar_mensaje_dependencias(titulo, texto, detalles, tipo="error"):
-    from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QVBoxLayout, QPushButton
-    from PyQt6.QtGui import QPixmap
-    from PyQt6.QtCore import Qt
-    app = QApplication.instance() or QApplication(sys.argv)
-    dialog = QDialog()
-    dialog.setWindowTitle(titulo)
-    dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
-    dialog.setFixedWidth(420)
-    # Solo se permite setStyleSheet aquí para personalizar el diálogo de dependencias.
-    # No usar setStyleSheet embebido en widgets individuales fuera de diálogos personalizadas o theme global.
-    dialog.setStyleSheet(f"""
-        QDialog {{
-            background: #fff9f3;
-            border-radius: 18px;
-            border: 2px solid #e3e3e3;
-        }}
-        QLabel#titulo {{
-            color: #2563eb;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 12px 0 0 0;
-            qproperty-alignment: AlignCenter;
-        }}
-        QLabel#mensaje {{
-            color: #1e293b;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 8px 0 0 0;
-            qproperty-alignment: AlignCenter;
-        }}
-        QLabel#detalles {{
-            color: {'#ef4444' if tipo=='error' else '#fbbf24'};
-            font-size: 13px;
-            font-weight: 500;
-            background: {'#ffe5e5' if tipo=='error' else '#fef9c3'};
-            border-radius: 10px;
-            padding: 10px 16px;
-            margin: 12px 0 0 0;
-            qproperty-alignment: AlignCenter;
-        }}
-        QPushButton {{
-            background: #2563eb;
-            color: white;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            min-width: 100px;
-            min-height: 32px;
-            padding: 8px 24px;
-            margin-top: 18px;
-        }}
-        QPushButton:hover {{
-            background: #1e40af;
-        }}
-    """)
-    layout = QVBoxLayout()
-    # Ícono grande
-    icon_label = QLabel()
-    if tipo == "error":
-        icon_label.setPixmap(QPixmap("resources/icons/reject.svg").scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
-    else:
-        icon_label.setPixmap(QPixmap("resources/icons/warning.svg").scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
-    icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-    layout.addWidget(icon_label)
-    # Título
-    titulo_label = QLabel(titulo)
-    titulo_label.setObjectName("titulo")
-    layout.addWidget(titulo_label)
-    # Mensaje principal
-    mensaje_label = QLabel(texto)
-    mensaje_label.setObjectName("mensaje")
-    mensaje_label.setWordWrap(True)
-    layout.addWidget(mensaje_label)
-    # Detalles (lista de dependencias)
-    detalles_label = QLabel(detalles)
-    detalles_label.setObjectName("detalles")
-    detalles_label.setWordWrap(True)
-    layout.addWidget(detalles_label)
-    # Botón de cierre
-    btn = QPushButton("Cerrar")
-    btn.clicked.connect(dialog.accept)
-    layout.addWidget(btn, alignment=Qt.AlignmentFlag.AlignCenter)
-    dialog.setLayout(layout)
-    dialog.exec()
-
 def verificar_dependencias():
     """
     Verifica si las dependencias críticas y secundarias están instaladas.
@@ -290,6 +201,23 @@ def verificar_dependencias():
         except Exception:
             print(f"[LOG 2.2.2] ❌ {paquete} faltante.", flush=True)
             faltantes_secundarios.append(f"{paquete}{' >= ' + version if version else ''}")
+    def mostrar_mensaje_dependencias(titulo, mensaje, detalles, tipo="info"):
+        from PyQt6.QtWidgets import QMessageBox, QApplication
+        app = QApplication.instance() or QApplication(sys.argv)
+        icon = {
+            "info": QMessageBox.Icon.Information,
+            "exito": QMessageBox.Icon.Information,
+            "advertencia": QMessageBox.Icon.Warning,
+            "warning": QMessageBox.Icon.Warning,
+            "error": QMessageBox.Icon.Critical
+        }.get(tipo, QMessageBox.Icon.Information)
+        msg_box = QMessageBox()
+        msg_box.setIcon(icon)
+        msg_box.setWindowTitle(titulo)
+        msg_box.setText(mensaje)
+        msg_box.setInformativeText(detalles)
+        msg_box.exec()
+
     if faltantes_criticos:
         print("[LOG 2.3] Dependencias críticas faltantes. Mostrando mensaje y abortando.", flush=True)
         mostrar_mensaje_dependencias(
