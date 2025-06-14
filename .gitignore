@@ -5,3 +5,5 @@ config/privado/
 **/tests/*privado*
 # Ignorar archivo de variables de entorno
 .env
+# Ignorar archivos compilados de Python
+*.pyc

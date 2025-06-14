@@ -35,21 +35,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.main_layout.setSpacing(20)
         self.setWindowTitle("Gestión de Vidrios")
 
-        self._init_header()
-        self._init_tabs()
-        self._init_feedback_label()
-        self._init_tabla_pedido()
-        self.setLayout(self.main_layout)
-        self._init_column_config()
-        self._init_header_menu()
-        self._init_theme()
-        self._init_main_buttons()
-        self.conectar_botones_principales()
-        self._init_event_bus_and_signals()
-        self._init_controller_data()
-        self.tabs.currentChanged.connect(self._on_tab_changed)
-
-    def _init_header(self):
+        # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
@@ -69,12 +55,14 @@ class VidriosView(QWidget, TableResponsiveMixin):
         header_layout.addWidget(self.boton_agregar_vidrios_obra)
         self.main_layout.addLayout(header_layout)
 
-    def _init_tabs(self):
+        # --- TABS PRINCIPALES (MEJORADO: paddings, márgenes, alineación, consistencia visual) ---
         self.tabs = QTabWidget()
         self.tabs.setObjectName("tabs_vidrios")
+        # Eliminar setStyleSheet embebido, migrar a QSS global
+        # self.tabs.setStyleSheet(...)
         self.main_layout.addWidget(self.tabs)
 
-        # Tab 1: Obras
+        # Pestaña 1: Obras sin pedido de vidrios (mejorada)
         self.tab_obras = QWidget()
         tab_obras_layout = QVBoxLayout(self.tab_obras)
         tab_obras_layout.setContentsMargins(24, 20, 24, 20)
@@ -98,7 +86,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.tab_obras.setLayout(tab_obras_layout)
         self.tabs.addTab(self.tab_obras, "Obras y estado de pedidos")
 
-        # Tab 2: Pedidos usuario
+        # Pestaña 2: Pedidos realizados por el usuario (mejorada)
         self.tab_pedidos_usuario = QWidget()
         tab_pedidos_usuario_layout = QVBoxLayout(self.tab_pedidos_usuario)
         tab_pedidos_usuario_layout.setContentsMargins(24, 20, 24, 20)
@@ -118,7 +106,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.tab_pedidos_usuario.setLayout(tab_pedidos_usuario_layout)
         self.tabs.addTab(self.tab_pedidos_usuario, "Pedidos realizados por usuario")
 
-    def _init_feedback_label(self):
+        # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")
         self.label_feedback.setVisible(False)
@@ -127,13 +115,14 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None
 
-    def _init_tabla_pedido(self):
+        # --- Inicialización robusta de tabla_pedido, boton_guardar_pedido y label_formulario ---
         self.tabla_pedido = QTableWidget()
         self.tabla_pedido.setObjectName("tabla_pedido_vidrios")
         self.tabla_pedido.setHorizontalHeaderLabels(["Tipología", "Ancho x Alto", "Color", "Cantidad", self.ACCION_HEADER])
         self.tabla_pedido.setAlternatingRowColors(True)
         self.tabla_pedido.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabla_pedido.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        # Pestaña de pedidos de usuario
         self.tab_pedidos = QWidget()
         tab_pedidos_layout = QVBoxLayout(self.tab_pedidos)
         tab_pedidos_layout.setContentsMargins(24, 20, 24, 20)
@@ -148,12 +137,14 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.tab_pedidos.setLayout(tab_pedidos_layout)
         self.tabs.addTab(self.tab_pedidos, "Pedido de vidrios para obra")
 
-    def _init_column_config(self):
+        self.setLayout(self.main_layout)
+
+        # Configuración de columnas y headers dinámicos
         self.config_path = f"config_vidrios_columns_{self.usuario_actual}.json"
         self.columnas_visibles = self.cargar_config_columnas()
         self.aplicar_columnas_visibles()
 
-    def _init_header_menu(self):
+        # Menú contextual en el header (robusto)
         header = self.tabla_obras.horizontalHeader()
         if header is not None:
             header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
@@ -168,16 +159,16 @@ class VidriosView(QWidget, TableResponsiveMixin):
             if hasattr(header, 'sectionClicked'):
                 header.sectionClicked.connect(self.mostrar_menu_columnas_header)
 
-    def _init_theme(self):
+        # Cargar y aplicar QSS global y tema visual (solo desde resources/qss/)
         from utils.theme_manager import cargar_modo_tema
         tema = cargar_modo_tema()
         qss_tema = f"resources/qss/theme_{tema}.qss"
         aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
 
-    def _init_main_buttons(self):
+        # Botones principales como iconos (con sombra real)
         botones_layout = QHBoxLayout()
         self.boton_buscar = QPushButton()
-        self.boton_buscar.setObjectName("boton_buscar_vidrios")
+        self.boton_buscar.setObjectName("boton_buscar_vidrios")  # Unificación visual y QSS global
         self.boton_buscar.setIcon(QIcon("resources/icons/search_icon.svg"))
         self.boton_buscar.setIconSize(QSize(20, 20))
         self.boton_buscar.setToolTip("Buscar vidrio")
@@ -190,7 +181,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
         sombra2.setOffset(0, 2)
         self.boton_buscar.setGraphicsEffect(sombra2)
         self.boton_exportar_excel = QPushButton()
-        self.boton_exportar_excel.setObjectName("boton_exportar_excel_vidrios")
+        self.boton_exportar_excel.setObjectName("boton_exportar_excel_vidrios")  # Unificación visual y QSS global
         self.boton_exportar_excel.setIcon(QIcon("resources/icons/excel_icon.svg"))
         self.boton_exportar_excel.setIconSize(QSize(24, 24))
         self.boton_exportar_excel.setToolTip("Exportar vidrios a Excel")
@@ -208,19 +199,42 @@ class VidriosView(QWidget, TableResponsiveMixin):
         botones_layout.addWidget(self.boton_exportar_excel)
         botones_layout.addStretch()
         self.main_layout.addLayout(botones_layout)
+        # Conectar botones principales a sus acciones (exportar, etc.)
+        self.conectar_botones_principales()
 
-    def _init_event_bus_and_signals(self):
+        # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
+        self.label_feedback = QLabel()
+        self.label_feedback.setObjectName("label_feedback")
+        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
+        # [MIGRACIÓN QSS] Cumple: no hay setStyleSheet activos, todo el feedback y estilos visuales se gestionan por QSS global (ver docs/estandares_visuales.md)
+        self.label_feedback.setVisible(False)
+        self.label_feedback.setAccessibleName("Mensaje de feedback de vidrios")
+        self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
+        self.main_layout.addWidget(self.label_feedback)
+        self._feedback_timer = None
+
+        # Eliminar referencias a self.tabla_vidrios.horizontalHeader() y self.tabla_vidrios.itemSelectionChanged.connect(...)
+        # Si se requiere menú contextual, usar self.tabla_obras o self.tabla_pedido según la pestaña activa.
+
+        # Suscribirse a la señal global de integración en tiempo real
         event_bus.obra_agregada.connect(self.actualizar_por_obra)
+
+        # Conectar señales de las tablas a métodos específicos
         self.tabla_obras.cellDoubleClicked.connect(self.editar_estado_pedido)
         self.tabla_obras.itemSelectionChanged.connect(self.actualizar_detalle_pedido)
         self.tabla_pedido.cellDoubleClicked.connect(self.editar_detalle_pedido)
 
-    def _init_controller_data(self):
+        self.setLayout(self.main_layout)
+
+        # Proteger acceso a self.controller
         if self.controller:
             self.controller.cargar_resumen_obras()
             self.controller.cargar_pedidos_usuario(self.usuario_actual)
         else:
             self.mostrar_feedback("Error: controlador no inicializado.", tipo="error")
+
+        # Conectar el cambio de pestaña a la carga de datos correspondiente
+        self.tabs.currentChanged.connect(self._on_tab_changed)
 
     def create_form_layout(self):
         form_layout = QFormLayout()
@@ -746,7 +760,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
         # Aquí podrías poblar la tabla con datos de la obra si es necesario
 
     def _guardar_pedido_vidrios(self):
-        if not hasattr(self, 'controller'):
+        if not self.controller:
+            self.mostrar_feedback("Error: El controlador no está disponible para guardar el pedido.", tipo="error")
             return
         datos = []
         for row in range(self.get_safe_row_count(self.tabla_pedido)):
@@ -775,7 +790,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.tabla_pedido.setColumnCount(5)
         self.tabla_pedido.setHorizontalHeaderLabels(["Tipología", "Ancho x Alto", "Color", "Cantidad", self.ACCION_HEADER])
     def _ver_detalle_pedido(self, row):
-        if not hasattr(self, 'controller'):
+        if not self.controller:
+            self.mostrar_feedback("Error: El controlador no está disponible para mostrar el detalle del pedido.", tipo="error")
             return
         item_id_obra = self.get_safe_item(self.tabla_pedido, row, 0)
         item_id_vidrio = self.get_safe_item(self.tabla_pedido, row, 1)
