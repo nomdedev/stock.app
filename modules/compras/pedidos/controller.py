@@ -7,6 +7,8 @@ from functools import wraps
 from core.logger import log_error
 from core.event_bus import event_bus
 
+EXITO = 'éxito'
+
 class PermisoAuditoria:
     def __init__(self, modulo):
         self.modulo = modulo
@@ -33,7 +35,7 @@ class PermisoAuditoria:
                     print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
                     resultado = func(controller, *args, **kwargs)
                     print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
-                    detalle = f"{accion} - éxito"
+                    detalle = f"{accion} - {EXITO}"
                     auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
                     return resultado
                 except Exception as e:
@@ -87,9 +89,9 @@ class ComprasPedidosController:
                 self._registrar_evento_auditoria('crear', 'campos incompletos', 'error')
                 return
 
-            self.model.crear_pedido(tuple(campos.values()))
+            self._registrar_evento_auditoria('crear', 'pedido creado', EXITO)
             self.view.label.setText("Pedido creado exitosamente.")
-            self._registrar_evento_auditoria('crear', 'pedido creado', 'éxito')
+            self._registrar_evento_auditoria('crear', 'pedido creado', EXITO)
             # INTEGRACIÓN EN TIEMPO REAL: emitir señal de pedido actualizado
             event_bus.pedido_actualizado.emit({
                 'id': self.model.obtener_ultimo_id_pedido(),
@@ -104,9 +106,9 @@ class ComprasPedidosController:
     @permiso_auditoria_compras('actualizar')
     def actualizar_pedido(self, id_pedido, datos, fecha_actualizacion):
         try:
-            self.dal.actualizar_registro("pedidos", id_pedido, datos, fecha_actualizacion)
+            self._registrar_evento_auditoria('actualizar', f"pedido {id_pedido} actualizado", EXITO)
             self.view.label.setText("Pedido actualizado exitosamente.")
-            self._registrar_evento_auditoria('actualizar', f"pedido {id_pedido} actualizado", 'éxito')
+            self._registrar_evento_auditoria('actualizar', f"pedido {id_pedido} actualizado", EXITO)
             # INTEGRACIÓN EN TIEMPO REAL: emitir señal de pedido actualizado
             event_bus.pedido_actualizado.emit({
                 'id': id_pedido,
@@ -150,9 +152,9 @@ class ComprasPedidosController:
             item_stock = QTableWidgetItem(str(stock_actual))
             item_faltante = QTableWidgetItem(str(faltante))
             self.view.tabla_detalle_pedido.setItem(row, 5, item_stock)
-            self.view.tabla_detalle_pedido.setItem(row, 6, item_faltante)
+        self._registrar_evento_auditoria('ver_detalles', f"pedido {id_pedido} detalles mostrados", EXITO)
         self.view.tabla_detalle_pedido.resizeColumnsToContents()
-        self._registrar_evento_auditoria('ver_detalles', f"pedido {id_pedido} detalles mostrados", 'éxito')
+        self._registrar_evento_auditoria('ver_detalles', f"pedido {id_pedido} detalles mostrados", EXITO)
 
     @permiso_auditoria_compras('cargar_presupuesto')
     def cargar_presupuesto(self):
@@ -171,9 +173,9 @@ class ComprasPedidosController:
                 self._registrar_evento_auditoria('cargar_presupuesto', 'datos incompletos', 'error')
                 return
 
-            self.model.agregar_presupuesto((id_pedido, *presupuesto.values()))
+            self._registrar_evento_auditoria('cargar_presupuesto', f"presupuesto cargado para pedido {id_pedido}", EXITO)
             self.view.label.setText(f"Presupuesto cargado para el pedido {id_pedido}.")
-            self._registrar_evento_auditoria('cargar_presupuesto', f"presupuesto cargado para pedido {id_pedido}", 'éxito')
+            self._registrar_evento_auditoria('cargar_presupuesto', f"presupuesto cargado para pedido {id_pedido}", EXITO)
         except Exception as e:
             log_error(f"Error al cargar presupuesto: {e}")
             self.view.label.setText("Error al cargar el presupuesto.")
@@ -184,9 +186,9 @@ class ComprasPedidosController:
         try:
             presupuestos = self.model.obtener_presupuestos_por_pedido(id_pedido)
             if presupuestos:
-                comparacion = sorted(presupuestos, key=lambda x: x[5])
+                self._registrar_evento_auditoria('comparar_presupuestos', f"pedido {id_pedido} presupuestos comparados", EXITO)
                 self.view.mostrar_comparacion_presupuestos(comparacion)
-                self._registrar_evento_auditoria('comparar_presupuestos', f"pedido {id_pedido} presupuestos comparados", 'éxito')
+                self._registrar_evento_auditoria('comparar_presupuestos', f"pedido {id_pedido} presupuestos comparados", EXITO)
             else:
                 self.view.label.setText("No hay presupuestos para comparar.")
                 self._registrar_evento_auditoria('comparar_presupuestos', f"pedido {id_pedido} sin presupuestos", 'error')
@@ -206,9 +208,9 @@ class ComprasPedidosController:
             for detalle in detalles_pedido:
                 id_item = detalle[1]
                 cantidad = detalle[2]
-                self.inventario_model.actualizar_stock(id_item, -cantidad)
+            self._registrar_evento_auditoria('sincronizar_inventario', f"pedido {id_pedido} sincronizado", EXITO)
             self.view.label.setText(f"Pedido {id_pedido} sincronizado con el inventario.")
-            self._registrar_evento_auditoria('sincronizar_inventario', f"pedido {id_pedido} sincronizado", 'éxito')
+            self._registrar_evento_auditoria('sincronizar_inventario', f"pedido {id_pedido} sincronizado", EXITO)
         except Exception as e:
             log_error(f"Error al sincronizar pedido con inventario: {e}")
             self.view.label.setText("Error al sincronizar el pedido con el inventario.")
@@ -222,9 +224,9 @@ class ComprasPedidosController:
             for row, pedido in enumerate(pedidos):
                 for col, value in enumerate(pedido):
                     self.view.tabla_pedidos.setItem(row, col, QTableWidgetItem(str(value)))
-            self.view.tabla_pedidos.resizeColumnsToContents()
+            self._registrar_evento_auditoria('cargar_pedidos', 'todos los pedidos cargados', EXITO)
             self.view.label.setText("Pedidos cargados correctamente.")
-            self._registrar_evento_auditoria('cargar_pedidos', 'todos los pedidos cargados', 'éxito')
+            self._registrar_evento_auditoria('cargar_pedidos', 'todos los pedidos cargados', EXITO)
         except Exception as e:
             log_error(f"Error al cargar pedidos: {e}")
             self.view.label.setText("Error al cargar los pedidos.")
@@ -233,9 +235,9 @@ class ComprasPedidosController:
     @permiso_auditoria_compras('cancelar')
     def cancelar_pedido(self, id_pedido):
         try:
-            self.model.cancelar_pedido(id_pedido)
+            self._registrar_evento_auditoria('cancelar', f"pedido {id_pedido} cancelado", EXITO)
             self.view.label.setText(f"Pedido {id_pedido} cancelado correctamente.")
-            self._registrar_evento_auditoria('cancelar', f"pedido {id_pedido} cancelado", 'éxito')
+            self._registrar_evento_auditoria('cancelar', f"pedido {id_pedido} cancelado", EXITO)
             # INTEGRACIÓN EN TIEMPO REAL: emitir señal de pedido cancelado
             event_bus.pedido_cancelado.emit({
                 'id': id_pedido,

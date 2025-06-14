@@ -27,6 +27,7 @@ Este índice centraliza el acceso a todos los documentos clave del proyecto. Con
 - **Íconos:** Todos los íconos SVG y PNG están en `resources/icons/`.
 - **Scripts de base de datos:** Centralizados en `scripts/db/`.
 - **PDFs y Excels de auditoría:** En `docs/auditoria/`.
+- **Estructura de tablas por módulo:** [Estructura de tablas](estructura_tablas_por_modulo.md).
 - **Tests:** Subcarpetas por módulo en `tests/` y datos de prueba en `tests/fixtures/`.
 
 Consulta el README principal para detalles y convenciones de cada carpeta.

@@ -15145,3 +15145,118 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-14 08:56:48,545 - ERROR - Error al ejecutar la consulta en la base de datos.
 
 ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 09:59:09,669 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 10:13:32,017 - INFO - Aplicación iniciada
+2025-06-14 10:13:32,017 - INFO - Aplicación iniciada
+2025-06-14 10:13:32,113 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 10:13:32,113 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 10:13:32,113 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 10:13:33,773 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:33,773 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:33,773 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:33,773 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:35,030 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:35,030 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:35,030 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:35,030 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:35,030 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:35,577 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:35,577 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:35,577 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:35,577 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:35,577 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:35,577 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 10:13:37,111 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 10:13:37,111 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 10:13:37,111 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 10:13:37,111 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 10:13:37,111 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 10:13:37,111 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 10:13:37,111 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 10:13:38,461 - ERROR - [PERMISOS] No se encontraron módulos permitidos para el usuario: {'id': 1, 'usuario': 'admin', 'password_hash': '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'rol': 'admin', 'nombre': 'Administrador', 'apellido': 'Admin', 'email': 'admin@demo.com', 'estado': 'activo'}
+2025-06-14 10:13:38,461 - ERROR - [PERMISOS] No se encontraron módulos permitidos para el usuario: {'id': 1, 'usuario': 'admin', 'password_hash': '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'rol': 'admin', 'nombre': 'Administrador', 'apellido': 'Admin', 'email': 'admin@demo.com', 'estado': 'activo'}
+2025-06-14 10:13:38,461 - ERROR - [PERMISOS] No se encontraron módulos permitidos para el usuario: {'id': 1, 'usuario': 'admin', 'password_hash': '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'rol': 'admin', 'nombre': 'Administrador', 'apellido': 'Admin', 'email': 'admin@demo.com', 'estado': 'activo'}
+2025-06-14 10:13:38,461 - ERROR - [PERMISOS] No se encontraron módulos permitidos para el usuario: {'id': 1, 'usuario': 'admin', 'password_hash': '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'rol': 'admin', 'nombre': 'Administrador', 'apellido': 'Admin', 'email': 'admin@demo.com', 'estado': 'activo'}
+2025-06-14 10:13:38,461 - ERROR - [PERMISOS] No se encontraron módulos permitidos para el usuario: {'id': 1, 'usuario': 'admin', 'password_hash': '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'rol': 'admin', 'nombre': 'Administrador', 'apellido': 'Admin', 'email': 'admin@demo.com', 'estado': 'activo'}
+2025-06-14 10:13:38,461 - ERROR - [PERMISOS] No se encontraron módulos permitidos para el usuario: {'id': 1, 'usuario': 'admin', 'password_hash': '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'rol': 'admin', 'nombre': 'Administrador', 'apellido': 'Admin', 'email': 'admin@demo.com', 'estado': 'activo'}
+2025-06-14 10:13:38,461 - ERROR - [PERMISOS] No se encontraron módulos permitidos para el usuario: {'id': 1, 'usuario': 'admin', 'password_hash': '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'rol': 'admin', 'nombre': 'Administrador', 'apellido': 'Admin', 'email': 'admin@demo.com', 'estado': 'activo'}
+2025-06-14 10:13:38,483 - WARNING - [PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.
+2025-06-14 10:13:38,483 - WARNING - [PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.
+2025-06-14 10:13:38,483 - WARNING - [PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.
+2025-06-14 10:13:38,483 - WARNING - [PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.
+2025-06-14 10:13:38,483 - WARNING - [PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.
+2025-06-14 10:13:38,483 - WARNING - [PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.
+2025-06-14 10:13:38,483 - WARNING - [PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.
+2025-06-14 10:13:38,561 - INFO - [PERMISOS] Sidebar filtrado: ['Configuración']
+2025-06-14 10:13:38,561 - INFO - [PERMISOS] Sidebar filtrado: ['Configuración']
+2025-06-14 10:13:38,561 - INFO - [PERMISOS] Sidebar filtrado: ['Configuración']
+2025-06-14 10:13:38,561 - INFO - [PERMISOS] Sidebar filtrado: ['Configuración']
+2025-06-14 10:13:38,561 - INFO - [PERMISOS] Sidebar filtrado: ['Configuración']
+2025-06-14 10:13:38,561 - INFO - [PERMISOS] Sidebar filtrado: ['Configuración']
+2025-06-14 10:13:38,561 - INFO - [PERMISOS] Sidebar filtrado: ['Configuración']
+2025-06-14 10:13:38,568 - INFO - [PERMISOS] Mapeo sidebar->stack: [11]
+2025-06-14 10:13:38,568 - INFO - [PERMISOS] Mapeo sidebar->stack: [11]
+2025-06-14 10:13:38,568 - INFO - [PERMISOS] Mapeo sidebar->stack: [11]
+2025-06-14 10:13:38,568 - INFO - [PERMISOS] Mapeo sidebar->stack: [11]
+2025-06-14 10:13:38,568 - INFO - [PERMISOS] Mapeo sidebar->stack: [11]
+2025-06-14 10:13:38,568 - INFO - [PERMISOS] Mapeo sidebar->stack: [11]
+2025-06-14 10:13:38,568 - INFO - [PERMISOS] Mapeo sidebar->stack: [11]
+2025-06-14 10:13:38,584 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'
+2025-06-14 10:13:38,584 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'
+2025-06-14 10:13:38,584 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'
+2025-06-14 10:13:38,584 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'
+2025-06-14 10:13:38,584 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'
+2025-06-14 10:13:38,584 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'
+2025-06-14 10:13:38,584 - ERROR - [INTEGRACIÓN] Error al poblar estado de pedidos en Obras: 'pyodbc.Row' object has no attribute 'get'

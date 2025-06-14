@@ -124,4 +124,33 @@ VALUES
 (2, 'pendiente', NULL, NULL, 'Esperando confirmación'),
 (3, 'entregado', '2025-06-12', 'Logística Delta', 'Entregado sin inconvenientes');
 
+-- Agregar columnas faltantes en la tabla `obras`
+IF COL_LENGTH('inventario.dbo.obras', 'estado_actual') IS NULL
+ALTER TABLE inventario.dbo.obras ADD estado_actual NVARCHAR(50), ultima_actualizacion DATETIME DEFAULT GETDATE();
+
+-- Crear tabla `historial_estados`
+IF OBJECT_ID('inventario.dbo.historial_estados', 'U') IS NULL
+CREATE TABLE inventario.dbo.historial_estados (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    id_obra INT FOREIGN KEY REFERENCES inventario.dbo.obras(id),
+    estado NVARCHAR(50),
+    fecha_cambio DATETIME DEFAULT GETDATE(),
+    detalles NVARCHAR(255)
+);
+
+-- Ajustar tablas relacionadas con pedidos para incluir seguimiento detallado
+IF COL_LENGTH('inventario.dbo.vidrios_por_obra', 'fecha_actualizacion') IS NULL
+ALTER TABLE inventario.dbo.vidrios_por_obra ADD fecha_actualizacion DATETIME DEFAULT GETDATE();
+
+IF COL_LENGTH('inventario.dbo.herrajes_por_obra', 'fecha_actualizacion') IS NULL
+ALTER TABLE inventario.dbo.herrajes_por_obra ADD fecha_actualizacion DATETIME DEFAULT GETDATE();
+
+-- Insertar datos de ejemplo en `historial_estados`
+INSERT INTO inventario.dbo.historial_estados (id_obra, estado, detalles)
+VALUES
+(1, 'En progreso', 'Inicio de obra'),
+(1, 'Pendiente', 'Esperando materiales'),
+(2, 'Completado', 'Obra finalizada'),
+(3, 'En progreso', 'Instalación de vidrios en curso');
+
 -- Puedes agregar más ejemplos para otros módulos según tus tablas y relaciones.

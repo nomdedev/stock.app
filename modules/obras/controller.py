@@ -34,26 +34,32 @@ class PermisoAuditoria:
                 usuario = getattr(controller, 'usuario_actual', None)
                 ip = usuario.get('ip', '') if usuario else ''
                 usuario_id = usuario['id'] if usuario and 'id' in usuario else None
+
+                def mostrar_feedback(mensaje, tipo='error'):
+                    if hasattr(controller, 'view'):
+                        if hasattr(controller.view, 'mostrar_mensaje'):
+                            controller.view.mostrar_mensaje(mensaje, tipo=tipo)
+                        elif hasattr(controller.view, 'label'):
+                            controller.view.label.setText(mensaje)
+
+                def log_and_feedback(mensaje, tipo_log='error', tipo_feedback='error', extra_log=None):
+                    mostrar_feedback(mensaje, tipo=tipo_feedback)
+                    from core.logger import log_error
+                    log_msg = extra_log if extra_log else mensaje
+                    log_error(log_msg)
+
                 # Validación de modelos
                 if not usuario_model or not auditoria_model:
                     mensaje = f"No tiene permiso para realizar la acción: {accion} (modelos no disponibles)"
-                    if hasattr(controller, 'view') and hasattr(controller.view, 'mostrar_mensaje'):
-                        controller.view.mostrar_mensaje(mensaje, tipo='error')
-                    elif hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                        controller.view.label.setText(mensaje)
-                    from core.logger import log_error
-                    log_error(f"{mensaje} [{self.modulo}/{accion}]")
+                    log_and_feedback(mensaje, extra_log=f"{mensaje} [{self.modulo}/{accion}]")
                     return False
+
                 # Validación de permisos
                 if not usuario or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
                     mensaje = f"No tiene permiso para realizar la acción: {accion}"
-                    if hasattr(controller, 'view') and hasattr(controller.view, 'mostrar_mensaje'):
-                        controller.view.mostrar_mensaje(mensaje, tipo='error')
-                    elif hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                        controller.view.label.setText(mensaje)
-                    from core.logger import log_error
-                    log_error(f"Permiso denegado: {accion} [{self.modulo}] usuario_id={usuario_id}")
+                    log_and_feedback(mensaje, extra_log=f"Permiso denegado: {accion} [{self.modulo}] usuario_id={usuario_id}")
                     return False
+
                 # Ejecución y registro de auditoría
                 try:
                     print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
