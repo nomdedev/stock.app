@@ -772,8 +772,13 @@ Linea escrita por Python
 Linea escrita por Python
 Linea escrita por Python
 Linea escrita por Python
+<<<<<<< Updated upstream
 Linea escrita por Python
 Linea escrita por Python
 Linea escrita por Python
+Linea escrita por Python
+Linea escrita por Python
+=======
+>>>>>>> Stashed changes
 Linea escrita por Python
 Linea escrita por Python
