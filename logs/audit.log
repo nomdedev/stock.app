@@ -14674,3 +14674,424 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-13 21:45:54,286 - INFO - Conexión cerrada con la base de datos 'users'.
 2025-06-13 21:47:30,417 - INFO - Conexión establecida con la base de datos 'inventario' (intento 1).
 2025-06-13 21:47:30,963 - INFO - Conexión cerrada con la base de datos 'inventario'.
+2025-06-14 08:45:59,408 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+'utf-16-le' codec can't decode bytes in position 14-15: illegal encoding
+2025-06-14 08:49:37,028 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 08:49:37,028 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 08:49:38,282 - INFO - Aplicación iniciada
+2025-06-14 08:49:38,282 - INFO - Aplicación iniciada
+2025-06-14 08:49:38,282 - INFO - Aplicación iniciada
+2025-06-14 08:49:38,492 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:38,492 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:38,492 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:38,492 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:39,802 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:39,802 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:39,802 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:39,802 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:39,802 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:40,660 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:40,660 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:40,660 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:40,660 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:40,660 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:40,660 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:41,129 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,129 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,129 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,129 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,129 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,129 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,129 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,419 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:41,419 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:41,419 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:41,419 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:41,419 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:41,419 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:41,419 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:41,419 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:41,704 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,704 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,704 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,704 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,704 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,704 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,704 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,704 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:41,704 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:49:42,197 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:42,197 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:42,197 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:42,197 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:42,197 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:42,197 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:42,197 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:42,197 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:42,197 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:49:42,197 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:50:04,959 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 08:52:19,562 - INFO - Aplicación iniciada
+2025-06-14 08:52:19,562 - INFO - Aplicación iniciada
+2025-06-14 08:52:19,631 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:19,631 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:19,631 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:20,381 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:20,381 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:20,381 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:20,381 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:20,982 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:20,982 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:20,982 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:20,982 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:20,982 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:21,525 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:21,525 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:21,525 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:21,525 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:21,525 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:21,525 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:22,105 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:22,105 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:22,105 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:22,105 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:22,105 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:22,105 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:22,105 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:22,696 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:22,696 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:22,696 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:22,696 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:22,696 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:22,696 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:22,696 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:22,696 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:52:23,198 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:23,198 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:23,198 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:23,198 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:23,198 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:23,198 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:23,198 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:23,198 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:52:23,198 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:54:07,994 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('Invalid parameter type.  param-index=0 param-type=dict', 'HY105')
+2025-06-14 08:56:43,253 - INFO - Aplicación iniciada
+2025-06-14 08:56:43,253 - INFO - Aplicación iniciada
+2025-06-14 08:56:43,519 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:43,519 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:43,519 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'auditorias_sistema'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:45,350 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:45,350 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:45,350 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:45,350 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:46,601 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:46,601 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:46,601 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:46,601 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:46,601 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:47,666 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:47,666 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:47,666 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:47,666 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:47,666 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:47,666 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:48,068 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,068 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,068 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,068 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,068 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,068 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,068 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,288 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:48,288 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:48,288 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:48,288 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:48,288 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:48,288 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:48,288 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:48,288 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'fecha_compra'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+2025-06-14 08:56:48,545 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,545 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,545 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,545 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,545 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,545 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,545 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,545 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")
+2025-06-14 08:56:48,545 - ERROR - Error al ejecutar la consulta en la base de datos.
+
+('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]'last_insert_rowid' is not a recognized built-in function name. (195) (SQLExecDirectW)")

@@ -2,7 +2,7 @@
 
 ## Generales (aplican a todos los módulos)
 - [ ] Unificar QSS de cabecera de tablas: fondo `#f8fafc`, radio `4px`, fuente `10px`, altura filas `25px`, selección `#e3f6fd`.
-- [ ] Consistencia en fuente y tamaño de celdas (≤12 px).
+- [ ] Consistencia en fuente y tamaño de celdas (**estándar: 12 px** en todas las tablas principales).
 - [ ] Alinear columnas importantes (números a la derecha, texto a la izquierda).
 - [ ] Todos los botones principales/secundarios usan `estilizar_boton_icono`.
 - [ ] Botones ubicados en la misma zona de cada vista.

@@ -58,7 +58,7 @@ QTableWidget QHeaderView::section { /* Header de todas las tablas por defecto (t
 }
 QTableWidget#tabla_comparacion,
 QTableWidget#tabla_pedidos { /* Tablas principales de Compras y Pedidos */
-    font-size: 13px;
+    font-size: 12px;
 }
 QHeaderView#header_comparacion,
 QHeaderView#header_pedidos { /* Header específico de tablas de comparación y pedidos (Compras) */
@@ -88,7 +88,7 @@ QPushButton#boton_agregar_logistica { /* Botón agregar en Logística */
     margin-left: 16px;
 }
 QTableWidget#tabla_logistica { /* Tabla principal de Logística */
-    font-size: 13px;
+    font-size: 12px;
 }
 QHeaderView#header_logistica { /* Header de tabla de Logística */
     background-color: #e3f6fd;
@@ -187,7 +187,7 @@ QPushButton#boton_agregar_usuarios {
     margin-left: 16px;
 }
 QTableWidget#tabla_usuarios {
-    font-size: 13px;
+    font-size: 12px;
 }
 QPushButton#boton_agregar {
     border-radius: 12px;
@@ -206,7 +206,7 @@ QPushButton#boton_agregar:focus {
 QTableWidget#tabla_tareas,
 QTableWidget#tabla_notificaciones,
 QTableWidget#tabla_vidrios {
-    font-size: 13px;
+    font-size: 12px;
 }
 QHeaderView#header_tareas,
 QHeaderView#header_notificaciones {
@@ -240,7 +240,7 @@ QPushButton#boton_produccion:focus {
     border: 2px solid #2563eb;
 }
 QTableWidget#tabla_produccion {
-    font-size: 13px;
+    font-size: 12px;
 }
 QLabel#tarjeta_kanban {
     background: #e0f2fe;
@@ -412,11 +412,12 @@ QTableWidget {
     border: 1.5px solid #e3e3e3;
 }
 QTableWidget QHeaderView::section, QHeaderView::section {
+    /* Estándar unificado de cabecera de tablas (ver checklist_unificado_mejoras_uiux.md) */
     background: #f8fafc;
     color: #2563eb;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 500;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 400;
     padding: 8px 12px;
     border: 1px solid #e3e3e3;
 }

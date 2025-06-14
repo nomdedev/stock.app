@@ -114,7 +114,6 @@ class UsuariosModel:
                 self._SQL_INSERT_PERMISOS_MODULOS,
                 (id_usuario, modulo, int(permisos.get('ver', False)), int(permisos.get('modificar', False)), int(permisos.get('aprobar', False)), creado_por)
             )
-            )
 
     def obtener_headers_usuarios(self):
         """Obtiene los nombres de columnas (headers) de la tabla usuarios desde la metadata de la base de datos."""
@@ -307,3 +306,9 @@ class UsuariosModel:
                     self._SQL_INSERT_PERMISOS_MODULOS,
                     (usuario_id, modulo, *permisos, creado_por)
                 )
+
+    def obtener_modulos_permitidos(self, usuario_id):
+        """Devuelve una lista de módulos a los que el usuario tiene permiso de ver."""
+        query = "SELECT modulo FROM permisos_modulos WHERE id_usuario = ? AND puede_ver = 1"
+        resultado = self.db.ejecutar_query(query, (usuario_id,))
+        return [r[0] for r in resultado] if resultado else []

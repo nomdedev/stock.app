@@ -446,6 +446,9 @@ pip install PyQt6-WebEngine
         self.mostrar_progreso(True)
         try:
             self.tabla_obras.setRowCount(0)
+            v_header = self.tabla_obras.verticalHeader()
+            if v_header is not None:
+                v_header.setDefaultSectionSize(25)
             for obra in obras:
                 row = self.tabla_obras.rowCount()
                 self.tabla_obras.insertRow(row)
@@ -874,3 +877,4 @@ pip install PyQt6-WebEngine
     def _get_header_text(self, col):
         header_item = self.tabla_envios.horizontalHeaderItem(col)
         return header_item.text() if header_item is not None else f"Columna {col+1}"
+

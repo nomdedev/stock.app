@@ -37,7 +37,7 @@ QTableWidget { /* Tablas principales de todos los módulos */
     background: #23272e;
     color: #60a5fa;
     border-radius: 10px;
-    font-size: 13px;
+    font-size: 12px;
     gridline-color: #334155;
     alternate-background-color: #1e293b;
     selection-background-color: #2563eb;

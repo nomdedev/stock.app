@@ -87,7 +87,8 @@ class Logger:
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Icon.Critical)
         msg.setWindowTitle("Error Crítico")
-        msg.setText(message)
+        texto = message if message else "Ha ocurrido un error crítico. Por favor, revisa los logs o contacta al administrador."
+        msg.setText(texto)
         msg.exec()
 
     def log_auditoria(self, usuario, accion, detalles):

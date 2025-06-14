@@ -30,6 +30,9 @@ class InventarioView(QWidget, TableResponsiveMixin):
     ajustar_stock_signal = pyqtSignal()
     ajustes_stock_guardados = pyqtSignal(list)  # Señal para emitir ajustes de stock guardados
 
+    CONEXION_INVALIDA_MSG = "No hay conexión válida a la base de datos."
+    ERROR_OBRAS_PENDIENTES_MSG = "Error de conexión a la base de datos al consultar obras pendientes."
+
     def __init__(self, db_connection=None, usuario_actual="default"):
         super().__init__()
         self.setObjectName("InventarioView")
@@ -40,29 +43,37 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.db_connection = db_connection
         self.usuario_actual = usuario_actual
 
-        # --- FEEDBACK VISUAL Y ACCESIBILIDAD ---
+        self._setup_feedback_label()
+        self._setup_header_and_buttons()
+        if not self._validate_connection():
+            return
+
+        self.inventario_headers = self.obtener_headers_desde_db("inventario_perfiles")
+        self._setup_tabs()
+        self._load_column_config()
+        self._setup_context_menu()
+        self._apply_theme()
+        self.exportar_excel_signal.connect(self.exportar_tabla_a_excel)
+
+    def _setup_feedback_label(self):
         self.label_feedback = QLabel("")
         self.label_feedback.setObjectName("label_feedback")
-        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de inventario")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None
 
-        # --- HEADER VISUAL MODERNO: título y barra de botones alineados ---
+    def _setup_header_and_buttons(self):
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
-        # Título (estándar visual global: ver docs/estandares_visuales.md)
         self.label_titulo = QLabel("Gestión de Inventario")
-        self.label_titulo.setObjectName("label_titulo")  # Unificación visual: todos los títulos usan este objectName
+        self.label_titulo.setObjectName("label_titulo")
         self.label_titulo.setAccessibleName("Título de módulo Inventario")
         self.label_titulo.setAccessibleDescription("Encabezado principal de la vista de inventario")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         header_layout.addStretch()
-        # --- BARRA DE BOTONES PRINCIPALES (estándar visual global) ---
-        btns = []
         icon_dir = os.path.join(os.path.dirname(__file__), '../../resources/icons')
         botones = [
             ("ajustar-stock.svg", "Ajustar stock", self.ajustar_stock_signal, "boton_ajustar_stock"),
@@ -85,32 +96,28 @@ class InventarioView(QWidget, TableResponsiveMixin):
             btn.setText("")
             btn.clicked.connect(signal.emit if hasattr(signal, 'emit') else signal)
             estilizar_boton_icono(btn)
-            btns.append(btn)
             header_layout.addWidget(btn)
         self.main_layout.addLayout(header_layout)
 
-        # Validar conexión
+    def _validate_connection(self):
         conexion_valida = self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])
         if not conexion_valida:
             error_label = QLabel("❌ Error: No se pudo conectar a la base de datos de inventario.\nVerifique la configuración o contacte al administrador.")
-            # QSS global: el color y formato de error se define en themes/light.qss y dark.qss
-            error_label.setProperty("feedback", "error")  # Para que el QSS global lo seleccione
+            error_label.setProperty("feedback", "error")
             self.main_layout.addWidget(error_label)
             self.setLayout(self.main_layout)
-            return
+            return False
+        self.main_layout.setSpacing(16)
+        return True
 
-        self.main_layout.setSpacing(16)  # Cambiar a un valor mayor para mejor visibilidad
-
-        # Obtener headers desde la base de datos
-        self.inventario_headers = self.obtener_headers_desde_db("inventario_perfiles")
-        # --- TABS PRINCIPALES (layout moderno y consistente con Vidrios) ---
+    def _setup_tabs(self):
         self.tabs = QTabWidget()
         self.tabs.setObjectName("tabs_inventario")
-        # Eliminar setStyleSheet embebido, migrar a QSS global
-        # self.tabs.setStyleSheet(...)
         self.main_layout.addWidget(self.tabs)
+        self._setup_tab_perfiles()
+        self._setup_tab_obras_material()
 
-        # Pestaña 1: Todos los perfiles/materiales
+    def _setup_tab_perfiles(self):
         self.tab_perfiles = QWidget()
         tab_perfiles_layout = QVBoxLayout(self.tab_perfiles)
         tab_perfiles_layout.setContentsMargins(24, 20, 24, 20)
@@ -126,6 +133,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
         v_header = self.tabla_inventario.verticalHeader()
         if v_header is not None:
             v_header.setVisible(False)
+            v_header.setDefaultSectionSize(25)
         h_header = self.tabla_inventario.horizontalHeader()
         if h_header is not None:
             h_header.setObjectName("header_inventario")
@@ -150,7 +158,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.tab_perfiles.setLayout(tab_perfiles_layout)
         self.tabs.addTab(self.tab_perfiles, "Perfiles y materiales")
 
-        # Pestaña 2: Obras y estado de pedidos de material
+    def _setup_tab_obras_material(self):
         self.tab_obras_material = QWidget()
         tab_obras_material_layout = QVBoxLayout(self.tab_obras_material)
         tab_obras_material_layout.setContentsMargins(24, 20, 24, 20)
@@ -166,20 +174,21 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.tabla_obras_material.setAlternatingRowColors(True)
         self.tabla_obras_material.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabla_obras_material.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        v_header_obras = self.tabla_obras_material.verticalHeader()
+        if v_header_obras is not None:
+            v_header_obras.setDefaultSectionSize(25)
         tab_obras_material_layout.addWidget(self.tabla_obras_material)
         self.tab_obras_material.setLayout(tab_obras_material_layout)
         self.tabs.addTab(self.tab_obras_material, "Obras y pedidos de material")
 
-        # Cargar configuración de columnas visibles
+    def _load_column_config(self):
         self.config_path = f"config_inventario_columns_{self.usuario_actual}.json"
-        # Definir columnas visibles por defecto
         columnas_visibles_default = {}
         for header in self.inventario_headers:
             if header.lower() in ["codigo", "descripcion", "stock", "necesario", "pedido"]:
                 columnas_visibles_default[header] = True
             else:
                 columnas_visibles_default[header] = False
-        # Si existe config previa, usarla; si no, usar el default
         if os.path.exists(self.config_path):
             try:
                 with open(self.config_path, "r", encoding="utf-8") as f:
@@ -190,11 +199,11 @@ class InventarioView(QWidget, TableResponsiveMixin):
             self.columnas_visibles = columnas_visibles_default
         self.aplicar_columnas_visibles()
 
-        # Menú contextual para mostrar/ocultar columnas
+    def _setup_context_menu(self):
         self.tabla_inventario.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tabla_inventario.customContextMenuRequested.connect(self.mostrar_menu_columnas)
 
-        # Cargar y aplicar QSS global y tema visual (NO modificar ni sobrescribir salvo justificación)
+    def _apply_theme(self):
         qss_tema = None
         try:
             with open("themes/config.json", "r", encoding="utf-8") as f:
@@ -207,9 +216,6 @@ class InventarioView(QWidget, TableResponsiveMixin):
         tema = cargar_modo_tema()
         qss_tema = f"resources/qss/theme_{tema}.qss"
         aplicar_qss_global_y_tema(self, qss_global_path="resources/qss/theme_light.qss", qss_tema_path=qss_tema)
-
-        # Conectar la señal exportar_excel_signal al método exportar_tabla_a_excel
-        self.exportar_excel_signal.connect(self.exportar_tabla_a_excel)
 
     def obtener_headers_desde_db(self, tabla):
         # --- POLÍTICA DE SEGURIDAD: No hardcodear cadenas de conexión. Usar variables de entorno o config segura ---
@@ -333,16 +339,18 @@ class InventarioView(QWidget, TableResponsiveMixin):
     def ver_obras_pendientes_material(self):
         id_item = self.obtener_id_item_seleccionado()
         if not id_item:
-            self.mostrar_feedback("Seleccione un material en la tabla.", tipo="advertencia")
             log_error("Intento de ver obras pendientes sin selección de material.")
+            self.mostrar_feedback(self.CONEXION_INVALIDA_MSG, tipo="error")
+            log_error(self.ERROR_OBRAS_PENDIENTES_MSG)
             return
-        if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
-            self.mostrar_feedback("No hay conexión válida a la base de datos.", tipo="error")
-            log_error("Error de conexión a la base de datos al consultar obras pendientes.")
             return
         try:
             query = "SELECT referencia_obra, cantidad_reservada, estado, codigo_reserva FROM reservas_materiales WHERE id_item = ? AND estado IN ('activa', 'pendiente')"
             server = get_db_server()
+            if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password"])):
+                self.mostrar_feedback(self.CONEXION_INVALIDA_MSG, tipo="error")
+                log_error("Error de conexión a la base de datos al consultar obras pendientes.")
+                return
             connection_string = (
                 f"DRIVER={{{self.db_connection.driver}}};"
                 f"SERVER={server};"
@@ -403,10 +411,10 @@ class InventarioView(QWidget, TableResponsiveMixin):
             self.expandir_fila(row, id_item)
             self.filas_expandidas.add((row, id_item))
 
-    def expandir_fila(self, row, id_item):
-        # Consultar reservas activas/pendientes para este material
         if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
-            self.mostrar_feedback("No hay conexión válida a la base de datos.", tipo="error")
+            self.mostrar_feedback(self.CONEXION_INVALIDA_MSG, tipo="error")
+            log_error("Error de conexión a la base de datos al expandir fila.")
+            return
             log_error("Error de conexión a la base de datos al expandir fila.")
             return
         try:
@@ -447,6 +455,11 @@ class InventarioView(QWidget, TableResponsiveMixin):
         except Exception as e:
             self.mostrar_feedback(f"Error al consultar reservas: {e}", tipo="error")
             log_error(f"Error al expandir fila: {e}")
+
+    def expandir_fila(self, row, id_item):
+        # Método placeholder para expandir una fila, puede ser personalizado según la lógica de expansión
+        # Por defecto, no hace nada. Se puede implementar lógica adicional si se requiere.
+        pass
 
     def colapsar_fila(self, row):
         # Elimina todas las filas expandidas debajo de la fila seleccionada
@@ -491,104 +504,128 @@ class InventarioView(QWidget, TableResponsiveMixin):
         btns.addWidget(btn_cancelar)
         layout.addLayout(btns)
         dialog.setLayout(layout)
+
         perfiles_encontrados = []
-        def buscar_perfiles():
-            if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
-                self.mostrar_feedback("No hay conexión válida a la base de datos.", tipo="error")
-                log_error("Error de conexión a la base de datos al buscar perfiles.")
-                return
-            codigo = codigo_proveedor_input.text().strip()
-            if not codigo:
-                self.mostrar_feedback("Ingrese un código de proveedor.", tipo="advertencia")
-                log_error("Intento de buscar perfiles sin código de proveedor.")
-                return
-            query = "SELECT id, codigo, descripcion, stock FROM inventario_perfiles WHERE codigo LIKE ?"
-            server = get_db_server()
-            connection_string = (
-                f"DRIVER={{{self.db_connection.driver}}};"
-                f"SERVER={server};"
-                f"DATABASE={self.db_connection.database};"
-                f"UID={self.db_connection.username};"
-                f"PWD={self.db_connection.password};"
-                f"TrustServerCertificate=yes;"
+
+        btn_buscar.clicked.connect(
+            lambda: self._buscar_perfiles_dialog(
+                codigo_proveedor_input, tabla_perfiles, perfiles_encontrados
             )
-            try:
-                with pyodbc.connect(connection_string, timeout=10) as conn:
-                    cursor = conn.cursor()
-                    cursor.execute(query, (f"%{codigo}%",))
-                    perfiles = cursor.fetchall()
-                    perfiles_encontrados.clear()
-                    tabla_perfiles.setRowCount(0)
-                    for i, row in enumerate(perfiles):
-                        id_item, cod, desc, stock = row
-                        tabla_perfiles.insertRow(i)
-                        tabla_perfiles.setItem(i, 0, QTableWidgetItem(str(cod)))
-                        tabla_perfiles.setItem(i, 1, QTableWidgetItem(str(desc)))
-                        tabla_perfiles.setItem(i, 2, QTableWidgetItem(str(stock)))
-                        cantidad_pedir = QLineEdit()
-                        faltan_label = QLabel("0")
-                        tabla_perfiles.setCellWidget(i, 3, cantidad_pedir)
-                        tabla_perfiles.setCellWidget(i, 4, faltan_label)
-                        perfiles_encontrados.append({"id": id_item, "codigo": cod, "desc": desc, "stock": stock, "input": cantidad_pedir, "faltan": faltan_label})
-                        def actualizar_faltan(idx=i):
-                            try:
-                                val = int(perfiles_encontrados[idx]["input"].text())
-                            except Exception:
-                                val = 0
-                            faltan = max(0, val - int(perfiles_encontrados[idx]["stock"]))
-                            perfiles_encontrados[idx]["faltan"].setText(str(faltan))
-                        cantidad_pedir.textChanged.connect(actualizar_faltan)
-            except Exception as e:
-                self.mostrar_feedback(f"Error al buscar perfiles: {e}", tipo="error")
-                log_error(f"Error al buscar perfiles: {e}")
-        def pedir_lote():
-            if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
-                self.mostrar_feedback("No hay conexión válida a la base de datos.", tipo="error")
-                log_error("Error de conexión a la base de datos al pedir lote.")
-                return
-            pedidos = []
-            for perfil in perfiles_encontrados:
-                try:
-                    cantidad = int(perfil["input"].text())
-                except Exception:
-                    cantidad = 0
-                if cantidad <= 0:
-                    continue
-                stock = int(perfil["stock"])
-                a_pedir = min(cantidad, stock)
-                faltan = max(0, cantidad - stock)
-                if a_pedir > 0:
-                    pedidos.append((perfil["id"], a_pedir, "pendiente" if faltan else "activa"))
-            if not pedidos:
-                self.mostrar_feedback("No hay cantidades válidas para pedir.", tipo="advertencia")
-                log_error("Intento de pedir lote sin cantidades válidas.")
-                return
-            server = get_db_server()
-            connection_string = (
-                f"DRIVER={{{self.db_connection.driver}}};"
-                f"SERVER={server};"
-                f"DATABASE={self.db_connection.database};"
-                f"UID={self.db_connection.username};"
-                f"PWD={self.db_connection.password};"
-                f"TrustServerCertificate=yes;"
+        )
+        btn_reservar.clicked.connect(
+            lambda: self._pedir_lote_dialog(
+                perfiles_encontrados, dialog
             )
-            try:
-                with pyodbc.connect(connection_string, timeout=10) as conn:
-                    cursor = conn.cursor()
-                    for id_item, cantidad, estado in pedidos:
-                        cursor.execute("INSERT INTO reservas_materiales (id_item, cantidad_reservada, referencia_obra, estado) VALUES (?, ?, ?, ?)", (id_item, cantidad, "OBRA", estado))
-                    conn.commit()
-                self.mostrar_feedback("Pedido de material realizado correctamente.", tipo="exito")
-                log_error("Pedido de material realizado correctamente.")
-                dialog.accept()
-                self.actualizar_signal.emit()
-            except Exception as e:
-                self.mostrar_feedback(f"Error al registrar pedido: {e}", tipo="error")
-                log_error(f"Error al registrar pedido: {e}")
-        btn_buscar.clicked.connect(buscar_perfiles)
-        btn_reservar.clicked.connect(pedir_lote)
+        )
         btn_cancelar.clicked.connect(dialog.reject)
         dialog.exec()
+
+    def _buscar_perfiles_dialog(self, codigo_proveedor_input, tabla_perfiles, perfiles_encontrados):
+        if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
+            self.mostrar_feedback(self.CONEXION_INVALIDA_MSG, tipo="error")
+            log_error("Error de conexión a la base de datos al buscar perfiles.")
+            return
+        codigo = codigo_proveedor_input.text().strip()
+        if not codigo:
+            self.mostrar_feedback("Ingrese un código de proveedor.", tipo="advertencia")
+            log_error("Intento de buscar perfiles sin código de proveedor.")
+            return
+        query = "SELECT id, codigo, descripcion, stock FROM inventario_perfiles WHERE codigo LIKE ?"
+        server = get_db_server()
+        connection_string = (
+            f"DRIVER={{{self.db_connection.driver}}};"
+            f"SERVER={server};"
+            f"DATABASE={self.db_connection.database};"
+            f"UID={self.db_connection.username};"
+            f"PWD={self.db_connection.password};"
+            f"TrustServerCertificate=yes;"
+        )
+        try:
+            with pyodbc.connect(connection_string, timeout=10) as conn:
+                cursor = conn.cursor()
+                cursor.execute(query, (f"%{codigo}%",))
+                perfiles = cursor.fetchall()
+                perfiles_encontrados.clear()
+                tabla_perfiles.setRowCount(0)
+                for i, row in enumerate(perfiles):
+                    id_item, cod, desc, stock = row
+                    tabla_perfiles.insertRow(i)
+                    tabla_perfiles.setItem(i, 0, QTableWidgetItem(str(cod)))
+                    tabla_perfiles.setItem(i, 1, QTableWidgetItem(str(desc)))
+                    tabla_perfiles.setItem(i, 2, QTableWidgetItem(str(stock)))
+                    cantidad_pedir = QLineEdit()
+                    faltan_label = QLabel("0")
+                    tabla_perfiles.setCellWidget(i, 3, cantidad_pedir)
+                    tabla_perfiles.setCellWidget(i, 4, faltan_label)
+                    perfiles_encontrados.append({
+                        "id": id_item,
+                        "codigo": cod,
+                        "desc": desc,
+                        "stock": stock,
+                        "input": cantidad_pedir,
+                        "faltan": faltan_label
+                    })
+                    cantidad_pedir.textChanged.connect(
+                        partial(self._actualizar_faltan, perfiles_encontrados, i)
+                    )
+        except Exception as e:
+            self.mostrar_feedback(f"Error al buscar perfiles: {e}", tipo="error")
+
+    def _actualizar_faltan(self, perfiles_encontrados, idx):
+        try:
+            val = int(perfiles_encontrados[idx]["input"].text())
+        except Exception:
+            val = 0
+        faltan = max(0, val - int(perfiles_encontrados[idx]["stock"]))
+        perfiles_encontrados[idx]["faltan"].setText(str(faltan))
+
+    def _pedir_lote_dialog(self, perfiles_encontrados, dialog):
+        if not (self.db_connection and all(hasattr(self.db_connection, attr) for attr in ["driver", "database", "username", "password", "server"])):
+            self.mostrar_feedback(self.CONEXION_INVALIDA_MSG, tipo="error")
+            log_error("Error de conexión a la base de datos al pedir lote.")
+            return
+        pedidos = []
+        for perfil in perfiles_encontrados:
+            try:
+                cantidad = int(perfil["input"].text())
+            except Exception:
+                cantidad = 0
+            if cantidad <= 0:
+                continue
+            stock = int(perfil["stock"])
+            a_pedir = min(cantidad, stock)
+            faltan = max(0, cantidad - stock)
+            if a_pedir > 0:
+                pedidos.append((perfil["id"], a_pedir, "pendiente" if faltan else "activa"))
+        if not pedidos:
+            self.mostrar_feedback("No hay cantidades válidas para pedir.", tipo="advertencia")
+            log_error("Intento de pedir lote sin cantidades válidas.")
+            return
+        server = get_db_server()
+        connection_string = (
+            f"DRIVER={{{self.db_connection.driver}}};"
+            f"SERVER={server};"
+            f"DATABASE={self.db_connection.database};"
+            f"UID={self.db_connection.username};"
+            f"PWD={self.db_connection.password};"
+            f"TrustServerCertificate=yes;"
+        )
+        try:
+            with pyodbc.connect(connection_string, timeout=10) as conn:
+                cursor = conn.cursor()
+                for id_item, cantidad, estado in pedidos:
+                    cursor.execute(
+                        "INSERT INTO reservas_materiales (id_item, cantidad_reservada, referencia_obra, estado) VALUES (?, ?, ?, ?)",
+                        (id_item, cantidad, "OBRA", estado)
+                    )
+                conn.commit()
+            self.mostrar_feedback("Pedido de material realizado correctamente.", tipo="exito")
+            log_error("Pedido de material realizado correctamente.")
+            dialog.accept()
+            self.actualizar_signal.emit()
+        except Exception as e:
+            self.mostrar_feedback(f"Error al registrar pedido: {e}", tipo="error")
+            log_error(f"Error al registrar pedido: {e}")
 
     # Reemplazar la función antigua por la nueva
     abrir_reserva_lote_perfiles = abrir_pedido_material_obra
@@ -596,13 +633,6 @@ class InventarioView(QWidget, TableResponsiveMixin):
     def mostrar_feedback(self, mensaje, tipo="info"):
         if not hasattr(self, "label_feedback") or self.label_feedback is None:
             return
-        colores = {
-            "info": "#2563eb",
-            "exito": "#22c55e",
-            "advertencia": "#fbbf24",
-            "error": "#ef4444"
-        }
-        color = colores.get(tipo, "#2563eb")
         iconos = {
             "info": "ℹ️ ",
             "exito": "✅ ",

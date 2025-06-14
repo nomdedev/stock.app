@@ -602,7 +602,6 @@ class InventarioController:
     @permiso_auditoria_inventario('ver')
     def ver_qr_item_seleccionado(self):
         id_item = self.view.obtener_id_item_seleccionado()
-        usuario = getattr(self, 'usuario_actual', None)
         if not id_item:
             QMessageBox.warning(self.view, "QR", "Seleccione un perfil para ver su QR.")
             self._registrar_evento_auditoria('ver_qr_item_seleccionado', "denegado (sin selección)", exito=False)
@@ -618,9 +617,6 @@ class InventarioController:
 
     @permiso_auditoria_inventario('ver')
     def resaltar_items_bajo_stock(self, datos):
-        usuario = getattr(self, 'usuario_actual', None)
-        usuario_id = usuario['id'] if usuario and 'id' in usuario else None
-        ip = usuario.get('ip', '') if usuario else ''
         try:
             for row, item in enumerate(datos):
                 stock_actual = item[5]  # Suponiendo que la columna 5 es el stock actual

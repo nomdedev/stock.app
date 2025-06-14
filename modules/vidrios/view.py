@@ -21,11 +21,15 @@ class VidriosView(QWidget, TableResponsiveMixin):
     - No usa box-shadow en QSS (usa QGraphicsDropShadowEffect en botones).
     - Exportación QR robusta.
     """
+    PEDIDO_ENVIADO = "Pedido Enviado"
+    ACCION_HEADER = "Acción"
+
     def __init__(self, usuario_actual="default", headers_dinamicos=None, controller=None):
         super().__init__()
         self.usuario_actual = usuario_actual
         self._cambio_columnas_interactivo = False
         self.vidrios_headers = headers_dinamicos if headers_dinamicos else ["tipo", "ancho", "alto", "cantidad", "proveedor", "fecha_entrega"]
+        self.controller = controller  # Inicialización robusta
         self.main_layout = QVBoxLayout()
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(20)
@@ -114,8 +118,7 @@ class VidriosView(QWidget, TableResponsiveMixin):
         # --- Inicialización robusta de tabla_pedido, boton_guardar_pedido y label_formulario ---
         self.tabla_pedido = QTableWidget()
         self.tabla_pedido.setObjectName("tabla_pedido_vidrios")
-        self.tabla_pedido.setColumnCount(5)
-        self.tabla_pedido.setHorizontalHeaderLabels(["Tipología", "Ancho x Alto", "Color", "Cantidad", "Acción"])
+        self.tabla_pedido.setHorizontalHeaderLabels(["Tipología", "Ancho x Alto", "Color", "Cantidad", self.ACCION_HEADER])
         self.tabla_pedido.setAlternatingRowColors(True)
         self.tabla_pedido.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabla_pedido.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -223,9 +226,12 @@ class VidriosView(QWidget, TableResponsiveMixin):
 
         self.setLayout(self.main_layout)
 
+        # Proteger acceso a self.controller
         if self.controller:
             self.controller.cargar_resumen_obras()
             self.controller.cargar_pedidos_usuario(self.usuario_actual)
+        else:
+            self.mostrar_feedback("Error: controlador no inicializado.", tipo="error")
 
         # Conectar el cambio de pestaña a la carga de datos correspondiente
         self.tabs.currentChanged.connect(self._on_tab_changed)
@@ -328,7 +334,6 @@ class VidriosView(QWidget, TableResponsiveMixin):
                 if idx < 0 or idx >= self.get_safe_column_count(tabla):
                     self.mostrar_feedback("Índice de columna fuera de rango", "error")
                     return
-                pos = header.sectionPosition(idx)
                 global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
                 self.mostrar_menu_columnas(global_pos, tabla, headers, columnas_visibles)
             else:
@@ -487,7 +492,9 @@ class VidriosView(QWidget, TableResponsiveMixin):
         # Lógica para refrescar la tabla de obras tras una nueva obra
         if hasattr(self, 'tabla_obras'):
             self.tabla_obras.setRowCount(0)
-            print(f"[INFO] Refrescado visual de obras tras obra agregada: {datos_obra}")
+            vertical_header = self.tabla_obras.verticalHeader()
+            if vertical_header is not None:
+                vertical_header.setDefaultSectionSize(25)
         else:
             print("[WARN] No se pudo refrescar obras tras obra agregada.")
 
@@ -610,12 +617,14 @@ class VidriosView(QWidget, TableResponsiveMixin):
         if tabla is None:
             return
         item = tabla.item(row, column)
+        # Lógica para editar el estado del pedido (por ejemplo, cambiar texto o color)
         if item is None:
             return
-        # Lógica para editar el estado del pedido (por ejemplo, cambiar texto o color)
-        nuevo_estado = "Pedido Enviado" if item.text() != "Pedido Enviado" else "Pendiente"
+        nuevo_estado = self.PEDIDO_ENVIADO if item.text() != self.PEDIDO_ENVIADO else "Pendiente"
         item.setText(nuevo_estado)
-        color = QColor(76, 175, 80) if nuevo_estado == "Pedido Enviado" else QColor(255, 87, 34)
+        color = QColor(76, 175, 80) if nuevo_estado == self.PEDIDO_ENVIADO else QColor(255, 87, 34)
+        self.set_safe_background(tabla, row, column, color)
+        self.mostrar_feedback(f"Estado del pedido actualizado a '{nuevo_estado}'", tipo="exito")
         self.set_safe_background(tabla, row, column, color)
         self.mostrar_feedback(f"Estado del pedido actualizado a '{nuevo_estado}'", tipo="exito")
 
@@ -666,19 +675,37 @@ class VidriosView(QWidget, TableResponsiveMixin):
         """
         Refresca las tablas de vidrios y pedidos automáticamente al cambiar de pestaña.
         """
-        if hasattr(self, 'tabs') and self.tabs is not None:
-            # Obras y estado de pedidos
-            if hasattr(self, 'tab_obras') and self.tabs.currentWidget() == self.tab_obras:
-                if self.controller and hasattr(self.controller, 'cargar_resumen_obras'):
-                    self.controller.cargar_resumen_obras()
-            # Pedidos realizados por usuario
-            elif hasattr(self, 'tab_pedidos_usuario') and self.tabs.currentWidget() == self.tab_pedidos_usuario:
-                if self.controller and hasattr(self.controller, 'cargar_pedidos_usuario'):
-                    self.controller.cargar_pedidos_usuario(self.usuario_actual)
-            # Pedido de vidrios para obra
-            elif hasattr(self, 'tab_pedidos') and self.tabs.currentWidget() == self.tab_pedidos:
-                if hasattr(self, 'actualizar_tabla_pedido'):
-                    self.actualizar_tabla_pedido()
+        if not hasattr(self, 'tabs') or self.tabs is None:
+            return
+
+        current_widget = self.tabs.currentWidget()
+        if self._is_tab_obras(current_widget):
+            self._handle_tab_obras()
+        elif self._is_tab_pedidos_usuario(current_widget):
+            self._handle_tab_pedidos_usuario()
+        elif self._is_tab_pedidos(current_widget):
+            self._handle_tab_pedidos()
+
+    def _is_tab_obras(self, widget):
+        return hasattr(self, 'tab_obras') and widget == self.tab_obras
+
+    def _is_tab_pedidos_usuario(self, widget):
+        return hasattr(self, 'tab_pedidos_usuario') and widget == self.tab_pedidos_usuario
+
+    def _is_tab_pedidos(self, widget):
+        return hasattr(self, 'tab_pedidos') and widget == self.tab_pedidos
+
+    def _handle_tab_obras(self):
+        if self.controller and hasattr(self.controller, 'cargar_resumen_obras'):
+            self.controller.cargar_resumen_obras()
+
+    def _handle_tab_pedidos_usuario(self):
+        if self.controller and hasattr(self.controller, 'cargar_pedidos_usuario'):
+            self.controller.cargar_pedidos_usuario(self.usuario_actual)
+
+    def _handle_tab_pedidos(self):
+        if hasattr(self, 'actualizar_tabla_pedido'):
+            self.actualizar_tabla_pedido()
 
     def mostrar_resumen_obras(self, obras):
         self.tabla_obras.setRowCount(0)
@@ -699,20 +726,21 @@ class VidriosView(QWidget, TableResponsiveMixin):
         self.tabla_obras.setHorizontalHeaderLabels(["ID Obra", "Nombre", "Cliente", "Fecha Entrega", "Estado pedido", "Acción"])
 
     def _editar_estado_pedido(self, row):
-        if not hasattr(self, 'controller'):
+        if not self.controller or not hasattr(self.controller, 'actualizar_estado_pedido'):
+            self.mostrar_feedback("Error: controlador no inicializado o método no disponible.", tipo="error")
             return
+
         item_id = self.get_safe_item(self.tabla_obras, row, 0)
         item_estado = self.get_safe_item(self.tabla_obras, row, 4)
         if item_id is None or item_estado is None:
             self.mostrar_feedback("No se pudo obtener la obra o el estado actual.", tipo="error")
             return
+
         id_obra = item_id.text()
         estado_actual = item_estado.text()
         nuevo_estado, ok = QInputDialog.getText(self, "Editar estado de pedido", "Nuevo estado:", text=estado_actual)
         if ok and nuevo_estado and nuevo_estado != estado_actual:
             self.controller.actualizar_estado_pedido(id_obra, nuevo_estado)
-            self.mostrar_feedback(f"Estado de pedido actualizado a '{nuevo_estado}'", tipo="exito")
-            self.controller.cargar_resumen_obras()
 
     def _iniciar_pedido_para_obra(self):
         row = self.tabla_obras.currentRow()
@@ -758,8 +786,8 @@ class VidriosView(QWidget, TableResponsiveMixin):
             btn_detalle.clicked.connect(lambda _, r=row: self._ver_detalle_pedido(r))
             self.tabla_pedido.setCellWidget(row, 4, btn_detalle)
         self.tabla_pedido.setColumnCount(5)
-        self.tabla_pedido.setHorizontalHeaderLabels(["Tipología", "Ancho x Alto", "Color", "Cantidad", "Acción"])
-
+        self.tabla_pedido.setColumnCount(5)
+        self.tabla_pedido.setHorizontalHeaderLabels(["Tipología", "Ancho x Alto", "Color", "Cantidad", self.ACCION_HEADER])
     def _ver_detalle_pedido(self, row):
         if not hasattr(self, 'controller'):
             return
