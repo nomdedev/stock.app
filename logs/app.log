@@ -14708,3 +14708,19 @@ Error: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes 
 2025-06-13 20:47:43,968 - ERROR - Error al ejecutar la consulta en la base de datos.
 
 'utf-16-le' codec can't decode bytes in position 14-15: illegal encoding
+2025-06-13 21:39:06,885 - INFO - Conexión establecida con la base de datos 'users' (intento 1).
+2025-06-13 21:39:07,109 - INFO - Conexión cerrada con la base de datos 'users'.
+2025-06-13 21:39:24,246 - INFO - Conexión establecida con la base de datos 'inventario' (intento 1).
+2025-06-13 21:39:24,454 - INFO - Conexión cerrada con la base de datos 'inventario'.
+2025-06-13 21:39:30,759 - INFO - Conexión establecida con la base de datos 'auditoria' (intento 1).
+2025-06-13 21:39:30,792 - INFO - Conexión cerrada con la base de datos 'auditoria'.
+2025-06-13 21:40:08,194 - INFO - Conexión establecida con la base de datos 'auditoria' (intento 1).
+2025-06-13 21:40:08,278 - INFO - Conexión cerrada con la base de datos 'auditoria'.
+2025-06-13 21:41:57,261 - INFO - Conexión establecida con la base de datos 'users' (intento 1).
+2025-06-13 21:41:57,364 - INFO - Conexión cerrada con la base de datos 'users'.
+2025-06-13 21:42:19,011 - INFO - Conexión establecida con la base de datos 'inventario' (intento 1).
+2025-06-13 21:42:19,214 - INFO - Conexión cerrada con la base de datos 'inventario'.
+2025-06-13 21:45:54,182 - INFO - Conexión establecida con la base de datos 'users' (intento 1).
+2025-06-13 21:45:54,286 - INFO - Conexión cerrada con la base de datos 'users'.
+2025-06-13 21:47:30,417 - INFO - Conexión establecida con la base de datos 'inventario' (intento 1).
+2025-06-13 21:47:30,963 - INFO - Conexión cerrada con la base de datos 'inventario'.

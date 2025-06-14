@@ -20,43 +20,43 @@ class PermisoAuditoria:
                 usuario = getattr(controller, 'usuario_actual', None)
                 ip = usuario.get('ip', '') if usuario else ''
                 usuario_id = usuario['id'] if usuario and 'id' in usuario else None
-                if not usuario or not usuario_model:
-                    if hasattr(controller, 'view') and hasattr(controller.view, 'mostrar_mensaje'):
-                        controller.view.mostrar_mensaje(f"No tiene permiso para realizar la acción: {accion}", tipo='error')
-                    elif hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
-                    if auditoria_model:
-                        detalle = f"{accion} - denegado"
-                        auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+
+                if not self._permiso_usuario(controller, usuario, usuario_model, auditoria_model, accion, usuario_id, ip):
                     return None
-                if usuario['rol'] not in ('admin', 'supervisor'):
-                    modulos_permitidos = usuario_model.obtener_modulos_permitidos(usuario)
-                    if self.modulo not in modulos_permitidos:
-                        if hasattr(controller, 'view') and hasattr(controller.view, 'mostrar_mensaje'):
-                            controller.view.mostrar_mensaje(f"No tiene permiso para acceder al módulo: {self.modulo}", tipo='error')
-                        elif hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                            controller.view.label.setText(f"No tiene permiso para acceder al módulo: {self.modulo}")
-                        if auditoria_model:
-                            detalle = f"{accion} - denegado (módulo)"
-                            auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
-                        return None
+
                 try:
-                    # print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
                     resultado = func(controller, *args, **kwargs)
-                    # print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
-                    if auditoria_model:
-                        detalle = f"{accion} - éxito"
-                        auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+                    self._auditar_evento(auditoria_model, usuario_id, accion, f"{accion} - éxito", ip)
                     return resultado
                 except Exception as e:
-                    # print(f"[LOG ACCIÓN] Error en acción '{accion}' en módulo '{self.modulo}': {e}")
-                    if auditoria_model:
-                        detalle = f"{accion} - error: {e}"
-                        auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+                    self._auditar_evento(auditoria_model, usuario_id, accion, f"{accion} - error: {e}", ip)
                     log_error(f"Error en {accion}: {e}")
                     raise
             return wrapper
         return decorador
+
+    def _feedback_permiso_denegado(self, controller, mensaje):
+        if hasattr(controller, 'view') and hasattr(controller.view, 'mostrar_mensaje'):
+            controller.view.mostrar_mensaje(mensaje, tipo='error')
+        elif hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+            controller.view.label.setText(mensaje)
+
+    def _auditar_evento(self, auditoria_model, usuario_id, accion, detalle, ip):
+        if auditoria_model:
+            auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+
+    def _permiso_usuario(self, controller, usuario, usuario_model, auditoria_model, accion, usuario_id, ip):
+        if not usuario or not usuario_model:
+            self._feedback_permiso_denegado(controller, f"No tiene permiso para realizar la acción: {accion}")
+            self._auditar_evento(auditoria_model, usuario_id, accion, f"{accion} - denegado", ip)
+            return False
+        if usuario['rol'] not in ('admin', 'supervisor'):
+            modulos_permitidos = usuario_model.obtener_modulos_permitidos(usuario)
+            if self.modulo not in modulos_permitidos:
+                self._feedback_permiso_denegado(controller, f"No tiene permiso para acceder al módulo: {self.modulo}")
+                self._auditar_evento(auditoria_model, usuario_id, accion, f"{accion} - denegado (módulo)", ip)
+                return False
+        return True
 
 permiso_auditoria_inventario = PermisoAuditoria('inventario')
 
@@ -196,32 +196,16 @@ class InventarioController:
             try:
                 print(f"[DEBUG] Tipo de self.view: {type(self.view)}")
                 datos = self.view.abrir_formulario_nuevo_item()
-                campos_obligatorios = ["codigo", "nombre", "tipo_material", "unidad", "stock_actual", "stock_minimo", "ubicacion", "descripcion"]
-                if not datos or not all(datos.get(campo) for campo in campos_obligatorios):
-                    self._feedback("Todos los campos son obligatorios para agregar un ítem.", tipo='warning')
+                if not self._validar_datos_item(datos):
                     return
                 codigo = datos.get("codigo")
-                if not isinstance(codigo, str) or not codigo.strip():
-                    self._feedback("El código del ítem es obligatorio y debe ser texto.", tipo='warning')
+                if not self._validar_codigo_item(codigo):
                     return
-                if self.model.obtener_item_por_codigo(codigo):
-                    self._feedback("Ya existe un ítem con ese código.", tipo='warning')
+                if self._existe_item_codigo(codigo):
                     return
-                try:
-                    self.model.agregar_item(tuple(datos.get(campo, None) for campo in ["codigo", "nombre", "tipo_material", "unidad", "stock_actual", "stock_minimo", "ubicacion", "descripcion", "qr", "imagen_referencia"]))
-                except Exception as e:
-                    log_error(f"Error al agregar ítem en la base de datos: {e}")
-                    self._feedback(f"Error al agregar ítem en la base de datos: {e}", tipo='error')
-                    self._registrar_evento_auditoria('error', f"Error al agregar ítem: {e}", exito=False)
+                if not self._agregar_item_db(datos):
                     return
-                try:
-                    item_row = self.model.obtener_item_por_codigo(codigo)
-                    nombre_usuario = self.usuario_actual.get("nombre", "") if self.usuario_actual else ''
-                    if item_row:
-                        self.model.registrar_movimiento((item_row[0][0], "alta", datos["stock_actual"], nombre_usuario, "Alta inicial de ítem", None))
-                except Exception as e:
-                    log_error(f"Error al registrar movimiento de alta: {e}")
-                    self._registrar_evento_auditoria('error', f"Error al registrar movimiento de alta: {e}", exito=False)
+                self._registrar_movimiento_alta(codigo, datos)
                 self._registrar_evento_auditoria('alta', f"Ítem agregado: {codigo}")
                 self.actualizar_inventario()
                 self._feedback(f"Ítem '{codigo}' agregado correctamente.", tipo='success')
@@ -235,103 +219,69 @@ class InventarioController:
             return
         return self._solicitud_aprobacion_o_ejecucion('agregar', datos, ejecutar)
 
+    def _validar_datos_item(self, datos):
+        campos_obligatorios = ["codigo", "nombre", "tipo_material", "unidad", "stock_actual", "stock_minimo", "ubicacion", "descripcion"]
+        if not datos or not all(datos.get(campo) for campo in campos_obligatorios):
+            self._feedback("Todos los campos son obligatorios para agregar un ítem.", tipo='warning')
+            return False
+        return True
+
+    def _validar_codigo_item(self, codigo):
+        if not isinstance(codigo, str) or not codigo.strip():
+            self._feedback("El código del ítem es obligatorio y debe ser texto.", tipo='warning')
+            return False
+        return True
+
+    def _existe_item_codigo(self, codigo):
+        if self.model.obtener_item_por_codigo(codigo):
+            self._feedback("Ya existe un ítem con ese código.", tipo='warning')
+            return True
+        return False
+
+    def _agregar_item_db(self, datos):
+        try:
+            self.model.agregar_item(tuple(datos.get(campo, None) for campo in ["codigo", "nombre", "tipo_material", "unidad", "stock_actual", "stock_minimo", "ubicacion", "descripcion", "qr", "imagen_referencia"]))
+            return True
+        except Exception as e:
+            log_error(f"Error al agregar ítem en la base de datos: {e}")
+            self._feedback(f"Error al agregar ítem en la base de datos: {e}", tipo='error')
+            self._registrar_evento_auditoria('error', f"Error al agregar ítem: {e}", exito=False)
+            return False
+
+    def _registrar_movimiento_alta(self, codigo, datos):
+        try:
+            item_row = self.model.obtener_item_por_codigo(codigo)
+            nombre_usuario = self.usuario_actual.get("nombre", "") if self.usuario_actual else ''
+            if item_row:
+                self.model.registrar_movimiento((item_row[0][0], "alta", datos["stock_actual"], nombre_usuario, "Alta inicial de ítem", None))
+        except Exception as e:
+            log_error(f"Error al registrar movimiento de alta: {e}")
+            self._registrar_evento_auditoria('error', f"Error al registrar movimiento de alta: {e}", exito=False)
+
     @permiso_auditoria_inventario('editar')
     def reservar_item(self):
         def ejecutar():
             try:
-                dialog = QDialog(self.view)
-                dialog.setWindowTitle("Reservar material para obra")
-                layout = QVBoxLayout()
-                form_layout = QFormLayout()
-                obra_input = QLineEdit()
-                id_item_input = QLineEdit()
-                cantidad_input = QLineEdit()
-                codigo_reserva_input = QLineEdit()
-                form_layout.addRow("Obra (ID o nombre):", obra_input)
-                form_layout.addRow("ID de material:", id_item_input)
-                form_layout.addRow("Cantidad a reservar:", cantidad_input)
-                form_layout.addRow("Código de reserva único:", codigo_reserva_input)
-                layout.addLayout(form_layout)
-                botones_layout = QHBoxLayout()
-                reservar_button = QPushButton("Reservar")
-                cancelar_button = QPushButton("Cancelar")
-                botones_layout.addWidget(reservar_button)
-                botones_layout.addWidget(cancelar_button)
-                layout.addLayout(botones_layout)
-                dialog.setLayout(layout)
+                dialog, obra_input, id_item_input, cantidad_input, codigo_reserva_input = self._crear_dialogo_reserva()
+                reservar_button = dialog.findChild(QPushButton, "Reservar")
+                cancelar_button = dialog.findChild(QPushButton, "Cancelar")
+
                 def on_reservar():
                     obra = obra_input.text().strip()
                     id_item = id_item_input.text().strip()
                     cantidad = cantidad_input.text().strip()
                     codigo_reserva = codigo_reserva_input.text().strip()
-                    if not (obra and id_item and cantidad and codigo_reserva):
-                        self._feedback("Complete todos los campos para reservar.", tipo='warning')
-                        self._registrar_evento_auditoria('reserva_material', "Campos incompletos para reserva", exito=False)
+                    if not self._validar_campos_reserva(obra, id_item, cantidad, codigo_reserva):
                         return
-                    try:
-                        cantidad_int = int(cantidad)
-                        if cantidad_int <= 0:
-                            self._feedback("La cantidad debe ser mayor a cero.", tipo='warning')
-                            self._registrar_evento_auditoria('reserva_material', "Cantidad no válida", exito=False)
-                            return
-                    except Exception:
-                        self._feedback("Ingrese un número válido para la cantidad.", tipo='warning')
-                        self._registrar_evento_auditoria('reserva_material', "Cantidad no numérica", exito=False)
+                    cantidad_int = self._validar_cantidad_reserva(cantidad)
+                    if cantidad_int is None:
                         return
-                    item_row = self.model.obtener_item_por_codigo(id_item) if not id_item.isdigit() else self.model.db.ejecutar_query("SELECT * FROM inventario_perfiles WHERE id = ?", (id_item,))
-                    if not item_row:
-                        self._feedback("No se encontró el material especificado.", tipo='warning')
-                        self._registrar_evento_auditoria('reserva_material', f"Material no encontrado: {id_item}", exito=False)
+                    if not self._validar_item_para_reserva(obra, id_item, cantidad_int, codigo_reserva):
                         return
-                    stock_actual = item_row[0][5] if len(item_row[0]) > 5 else None
-                    if stock_actual is None or int(stock_actual) < cantidad_int:
-                        self._feedback("Stock insuficiente para reservar la cantidad solicitada.", tipo='warning')
-                        self._registrar_evento_auditoria('reserva_material', f"Stock insuficiente para {id_item}", exito=False)
-                        return
-                    reservas_existentes = self.model.db.ejecutar_query(
-                        "SELECT COUNT(*) FROM reservas_materiales WHERE (codigo_reserva = ? OR (referencia_obra = ? AND id_item = ?)) AND estado = 'activa'",
-                        (codigo_reserva, obra, id_item)
-                    )
-                    if reservas_existentes and reservas_existentes[0][0] > 0:
-                        self._feedback("Ya existe una reserva activa para este material y obra, o el código ya está en uso.", tipo='warning')
-                        self._registrar_evento_auditoria('reserva_material', f"Reserva duplicada para {id_item} obra {obra}", exito=False)
-                        return
-                    # Validación cruzada: impedir reservas a obras inexistentes
-                    id_obra = obra if obra.isdigit() else None
-                    from modules.obras.model import ObrasModel
-                    obras_model = ObrasModel(self.db_connection)
-                    if id_obra is not None and not obras_model.existe_obra_por_id(int(id_obra)):
-                        self._feedback("No existe una obra con ese ID. No se puede reservar material.", tipo='error')
-                        self._registrar_evento_auditoria('reserva_material', f"Intento de reserva a obra inexistente: {id_obra}", exito=False)
-                        return
-                    # Si se usa nombre, se podría agregar validación adicional aquí
-                    try:
-                        self.model.db.ejecutar_query(
-                            """
-                            INSERT INTO reservas_materiales (referencia_obra, id_item, cantidad, codigo_reserva, estado)
-                            VALUES (?, ?, ?, ?, 'activa')
-                            """,
-                            (obra, id_item, cantidad_int, codigo_reserva)
-                        )
-                        # Registrar pedido de material y auditar
-                        self.model.registrar_pedido_material(
-                            id_obra=int(id_obra) if id_obra is not None else None,
-                            id_item=int(id_item),
-                            cantidad=cantidad_int,
-                            estado='reservado',
-                            usuario=self.usuario_actual.get('nombre', '') if self.usuario_actual else None
-                        )
-                        self._registrar_evento_auditoria('reserva_material', f"Reserva creada: {codigo_reserva} para obra {obra} y material {id_item}")
-                        self._feedback(f"Reserva creada correctamente para obra {obra} y material {id_item}.", tipo='success')
-                        self.actualizar_inventario()
-                        dialog.accept()
-                    except Exception as e:
-                        log_error(f"Error al crear reserva: {e}")
-                        self._feedback(f"Error al crear la reserva: {e}", tipo='error')
-                        self._registrar_evento_auditoria('error', f"Error al crear reserva: {e}", exito=False)
+                    self._crear_reserva_y_pedido(dialog, obra, id_item, cantidad_int, codigo_reserva)
+
                 reservar_button.clicked.connect(on_reservar)
                 cancelar_button.clicked.connect(dialog.reject)
-                dialog.setLayout(layout)
                 dialog.exec()
             except Exception as e:
                 log_error(f"Error al abrir la ventana de reserva: {e}")
@@ -339,76 +289,142 @@ class InventarioController:
                 self._registrar_evento_auditoria('error', f"Error al abrir ventana reserva: {e}", exito=False)
         return self._solicitud_aprobacion_o_ejecucion('reservar', {}, ejecutar)
 
+    def _validar_item_para_reserva(self, obra, id_item, cantidad_int, codigo_reserva):
+        item_row = self._obtener_item_row(id_item)
+        if not self._validar_item_row(item_row, id_item):
+            return False
+        if not self._validar_stock_reserva(item_row, cantidad_int, id_item):
+            return False
+        if not self._validar_reserva_existente(codigo_reserva, obra, id_item):
+            return False
+        if not self._validar_obra_existente_para_reserva(obra):
+            return False
+        return True
+
+    def _crear_dialogo_reserva(self):
+        dialog = QDialog(self.view)
+        dialog.setWindowTitle("Reservar material para obra")
+        layout = QVBoxLayout()
+        form_layout = QFormLayout()
+        obra_input = QLineEdit()
+        id_item_input = QLineEdit()
+        cantidad_input = QLineEdit()
+        codigo_reserva_input = QLineEdit()
+        form_layout.addRow("Obra (ID o nombre):", obra_input)
+        form_layout.addRow("ID de material:", id_item_input)
+        form_layout.addRow("Cantidad a reservar:", cantidad_input)
+        form_layout.addRow("Código de reserva único:", codigo_reserva_input)
+        layout.addLayout(form_layout)
+        botones_layout = QHBoxLayout()
+        reservar_button = QPushButton("Reservar")
+        reservar_button.setObjectName("Reservar")
+        cancelar_button = QPushButton("Cancelar")
+        cancelar_button.setObjectName("Cancelar")
+        botones_layout.addWidget(reservar_button)
+        botones_layout.addWidget(cancelar_button)
+        layout.addLayout(botones_layout)
+        dialog.setLayout(layout)
+        return dialog, obra_input, id_item_input, cantidad_input, codigo_reserva_input
+
+    def _validar_campos_reserva(self, obra, id_item, cantidad, codigo_reserva):
+        if not (obra and id_item and cantidad and codigo_reserva):
+            self._feedback("Complete todos los campos para reservar.", tipo='warning')
+            self._registrar_evento_auditoria('reserva_material', "Campos incompletos para reserva", exito=False)
+            return False
+        return True
+
+    def _validar_cantidad_reserva(self, cantidad):
+        try:
+            cantidad_int = int(cantidad)
+            if cantidad_int <= 0:
+                self._feedback("La cantidad debe ser mayor a cero.", tipo='warning')
+                self._registrar_evento_auditoria('reserva_material', "Cantidad no válida", exito=False)
+                return None
+            return cantidad_int
+        except Exception:
+            self._feedback("Ingrese un número válido para la cantidad.", tipo='warning')
+            self._registrar_evento_auditoria('reserva_material', "Cantidad no numérica", exito=False)
+            return None
+
+    def _obtener_item_row(self, id_item):
+        if not id_item.isdigit():
+            return self.model.obtener_item_por_codigo(id_item)
+        else:
+            return self.model.db.ejecutar_query("SELECT * FROM inventario_perfiles WHERE id = ?", (id_item,))
+
+    def _validar_item_row(self, item_row, id_item):
+        if not item_row:
+            self._feedback("No se encontró el material especificado.", tipo='warning')
+            self._registrar_evento_auditoria('reserva_material', f"Material no encontrado: {id_item}", exito=False)
+            return False
+        return True
+
+    def _validar_stock_reserva(self, item_row, cantidad_int, id_item):
+        stock_actual = item_row[0][5] if len(item_row[0]) > 5 else None
+        if stock_actual is None or int(stock_actual) < cantidad_int:
+            self._feedback("Stock insuficiente para reservar la cantidad solicitada.", tipo='warning')
+            self._registrar_evento_auditoria('reserva_material', f"Stock insuficiente para {id_item}", exito=False)
+            return False
+        return True
+
+    def _validar_reserva_existente(self, codigo_reserva, obra, id_item):
+        reservas_existentes = self.model.db.ejecutar_query(
+            "SELECT COUNT(*) FROM reservas_materiales WHERE (codigo_reserva = ? OR (referencia_obra = ? AND id_item = ?)) AND estado = 'activa'",
+            (codigo_reserva, obra, id_item)
+        )
+        if reservas_existentes and reservas_existentes[0][0] > 0:
+            self._feedback("Ya existe una reserva activa para este material y obra, o el código ya está en uso.", tipo='warning')
+            self._registrar_evento_auditoria('reserva_material', f"Reserva duplicada para {id_item} obra {obra}", exito=False)
+            return False
+        return True
+
+    def _validar_obra_existente_para_reserva(self, obra):
+        id_obra = obra if obra.isdigit() else None
+        from modules.obras.model import ObrasModel
+        obras_model = ObrasModel(self.db_connection)
+        if id_obra is not None and not obras_model.existe_obra_por_id(int(id_obra)):
+            self._feedback("No existe una obra con ese ID. No se puede reservar material.", tipo='error')
+            self._registrar_evento_auditoria('reserva_material', f"Intento de reserva a obra inexistente: {id_obra}", exito=False)
+            return False
+        return True
+
+    def _crear_reserva_y_pedido(self, dialog, obra, id_item, cantidad_int, codigo_reserva):
+        id_obra = obra if obra.isdigit() else None
+        try:
+            self.model.db.ejecutar_query(
+                """
+                INSERT INTO reservas_materiales (referencia_obra, id_item, cantidad, codigo_reserva, estado)
+                VALUES (?, ?, ?, ?, 'activa')
+                """,
+                (obra, id_item, cantidad_int, codigo_reserva)
+            )
+            self.model.registrar_pedido_material(
+                id_obra=int(id_obra) if id_obra is not None else None,
+                id_item=int(id_item),
+                cantidad=cantidad_int,
+                estado='reservado',
+                usuario=self.usuario_actual.get('nombre', '') if self.usuario_actual else None
+            )
+            self._registrar_evento_auditoria('reserva_material', f"Reserva creada: {codigo_reserva} para obra {obra} y material {id_item}")
+            self._feedback(f"Reserva creada correctamente para obra {obra} y material {id_item}.", tipo='success')
+            self.actualizar_inventario()
+            dialog.accept()
+        except Exception as e:
+            log_error(f"Error al crear reserva: {e}")
+            self._feedback(f"Error al crear la reserva: {e}", tipo='error')
+            self._registrar_evento_auditoria('error', f"Error al crear reserva: {e}", exito=False)
+
     @permiso_auditoria_inventario('editar')
     def ajustar_stock(self):
         def ejecutar():
             try:
-                dialog = QDialog(self.view)
-                dialog.setWindowTitle("Ajustar stock de material")
-                layout = QVBoxLayout()
-                form_layout = QFormLayout()
-                id_item_input = QLineEdit()
-                cantidad_input = QLineEdit()
-                motivo_input = QLineEdit()
-                stock_actual_label = QLabel("")
-                form_layout.addRow("ID o código de material:", id_item_input)
-                form_layout.addRow("Stock actual:", stock_actual_label)
-                form_layout.addRow("Nuevo stock (valor absoluto):", cantidad_input)
-                form_layout.addRow("Motivo del ajuste:", motivo_input)
-                layout.addLayout(form_layout)
-                botones_layout = QHBoxLayout()
-                ajustar_button = QPushButton("Ajustar")
-                cancelar_button = QPushButton("Cancelar")
-                botones_layout.addWidget(ajustar_button)
-                botones_layout.addWidget(cancelar_button)
-                layout.addLayout(botones_layout)
-                dialog.setLayout(layout)
-
-                def actualizar_stock_label():
-                    id_item = id_item_input.text().strip()
-                    if not id_item:
-                        stock_actual_label.setText("")
-                        return
-                    item_row = self.model.obtener_item_por_codigo(id_item) if not id_item.isdigit() else self.model.db.ejecutar_query("SELECT id, codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr, imagen_referencia FROM inventario_perfiles WHERE id = ?", (id_item,))
-                    if item_row and len(item_row) > 0:
-                        stock_actual = item_row[0][5]
-                        stock_actual_label.setText(str(stock_actual))
-                    else:
-                        stock_actual_label.setText("No encontrado")
-
-                id_item_input.editingFinished.connect(actualizar_stock_label)
-
-                def on_ajustar():
-                    id_item = id_item_input.text().strip()
-                    cantidad = cantidad_input.text().strip()
-                    motivo = motivo_input.text().strip()
-                    if not (id_item and cantidad and motivo):
-                        self._feedback("Complete todos los campos para ajustar stock.", tipo='warning')
-                        self._registrar_evento_auditoria('ajuste_stock', "Campos incompletos para ajuste", exito=False)
-                        return
-                    try:
-                        nueva_cantidad = int(cantidad)
-                    except Exception:
-                        self._feedback("Ingrese un número válido para el nuevo stock.", tipo='warning')
-                        self._registrar_evento_auditoria('ajuste_stock', "Cantidad no numérica", exito=False)
-                        return
-                    item_row = self.model.obtener_item_por_codigo(id_item) if not id_item.isdigit() else self.model.db.ejecutar_query("SELECT id, codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr, imagen_referencia FROM inventario_perfiles WHERE id = ?", (id_item,))
-                    if not item_row:
-                        self._feedback("No se encontró el material especificado.", tipo='warning')
-                        self._registrar_evento_auditoria('ajuste_stock', f"Material no encontrado: {id_item}", exito=False)
-                        return
-                    id_perfil = item_row[0][0]
-                    try:
-                        self.model.ajustar_stock_perfil(id_perfil, nueva_cantidad, self.usuario_actual, self.view)
-                        self._registrar_evento_auditoria('ajuste_stock', f"Ajuste de stock: {id_perfil} nuevo valor {nueva_cantidad} motivo {motivo}")
-                        self._feedback(f"Stock ajustado correctamente para material {id_perfil}.", tipo='success')
-                        self.actualizar_inventario()
-                        dialog.accept()
-                    except Exception as e:
-                        log_error(f"Error al ajustar stock: {e}")
-                        self._feedback(f"Error al ajustar stock: {e}", tipo='error')
-                        self._registrar_evento_auditoria('error', f"Error al ajustar stock: {e}", exito=False)
-                ajustar_button.clicked.connect(on_ajustar)
+                dialog, id_item_input, cantidad_input, motivo_input, stock_actual_label, ajustar_button, cancelar_button = self._crear_dialogo_ajuste_stock()
+                id_item_input.editingFinished.connect(
+                    lambda: self._actualizar_stock_label(id_item_input, stock_actual_label)
+                )
+                ajustar_button.clicked.connect(
+                    lambda: self._on_ajustar_stock(dialog, id_item_input, cantidad_input, motivo_input)
+                )
                 cancelar_button.clicked.connect(dialog.reject)
                 dialog.exec()
             except Exception as e:
@@ -416,6 +432,74 @@ class InventarioController:
                 self._feedback(f"Error al abrir la ventana de ajuste de stock: {e}", tipo='error')
                 self._registrar_evento_auditoria('error', f"Error al abrir ventana ajuste stock: {e}", exito=False)
         return self._solicitud_aprobacion_o_ejecucion('ajustar_stock', {}, ejecutar)
+
+    def _crear_dialogo_ajuste_stock(self):
+        dialog = QDialog(self.view)
+        dialog.setWindowTitle("Ajustar stock de material")
+        layout = QVBoxLayout()
+        form_layout = QFormLayout()
+        id_item_input = QLineEdit()
+        cantidad_input = QLineEdit()
+        motivo_input = QLineEdit()
+        stock_actual_label = QLabel("")
+        form_layout.addRow("ID o código de material:", id_item_input)
+        form_layout.addRow("Stock actual:", stock_actual_label)
+        form_layout.addRow("Nuevo stock (valor absoluto):", cantidad_input)
+        form_layout.addRow("Motivo del ajuste:", motivo_input)
+        layout.addLayout(form_layout)
+        botones_layout = QHBoxLayout()
+        ajustar_button = QPushButton("Ajustar")
+        cancelar_button = QPushButton("Cancelar")
+        botones_layout.addWidget(ajustar_button)
+        botones_layout.addWidget(cancelar_button)
+        layout.addLayout(botones_layout)
+        dialog.setLayout(layout)
+        return dialog, id_item_input, cantidad_input, motivo_input, stock_actual_label, ajustar_button, cancelar_button
+
+    def _actualizar_stock_label(self, id_item_input, stock_actual_label):
+        id_item = id_item_input.text().strip()
+        if not id_item:
+            stock_actual_label.setText("")
+            return
+        item_row = self.model.obtener_item_por_codigo(id_item) if not id_item.isdigit() else self.model.db.ejecutar_query(
+            "SELECT id, codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr, imagen_referencia FROM inventario_perfiles WHERE id = ?", (id_item,))
+        if item_row and len(item_row) > 0:
+            stock_actual = item_row[0][5]
+            stock_actual_label.setText(str(stock_actual))
+        else:
+            stock_actual_label.setText("No encontrado")
+
+    def _on_ajustar_stock(self, dialog, id_item_input, cantidad_input, motivo_input):
+        id_item = id_item_input.text().strip()
+        cantidad = cantidad_input.text().strip()
+        motivo = motivo_input.text().strip()
+        if not (id_item and cantidad and motivo):
+            self._feedback("Complete todos los campos para ajustar stock.", tipo='warning')
+            self._registrar_evento_auditoria('ajuste_stock', "Campos incompletos para ajuste", exito=False)
+            return
+        try:
+            nueva_cantidad = int(cantidad)
+        except Exception:
+            self._feedback("Ingrese un número válido para el nuevo stock.", tipo='warning')
+            self._registrar_evento_auditoria('ajuste_stock', "Cantidad no numérica", exito=False)
+            return
+        item_row = self.model.obtener_item_por_codigo(id_item) if not id_item.isdigit() else self.model.db.ejecutar_query(
+            "SELECT id, codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion, qr, imagen_referencia FROM inventario_perfiles WHERE id = ?", (id_item,))
+        if not item_row:
+            self._feedback("No se encontró el material especificado.", tipo='warning')
+            self._registrar_evento_auditoria('ajuste_stock', f"Material no encontrado: {id_item}", exito=False)
+            return
+        id_perfil = item_row[0][0]
+        try:
+            self.model.ajustar_stock_perfil(id_perfil, nueva_cantidad, self.usuario_actual, self.view)
+            self._registrar_evento_auditoria('ajuste_stock', f"Ajuste de stock: {id_perfil} nuevo valor {nueva_cantidad} motivo {motivo}")
+            self._feedback(f"Stock ajustado correctamente para material {id_perfil}.", tipo='success')
+            self.actualizar_inventario()
+            dialog.accept()
+        except Exception as e:
+            log_error(f"Error al ajustar stock: {e}")
+            self._feedback(f"Error al ajustar stock: {e}", tipo='error')
+            self._registrar_evento_auditoria('error', f"Error al ajustar stock: {e}", exito=False)
 
     @permiso_auditoria_inventario('editar')
     def procesar_ajustes_stock(self, ajustes):
@@ -519,8 +603,6 @@ class InventarioController:
     def ver_qr_item_seleccionado(self):
         id_item = self.view.obtener_id_item_seleccionado()
         usuario = getattr(self, 'usuario_actual', None)
-        usuario_id = usuario['id'] if usuario and 'id' in usuario else None
-        ip = usuario.get('ip', '') if usuario else ''
         if not id_item:
             QMessageBox.warning(self.view, "QR", "Seleccione un perfil para ver su QR.")
             self._registrar_evento_auditoria('ver_qr_item_seleccionado', "denegado (sin selección)", exito=False)

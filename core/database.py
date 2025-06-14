@@ -5,6 +5,7 @@ from core.logger import Logger
 from core.config import DB_SERVER, DB_USERNAME, DB_PASSWORD
 import logging
 import time
+from core.logger import Logger
 
 def get_connection_string(driver, database):
     """
@@ -19,6 +20,10 @@ def get_connection_string(driver, database):
         f"PWD={DB_PASSWORD};"
         f"TrustServerCertificate=yes;"
     )
+
+DB_CONN_ERROR_MSG = "No se pudo establecer la conexión a la base de datos."
+DB_CONN_ERROR_DETAIL = "No se pudo conectar a la base de datos.\n\nVerifica el servidor, credenciales y que SQL Server acepte conexiones remotas.\n\nError: "
+DB_QUERY_ERROR_DETAIL = "Error al ejecutar la consulta en la base de datos.\n\n"
 
 class BaseDatabaseConnection:
     def __init__(self, database, timeout=None, max_retries=None):
@@ -68,9 +73,7 @@ class BaseDatabaseConnection:
     def ejecutar_query(self, query, parametros=None):
         try:
             if not self.connection:
-                self.conectar()
-            if not self.connection:
-                raise RuntimeError("No se pudo establecer la conexión a la base de datos.")
+                raise RuntimeError(DB_CONN_ERROR_MSG)
             cursor = self.connection.cursor()
             if parametros:
                 cursor.execute(query, parametros)
@@ -80,25 +83,22 @@ class BaseDatabaseConnection:
                 return cursor.fetchall()
             self.connection.commit()
         except pyodbc.OperationalError as e:
-            from core.logger import Logger
             Logger().log_error_popup(
-                "No se pudo conectar a la base de datos.\n\nVerifica el servidor, credenciales y que SQL Server acepte conexiones remotas.\n\nError: " + str(e)
+                DB_CONN_ERROR_DETAIL + str(e)
             )
             return None
         except Exception as e:
-            from core.logger import Logger
             Logger().log_error_popup(
-                "Error al ejecutar la consulta en la base de datos.\n\n" + str(e)
+                DB_QUERY_ERROR_DETAIL + str(e)
             )
             return None
-
     def ejecutar_query_return_rowcount(self, query, parametros=None):
         """Ejecuta una query y retorna el número de filas afectadas (para UPDATE/DELETE)."""
         try:
             if not self.connection:
                 self.conectar()
             if not self.connection:
-                raise RuntimeError("No se pudo establecer la conexión a la base de datos.")
+                raise RuntimeError(DB_CONN_ERROR_MSG)
             cursor = self.connection.cursor()
             if parametros:
                 cursor.execute(query, parametros)
@@ -108,18 +108,15 @@ class BaseDatabaseConnection:
             self.connection.commit()
             return rowcount
         except pyodbc.OperationalError as e:
-            from core.logger import Logger
             Logger().log_error_popup(
-                "No se pudo conectar a la base de datos.\n\nVerifica el servidor, credenciales y que SQL Server acepte conexiones remotas.\n\nError: " + str(e)
+                DB_CONN_ERROR_DETAIL + str(e)
             )
             return 0
         except Exception as e:
-            from core.logger import Logger
             Logger().log_error_popup(
-                "Error al ejecutar la consulta en la base de datos.\n\n" + str(e)
+                DB_QUERY_ERROR_DETAIL + str(e)
             )
             return 0
-
     def begin_transaction(self):
         if not self.connection:
             self.conectar()
@@ -165,7 +162,7 @@ class BaseDatabaseConnection:
                     try:
                         self.db.commit()
                         return
-                    except pyodbc.OperationalError as te:
+                    except pyodbc.OperationalError:
                         if (time.time() - self.start_time) < self.timeout:
                             attempt += 1
                             time.sleep(1)
@@ -232,10 +229,10 @@ class DatabaseConnection:
 
     def ejecutar_query(self, query, parametros=None):
         try:
+            if not self.database:
+                raise RuntimeError(DB_CONN_ERROR_MSG)
             connection_string = get_connection_string(self.driver, self.database)
             with pyodbc.connect(connection_string, timeout=10) as conn:
-                if not conn:
-                    raise RuntimeError("No se pudo establecer la conexión a la base de datos.")
                 cursor = conn.cursor()
                 if parametros:
                     cursor.execute(query, parametros)
@@ -244,19 +241,13 @@ class DatabaseConnection:
                 if query.strip().upper().startswith("SELECT"):
                     return cursor.fetchall()
                 conn.commit()
-        except pyodbc.OperationalError as e:
-            from core.logger import Logger
-            Logger().log_error_popup(
-                "No se pudo conectar a la base de datos.\n\nVerifica el servidor, credenciales y que SQL Server acepte conexiones remotas.\n\nError: " + str(e)
-            )
             return None
         except Exception as e:
             from core.logger import Logger
             Logger().log_error_popup(
-                "Error al ejecutar la consulta en la base de datos.\n\n" + str(e)
+                DB_QUERY_ERROR_DETAIL + str(e)
             )
             return None
-
     @staticmethod
     def listar_bases_de_datos():
         try:
@@ -304,7 +295,7 @@ class DataAccessLayer:
 
     def actualizar_registro(self, tabla, id_registro, datos, fecha_actualizacion):
         if not self.verificar_concurrencia(tabla, id_registro, fecha_actualizacion):
-            raise Exception("Conflicto de concurrencia detectado.")
+            raise RuntimeError("Conflicto de concurrencia detectado.")
         campos = ", ".join([f"{campo} = ?" for campo in datos.keys()])
         query = f"UPDATE {tabla} SET {campos}, fecha_actualizacion = ? WHERE id = ?"
         valores = list(datos.values()) + [datetime.now().isoformat(), id_registro]

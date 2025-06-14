@@ -69,87 +69,116 @@ import platform
 import importlib.metadata as importlib_metadata  # Sustituye pkg_resources (deprecado)
 from core.event_bus import event_bus
 
+# Definir constantes para literales duplicados
+MODULO_CONFIGURACION = "Configuración"
+DB_DRIVER_SQL_SERVER = "ODBC Driver 17 for SQL Server"
+
 # --- UTILIDAD PARA COMPARAR VERSIONES ---
 def version_mayor_igual(version_actual, version_requerida):
     from packaging import version
     return version.parse(version_actual) >= version.parse(version_requerida)
 
 # --- INSTALACIÓN AUTOMÁTICA DE DEPENDENCIAS CRÍTICAS (WHEELS) PARA TODA LA APP ---
-def instalar_dependencias_criticas():
+
+def _ejecutar_comando_pip(args):
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip"] + args)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR PIP] {e}")
+        return False
+
+def _instalar_wheel_local(paquete, wheel_url, wheel_filename):
     import urllib.request
-    print("[LOG 1.1] === INICIO DE CHEQUEO DE DEPENDENCIAS CRÍTICAS ===")
-    py_version = f"{sys.version_info.major}{sys.version_info.minor}"  # Ej: 311 para Python 3.11
-    arch = platform.architecture()[0]
-    py_tag = f"cp{py_version}"
-    win_tag = "win_amd64" if arch == "64bit" else "win32"
-    wheels = {
-        "pandas": f"pandas-2.2.2-{py_tag}-{py_tag}-{win_tag}.whl",
-        "pyodbc": f"pyodbc-5.0.1-{py_tag}-{py_tag}-{win_tag}.whl"
-    }
-    url_base = "https://download.lfd.uci.edu/pythonlibs/archive/"
-    def instalar_wheel(paquete, wheel_file):
-        url = url_base + wheel_file
-        local_path = os.path.join(os.getcwd(), wheel_file)
-        try:
-            print(f"[LOG 1.1.1] Descargando e instalando wheel para {paquete} desde {url}...")
-            urllib.request.urlretrieve(url, local_path)
-            subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", local_path])
-            os.remove(local_path)
+    local_path = os.path.join(os.getcwd(), wheel_filename)
+    try:
+        print(f"[LOG 1.1.1] Descargando wheel para {paquete} desde {wheel_url}...")
+        urllib.request.urlretrieve(wheel_url, local_path)
+        if _ejecutar_comando_pip(["install", "--user", local_path]):
             print(f"[LOG 1.1.2] ✅ {paquete} instalado desde wheel.")
             return True
-        except Exception as e:
-            print(f"[LOG 1.1.3] ❌ Error instalando {paquete} desde wheel: {e}")
-            return False
-    def instalar_dependencia(paquete, version):
-        try:
-            print(f"[LOG 1.2.1] Instalando {paquete}=={version} con pip...")
-            subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", f"{paquete}=={version}", "--prefer-binary"])
-            print(f"[LOG 1.2.2] ✅ {paquete} instalado normalmente.")
-            return True
-        except Exception as e:
-            print(f"[LOG 1.2.3] ❌ Error instalando {paquete} normalmente: {e}")
-            if paquete in wheels:
-                return instalar_wheel(paquete, wheels[paquete])
-            return False
-    def instalar_dependencia_si_falta(paquete, version):
-        print(f"[LOG 1.3.1] Chequeando {paquete} >= {version if version else ''}...")
-        try:
-            actual = importlib_metadata.version(paquete)
-            if version and not version_mayor_igual(actual, version):
-                raise Exception(f"Versión instalada {actual} < requerida {version}")
-            print(f"[LOG 1.3.2] ✅ {paquete} ya está instalado y cumple versión.")
-            return True
-        except Exception:
-            print(f"[LOG 1.3.3] ❌ {paquete} no está instalado o la versión es incorrecta. Intentando instalar...")
-            return instalar_dependencia(paquete, version)
-    requeridos = [("pandas", "2.2.2"), ("pyodbc", "5.0.1")]
-    for paquete, version in requeridos:
-        instalar_dependencia_si_falta(paquete, version)
-    # Instalar el resto de requirements.txt, excluyendo pandas y pyodbc
+        return False
+    except Exception as e:
+        print(f"[LOG 1.1.3] ❌ Error descargando/instalando {paquete} desde wheel: {e}")
+        return False
+    finally:
+        if os.path.exists(local_path):
+            os.remove(local_path)
+
+def _instalar_paquete_pip(paquete, version=None):
+    target = f"{paquete}=={version}" if version else paquete
+    print(f"[LOG 1.2.1] Instalando {target} con pip...")
+    if _ejecutar_comando_pip(["install", "--user", target, "--prefer-binary"]):
+        print(f"[LOG 1.2.2] ✅ {paquete} instalado.")
+        return True
+    print(f"[LOG 1.2.3] ❌ Error instalando {paquete}.")
+    return False
+
+def _instalar_dependencia_si_necesario(paquete, version, wheel_info=None):
+    print(f"[LOG 1.3.1] Chequeando {paquete} {'>= ' + version if version else ''}...")
     try:
-        print("[LOG 1.4.1] Instalando el resto de dependencias desde requirements.txt (sin pandas ni pyodbc)...")
-        req_path = os.path.join(os.getcwd(), "requirements.txt")
-        req_tmp_path = os.path.join(os.getcwd(), "requirements_tmp.txt")
+        actual = importlib_metadata.version(paquete)
+        if version and not version_mayor_igual(actual, version):
+            raise ValueError(f"Versión instalada {actual} < requerida {version}")
+        print(f"[LOG 1.3.2] ✅ {paquete} ya está instalado y cumple versión.")
+        return True
+    except Exception:
+        print(f"[LOG 1.3.3] ❌ {paquete} no está instalado o la versión es incorrecta. Intentando instalar...")
+        if not _instalar_paquete_pip(paquete, version) and wheel_info:
+            print(f"[LOG 1.3.4] Falló la instalación normal de {paquete}. Intentando con wheel...")
+            return _instalar_wheel_local(paquete, wheel_info['url'], wheel_info['filename'])
+        elif not wheel_info:
+             return _instalar_paquete_pip(paquete, version) # Reintentar sin wheel si no hay info de wheel
+    return False # Si llega aquí, algo falló
+
+def _instalar_desde_requirements():
+    print("[LOG 1.4.1] Instalando dependencias desde requirements.txt (excluyendo pandas y pyodbc)...")
+    req_path = os.path.join(os.getcwd(), "requirements.txt")
+    req_tmp_path = os.path.join(os.getcwd(), "requirements_tmp.txt")
+    try:
         with open(req_path, "r", encoding="utf-8") as fin, open(req_tmp_path, "w", encoding="utf-8") as fout:
             for line in fin:
                 if not (line.strip().startswith("pandas") or line.strip().startswith("pyodbc")):
                     fout.write(line)
-        # Leer requirements_tmp.txt y chequear cada paquete antes de instalar
+        
         with open(req_tmp_path, "r", encoding="utf-8") as f:
             for line in f:
-                pkg = line.strip().split("==")[0] if "==" in line else line.strip()
-                if not pkg or pkg.startswith("#"): continue
-                try:
-                    actual = importlib_metadata.version(pkg)
-                    print(f"[LOG 1.4.2] Chequeando {pkg}... versión instalada: {actual}")
-                except Exception:
-                    print(f"[LOG 1.4.4] ❌ {pkg} no está instalado. Instalando...")
-                    subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", line.strip()])
-        os.remove(req_tmp_path)
-        print("[LOG 1.4.5] ✅ Todas las dependencias instaladas correctamente.")
+                line_stripped = line.strip()
+                if not line_stripped or line_stripped.startswith("#"): 
+                    continue
+                pkg_name_parts = line_stripped.split("==")
+                pkg = pkg_name_parts[0]
+                version_req = pkg_name_parts[1] if len(pkg_name_parts) > 1 else None
+                _instalar_dependencia_si_necesario(pkg, version_req) # No usa wheel para estos
+        print("[LOG 1.4.5] ✅ Verificación de dependencias de requirements.txt completada.")
     except Exception as e:
-        print(f"[LOG 1.4.6] ❌ Error instalando requirements.txt: {e}")
-        print("Por favor, revisa los logs y ejecuta manualmente si es necesario.")
+        print(f"[LOG 1.4.6] ❌ Error procesando requirements.txt: {e}")
+    finally:
+        if os.path.exists(req_tmp_path):
+            os.remove(req_tmp_path)
+
+def instalar_dependencias_criticas():
+    print("[LOG 1.1] === INICIO DE CHEQUEO DE DEPENDENCIAS CRÍTICAS ===")
+    py_version_short = f"{sys.version_info.major}{sys.version_info.minor}"
+    arch = platform.architecture()[0]
+    py_tag = f"cp{py_version_short}"
+    win_tag = "win_amd64" if arch == "64bit" else "win32"
+    
+    url_base_wheels = "https://download.lfd.uci.edu/pythonlibs/archive/"
+    
+    dependencias_con_wheels = {
+        "pandas": {"version": "2.2.2", "wheel_filename_template": "pandas-{version}-{py_tag}-{py_tag}-{win_tag}.whl"},
+        "pyodbc": {"version": "5.0.1", "wheel_filename_template": "pyodbc-{version}-{py_tag}-{py_tag}-{win_tag}.whl"}
+    }
+
+    for paquete, info in dependencias_con_wheels.items():
+        version = info["version"]
+        wheel_filename = info["wheel_filename_template"].format(version=version, py_tag=py_tag, win_tag=win_tag)
+        wheel_url = url_base_wheels + wheel_filename
+        wheel_info = {"url": wheel_url, "filename": wheel_filename}
+        _instalar_dependencia_si_necesario(paquete, version, wheel_info)
+
+    _instalar_desde_requirements()
     print("[LOG 1.5] === FIN DE CHEQUEO DE DEPENDENCIAS CRÍTICAS ===")
         
 
@@ -162,62 +191,36 @@ def _verificar_e_instalar_dependencias():
         print("Instalando dependencias críticas automáticamente...")
         instalar_dependencias_criticas()
 
-def verificar_dependencias():
-    """
-    Verifica si las dependencias críticas y secundarias están instaladas.
-    Si falta una CRÍTICA (PyQt6, pandas, pyodbc), muestra un error y cierra.
-    Si faltan secundarias, muestra advertencia visual pero permite iniciar la app.
-    Ahora acepta versiones IGUALES O SUPERIORES a las requeridas.
-    """
-    from PyQt6.QtWidgets import QApplication
-    requeridos_criticos = [
-        ("PyQt6", "6.9.0"), ("pandas", "2.2.2"), ("pyodbc", "5.0.1")
-    ]
-    requeridos_secundarios = [
-        ("reportlab", "4.4.0"), ("qrcode", "7.4.2"), ("matplotlib", "3.8.4"),
-        ("pytest", "8.2.0"), ("pillow", "10.3.0"), ("python-dateutil", "2.9.0"),
-        ("pytz", "2024.1"), ("tzdata", "2024.1"), ("openpyxl", "3.1.2"),
-        ("colorama", "0.4.6"), ("ttkthemes", "3.2.2"), ("fpdf", None)
-    ]
-    faltantes_criticos = []
-    faltantes_secundarios = []
-    print("[LOG 2.1] Chequeando dependencias críticas...", flush=True)
-    for paquete, version in requeridos_criticos:
+def chequear_dependencias(lista, tipo_log):
+    faltantes = []
+    for paquete, version in lista:
         try:
             actual = importlib_metadata.version(paquete)
             if version and not version_mayor_igual(actual, version):
-                raise Exception(f"Versión instalada {actual} < requerida {version}")
-            print(f"[LOG 2.1.1] ✅ {paquete} presente y versión >= {version if version else ''}.", flush=True)
+                raise ValueError(f"Versión instalada {actual} < requerida {version}")
+            print(f"{tipo_log} ✅ {paquete} presente y versión >= {version if version else ''}.", flush=True)
         except Exception:
-            print(f"[LOG 2.1.2] ❌ {paquete} faltante o versión menor a la requerida.", flush=True)
-            faltantes_criticos.append(f"{paquete}{' >= ' + version if version else ''}")
-    print("[LOG 2.2] Chequeando dependencias secundarias...", flush=True)
-    for paquete, version in requeridos_secundarios:
-        try:
-            actual = importlib_metadata.version(paquete)
-            if version and not version_mayor_igual(actual, version):
-                raise Exception(f"Versión instalada {actual} < requerida {version}")
-            print(f"[LOG 2.2.1] ✅ {paquete} presente.", flush=True)
-        except Exception:
-            print(f"[LOG 2.2.2] ❌ {paquete} faltante.", flush=True)
-            faltantes_secundarios.append(f"{paquete}{' >= ' + version if version else ''}")
-    def mostrar_mensaje_dependencias(titulo, mensaje, detalles, tipo="info"):
-        from PyQt6.QtWidgets import QMessageBox, QApplication
-        app = QApplication.instance() or QApplication(sys.argv)
-        icon = {
-            "info": QMessageBox.Icon.Information,
-            "exito": QMessageBox.Icon.Information,
-            "advertencia": QMessageBox.Icon.Warning,
-            "warning": QMessageBox.Icon.Warning,
-            "error": QMessageBox.Icon.Critical
-        }.get(tipo, QMessageBox.Icon.Information)
-        msg_box = QMessageBox()
-        msg_box.setIcon(icon)
-        msg_box.setWindowTitle(titulo)
-        msg_box.setText(mensaje)
-        msg_box.setInformativeText(detalles)
-        msg_box.exec()
+            print(f"{tipo_log} ❌ {paquete} faltante o versión menor a la requerida.", flush=True)
+            faltantes.append(f"{paquete}{' >= ' + version if version else ''}")
+    return faltantes
 
+def mostrar_mensaje_dependencias(titulo, mensaje, detalles, tipo="info"):
+    from PyQt6.QtWidgets import QMessageBox, QApplication
+    icon = {
+        "info": QMessageBox.Icon.Information,
+        "exito": QMessageBox.Icon.Information,
+        "advertencia": QMessageBox.Icon.Warning,
+        "warning": QMessageBox.Icon.Warning,
+        "error": QMessageBox.Icon.Critical
+    }.get(tipo, QMessageBox.Icon.Information)
+    msg_box = QMessageBox()
+    msg_box.setIcon(icon)
+    msg_box.setWindowTitle(titulo)
+    msg_box.setText(mensaje)
+    msg_box.setInformativeText(detalles)
+    msg_box.exec()
+
+def manejar_dependencias_faltantes(faltantes_criticos, faltantes_secundarios):
     if faltantes_criticos:
         print("[LOG 2.3] Dependencias críticas faltantes. Mostrando mensaje y abortando.", flush=True)
         mostrar_mensaje_dependencias(
@@ -227,7 +230,7 @@ def verificar_dependencias():
             tipo="error"
         )
         sys.exit(1)
-    elif faltantes_secundarios:
+    if faltantes_secundarios:
         print("[LOG 2.4] Dependencias secundarias faltantes. Mostrando advertencia.", flush=True)
         mostrar_mensaje_dependencias(
             "Dependencias opcionales faltantes",
@@ -235,8 +238,30 @@ def verificar_dependencias():
             "\n".join(faltantes_secundarios),
             tipo="warning"
         )
-    else:
+    if not faltantes_criticos and not faltantes_secundarios:
         print("[LOG 2.5] ✅ Todas las dependencias críticas y secundarias están instaladas correctamente.", flush=True)
+
+def verificar_dependencias():
+    """
+    Verifica si las dependencias críticas y secundarias están instaladas.
+    Si falta una CRÍTICA (PyQt6, pandas, pyodbc), muestra un error y cierra.
+    Si faltan secundarias, muestra advertencia visual pero permite iniciar la app.
+    Ahora acepta versiones IGUALES O SUPERIORES a las requeridas.
+    """
+    requeridos_criticos = [
+        ("PyQt6", "6.9.0"), ("pandas", "2.2.2"), ("pyodbc", "5.0.1")
+    ]
+    requeridos_secundarios = [
+        ("reportlab", "4.4.0"), ("qrcode", "7.4.2"), ("matplotlib", "3.8.4"),
+        ("pytest", "8.2.0"), ("pillow", "10.3.0"), ("python-dateutil", "2.9.0"),
+        ("pytz", "2024.1"), ("tzdata", "2024.1"), ("openpyxl", "3.1.2"),
+        ("colorama", "0.4.6"), ("ttkthemes", "3.2.2"), ("fpdf", None)
+    ]
+    print("[LOG 2.1] Chequeando dependencias críticas...", flush=True)
+    faltantes_criticos = chequear_dependencias(requeridos_criticos, "[LOG 2.1.1]")
+    print("[LOG 2.2] Chequeando dependencias secundarias...", flush=True)
+    faltantes_secundarios = chequear_dependencias(requeridos_secundarios, "[LOG 2.2.1]")
+    manejar_dependencias_faltantes(faltantes_criticos, faltantes_secundarios)
 # Verificar e instalar dependencias críticas
 _verificar_e_instalar_dependencias()
 # Ahora verificar dependencias instaladas y requeridas
@@ -327,7 +352,7 @@ sidebar_sections = [
     ("Auditoría", os.path.join(svg_dir, 'auditoria.svg')),
     ("Mantenimiento", os.path.join(svg_dir, 'mantenimiento.svg')),
     ("Usuarios", os.path.join(svg_dir, 'users.svg')),
-    ("Configuración", os.path.join(svg_dir, 'configuracion.svg'))
+    (MODULO_CONFIGURACION, os.path.join(svg_dir, 'configuracion.svg'))
 ]
 icon_map = {
     "Obras": "obras",
@@ -341,7 +366,7 @@ icon_map = {
     "Auditoría": "auditoria",
     "Mantenimiento": "mantenimiento",
     "Usuarios": "users",
-    "Configuración": "configuracion"
+    MODULO_CONFIGURACION: "configuracion"
 }
 
 # Clase principal
@@ -365,36 +390,52 @@ class MainWindow(QMainWindow):
         self._status_bar.addPermanentWidget(self.usuario_label, 1)
         self.initUI(usuario, modulos_permitidos)
 
-    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
-        colores = {
-            "info": "#2563eb",
-            "exito": "#22c55e",
-            "advertencia": "#fbbf24",
-            "error": "#ef4444"
-        }
-        color = colores.get(tipo, "#2563eb")
-        # El estilo visual del status bar se gestiona por QSS de theme global. No usar setStyleSheet aquí.
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000, show_modal=None):
+        # tipo: "info", "exito", "advertencia", "error"
+        # El estilo visual del status bar se gestiona por QSS de theme global.
         self._status_bar.showMessage(mensaje, duracion)
-        if tipo == "error":
-            QMessageBox.critical(self, "Error", mensaje)
-        elif tipo == "advertencia":
-            QMessageBox.warning(self, "Advertencia", mensaje)
-        elif tipo == "exito":
-            QMessageBox.information(self, "Éxito", mensaje)
+
+        if show_modal is None:
+            # Comportamiento por defecto: modales para error y advertencia.
+            # Éxito e info no muestran modal por defecto, para ser menos intrusivos.
+            show_modal_decision = tipo in ["error", "advertencia"]
+        else:
+            show_modal_decision = show_modal
+
+        if show_modal_decision:
+            if tipo == "error":
+                QMessageBox.critical(self, "Error", mensaje)
+            elif tipo == "advertencia":
+                QMessageBox.warning(self, "Advertencia", mensaje)
+            elif tipo == "exito":  # Solo si show_modal es True explícitamente
+                QMessageBox.information(self, "Éxito", mensaje)
+            elif tipo == "info":  # Solo si show_modal es True explícitamente
+                QMessageBox.information(self, "Información", mensaje)
 
     def actualizar_usuario_label(self, usuario):
-        rol = usuario.get('rol', '').lower()
-        colores = {
-            'admin': '#2563eb',
-            'supervisor': '#fbbf24',
-            'usuario': '#22c55e'
-        }
-        color = colores.get(rol, '#1e293b')
-        # El estilo visual de usuario_label se gestiona por QSS de theme global. No usar setStyleSheet aquí.
+        # rol = usuario.get(\'rol\', \'\').lower() # Variable rol no se usa si el color es por QSS
+        # El color se maneja por QSS global, esta variable no se usa.
         self.usuario_label.setText(f"Usuario: {usuario['usuario']} ({usuario['rol']})")
 
-    def initUI(self, usuario=None, modulos_permitidos=None):
+    def initUI(self, usuario=None, modulos_permitidos_param=None):
         # Crear conexiones persistentes a las bases de datos (una sola instancia por base)
+        self._init_database_connections()
+        # Crear instancias de modelos
+        self._init_models()
+        # Crear vistas y controladores principales
+        self._init_views_and_controllers(usuario)
+        # Layout principal
+        self._setup_main_layout()
+        # Filtrado de módulos y configuración del sidebar
+        self._filter_modules_and_setup_sidebar(usuario, modulos_permitidos_param)
+        # Pasar usuario_actual a los controladores
+        self._update_controllers_with_user(usuario)
+        # Conectar señales para integración entre módulos
+        self._connect_module_signals()
+        # Integración visual de estado de pedidos en obras
+        self._integrate_order_status_in_works()
+
+    def _init_database_connections(self):
         self.db_connection_inventario = DatabaseConnection()
         self.db_connection_inventario.conectar_a_base("inventario")
         self.db_connection_usuarios = DatabaseConnection()
@@ -405,9 +446,9 @@ class MainWindow(QMainWindow):
         self.db_connection_configuracion = self.db_connection_inventario
         self.db_connection_produccion = self.db_connection_inventario
 
-        # Crear instancias de modelos
+    def _init_models(self):
         self.inventario_model = InventarioModel(db_connection=self.db_connection_inventario)
-        self.inventario_model.actualizar_qr_y_campos_por_descripcion()
+        # self.inventario_model.actualizar_qr_y_campos_por_descripcion()  # Método no existe, línea comentada para evitar error
         self.obras_model = ObrasModel(db_connection=self.db_connection_inventario)
         self.produccion_model = ProduccionModel(db_connection=self.db_connection_produccion)
         self.logistica_model = LogisticaModel(db_connection=self.db_connection_inventario)
@@ -415,67 +456,77 @@ class MainWindow(QMainWindow):
         self.configuracion_model = ConfiguracionModel(db_connection=self.db_connection_configuracion)
         self.herrajes_model = HerrajesModel(self.db_connection_inventario)
         self.usuarios_model = UsuariosModel(db_connection=self.db_connection_usuarios)
-        self.usuarios_model.crear_usuarios_iniciales()
+        # self.usuarios_model.crear_usuarios_iniciales()  # Método no existe, línea comentada para evitar error
+        self.auditoria_model = AuditoriaModel(db_connection=self.db_connection_auditoria) # Movido aquí para consistencia
 
-        # Crear vistas y controladores principales
+    def _init_views_and_controllers(self, usuario):
         usuario_str = usuario['usuario'] if isinstance(usuario, dict) and 'usuario' in usuario else str(usuario)
+        
         self.inventario_view = InventarioView(db_connection=self.db_connection_inventario, usuario_actual=usuario_str)
         self.inventario_controller = InventarioController(
             model=self.inventario_model,
             view=self.inventario_view,
             db_connection=self.db_connection_inventario,
-            usuario_actual=usuario  # Asegura que usuario_actual se propague correctamente
+            usuario_actual=usuario
         )
         self.obras_view = ObrasView()
-        # Inyectar el controller en la vista para acceso robusto desde el botón de alta
         self.obras_controller = ObrasController(
             model=self.obras_model, view=self.obras_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model, logistica_controller=None
         )
         self.obras_view.set_controller(self.obras_controller)
+        
         self.produccion_view = ProduccionView()
         self.produccion_controller = ProduccionController(
             model=self.produccion_model, view=self.produccion_view, db_connection=self.db_connection_produccion
         )
+        
         self.logistica_view = LogisticaView()
         self.logistica_controller = LogisticaController(
             model=self.logistica_model, view=self.logistica_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
         )
         self.obras_controller.logistica_controller = self.logistica_controller
+        
         self.compras_pedidos_view = ComprasPedidosView()
         self.compras_pedidos_controller = ComprasPedidosController(
             self.pedidos_model, self.compras_pedidos_view, self.db_connection_pedidos, self.usuarios_model
         )
         self.compras_pedidos_controller.cargar_pedidos()
+        
         self.pedidos_view = PedidosIndependienteView()
         self.pedidos_controller = PedidosController(self.pedidos_view, self.db_connection_pedidos)
+        
+        self.usuarios_view = UsuariosView() # Crear vista antes de pasarla al controlador
         self.usuarios_controller = UsuariosController(
-            model=self.usuarios_model, view=None, db_connection=self.db_connection_usuarios
+            model=self.usuarios_model, view=self.usuarios_view, db_connection=self.db_connection_usuarios
         )
-        self.usuarios_view = UsuariosView()
-        self.usuarios_controller.view = self.usuarios_view
+        
         self.auditoria_view = AuditoriaView()
-        self.auditoria_model = AuditoriaModel(db_connection=self.db_connection_auditoria)
         self.auditoria_controller = AuditoriaController(
             model=self.auditoria_model, view=self.auditoria_view, db_connection=self.db_connection_auditoria
         )
+        
         self.configuracion_view = ConfiguracionView()
         self.configuracion_controller = ConfiguracionController(
             model=self.configuracion_model, view=self.configuracion_view, db_connection=self.db_connection_configuracion, usuarios_model=self.usuarios_model
         )
+        
         self.mantenimiento_view = MantenimientoView()
         from modules.mantenimiento.controller import MantenimientoController
         self.mantenimiento_controller = MantenimientoController(
             model=self.mantenimiento_view, view=self.mantenimiento_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
         )
+        
         self.contabilidad_view = ContabilidadView()
         from modules.contabilidad.controller import ContabilidadController
         self.contabilidad_controller = ContabilidadController(
             model=self.contabilidad_view, view=self.contabilidad_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
         )
+        
         self.herrajes_view = HerrajesView()
         self.herrajes_controller = HerrajesController(
             self.herrajes_model, self.herrajes_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
         )
+        
         from modules.vidrios.view import VidriosView
         from modules.vidrios.controller import VidriosController
         self.vidrios_view = VidriosView()
@@ -483,12 +534,13 @@ class MainWindow(QMainWindow):
             model=self.vidrios_view, view=self.vidrios_view, db_connection=self.db_connection_inventario
         )
 
-        # Layout principal
+    def _setup_main_layout(self):
         main_layout = QHBoxLayout()
         central_widget = QWidget()
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
         self.module_stack = QStackedWidget()
+        
         # Agregar vistas al stack en el MISMO orden que sidebar_sections
         self.module_stack.addWidget(self.obras_view)            # 0 Obras
         self.module_stack.addWidget(self.inventario_view)       # 1 Inventario
@@ -503,66 +555,114 @@ class MainWindow(QMainWindow):
         self.module_stack.addWidget(self.usuarios_view)         # 10 Usuarios
         self.module_stack.addWidget(self.configuracion_view)    # 11 Configuración
         main_layout.addWidget(self.module_stack)
-        self._ajustar_sidebar()
+        self._ajustar_sidebar() # Llamada inicial para ajustar el sidebar
 
-        # --- FILTRADO ROBUSTO Y DOCUMENTADO DE MÓDULOS EN SIDEBAR Y STACK PRINCIPAL ---
-        # 1. Obtener módulos permitidos para el usuario actual (según permisos_modulos)
-        # ATENCIÓN: obtener_modulos_permitidos debe estar implementado y accesible en UsuariosModel
+    def _filter_modules_and_setup_sidebar(self, usuario, modulos_permitidos_param):
+        modulos_a_usar = self._obtener_modulos_a_usar(usuario, modulos_permitidos_param)
+        modulos_sidebar_originales = [nombre for nombre, _ in sidebar_sections]
+        secciones_filtradas_sidebar, self.map_sidebar_idx_to_stack_idx = self._construir_secciones_sidebar(
+            modulos_a_usar, modulos_sidebar_originales
+        )
+
+        if not secciones_filtradas_sidebar:
+            secciones_filtradas_sidebar, self.map_sidebar_idx_to_stack_idx = self._manejar_sidebar_vacio(
+                modulos_sidebar_originales
+            )
+
+        self._setup_sidebar_widget(secciones_filtradas_sidebar)
+
+        initial_sidebar_idx_to_select, initial_stack_idx_to_select = self._determinar_indices_iniciales(
+            modulos_a_usar, secciones_filtradas_sidebar, modulos_sidebar_originales
+        )
+
+        if secciones_filtradas_sidebar:
+            self.sidebar.select_button_visually(initial_sidebar_idx_to_select)
+            self.module_stack.setCurrentIndex(initial_stack_idx_to_select)
+        else:
+            self._mostrar_widget_error_stack()
+
+        self.sidebar.setFocus()
+        self.logger.info(f"[PERMISOS] Sidebar filtrado: {[n for n, _ in secciones_filtradas_sidebar]}")
+        self.logger.info(f"[PERMISOS] Mapeo sidebar->stack: {self.map_sidebar_idx_to_stack_idx}")
+
+    def _obtener_modulos_a_usar(self, usuario, modulos_permitidos_param):
         try:
-            modulos_permitidos = self.usuarios_model.obtener_modulos_permitidos(usuario)
-            if not modulos_permitidos:
+            modulos_permitidos_obtenidos = self.usuarios_model.obtener_modulos_permitidos(usuario)
+            if not modulos_permitidos_obtenidos:
                 self.logger.error(f"[PERMISOS] No se encontraron módulos permitidos para el usuario: {usuario}")
         except Exception as e:
             import traceback
             self.logger.error(f"[ERROR] Excepción al inicializar la UI: {e}\n{traceback.format_exc()}")
-            from PyQt6.QtWidgets import QMessageBox
             QMessageBox.critical(self, "Error crítico", f"Error al cargar la interfaz: {e}")
             self.close()
-        # 2. Filtrar secciones del sidebar y widgets del stack según permisos
-        if not isinstance(modulos_permitidos, list):
-            modulos_permitidos = []
-        secciones_filtradas = []
-        indices_permitidos = []
-        modulos_sidebar = [nombre for nombre, _ in sidebar_sections]
-        for i, nombre in enumerate(modulos_sidebar):
-            if nombre in modulos_permitidos:
-                icon_name = icon_map.get(nombre, nombre.lower().replace(" / ", "_").replace(" ", "_"))
-                secciones_filtradas.append((nombre, get_icon(icon_name)))
-                indices_permitidos.append(i)
-        # 3. Filtrar secciones y sincronizar con el stack
-        # 4. Si no hay módulos permitidos, mostrar mensaje y fallback seguro
-        if not secciones_filtradas:
-            self.logger.warning(f"[PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.")
-            secciones_filtradas = [("Configuración", get_icon(icon_map["Configuración"]))]
-            indices_permitidos = [0]
-        # 5. Recrear el sidebar con los módulos filtrados
-        # Eliminar sidebar anterior si existe antes de agregar el nuevo
+            return []
+        modulos_a_usar = modulos_permitidos_param if isinstance(modulos_permitidos_param, list) else modulos_permitidos_obtenidos
+        if not isinstance(modulos_a_usar, list):
+            modulos_a_usar = []
+        return modulos_a_usar
+
+    def _construir_secciones_sidebar(self, modulos_a_usar, modulos_sidebar_originales):
+        secciones_filtradas_sidebar = []
+        map_sidebar_idx_to_stack_idx = []
+        for i, nombre_modulo_sidebar in enumerate(modulos_sidebar_originales):
+            if nombre_modulo_sidebar in modulos_a_usar:
+                icon_name = icon_map.get(nombre_modulo_sidebar, "default_icon")
+                if icon_name == "default_icon" and nombre_modulo_sidebar.lower().replace(" / ", "_").replace(" ", "_") != "default_icon":
+                    generated_icon_name = nombre_modulo_sidebar.lower().replace(" / ", "_").replace(" ", "_")
+                    icon_name = generated_icon_name
+                secciones_filtradas_sidebar.append((nombre_modulo_sidebar, get_icon(icon_name)))
+                map_sidebar_idx_to_stack_idx.append(i)
+        return secciones_filtradas_sidebar, map_sidebar_idx_to_stack_idx
+
+    def _manejar_sidebar_vacio(self, modulos_sidebar_originales):
+        self.logger.warning("[PERMISOS] Usuario sin módulos permitidos. Mostrando solo Configuración.")
+        secciones_filtradas_sidebar = [(MODULO_CONFIGURACION, get_icon(icon_map[MODULO_CONFIGURACION]))]
+        try:
+            idx_config = modulos_sidebar_originales.index(MODULO_CONFIGURACION)
+            map_sidebar_idx_to_stack_idx = [idx_config]
+        except ValueError:
+            idx_fallback = len(modulos_sidebar_originales) - 1
+            map_sidebar_idx_to_stack_idx = [idx_fallback]
+            self.logger.error(f"[PERMISOS] Módulo '{MODULO_CONFIGURACION}' no encontrado en sidebar_sections para fallback.")
+        return secciones_filtradas_sidebar, map_sidebar_idx_to_stack_idx
+
+    def _setup_sidebar_widget(self, secciones_filtradas_sidebar):
         if hasattr(self, "sidebar"):
             self.sidebar.setParent(None)
             del self.sidebar
-        self.sidebar = Sidebar(sections=secciones_filtradas, mostrar_nombres=True)
-        main_layout.insertWidget(0, self.sidebar)
-        # 6. Seleccionar el primer módulo permitido como vista inicial (priorizando 'Obras' si está permitido)
-        index_obras = None
-        if modulos_permitidos and isinstance(modulos_permitidos, list) and "Obras" in modulos_permitidos:
-            # Buscar el índice de 'Obras' en el sidebar filtrado
-            for idx, (nombre, _) in enumerate(secciones_filtradas):
-                if nombre == "Obras":
-                    index_obras = idx
-                    break
-        if index_obras is not None:
-            self.module_stack.setCurrentIndex(index_obras)
-        elif indices_permitidos:
-            self.module_stack.setCurrentIndex(indices_permitidos[0])
-        else:
-            self.module_stack.setCurrentIndex(0)
-        # 7. Accesibilidad: enfocar el sidebar tras el filtrado
-        self.sidebar.setFocus()
-        # 8. Documentación y log para diagnóstico
-        self.logger.info(f"[PERMISOS] Sidebar filtrado: {[n for n, _ in secciones_filtradas]}")
-        # --- FIN FILTRADO ROBUSTO DE MÓDULOS ---
+        central_widget = self.centralWidget()
+        main_layout = central_widget.layout() # type: ignore
+        if not main_layout:
+            self.logger.error("[CRITICAL] main_layout no encontrado al configurar sidebar.")
+            main_layout = QHBoxLayout()
+            if central_widget:
+                central_widget.setLayout(main_layout) # type: ignore
+            main_layout.addWidget(self.module_stack)
+        self.sidebar = Sidebar(sections=secciones_filtradas_sidebar, mostrar_nombres=True)
+        main_layout.insertWidget(0, self.sidebar) # type: ignore
 
-        # Pasar usuario_actual a los controladores
+    def _determinar_indices_iniciales(self, modulos_a_usar, secciones_filtradas_sidebar, modulos_sidebar_originales):
+        initial_sidebar_idx_to_select = 0
+        initial_stack_idx_to_select = self.map_sidebar_idx_to_stack_idx[0] if self.map_sidebar_idx_to_stack_idx else 0
+        if "Obras" in modulos_a_usar:
+            try:
+                obras_sidebar_idx = [s[0] for s in secciones_filtradas_sidebar].index("Obras")
+                obras_stack_idx = modulos_sidebar_originales.index("Obras")
+                if obras_stack_idx in self.map_sidebar_idx_to_stack_idx:
+                    initial_sidebar_idx_to_select = obras_sidebar_idx
+                    initial_stack_idx_to_select = obras_stack_idx
+            except ValueError:
+                self.logger.warning("[PERMISOS] Módulo 'Obras' permitido pero no encontrado en secciones filtradas/originales para selección inicial.")
+        return initial_sidebar_idx_to_select, initial_stack_idx_to_select
+
+    def _mostrar_widget_error_stack(self):
+        self.logger.error("[PERMISOS] No hay módulos para mostrar después del filtrado.")
+        error_label = QLabel("Error: No tiene módulos asignados o no se pudieron cargar.")
+        error_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.module_stack.addWidget(error_label)
+        self.module_stack.setCurrentIndex(self.module_stack.count() - 1)
+
+    def _update_controllers_with_user(self, usuario):
         self.inventario_controller.usuario_actual = usuario
         self.obras_controller.usuario_actual = usuario
         self.produccion_controller.usuario_actual = usuario
@@ -573,29 +673,29 @@ class MainWindow(QMainWindow):
         self.auditoria_controller.usuario_actual = usuario
         self.configuracion_controller.usuario_actual = usuario
         self.herrajes_controller.usuario_actual = usuario
+        # self.vidrios_controller no tiene usuario_actual actualmente, si se necesita, añadirlo.
 
-        # INTEGRACIÓN EN TIEMPO REAL ENTRE MÓDULOS (Obras, Inventario, Vidrios, Pedidos)
-        # Conectar la señal obra_agregada de ObrasView a los controladores de Inventario y Vidrios
+    def _connect_module_signals(self):
         if hasattr(self.obras_view, 'obra_agregada'):
             if hasattr(self.inventario_controller, 'actualizar_por_obra'):
                 self.obras_view.obra_agregada.connect(self.inventario_controller.actualizar_por_obra)
             if hasattr(self.vidrios_controller, 'actualizar_por_obra'):
                 self.obras_view.obra_agregada.connect(self.vidrios_controller.actualizar_por_obra)
-        # Conectar la señal pedido_actualizado del event_bus a los controladores de Obras e Inventario
+        
         if hasattr(self.inventario_controller, 'actualizar_por_pedido'):
             event_bus.pedido_actualizado.connect(self.inventario_controller.actualizar_por_pedido)
         if hasattr(self.obras_controller, 'actualizar_por_pedido'):
             event_bus.pedido_actualizado.connect(self.obras_controller.actualizar_por_pedido)
-        # Conectar la señal pedido_cancelado del event_bus a los controladores de Obras e Inventario
+        
         if hasattr(self.inventario_controller, 'actualizar_por_pedido_cancelado'):
             event_bus.pedido_cancelado.connect(self.inventario_controller.actualizar_por_pedido_cancelado)
         if hasattr(self.obras_controller, 'actualizar_por_pedido_cancelado'):
             event_bus.pedido_cancelado.connect(self.obras_controller.actualizar_por_pedido_cancelado)
-        # Conectar la señal pageChanged del sidebar al cambio de vista en el stack
-        self.sidebar.pageChanged.connect(self._on_sidebar_page_changed)
+        
+        if hasattr(self, 'sidebar'): # Asegurarse que el sidebar existe
+            self.sidebar.pageChanged.connect(self._on_sidebar_page_changed)
 
-        # --- INTEGRACIÓN VISUAL DE ESTADO DE PEDIDOS EN OBRAS ---
-        # Al inicializar la UI, poblar la tabla de obras con el estado de pedidos de Inventario, Vidrios y Herrajes
+    def _integrate_order_status_in_works(self):
         try:
             self.obras_controller.mostrar_estado_pedidos_en_tabla(
                 inventario_controller=self.inventario_controller,
@@ -605,8 +705,20 @@ class MainWindow(QMainWindow):
         except Exception as e:
             self.logger.error(f"[INTEGRACIÓN] Error al poblar estado de pedidos en Obras: {e}")
 
-    def _on_sidebar_page_changed(self, idx):
-        self.module_stack.setCurrentIndex(idx)
+    def _on_sidebar_page_changed(self, sidebar_idx):
+        # sidebar_idx es el índice dentro de las secciones_filtradas del sidebar.
+        # Usar el mapeo para obtener el índice correcto en el module_stack original.
+        if hasattr(self, 'map_sidebar_idx_to_stack_idx') and 0 <= sidebar_idx < len(self.map_sidebar_idx_to_stack_idx):
+            stack_idx = self.map_sidebar_idx_to_stack_idx[sidebar_idx]
+            if 0 <= stack_idx < self.module_stack.count():
+                self.module_stack.setCurrentIndex(stack_idx)
+                # Asegurar que el botón del sidebar también se actualice visualmente si el cambio no vino de un clic directo
+                if hasattr(self, 'sidebar') and hasattr(self.sidebar, 'select_button_visually'):
+                    self.sidebar.select_button_visually(sidebar_idx) # type: ignore
+            else:
+                self.logger.error(f"[NAV] Error: Índice de stack mapeado {stack_idx} fuera de rango.")
+        else:
+            self.logger.error(f"[NAV] Error: Índice de sidebar {sidebar_idx} fuera de rango en mapeo o mapeo no inicializado.")
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -644,21 +756,22 @@ class MainWindow(QMainWindow):
         """
         import pyodbc
         from core.config import DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_DEFAULT_DATABASE
-        DB_DRIVER = 'ODBC Driver 17 for SQL Server'
+        # La constante DB_DRIVER_SQL_SERVER ya está definida globalmente
         try:
             connection_string = (
-                f"DRIVER={{{DB_DRIVER}}};"
+                f"DRIVER={{{DB_DRIVER_SQL_SERVER}}};"
                 f"SERVER={DB_SERVER};"
                 f"DATABASE={DB_DEFAULT_DATABASE};"
                 f"UID={DB_USERNAME};"
                 f"PWD={DB_PASSWORD};"
                 f"TrustServerCertificate=yes;"
             )
-            with pyodbc.connect(connection_string, timeout=3):
-                if not self._estado_bd_online:
-                    self.sidebar.set_estado_online(True)
-                    self._estado_bd_online = True
-                return
+            # No se usa la variable conn, se puede quitar el with y el as conn
+            pyodbc.connect(connection_string, timeout=3).close() # Cerrar conexión inmediatamente
+            if not self._estado_bd_online:
+                self.sidebar.set_estado_online(True)
+                self._estado_bd_online = True
+            return
         except Exception:
             if self._estado_bd_online:
                 self.sidebar.set_estado_online(False)
@@ -668,22 +781,24 @@ class MainWindow(QMainWindow):
 def chequear_conexion_bd():
     import pyodbc
     # Puedes ajustar estos valores según tu configuración real
-    DB_DRIVER = os.environ.get('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
+    # DB_DRIVER = os.environ.get('DB_DRIVER', 'ODBC Driver 17 for SQL Server') # Usar constante global
+    db_driver_local = os.environ.get('DB_DRIVER', DB_DRIVER_SQL_SERVER)
     DB_SERVER = os.environ.get('DB_SERVER', 'localhost\\SQLEXPRESS')
     DB_DATABASE = os.environ.get('DB_DATABASE', 'inventario')
     DB_USERNAME = os.environ.get('DB_USERNAME', 'sa')
     DB_PASSWORD = os.environ.get('DB_PASSWORD', 'tu_contraseña_aqui')
     try:
         connection_string = (
-            f"DRIVER={{{DB_DRIVER}}};"
+            f"DRIVER={{{db_driver_local}}};"
             f"SERVER={DB_SERVER};"
             f"DATABASE={DB_DATABASE};"
             f"UID={DB_USERNAME};"
             f"PWD={DB_PASSWORD};"
             f"TrustServerCertificate=yes;"
         )
-        with pyodbc.connect(connection_string, timeout=5) as conn:
-            print("✅ Conexión exitosa a la base de datos.")
+        # No se usa la variable conn, se puede quitar el with y el as conn
+        pyodbc.connect(connection_string, timeout=5).close() # Cerrar conexión inmediatamente
+        print("✅ Conexión exitosa a la base de datos.")
     except Exception as e:
         print(f"❌ Error de conexión a la base de datos: {e}")
         print("Verifica usuario, contraseña, servidor y que SQL Server acepte autenticación SQL.")
@@ -692,27 +807,29 @@ def chequear_conexion_bd():
 def chequear_conexion_bd_gui():
     from PyQt6.QtWidgets import QApplication, QMessageBox
     from core.config import DB_SERVER, DB_SERVER_ALTERNATE, DB_USERNAME, DB_PASSWORD, DB_DEFAULT_DATABASE, DB_TIMEOUT
-    DB_DRIVER = 'ODBC Driver 17 for SQL Server'
     servidores = [DB_SERVER, DB_SERVER_ALTERNATE]
-    for DB_SERVER_ACTUAL in servidores:
+    # Renombrar variable para cumplir convención
+    for db_server_actual in servidores:
         try:
-            print(f"[LOG 3.1] Intentando conexión a BD: {DB_SERVER_ACTUAL} ...")
+            print(f"[LOG 3.1] Intentando conexión a BD: {db_server_actual} ...")
             connection_string = (
-                f"DRIVER={{{DB_DRIVER}}};"
-                f"SERVER={DB_SERVER_ACTUAL};"
+                f"DRIVER={{{DB_DRIVER_SQL_SERVER}}};"
+                f"SERVER={db_server_actual};"
                 f"DATABASE={DB_DEFAULT_DATABASE};"
                 f"UID={DB_USERNAME};"
                 f"PWD={DB_PASSWORD};"
                 f"TrustServerCertificate=yes;"
             )
             import pyodbc
-            with pyodbc.connect(connection_string, timeout=DB_TIMEOUT) as conn:
-                print(f"[LOG 3.2] ✅ Conexión exitosa a la base de datos: {DB_SERVER_ACTUAL}")
-                return
+            # No se usa la variable conn, se puede quitar el with y el as conn
+            pyodbc.connect(connection_string, timeout=DB_TIMEOUT).close() # Cerrar conexión inmediatamente
+            print(f"[LOG 3.2] ✅ Conexión exitosa a la base de datos: {db_server_actual}")
+            return
         except Exception as e:
-            print(f"[LOG 3.3] ❌ Error de conexión a la base de datos ({DB_SERVER_ACTUAL}): {e}")
+            print(f"[LOG 3.3] ❌ Error de conexión a la base de datos ({db_server_actual}): {e}")
     print("[LOG 3.4] ❌ No se pudo conectar a ninguna base de datos. Mostrando error GUI.")
-    app = QApplication.instance() or QApplication(sys.argv)
+    # No es necesario crear una nueva instancia de QApplication si ya existe
+    # app = QApplication.instance() or QApplication(sys.argv)
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Icon.Critical)
     msg.setWindowTitle("Error de conexión a la base de datos")
@@ -813,10 +930,12 @@ if __name__ == "__main__":
     # Detectar modo de tema desde config o theme_manager
     from utils.theme_manager import cargar_modo_tema
     modo_tema = cargar_modo_tema()  # 'light' o 'dark'
-    if modo_tema == 'dark':
-        splash.setStyleSheet(open('resources/qss/theme_dark.qss', encoding='utf-8').read())
-    else:
-        splash.setStyleSheet(open('resources/qss/theme_light.qss', encoding='utf-8').read())
+    qss_file = 'resources/qss/theme_dark.qss' if modo_tema == 'dark' else 'resources/qss/theme_light.qss'
+    try:
+        with open(qss_file, 'r', encoding='utf-8') as f:
+            splash.setStyleSheet(f.read())
+    except FileNotFoundError:
+        print(f"[ERROR] No se encontró el archivo QSS: {qss_file}")
     # --- MOSTRAR IMAGEN PERSONALIZADA EN SPLASHSCREEN ---
     # Si SplashScreen permite set_image, usarlo. Si no, modificar el widget para mostrar la imagen.
     try:

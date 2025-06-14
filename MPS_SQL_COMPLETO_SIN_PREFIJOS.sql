@@ -71,11 +71,10 @@ CREATE TABLE inventario_items (
 -- =====================
 IF OBJECT_ID('movimientos_stock', 'U') IS NOT NULL DROP TABLE movimientos_stock;
 CREATE TABLE movimientos_stock (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    id_item INT FOREIGN KEY REFERENCES inventario_items(id) ON DELETE CASCADE,
-    fecha DATETIME DEFAULT GETDATE(),
-    tipo_movimiento NVARCHAR(20) NOT NULL,
-    cantidad DECIMAL(18,2) NOT NULL,
+    id INT PRIMARY KEY IDENTITY(1,1),
+    id_perfil INT FOREIGN KEY REFERENCES inventario_perfiles(id) ON DELETE CASCADE,
+    tipo_movimiento VARCHAR(50) NOT NULL CHECK (tipo_movimiento IN ('entrada', 'salida', 'ajuste')),
+    cantidad DECIMAL(10, 2) NOT NULL,
     realizado_por INT,
     observaciones NVARCHAR(MAX),
     referencia NVARCHAR(255),
@@ -127,10 +126,11 @@ CREATE TABLE cronograma_obras (
 -- =====================
 IF OBJECT_ID('materiales_por_obra', 'U') IS NOT NULL DROP TABLE materiales_por_obra;
 CREATE TABLE materiales_por_obra (
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY(1,1),
     id_obra INT FOREIGN KEY REFERENCES obras(id) ON DELETE CASCADE,
-    id_item INT FOREIGN KEY REFERENCES inventario_items(id) ON DELETE CASCADE,
-    cantidad DECIMAL(18,2),
+    id_perfil INT FOREIGN KEY REFERENCES inventario_perfiles(id) ON DELETE CASCADE,
+    cantidad_requerida DECIMAL(10, 2),
+    cantidad_utilizada DECIMAL(10, 2),
     estado NVARCHAR(30)
 );
 
@@ -150,10 +150,11 @@ CREATE TABLE pedidos_compra (
 -- =====================
 IF OBJECT_ID('detalle_pedido', 'U') IS NOT NULL DROP TABLE detalle_pedido;
 CREATE TABLE detalle_pedido (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    pedido_id INT FOREIGN KEY REFERENCES pedidos_compra(id) ON DELETE CASCADE,
-    id_item INT FOREIGN KEY REFERENCES inventario_items(id),
-    cantidad DECIMAL(18,2),
+    id INT PRIMARY KEY IDENTITY(1,1),
+    id_pedido INT FOREIGN KEY REFERENCES pedidos(id) ON DELETE CASCADE,
+    id_perfil INT FOREIGN KEY REFERENCES inventario_perfiles(id) ON DELETE CASCADE,
+    cantidad DECIMAL(10, 2) NOT NULL,
+    precio_unitario DECIMAL(10, 2) NOT NULL,
     justificacion NVARCHAR(MAX)
 );
 

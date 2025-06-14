@@ -124,13 +124,6 @@ class PedidosView(QWidget):
     def mostrar_feedback(self, mensaje, tipo="info"):
         if not hasattr(self, "label_feedback") or self.label_feedback is None:
             return
-        colores = {
-            "info": "#2563eb",
-            "exito": "#22c55e",
-            "advertencia": "#fbbf24",
-            "error": "#ef4444"
-        }
-        color = colores.get(tipo, "#2563eb")
         iconos = {
             "info": "ℹ️ ",
             "exito": "✅ ",
@@ -197,7 +190,6 @@ class PedidosView(QWidget):
                 if idx < 0 or idx >= self.tabla_pedidos.columnCount():
                     self.mostrar_feedback("Índice de columna fuera de rango", "error")
                     return
-                pos = header.sectionPosition(idx)
                 global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
                 self.mostrar_menu_columnas(global_pos)
             else:

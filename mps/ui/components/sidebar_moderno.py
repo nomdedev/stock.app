@@ -7,10 +7,11 @@ from components.sidebar_button import SidebarButton
 from utils.icon_loader import get_icon
 
 class Sidebar(QWidget):
-    estado_cambiado = pyqtSignal(bool)  # True=online, False=offline
+    estado_cambiado = pyqtSignal(bool)
     pageChanged = pyqtSignal(int)  # Nueva señal para cambiar de página
     def __init__(self, sections, mostrar_nombres=False, online=True, modo_oscuro=False, widget_tema_target=None):
         super().__init__()
+        self.sections = sections # Almacenar secciones
         self._widget_tema_target = widget_tema_target  # Widget donde se aplicará el QSS
         self.setObjectName("sidebar")
         layout = QVBoxLayout()
@@ -34,6 +35,7 @@ class Sidebar(QWidget):
         self._sidebar_buttons = []
         for idx, (title, icon) in enumerate(sections):
             btn = SidebarButton(icon=icon, text=title if mostrar_nombres else "")
+            btn.setCheckable(True) # Hacer botones checkables
             btn.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
             btn.setFixedHeight(40)
             btn.setIconSize(QSize(24, 24))
@@ -41,6 +43,8 @@ class Sidebar(QWidget):
             btn.clicked.connect(lambda checked, ix=idx: self._on_sidebar_button_clicked(ix))
             layout.addWidget(btn)
             self._sidebar_buttons.append(btn)
+        
+        self._current_selected_index = -1 # Índice del botón actualmente seleccionado
 
         layout.addStretch()
 
@@ -125,7 +129,33 @@ class Sidebar(QWidget):
     def _on_sidebar_button_clicked(self, idx):
         # Emitir señal para que MainWindow cambie el stack
         if hasattr(self, 'pageChanged'):
-            self.pageChanged.emit(idx)
+            if self._current_selected_index != idx: # Solo si se hace clic en un botón diferente
+                if 0 <= self._current_selected_index < len(self._sidebar_buttons):
+                    self._sidebar_buttons[self._current_selected_index].setChecked(False)
+                
+                # El botón clickeado (btn) se auto-chequea porque es checkable.
+                # No necesitamos llamar a self._sidebar_buttons[idx].setChecked(True) explícitamente aquí
+                # a menos que el comportamiento de auto-check no sea el deseado o necesitemos forzarlo.
+                # Por ahora, asumimos que el QButtonGroup o el manejo de checkable es suficiente.
+                # Si los botones no están en un QButtonGroup, necesitamos gestionar el uncheck manualmente.
+                self._sidebar_buttons[idx].setChecked(True) # Asegurar que el actual esté chequeado
+                self._current_selected_index = idx
+                self.pageChanged.emit(idx)
+            elif self._sidebar_buttons[idx].isCheckable() and not self._sidebar_buttons[idx].isChecked():
+                # Si se hace clic en el mismo botón y estaba unchecked (raro para un sidebar), chequearlo.
+                 self._sidebar_buttons[idx].setChecked(True)
+            # Si se hace clic en el mismo botón y ya está chequeado, no hacer nada o deschequearlo si se permite.
+            # Para un sidebar, normalmente un botón permanece seleccionado.
+
+    def select_button_visually(self, index: int):
+        if 0 <= index < len(self._sidebar_buttons):
+            if self._current_selected_index != index:
+                if 0 <= self._current_selected_index < len(self._sidebar_buttons):
+                    self._sidebar_buttons[self._current_selected_index].setChecked(False)
+                
+                self._sidebar_buttons[index].setChecked(True)
+                self._current_selected_index = index
+        # No emitir pageChanged aquí, es solo para actualización visual
 
     def _set_icono_tema(self):
         icon_tema = get_icon("moon") if self._modo_oscuro else get_icon("sun_custom")

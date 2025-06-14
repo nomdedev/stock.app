@@ -16,7 +16,7 @@ FLUJO FUNCIONAL Y DE DATOS (RESUMEN):
 INTERCONEXIÓN DE TABLAS Y LÓGICA:
 - obras <-> materiales_por_obra (N a N)
 - obras <-> cronograma_obras (1 a N)
-- materiales_por_obra <-> inventario_items (por id_item)
+- materiales_por_obra <-> inventario_perfiles (por id_perfil)
 - Todas las acciones quedan registradas en auditorias_sistema
 
 CHECKLIST FUNCIONAL Y VISUAL:
@@ -65,6 +65,8 @@ import pandas as pd
 from fpdf import FPDF
 from core.database import ObrasDatabaseConnection
 
+CLIENTE_SOLO_LETRAS_NUMEROS_ESPACIOS = "Cliente solo puede contener letras, números y espacios"
+
 class OptimisticLockError(Exception):
     """Excepción para conflictos de bloqueo optimista en obras."""
     pass
@@ -99,10 +101,10 @@ class ObrasModel:
             raise ValueError("Nombre muy largo (máx 100 caracteres)")
         if len(cliente) > 100:
             raise ValueError("Cliente muy largo (máx 100 caracteres)")
-        if not all(c.isalnum() or c.isspace() for c in nombre):
-            raise ValueError("Nombre solo puede contener letras, números y espacios")
         if not all(c.isalnum() or c.isspace() for c in cliente):
-            raise ValueError("Cliente solo puede contener letras, números y espacios")
+            raise ValueError(CLIENTE_SOLO_LETRAS_NUMEROS_ESPACIOS)
+        # Validar fechas si están presentes
+        from datetime import datetime
         # Validar fechas si están presentes
         from datetime import datetime
         try:
@@ -161,23 +163,26 @@ class ObrasModel:
             return []
 
     def asignar_material_a_obra(self, datos):
+        # datos debe ser (id_obra, id_perfil, cantidad_necesaria, cantidad_reservada, estado)
         try:
             query = """
-            INSERT INTO materiales_por_obra (id_obra, id_item, cantidad_necesaria, cantidad_reservada, estado)
+            INSERT INTO materiales_por_obra (id_obra, id_perfil, cantidad_requerida, cantidad_utilizada, estado)
             VALUES (?, ?, ?, ?, ?)
-            """
+            """ # Asumiendo que cantidad_reservada es cantidad_utilizada y cantidad_necesaria es cantidad_requerida
             self.db_connection.ejecutar_query(query, datos)
         except Exception as e:
             print(f"Error al asignar material a obra: {e}")
             raise
 
-    def insertar_material_obra(self, id_obra, id_item, cantidad, estado):
+    def insertar_material_obra(self, id_obra, id_perfil, cantidad, estado):
+        # Renombrado id_item a id_perfil
         query = """
-        INSERT INTO materiales_por_obra (id_obra, id_item, cantidad_necesaria, cantidad_reservada, estado)
+        INSERT INTO materiales_por_obra (id_obra, id_perfil, cantidad_requerida, cantidad_utilizada, estado)
         VALUES (?, ?, ?, ?, ?)
         """
-        cantidad_reservada = cantidad if estado == "Reservado" else 0
-        self.db_connection.ejecutar_query(query, (id_obra, id_item, cantidad, cantidad_reservada, estado))
+        # Asumiendo que cantidad_reservada es cantidad_utilizada y cantidad_necesaria es cantidad_requerida
+        cantidad_utilizada = cantidad if estado == "Reservado" else 0 # O la lógica que corresponda para cantidad_utilizada
+        self.db_connection.ejecutar_query(query, (id_obra, id_perfil, cantidad, cantidad_utilizada, estado))
 
     def exportar_cronograma(self, formato: str, id_obra) -> str:
         """
@@ -343,10 +348,10 @@ class ObrasModel:
             raise ValueError("Nombre muy largo (máx 100 caracteres)")
         if len(cliente) > 100:
             raise ValueError("Cliente muy largo (máx 100 caracteres)")
-        if not all(c.isalnum() or c.isspace() for c in nombre):
-            raise ValueError("Nombre solo puede contener letras, números y espacios")
         if not all(c.isalnum() or c.isspace() for c in cliente):
-            raise ValueError("Cliente solo puede contener letras, números y espacios")
+            raise ValueError(CLIENTE_SOLO_LETRAS_NUMEROS_ESPACIOS)
+        # Validar fechas
+        from datetime import datetime
         # Validar fechas
         from datetime import datetime
         fecha_medicion = datos_dict.get('fecha_medicion', '')
@@ -404,10 +409,10 @@ class ObrasModel:
             errores.append("Nombre muy largo (máx 100 caracteres)")
         if len(cliente) > 100:
             errores.append("Cliente muy largo (máx 100 caracteres)")
-        if not all(c.isalnum() or c.isspace() for c in nombre):
-            errores.append("Nombre solo puede contener letras, números y espacios")
         if not all(c.isalnum() or c.isspace() for c in cliente):
-            errores.append("Cliente solo puede contener letras, números y espacios")
+            errores.append(CLIENTE_SOLO_LETRAS_NUMEROS_ESPACIOS)
+        from datetime import datetime
+        fecha_medicion = datos.get('fecha_medicion', '')
         from datetime import datetime
         fecha_medicion = datos.get('fecha_medicion', '')
         fecha_entrega = datos.get('fecha_entrega', '')
