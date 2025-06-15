@@ -46,62 +46,81 @@ CREATE TABLE inventario.dbo.logistica_por_obra (
 );
 
 -- 1. USUARIOS (en base users)
+DECLARE @estado_activo NVARCHAR(10) = 'activo';
+
 INSERT INTO users.dbo.usuarios (nombre, apellido, email, usuario, password_hash, rol, estado)
 VALUES
-('Admin', 'Principal', 'admin@empresa.com', 'admin', 'hash1', 'admin', 'activo'),
-('Juan', 'Pérez', 'juan@empresa.com', 'jperez', 'hash2', 'operador', 'activo'),
-('Ana', 'García', 'ana@empresa.com', 'agarcia', 'hash3', 'logistica', 'activo');
+('Admin', 'Principal', 'admin@empresa.com', 'admin', 'hash1', 'admin', @estado_activo),
+('Juan', 'Pérez', 'juan@empresa.com', 'jperez', 'hash2', 'operador', @estado_activo),
+('Ana', 'García', 'ana@empresa.com', 'agarcia', 'hash3', 'logistica', @estado_activo);
 
 -- 2. PERMISOS DE USUARIOS
+DECLARE @ID_ADMIN INT = 1;
+DECLARE @ID_OPERADOR INT = 2;
+DECLARE @ID_LOGISTICA INT = 3;
+DECLARE @PERMISO_VER BIT = 1;
+DECLARE @PERMISO_MODIFICAR BIT = 1;
+DECLARE @PERMISO_APROBAR BIT = 1;
+DECLARE @PERMISO_NO_APROBAR BIT = 0;
+DECLARE @PERMISO_NO_MODIFICAR BIT = 0;
+
 INSERT INTO users.dbo.permisos_modulos (id_usuario, modulo, puede_ver, puede_modificar, puede_aprobar)
 VALUES
-(1, 'Obras', 1, 1, 1),
-(2, 'Obras', 1, 1, 0),
-(3, 'Logistica', 1, 0, 0);
+(@ID_ADMIN, 'Obras', @PERMISO_VER, @PERMISO_MODIFICAR, @PERMISO_APROBAR),
+(@ID_OPERADOR, 'Obras', @PERMISO_VER, @PERMISO_MODIFICAR, @PERMISO_NO_APROBAR),
+(@ID_LOGISTICA, 'Logistica', @PERMISO_VER, @PERMISO_NO_MODIFICAR, @PERMISO_NO_APROBAR);
 
 -- 3. MATERIALES POR OBRA (en base inventario)
+DECLARE @CANTIDAD_RESERVADA_DEFAULT DECIMAL(18,2) = 10;
+DECLARE @CANTIDAD_MATERIAL_5 DECIMAL(18,2) = 5;
+DECLARE @CANTIDAD_MATERIAL_8 DECIMAL(18,2) = 8;
+DECLARE @CANTIDAD_MATERIAL_12 DECIMAL(18,2) = 12;
 INSERT INTO inventario.dbo.materiales_por_obra (id_obra, id_item, cantidad_necesaria, cantidad_reservada, estado)
 VALUES
-(1, 101, 10, 10, 'reservado'),
-(1, 102, 5, 5, 'reservado'),
-(2, 103, 8, 8, 'reservado'),
-(3, 104, 12, 12, 'reservado');
+(1, 101, @CANTIDAD_RESERVADA_DEFAULT, @CANTIDAD_RESERVADA_DEFAULT, 'reservado'),
+(1, 102, @CANTIDAD_MATERIAL_5, @CANTIDAD_MATERIAL_5, 'reservado'),
+(2, 103, @CANTIDAD_MATERIAL_8, @CANTIDAD_MATERIAL_8, 'reservado'),
+(3, 104, @CANTIDAD_MATERIAL_12, @CANTIDAD_MATERIAL_12, 'reservado');
 
 -- 4. CRONOGRAMA DE OBRAS (en base inventario)
+DECLARE @ETAPA_MEDICION NVARCHAR(20) = 'Medición';
+DECLARE @ETAPA_FABRICACION NVARCHAR(20) = 'Fabricación';
+DECLARE @ETAPA_ENTREGA NVARCHAR(20) = 'Entrega';
+
 INSERT INTO inventario.dbo.cronograma_obras (id_obra, etapa, fecha_programada, fecha_realizada, observaciones, responsable, estado)
 VALUES
-(1, 'Medición', '2025-05-01', '2025-05-02', 'Medición realizada', 1, 'completado'),
-(1, 'Fabricación', '2025-05-10', NULL, 'En espera de materiales', 2, 'pendiente'),
-(2, 'Medición', '2025-04-20', '2025-04-21', 'Medición ok', 1, 'completado'),
-(2, 'Fabricación', '2025-04-25', NULL, '', 2, 'pendiente'),
-(3, 'Medición', '2025-03-15', '2025-03-16', '', 1, 'completado'),
-(3, 'Entrega', '2025-06-10', NULL, '', 3, 'pendiente');
+(1, @ETAPA_MEDICION, '2025-05-01', '2025-05-02', 'Medición realizada', 1, 'completado'),
+(1, @ETAPA_FABRICACION, '2025-05-10', NULL, 'En espera de materiales', 2, 'pendiente'),
+(2, @ETAPA_MEDICION, '2025-04-20', '2025-04-21', 'Medición ok', 1, 'completado'),
+(2, @ETAPA_FABRICACION, '2025-04-25', NULL, '', 2, 'pendiente'),
+(3, @ETAPA_ENTREGA, '2025-06-10', NULL, '', 3, 'pendiente');
 
 -- 5. LOGS DE USUARIOS (opcional, para auditoría)
+DECLARE @IP_LOCAL NVARCHAR(15) = '127.0.0.1';
 INSERT INTO users.dbo.logs_usuarios (usuario_id, accion, modulo, fecha_hora, detalle, ip_origen)
 VALUES
-(1, 'login', 'Obras', GETDATE(), 'Ingreso correcto', '127.0.0.1'),
-(2, 'alta_obra', 'Obras', GETDATE(), 'Creó obra Torre Norte', '127.0.0.1'),
-(3, 'ver_cronograma', 'Obras', GETDATE(), 'Consultó cronograma', '127.0.0.1');
+(1, 'login', 'Obras', GETDATE(), 'Ingreso correcto', @IP_LOCAL),
+(2, 'alta_obra', 'Obras', GETDATE(), 'Creó obra Torre Norte', @IP_LOCAL),
+(3, 'ver_cronograma', 'Obras', GETDATE(), 'Consultó cronograma', @IP_LOCAL);
 
 -- 6. SOLICITUDES DE APROBACION (opcional)
 INSERT INTO users.dbo.solicitudes_aprobacion (id_usuario, modulo, tipo_accion, datos_json, estado)
 VALUES
 (2, 'Obras', 'alta', '{"obra":"Residencial Sur"}', 'pendiente');
-
 -- 7. VIDRIOS POR OBRA (en base inventario)
+DECLARE @CANTIDAD_VIDRIO_DEFAULT DECIMAL(18,2) = 8;
 INSERT INTO inventario.dbo.vidrios_por_obra (id_obra, id_vidrio, cantidad_necesaria, cantidad_reservada, estado)
 VALUES
 (1, 201, 6, 6, 'reservado'),
 (2, 202, 4, 4, 'reservado'),
-(3, 203, 8, 8, 'reservado');
-
+(3, 203, @CANTIDAD_VIDRIO_DEFAULT, @CANTIDAD_VIDRIO_DEFAULT, 'reservado');
 -- 8. HERRAJES POR OBRA (en base inventario)
+DECLARE @CANTIDAD_HERRAJE_DEFAULT DECIMAL(18,2) = 9;
 INSERT INTO inventario.dbo.herrajes_por_obra (id_obra, id_herraje, cantidad_necesaria, cantidad_reservada, estado)
 VALUES
-(1, 301, 12, 12, 'reservado'),
+(1, 301, @CANTIDAD_MATERIAL_12, @CANTIDAD_MATERIAL_12, 'reservado'),
 (2, 302, 7, 7, 'reservado'),
-(3, 303, 10, 10, 'reservado');
+(3, 303, @CANTIDAD_HERRAJE_DEFAULT, @CANTIDAD_HERRAJE_DEFAULT, 'reservado');
 
 -- 9. PAGOS POR OBRA (en base inventario)
 INSERT INTO inventario.dbo.pagos_por_obra (id_obra, monto, moneda, fecha_pago, metodo, estado)
@@ -109,13 +128,12 @@ VALUES
 (1, 1000, 'USD', '2025-05-05', 'transferencia', 'completado'),
 (2, 800, 'USD', '2025-04-28', 'efectivo', 'pendiente'),
 (3, 1200, 'USD', '2025-06-01', 'tarjeta', 'completado');
-
 -- 10. AUDITORÍA DE OBRAS (en base auditoria)
 INSERT INTO auditoria.dbo.eventos_auditoria (usuario_id, modulo, accion, detalle, ip_origen, fecha_hora)
 VALUES
-(1, 'Obras', 'alta', 'Alta de obra Edificio Central', '127.0.0.1', GETDATE()),
-(2, 'Obras', 'modificacion', 'Modificación de obra Torre Norte', '127.0.0.1', GETDATE()),
-(3, 'Obras', 'consulta', 'Consulta de obra Residencial Sur', '127.0.0.1', GETDATE());
+(1, 'Obras', 'alta', 'Alta de obra Edificio Central', @IP_LOCAL, GETDATE()),
+(2, 'Obras', 'modificacion', 'Modificación de obra Torre Norte', @IP_LOCAL, GETDATE()),
+(3, 'Obras', 'consulta', 'Consulta de obra Residencial Sur', @IP_LOCAL, GETDATE());
 
 -- 11. LOGÍSTICA POR OBRA (en base inventario)
 INSERT INTO inventario.dbo.logistica_por_obra (id_obra, estado_envio, fecha_envio, transportista, observaciones)

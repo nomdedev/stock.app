@@ -100,7 +100,7 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
             self.logs_headers = ["id", "usuario", "fecha", "acción", "detalle"]
             self.tabla_logs.setColumnCount(len(self.logs_headers))
             self.tabla_logs.setHorizontalHeaderLabels(self.logs_headers)
-        self.config_path_logs = f"config_auditoria_logs_columns.json"
+        self.config_path_logs = "config_auditoria_logs_columns.json"
         self.columnas_visibles_logs = self.cargar_config_columnas(self.config_path_logs, self.logs_headers)
         self.aplicar_columnas_visibles(self.tabla_logs, self.logs_headers, self.columnas_visibles_logs)
         header_logs = self.tabla_logs.horizontalHeader()
@@ -132,7 +132,6 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
         self.tabla_logs.setToolTip("Tabla de logs de auditoría")
         self.tabla_logs.setAccessibleName("Tabla principal de auditoría")
         # Refuerzo visual y robustez en header de tabla principal
-        header = self.tabla_logs.horizontalHeader() if hasattr(self.tabla_logs, 'horizontalHeader') else None
         # Eliminado setStyleSheet directo en header para unificar estilo visual global y evitar doble fondo/conflictos
         # Si se requiere refuerzo visual, hacerlo solo vía QSS global (themes/*.qss)
         # if header is not None:
@@ -202,7 +201,6 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
                 if idx < 0 or idx >= tabla.columnCount():
                     self.mostrar_feedback("Índice de columna fuera de rango", "error")
                     return
-                pos = header.sectionPosition(idx)
                 global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
                 self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
             else:

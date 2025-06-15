@@ -638,42 +638,44 @@ class ObrasController:
         - Registra auditoría (tipo_evento 'agregar') y feedback visual alineado a estándares.
         - Devuelve el id de la obra creada.
         """
+        if not self._tiene_permiso_alta_obra():
+            return None
+        try:
+            id_obra = self.model.agregar_obra_dict(datos)
+            self._feedback_alta_obra_exito(id_obra, datos)
+            return id_obra
+        except ValueError as e:
+            self._feedback_alta_obra_error(str(e))
+            raise
+        except Exception as e:
+            self._feedback_alta_obra_error(f"Error al crear obra: {e}")
+            raise
+
+    def _tiene_permiso_alta_obra(self):
         if hasattr(self, 'usuarios_model') and hasattr(self, 'usuario_actual'):
             usuarios_model = getattr(self, 'usuarios_model')
             usuario = getattr(self, 'usuario_actual')
             if not usuarios_model.tiene_permiso(usuario, 'Obras', 'agregar'):
                 mensaje = "Permiso denegado para crear obra."
-                if self.view and hasattr(self.view, 'label'):
-                    self.view.label.setText(mensaje)
-                elif self.view and hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(mensaje, tipo="error")
+                self._mostrar_feedback_alta_obra(mensaje, tipo="error")
                 self._registrar_evento_auditoria('agregar', mensaje, exito=False)
-                return None
-        try:
-            id_obra = self.model.agregar_obra_dict(datos)
-            self._registrar_evento_auditoria('agregar', f"Creó obra {id_obra}", exito=True)
-            mensaje = f"Obra '{datos['nombre']}' creada correctamente."
-            if self.view and hasattr(self.view, 'label'):
-                self.view.label.setText(mensaje)
-            elif self.view and hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(mensaje, tipo="exito")
-            return id_obra
-        except ValueError as e:
-            mensaje = str(e)
-            if self.view and hasattr(self.view, 'label'):
-                self.view.label.setText(mensaje)
-            elif self.view and hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(mensaje, tipo="error")
-            self._registrar_evento_auditoria('agregar', mensaje, exito=False)
-            raise
-        except Exception as e:
-            mensaje = f"Error al crear obra: {e}"
-            if self.view and hasattr(self.view, 'label'):
-                self.view.label.setText(mensaje)
-            elif self.view and hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(mensaje, tipo="error")
-            self._registrar_evento_auditoria('agregar', mensaje, exito=False)
-            raise
+                return False
+        return True
+
+    def _feedback_alta_obra_exito(self, id_obra, datos):
+        self._registrar_evento_auditoria('agregar', f"Creó obra {id_obra}", exito=True)
+        mensaje = f"Obra '{datos['nombre']}' creada correctamente."
+        self._mostrar_feedback_alta_obra(mensaje, tipo="exito")
+
+    def _feedback_alta_obra_error(self, mensaje):
+        self._mostrar_feedback_alta_obra(mensaje, tipo="error")
+        self._registrar_evento_auditoria('agregar', mensaje, exito=False)
+
+    def _mostrar_feedback_alta_obra(self, mensaje, tipo="info"):
+        if self.view and hasattr(self.view, 'label'):
+            self.view.label.setText(mensaje)
+        elif self.view and hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(mensaje, tipo=tipo)
 
     @permiso_auditoria_obras('baja')
     def baja_obra(self, id_obra):
@@ -687,35 +689,44 @@ class ObrasController:
         try:
             exito = self.model.eliminar_obra(id_obra)
             if exito:
-                self._registrar_evento_auditoria('baja', f"Eliminó obra {id_obra}", exito=True)
-                mensaje = "Obra eliminada correctamente."
-                if self.view and hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(mensaje, tipo="exito")
-                elif self.view and hasattr(self.view, 'label'):
-                    self.view.label.setText(mensaje)
-                logger.info(f"Obra {id_obra} eliminada correctamente.")
-                self.cargar_datos_obras_tabla()
-                self.mostrar_gantt()
-                self.actualizar_calendario()
+                self._feedback_baja_obra_exito(id_obra, logger)
             else:
-                self._registrar_evento_auditoria('baja', f"Intento de eliminar obra inexistente {id_obra}", exito=False)
-                mensaje = "La obra no existe."
-                if self.view and hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(mensaje, tipo="warning")
-                elif self.view and hasattr(self.view, 'label'):
-                    self.view.label.setText(mensaje)
-                logger.warning(f"Intento de eliminar obra inexistente {id_obra}.")
+                self._feedback_baja_obra_no_existe(id_obra, logger)
             return exito
         except Exception as e:
-            mensaje = f"Error al eliminar la obra: {e}"
-            if self.view and hasattr(self.view, 'label'):
-                self.view.label.setText(mensaje)
-            elif self.view and hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(mensaje, tipo="error")
-            logger.error(mensaje)
-            self._registrar_evento_auditoria('baja', mensaje, exito=False)
+            self._feedback_baja_obra_error(e, logger)
             raise
         return False
+
+    def _feedback_baja_obra_exito(self, id_obra, logger):
+        self._registrar_evento_auditoria('baja', f"Eliminó obra {id_obra}", exito=True)
+        mensaje = "Obra eliminada correctamente."
+        if self.view and hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(mensaje, tipo="exito")
+        elif self.view and hasattr(self.view, 'label'):
+            self.view.label.setText(mensaje)
+        logger.info(f"Obra {id_obra} eliminada correctamente.")
+        self.cargar_datos_obras_tabla()
+        self.mostrar_gantt()
+        self.actualizar_calendario()
+
+    def _feedback_baja_obra_no_existe(self, id_obra, logger):
+        self._registrar_evento_auditoria('baja', f"Intento de eliminar obra inexistente {id_obra}", exito=False)
+        mensaje = "La obra no existe."
+        if self.view and hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(mensaje, tipo="warning")
+        elif self.view and hasattr(self.view, 'label'):
+            self.view.label.setText(mensaje)
+        logger.warning(f"Intento de eliminar obra inexistente {id_obra}.")
+
+    def _feedback_baja_obra_error(self, e, logger):
+        mensaje = f"Error al eliminar la obra: {e}"
+        if self.view and hasattr(self.view, 'label'):
+            self.view.label.setText(mensaje)
+        elif self.view and hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(mensaje, tipo="error")
+        logger.error(mensaje)
+        self._registrar_evento_auditoria('baja', mensaje, exito=False)
 
     def mostrar_gantt(self):
         """Stub visual para evitar errores si no está implementado en la vista/test."""
@@ -725,7 +736,7 @@ class ObrasController:
         """Stub visual para evitar errores si no está implementado en la vista/test."""
         pass
 
-    def actualizar_por_pedido(self, datos_pedido):
+    def actualizar_por_pedido(self):
         """
         Slot para integración en tiempo real: refresca la vista y muestra feedback visual cuando se actualiza un pedido.
         Cumple con los estándares de feedback visual y robustez de señales.
@@ -738,7 +749,7 @@ class ObrasController:
             from core.logger import log_error
             log_error(f"Error en actualizar_por_pedido (ObrasController): {e}")
 
-    def actualizar_por_pedido_cancelado(self, datos_pedido):
+    def actualizar_por_pedido_cancelado(self):
         """
         Slot para integración en tiempo real: refresca la vista y muestra feedback visual cuando se cancela un pedido.
         Cumple con los estándares de feedback visual y robustez de señales.
