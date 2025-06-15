@@ -559,7 +559,6 @@ class ObrasController:
         """
         from core.logger import Logger
         logger = Logger()
-        usuario = self.usuario_actual
         try:
             self._validar_datos_obra_o_feedback(datos, logger)
             id_obra = self._agregar_obra_y_inicializar(datos)
@@ -856,76 +855,86 @@ class ObrasController:
         Permite seleccionar nueva fecha, valida, guarda y registra en auditoría.
         """
         try:
-            # Obtener datos de la obra
+            id_obra = self._obtener_id_obra_para_editar(id_obra)
             if id_obra is None:
-                if hasattr(self.view, 'get_selected_obra_id'):
-                    id_obra = self.view.get_selected_obra_id()
-                else:
-                    if hasattr(self.view, 'mostrar_mensaje'):
-                        self.view.mostrar_mensaje("No se pudo determinar la obra a editar.", tipo="error")
-                    return
+                return
             obra = self.model.obtener_obra_por_id(id_obra)
             if not obra:
-                if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje("Obra no encontrada.", tipo="error")
+                self._mostrar_feedback("Obra no encontrada.", tipo="error")
                 return
             fecha_actual = obra.get("fecha_entrega") if isinstance(obra, dict) else obra["fecha_entrega"]
-            from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QDateEdit, QPushButton, QHBoxLayout
-            from PyQt6.QtCore import QDate
-            from datetime import datetime
-            dialog = QDialog(self.view)
-            dialog.setWindowTitle("Editar fecha de entrega")
-            layout = QVBoxLayout(dialog)
-            layout.addWidget(QLabel(f"Fecha de entrega actual: {fecha_actual if fecha_actual else '-'}"))
-            date_edit = QDateEdit()
-            date_edit.setCalendarPopup(True)
-            # Setear fecha actual
-            try:
-                if fecha_actual:
-                    y, m, d = map(int, fecha_actual.split("-"))
-                    date_edit.setDate(QDate(y, m, d))
-                else:
-                    date_edit.setDate(QDate.currentDate())
-            except Exception:
-                date_edit.setDate(QDate.currentDate())
-            layout.addWidget(QLabel("Nueva fecha de entrega:"))
-            layout.addWidget(date_edit)
-            btns = QHBoxLayout()
-            btn_guardar = QPushButton("Guardar")
-            btn_cancelar = QPushButton("Cancelar")
-            btn_guardar.clicked.connect(dialog.accept)
-            btn_cancelar.clicked.connect(dialog.reject)
-            btns.addWidget(btn_guardar)
-            btns.addWidget(btn_cancelar)
-            layout.addLayout(btns)
-            dialog.setLayout(layout)
+            dialog, date_edit = self._crear_dialogo_fecha_entrega(fecha_actual)
             if dialog.exec() == QDialog.DialogCode.Accepted:
                 nueva_fecha = date_edit.date().toString("yyyy-MM-dd")
-                # Validar nueva fecha
-                fecha_medicion = obra.get("fecha_medicion") if isinstance(obra, dict) else obra["fecha_medicion"]
-                try:
-                    fecha_nueva_dt = datetime.strptime(nueva_fecha, "%Y-%m-%d").date()
-                    fecha_med_dt = datetime.strptime(fecha_medicion, "%Y-%m-%d").date() if fecha_medicion else None
-                except Exception:
-                    if hasattr(self.view, 'mostrar_mensaje'):
-                        self.view.mostrar_mensaje("Fechas inválidas.", tipo="error")
+                if not self._validar_nueva_fecha_entrega(obra, nueva_fecha):
                     return
-                if fecha_med_dt and fecha_nueva_dt < fecha_med_dt:
-                    if hasattr(self.view, 'mostrar_mensaje'):
-                        self.view.mostrar_mensaje("La fecha de entrega no puede ser anterior a la de medición.", tipo="error")
-                    return
-                # Actualizar en modelo
                 self.model.editar_obra(id_obra, {"fecha_entrega": nueva_fecha}, obra.get("rowversion", 1))
                 self.cargar_datos_obras_tabla()
-                if hasattr(self.view, 'mostrar_mensaje'):
-                    self.view.mostrar_mensaje(f"Fecha de entrega actualizada a {nueva_fecha}.", tipo="exito")
+                self._mostrar_feedback(f"Fecha de entrega actualizada a {nueva_fecha}.", tipo="exito")
                 self._registrar_evento_auditoria("editar_fecha_entrega", f"Editó fecha de entrega de obra {id_obra} a {nueva_fecha}", exito=True)
         except Exception as e:
             from core.logger import log_error
             log_error(f"Error en editar_fecha_entrega_dialog: {e}")
-            if hasattr(self.view, 'mostrar_mensaje'):
-                self.view.mostrar_mensaje(f"Error en editar fecha de entrega: {e}", tipo="error")
+            self._mostrar_feedback(f"Error en editar fecha de entrega: {e}", tipo="error")
             self._registrar_evento_auditoria("editar_fecha_entrega_dialog", f"Error: {e}", exito=False)
+
+    def _obtener_id_obra_para_editar(self, id_obra):
+        if id_obra is not None:
+            return id_obra
+        if hasattr(self.view, 'get_selected_obra_id'):
+            return self.view.get_selected_obra_id()
+        self._mostrar_feedback("No se pudo determinar la obra a editar.", tipo="error")
+        return None
+
+    def _crear_dialogo_fecha_entrega(self, fecha_actual):
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QDateEdit, QPushButton, QHBoxLayout
+        from PyQt6.QtCore import QDate
+        dialog = QDialog(self.view)
+        dialog.setWindowTitle("Editar fecha de entrega")
+        layout = QVBoxLayout(dialog)
+        layout.addWidget(QLabel(f"Fecha de entrega actual: {fecha_actual if fecha_actual else '-'}"))
+        date_edit = QDateEdit()
+        date_edit.setCalendarPopup(True)
+        try:
+            if fecha_actual:
+                y, m, d = map(int, fecha_actual.split("-"))
+                date_edit.setDate(QDate(y, m, d))
+            else:
+                date_edit.setDate(QDate.currentDate())
+        except Exception:
+            date_edit.setDate(QDate.currentDate())
+        layout.addWidget(QLabel("Nueva fecha de entrega:"))
+        layout.addWidget(date_edit)
+        btns = QHBoxLayout()
+        btn_guardar = QPushButton("Guardar")
+        btn_cancelar = QPushButton("Cancelar")
+        btn_guardar.clicked.connect(dialog.accept)
+        btn_cancelar.clicked.connect(dialog.reject)
+        btns.addWidget(btn_guardar)
+        btns.addWidget(btn_cancelar)
+        layout.addLayout(btns)
+        dialog.setLayout(layout)
+        return dialog, date_edit
+
+    def _validar_nueva_fecha_entrega(self, obra, nueva_fecha):
+        from datetime import datetime
+        fecha_medicion = obra.get("fecha_medicion") if isinstance(obra, dict) else obra["fecha_medicion"]
+        try:
+            fecha_nueva_dt = datetime.strptime(nueva_fecha, "%Y-%m-%d").date()
+            fecha_med_dt = datetime.strptime(fecha_medicion, "%Y-%m-%d").date() if fecha_medicion else None
+        except Exception:
+            self._mostrar_feedback("Fechas inválidas.", tipo="error")
+            return False
+        if fecha_med_dt and fecha_nueva_dt < fecha_med_dt:
+            self._mostrar_feedback("La fecha de entrega no puede ser anterior a la de medición.", tipo="error")
+            return False
+        return True
+
+    def _mostrar_feedback(self, mensaje, tipo="info"):
+        if hasattr(self.view, 'mostrar_mensaje'):
+            self.view.mostrar_mensaje(mensaje, tipo=tipo)
+        elif hasattr(self.view, 'label'):
+            self.view.label.setText(mensaje)
 
     def obtener_obras_en_fabricacion(self):
         """Devuelve una lista de obras en estado 'fabricacion' (case-insensitive)."""

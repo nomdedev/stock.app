@@ -120,26 +120,26 @@ class BaseDatabaseConnection:
     def begin_transaction(self):
         if not self.connection:
             self.conectar()
-        # pyodbc: desactivar autocommit para iniciar transacción solo si la conexión es válida y tiene el atributo
+        # pyodbc: desactivar autocommit para iniciar transacción
         conn = self.connection
-        if conn is not None and hasattr(conn, 'autocommit') and getattr(conn, 'autocommit', None) is not None:
+        if conn is not None:
             conn.autocommit = False
-        self.logger.debug(f"Transacción iniciada en '{self.database}'.")
+            self.logger.debug(f"Transacción iniciada en '{self.database}'.")
+        else:
+            self.logger.error("No se pudo iniciar la transacción porque la conexión es None.")
 
     def commit(self):
         if self.connection:
             self.connection.commit()
             conn = self.connection
-            if conn is not None and hasattr(conn, 'autocommit') and getattr(conn, 'autocommit', None) is not None:
-                conn.autocommit = True
+            conn.autocommit = True
             self.logger.debug(f"Transacción confirmada (commit) en '{self.database}'.")
 
     def rollback(self):
         if self.connection:
             self.connection.rollback()
             conn = self.connection
-            if conn is not None and hasattr(conn, 'autocommit') and getattr(conn, 'autocommit', None) is not None:
-                conn.autocommit = True
+            conn.autocommit = True
             self.logger.debug(f"Transacción revertida (rollback) en '{self.database}'.")
 
     class TransactionContext:

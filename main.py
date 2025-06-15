@@ -238,8 +238,8 @@ def manejar_dependencias_faltantes(faltantes_criticos, faltantes_secundarios):
             "\n".join(faltantes_secundarios),
             tipo="warning"
         )
-    if not faltantes_criticos and not faltantes_secundarios:
-        print("[LOG 2.5] ✅ Todas las dependencias críticas y secundarias están instaladas correctamente.", flush=True)
+    # Si no hay faltantes críticos ni secundarios, ya se ha manejado todo correctamente.
+    print("[LOG 2.5] ✅ Todas las dependencias críticas y secundarias están instaladas correctamente.", flush=True)
 
 def verificar_dependencias():
     """

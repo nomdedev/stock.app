@@ -13,6 +13,7 @@ QUIEN_LO_LLEVO_HEADER = "Quién lo llevó" # Nueva constante
 VEHICULO_HEADER = "Vehículo" # Nueva constante
 ESTADO_HEADER = "Estado:" # Nueva constante
 RESOURCES_ICONS_CLOSE_SVG = "resources/icons/close.svg" # Nueva constante
+DIALOG_STYLE = "QDialog { background: #fff9f3; border-radius: 12px; }"  # Nueva constante para estilos de diálogo
 
 # Se ubicó la importación de QWebEngineView al inicio del archivo para evitar errores de importación.
 try:
@@ -582,7 +583,7 @@ pip install PyQt6-WebEngine
         from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QLineEdit, QComboBox, QPushButton, QHBoxLayout
         dialog = QDialog(self)
         dialog.setWindowTitle("Agregar nuevo envío")
-        dialog.setModal(True)
+        dialog.setStyleSheet(DIALOG_STYLE)
         dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
         layout = QVBoxLayout(dialog)
         layout.setContentsMargins(24, 20, 24, 20)

@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QMainWindow, QFileDialog, QTableWidget, QTableWidget
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize, pyqtSignal
 import pandas as pd
+from core.ui_components import estilizar_boton_icono
 
 # --- Definición de constantes globales para literales, tooltips y estilos (restauradas y unificadas) ---
 LABEL_GENERAL = "Configuración general del sistema (próximamente)"

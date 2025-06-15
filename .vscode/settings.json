@@ -2529,5 +2529,9 @@
             "username": "sa",
             "database": "inventario"
         }
-    ]
+    ],
+    "sonarlint.connectedMode.project": {
+        "connectionId": "nomdedev",
+        "projectKey": "nomdedev_stock.app"
+    }
 }
