@@ -52,7 +52,6 @@ class FeedbackBanner(QWidget):
         self._timer = None
     def show_feedback(self, mensaje, tipo="info", duracion=3500):
         icon_path = self.ICONOS.get(tipo, self.ICONOS["info"])
-        color = self.COLORES.get(tipo, self.COLORES["info"])
         self.icon_label.setPixmap(QPixmap(icon_path).scaled(24, 24, Qt.AspectRatioMode.KeepAspectRatio))
         self.text_label.setText(mensaje)
         self.setStyleSheet("")  # Eliminar cualquier styleSheet embebido, usar solo QSS global
@@ -187,6 +186,8 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         # Tabla principal de herrajes (estándar visual global)
         self.tabla_herrajes = QTableWidget()
         self.tabla_herrajes.setObjectName("tabla_herrajes")  # Unificación visual: todas las tablas usan este objectName
+        self.tabla_herrajes.setAccessibleName("Tabla de herrajes")
+        self.tabla_herrajes.setAccessibleDescription("Muestra la lista de herrajes registrados")
         self.tabla_herrajes.setColumnCount(len(self.herrajes_headers))
         self.tabla_herrajes.setHorizontalHeaderLabels(self.herrajes_headers)
         self.make_table_responsive(self.tabla_herrajes)
@@ -194,7 +195,6 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.tabla_herrajes.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabla_herrajes.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.tabla_herrajes.setToolTip("Tabla principal de herrajes")
-        self.tabla_herrajes.setAccessibleName("Tabla de herrajes")
         tab_herrajes_layout.addWidget(self.tabla_herrajes)
         self.tab_herrajes.setLayout(tab_herrajes_layout)
         self.tabs.addTab(self.tab_herrajes, "Herrajes")
@@ -204,6 +204,8 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.pedidos_headers = ["ID Pedido", "Fecha", "Solicitante", "Herrajes", "Cantidad", "Estado", "Observaciones"]
         self.tabla_pedidos = QTableWidget()
         self.tabla_pedidos.setObjectName("tabla_pedidos_herrajes")
+        self.tabla_pedidos.setAccessibleName("Tabla de pedidos de herrajes")
+        self.tabla_pedidos.setAccessibleDescription("Muestra la lista de pedidos de herrajes")
         self.tabla_pedidos.setColumnCount(len(self.pedidos_headers))
         self.tabla_pedidos.setHorizontalHeaderLabels(self.pedidos_headers)
         self.make_table_responsive(self.tabla_pedidos)
@@ -211,7 +213,6 @@ class HerrajesView(QWidget, TableResponsiveMixin):
         self.tabla_pedidos.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.tabla_pedidos.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.tabla_pedidos.setToolTip("Tabla de pedidos de herrajes")
-        self.tabla_pedidos.setAccessibleName("Tabla de pedidos de herrajes")
         tab_pedidos_layout.addWidget(self.tabla_pedidos)
         # Botón para armar pedido de herrajes
         btn_nuevo_pedido = QPushButton()
@@ -610,21 +611,7 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             self.agregar_columna_acciones_pedidos()
         self.filtrar_tabla_pedidos()
 
-    def filtrar_tabla_pedidos(self, *args, **kwargs):
-        """
-        Aplica los filtros avanzados a la tabla de pedidos de herrajes.
-        """
-        estado = self.filtro_estado.currentText().lower()
-        obra = self.filtro_obra.currentData()
-        usuario = self.filtro_usuario.currentData()
-        tipo_herraje = self.filtro_tipo_herraje.currentData() if hasattr(self, 'filtro_tipo_herraje') else None
-        texto = self.filtro_busqueda.text().lower().strip()
-        # Filtro avanzado: stock bajo
-        stock_bajo = getattr(self, 'filtro_stock_bajo', None)
-        stock_bajo_activo = stock_bajo.currentData() is True if stock_bajo else False
-        # Filtro avanzado: rango de fechas (QLineEdit, parsear manualmente)
-        fecha_inicio = getattr(self, 'filtro_fecha_inicio', None)
-        fecha_fin = getattr(self, 'filtro_fecha_fin', None)
+    def _filtro_fecha(self, fecha_inicio, fecha_fin):
         fi = None
         ff = None
         if fecha_inicio and fecha_inicio.text().strip():
@@ -637,40 +624,57 @@ class HerrajesView(QWidget, TableResponsiveMixin):
                 ff = datetime.datetime.strptime(fecha_fin.text().strip(), "%Y-%m-%d").date()
             except Exception:
                 ff = None
+        return fi, ff
+
+    def _pedido_pasa_filtros(self, p, estado, obra, usuario, tipo_herraje, texto, stock_bajo_activo, fi, ff):
+        if estado != "todos" and p.get('estado', '').lower() != estado:
+            return False
+        if obra and p.get('obra', None) != obra:
+            return False
+        if usuario and p.get('usuario', None) != usuario:
+            return False
+        if tipo_herraje and p.get('tipo_herraje', None) != tipo_herraje:
+            return False
+        if texto:
+            texto_en = (
+                str(p.get('obra', '')).lower() +
+                str(p.get('usuario', '')).lower() +
+                str(p.get('herrajes', '')).lower() +
+                str(p.get('observaciones', '')).lower()
+            )
+            if texto not in texto_en:
+                return False
+        if stock_bajo_activo and not p.get('stock_bajo', False):
+            return False
+        if fi or ff:
+            try:
+                fecha_p = p.get('fecha', '')
+                if isinstance(fecha_p, str):
+                    fecha_p = datetime.datetime.strptime(fecha_p[:10], "%Y-%m-%d").date()
+                if fi and fecha_p < fi:
+                    return False
+                if ff and fecha_p > ff:
+                    return False
+            except Exception:
+                return False
+        return True
+
+    def filtrar_tabla_pedidos(self, *args, **kwargs):
+        """
+        Aplica los filtros avanzados a la tabla de pedidos de herrajes.
+        """
+        estado = self.filtro_estado.currentText().lower()
+        obra = self.filtro_obra.currentData()
+        usuario = self.filtro_usuario.currentData()
+        tipo_herraje = self.filtro_tipo_herraje.currentData() if hasattr(self, 'filtro_tipo_herraje') else None
+        texto = self.filtro_busqueda.text().lower().strip()
+        stock_bajo = getattr(self, 'filtro_stock_bajo', None)
+        stock_bajo_activo = stock_bajo.currentData() is True if stock_bajo else False
+        fecha_inicio = getattr(self, 'filtro_fecha_inicio', None)
+        fecha_fin = getattr(self, 'filtro_fecha_fin', None)
+        fi, ff = self._filtro_fecha(fecha_inicio, fecha_fin)
         self.tabla_pedidos.setRowCount(0)
-        resultados = []
-        for p in self._datos_pedidos_cache:
-            if estado != "todos" and p.get('estado', '').lower() != estado:
-                continue
-            if obra and p.get('obra', None) != obra:
-                continue
-            if usuario and p.get('usuario', None) != usuario:
-                continue
-            if tipo_herraje and p.get('tipo_herraje', None) != tipo_herraje:
-                continue
-            if texto:
-                texto_en = (
-                    str(p.get('obra', '')).lower() +
-                    str(p.get('usuario', '')).lower() +
-                    str(p.get('herrajes', '')).lower() +
-                    str(p.get('observaciones', '')).lower()
-                )
-                if texto not in texto_en:
-                    continue
-            if stock_bajo_activo and not p.get('stock_bajo', False):
-                continue
-            if fi or ff:
-                try:
-                    fecha_p = p.get('fecha', '')
-                    if isinstance(fecha_p, str):
-                        fecha_p = datetime.datetime.strptime(fecha_p[:10], "%Y-%m-%d").date()
-                    if fi and fecha_p < fi:
-                        continue
-                    if ff and fecha_p > ff:
-                        continue
-                except Exception:
-                    continue
-            resultados.append(p)
+        resultados = [p for p in self._datos_pedidos_cache if self._pedido_pasa_filtros(p, estado, obra, usuario, tipo_herraje, texto, stock_bajo_activo, fi, ff)]
         for p in resultados:
             row = self.tabla_pedidos.rowCount()
             self.tabla_pedidos.insertRow(row)
@@ -681,7 +685,6 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             self.tabla_pedidos.setItem(row, 4, QTableWidgetItem(str(p.get('cantidad', ''))))
             self.tabla_pedidos.setItem(row, 5, QTableWidgetItem(str(p.get('estado', ''))))
             self.tabla_pedidos.setItem(row, 6, QTableWidgetItem(str(p.get('observaciones', ''))))
-        # Volver a agregar columna de acciones si es necesario
         if self.tabla_pedidos.columnCount() == len(self.pedidos_headers):
             self.agregar_columna_acciones_pedidos()
         if not resultados:
@@ -834,20 +837,20 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             return None
         def actualizar_datos_herraje():
             texto = input_codigo.text().strip().lower()
-            herraje = buscar_herraje(texto)
-            if not herraje:
+            h = buscar_herraje(texto)
+            if not h:
                 lbl_nombre.setText("")
                 lbl_imagen.clear()
                 lbl_stock.setText("")
                 spin_cantidad.setMaximum(1)
                 return
-            lbl_nombre.setText(herraje.get('nombre',''))
-            stock = int(herraje.get('stock_actual', 1))
+            lbl_nombre.setText(h.get('nombre',''))
+            stock = int(h.get('stock_actual', 1))
             lbl_stock.setText(str(stock))
             spin_cantidad.setMaximum(stock if stock > 0 else 1)
             # Imagen
-            if herraje.get('imagen') and os.path.exists(herraje['imagen']):
-                pix = QPixmap(herraje['imagen']).scaled(64, 64, Qt.AspectRatioMode.KeepAspectRatio)
+            if h.get('imagen') and os.path.exists(h['imagen']):
+                pix = QPixmap(h['imagen']).scaled(64, 64, Qt.AspectRatioMode.KeepAspectRatio)
                 lbl_imagen.setPixmap(pix)
             else:
                 lbl_imagen.clear()
@@ -936,3 +939,6 @@ class HerrajesView(QWidget, TableResponsiveMixin):
             elif hasattr(self, 'tab_pedidos') and self.tabs.currentWidget() == self.tab_pedidos:
                 if self.controller and hasattr(self.controller, 'refrescar_pedidos'):
                     self.controller.refrescar_pedidos()
+
+# Constantes para evitar duplicados de literales
+TODOS_LOS_TIPOS_LITERAL = "Todos los tipos"

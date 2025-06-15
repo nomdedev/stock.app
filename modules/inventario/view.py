@@ -61,6 +61,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de inventario")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
+        self.label_feedback.setStyleSheet("")  # Eliminar estilos embebidos
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None
 
@@ -86,9 +87,12 @@ class InventarioView(QWidget, TableResponsiveMixin):
             ("viewdetails.svg", "Ver obras pendientes", self.ver_obras_pendientes_material, "boton_ver_obras"),
             ("reserve-stock.svg", "Reservar lote de perfiles", self.abrir_reserva_lote_perfiles, "boton_reservar_lote"),
         ]
+        # Aplicar sombra visual a los botones principales de la barra superior
         for icono, tooltip, signal, object_name in botones:
             btn = QPushButton()
             btn.setObjectName(object_name)
+            btn.setAccessibleName(tooltip)
+            btn.setAccessibleDescription(f"Botón: {tooltip}")
             icon_path = os.path.join(icon_dir, icono)
             btn.setIcon(QIcon(icon_path))
             btn.setIconSize(QSize(24, 24))
@@ -96,6 +100,12 @@ class InventarioView(QWidget, TableResponsiveMixin):
             btn.setText("")
             btn.clicked.connect(signal.emit if hasattr(signal, 'emit') else signal)
             estilizar_boton_icono(btn)
+            sombra = QGraphicsDropShadowEffect()
+            sombra.setBlurRadius(12)
+            sombra.setXOffset(0)
+            sombra.setYOffset(2)
+            sombra.setColor(QColor(0, 0, 0, 40))
+            btn.setGraphicsEffect(sombra)
             header_layout.addWidget(btn)
         self.main_layout.addLayout(header_layout)
 

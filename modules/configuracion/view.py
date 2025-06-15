@@ -3,6 +3,55 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize, pyqtSignal
 import pandas as pd
 
+# --- Definición de constantes globales para literales, tooltips y estilos (restauradas y unificadas) ---
+LABEL_GENERAL = "Configuración general del sistema (próximamente)"
+LABEL_CONEXION = "Configuración de conexión a base de datos (próximamente)"
+LABEL_PERMISOS = "Gestión de permisos de usuario (próximamente)"
+LABEL_TEMA = "Tema:"
+MSG_NO_ARCHIVO = "Ningún archivo seleccionado"
+MSG_NO_CARGA = "No se pudo cargar el archivo o está vacío."
+MSG_CONFIRMAR_IMPORT = "Confirmar importación"
+FILE_DIALOG_TITLE = "Seleccionar archivo de inventario"
+FILE_FILTER = "Archivos CSV (*.csv);;Archivos Excel (*.xlsx *.xls)"
+BTN_OFFLINE_TEXT = "Activar modo offline"
+BTN_OFFLINE_ICON = "img/offline_icon.svg"
+BTN_OFFLINE_ACCESSIBLE = "Botón activar modo offline"
+BTN_OFFLINE_DESC = "Activa el modo offline de la aplicación"
+BTN_OFFLINE_STYLE = "border-radius: 8px; background: #f1f5f9; font-size: 14px; padding: 8px 24px;"
+TOOLTIP_AGREGAR_CONFIG = "Agregar configuración"
+TOOLTIP_ACTIVAR_OFFLINE = "Activa el modo offline de la app"
+TOOLTIP_SELECCIONAR_CSV = "Seleccionar archivo CSV/Excel"
+TOOLTIP_IMPORTAR_CSV = "Importar inventario a la base de datos"
+TOOLTIP_TABLA_PREVIEW = "Tabla de previsualización de inventario"
+BTN_ACCION_TOOLTIP = "Botón de acción"
+BTN_ACCION_ACCESSIBLE = "Botón de acción de configuración"
+FOCUS_STYLE = "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }"
+PREVIEW_TABLE_STYLE = "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }"
+HEADER_STYLE = "background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;"
+LABEL_FEEDBACK_DESC = "Label informativo o de feedback"
+ADVERTENCIAS_LABEL_STYLE = "font-size: 13px; padding: 8px 0; color: #b45309; background: #fef9c3; border-radius: 8px;"
+MENSAJE_LABEL_STYLE = "font-size: 13px; padding: 8px 0;"
+BTN_IMPORTAR_ICON = "img/finish-check.svg"
+BTN_IMPORTAR_TEXT = "Importar inventario"
+BTN_IMPORTAR_ACCESSIBLE = "Botón importar inventario"
+BTN_IMPORTAR_DESC = "Importa los datos del archivo seleccionado a la base de datos"
+BTN_IMPORTAR_STYLE = "border-radius: 12px; background: #d1f7e7; font-size: 16px; font-weight: bold; color: #15803d;"
+TAB_GENERAL = "General"
+TAB_CONEXION = "Conexión"
+TAB_PERMISOS = "Permisos"
+TAB_IMPORTAR = "Importar Inventario"
+IMPORTAR_INVENTARIO_TITLE = "Importar Inventario desde CSV/Excel"
+IMPORTAR_INVENTARIO_STYLE = "font-size: 18px; font-weight: bold; color: #2563eb;"
+AYUDA_IMPORT = "Selecciona un archivo CSV o Excel con los datos de inventario. El sistema detectará y completará automáticamente las columnas requeridas. Puedes importar archivos incompletos: los campos faltantes se rellenarán por defecto."
+AYUDA_IMPORT_STYLE = "font-size: 13px; color: #64748b; background: #f1f5f9; border-radius: 8px; padding: 8px 12px;"
+CSV_INPUT_STYLE = "background: #e3f6fd; border-radius: 8px; padding: 8px 16px; color: #2563eb;"
+EXCEL_ICON = "img/excel_icon.svg"
+BTN_SELECCIONAR_CSV_ACCESSIBLE = "Botón seleccionar archivo CSV/Excel"
+BTN_SELECCIONAR_CSV_DESC = "Selecciona un archivo CSV o Excel para importar inventario"
+BTN_SELECCIONAR_CSV_STYLE = "border-radius: 8px; background: #e3f6fd;"
+PREVIEW_TABLE_BASE_STYLE = "background: #fff9f3; color: #2563eb; border-radius: 8px;"
+PREVIEW_TABLE_DESC = "Muestra una vista previa de los datos a importar"
+
 class ConfiguracionView(QMainWindow):
     theme_changed = pyqtSignal(str)
 
@@ -29,7 +78,10 @@ class ConfiguracionView(QMainWindow):
         self.boton_agregar = QPushButton()
         self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
-        self.boton_agregar.setToolTip("Agregar configuración")
+        self.boton_agregar.setToolTip(TOOLTIP_AGREGAR_CONFIG)
+        self.boton_agregar.setAccessibleName("Botón agregar configuración")
+        from core.ui_components import estilizar_boton_icono
+        estilizar_boton_icono(self.boton_agregar)
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
@@ -37,230 +89,103 @@ class ConfiguracionView(QMainWindow):
         # QTabWidget principal
         self.tabs = QTabWidget()
         self.tabs.setStyleSheet("QTabWidget::pane { border-radius: 12px; background: #f1f5f9; } QTabBar::tab { min-width: 160px; min-height: 36px; font-size: 14px; font-weight: 600; border-radius: 8px; padding: 8px 24px; margin-right: 8px; } QTabBar::tab:selected { background: #e3f6fd; color: #2563eb; }")
-
-        # --- Pestaña General ---
-        self.tab_general = QWidget()
-        layout_general = QVBoxLayout(self.tab_general)
-        label_general = QLabel("Configuración general del sistema (próximamente)")
-        label_general.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout_general.addWidget(label_general)
-        # Botón activar offline (para test y funcionalidad real)
-        self.boton_activar_offline = QPushButton()
-        self.boton_activar_offline.setText("Activar modo offline")
-        self.boton_activar_offline.setIcon(QIcon("img/offline_icon.svg"))
-        self.boton_activar_offline.setToolTip("Activa el modo offline de la app")
-        self.boton_activar_offline.setAccessibleName("Botón activar modo offline")
-        self.boton_activar_offline.setStyleSheet("border-radius: 8px; background: #f1f5f9; font-size: 14px; padding: 8px 24px;")
-        layout_general.addWidget(self.boton_activar_offline)
-        # --- Dropdown de tema visual ---
-        theme_row = QHBoxLayout()
-        theme_label = QLabel("Tema:")
-        self.combo_tema = QComboBox()
-        self.combo_tema.addItems(["Claro", "Oscuro"])
-        self.combo_tema.setCurrentIndex(0)  # Por defecto claro
-        self.combo_tema.currentIndexChanged.connect(self._emitir_cambio_tema)
-        theme_row.addWidget(theme_label)
-        theme_row.addWidget(self.combo_tema)
-        theme_row.addStretch()
-        layout_general.insertLayout(0, theme_row)
-        self.tabs.addTab(self.tab_general, "General")
-
-        # --- Pestaña Conexión ---
-        self.tab_conexion = QWidget()
-        layout_conexion = QVBoxLayout(self.tab_conexion)
-        label_conexion = QLabel("Configuración de conexión a base de datos (próximamente)")
-        label_conexion.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout_conexion.addWidget(label_conexion)
-        self.tabs.addTab(self.tab_conexion, "Conexión")
-
-        # --- Pestaña Permisos ---
-        self.tab_permisos = QWidget()
-        layout_permisos = QVBoxLayout(self.tab_permisos)
-        label_permisos = QLabel("Gestión de permisos de usuario (próximamente)")
-        label_permisos.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout_permisos.addWidget(label_permisos)
-        self.tabs.addTab(self.tab_permisos, "Permisos")
-
-        # --- Pestaña Importar Inventario ---
-        self.tab_importar = QWidget()
-        layout_importar = QVBoxLayout(self.tab_importar)
-        layout_importar.setContentsMargins(0, 0, 0, 0)
-        layout_importar.setSpacing(12)
-        label_titulo = QLabel("Importar Inventario desde CSV/Excel")
-        label_titulo.setStyleSheet("font-size: 18px; font-weight: bold; color: #2563eb;")
-        layout_importar.addWidget(label_titulo)
-        # Mensaje de ayuda
-        self.label_ayuda_import = QLabel("Selecciona un archivo CSV o Excel con los datos de inventario. El sistema detectará y completará automáticamente las columnas requeridas. Puedes importar archivos incompletos: los campos faltantes se rellenarán por defecto.")
-        self.label_ayuda_import.setWordWrap(True)
-        self.label_ayuda_import.setStyleSheet("font-size: 13px; color: #64748b; background: #f1f5f9; border-radius: 8px; padding: 8px 12px;")
-        layout_importar.addWidget(self.label_ayuda_import)
-        file_row = QHBoxLayout()
-        self.csv_file_input = QLabel("Ningún archivo seleccionado")
-        self.csv_file_input.setStyleSheet("background: #e3f6fd; border-radius: 8px; padding: 8px 16px; color: #2563eb;")
-        self.boton_seleccionar_csv = QPushButton()
-        self.boton_seleccionar_csv.setIcon(QIcon("img/excel_icon.svg"))
-        self.boton_seleccionar_csv.setToolTip("Seleccionar archivo CSV/Excel")
-        self.boton_seleccionar_csv.setFixedSize(36, 36)
-        self.boton_seleccionar_csv.setStyleSheet("border-radius: 8px; background: #e3f6fd;")
-        file_row.addWidget(self.csv_file_input)
-        file_row.addWidget(self.boton_seleccionar_csv)
-        file_row.addStretch()
-        layout_importar.addLayout(file_row)
-        # --- Preview visual ---
-        self.preview_table = QTableWidget()
-        self.preview_table.setMinimumHeight(160)
-        self.preview_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-        self.preview_table.setStyleSheet("background: #fff9f3; color: #2563eb; border-radius: 8px;")
-        layout_importar.addWidget(self.preview_table)
-        # --- Área de advertencias/errores ---
-        self.advertencias_label = QLabel()
-        self.advertencias_label.setWordWrap(True)
-        self.advertencias_label.setStyleSheet("font-size: 13px; padding: 8px 0; color: #b45309; background: #fef9c3; border-radius: 8px;")
-        self.advertencias_label.setVisible(False)
-        layout_importar.addWidget(self.advertencias_label)
-        # --- Mensaje de feedback ---
-        self.mensaje_label = QLabel()
-        self.mensaje_label.setWordWrap(True)
-        self.mensaje_label.setStyleSheet("font-size: 13px; padding: 8px 0;")
-        layout_importar.addWidget(self.mensaje_label)
-        # --- Botón Importar Inventario ---
-        self.boton_importar_csv = QPushButton()
-        self.boton_importar_csv.setIcon(QIcon("img/finish-check.svg"))
-        self.boton_importar_csv.setText("Importar inventario")
-        self.boton_importar_csv.setToolTip("Importar inventario a la base de datos")
-        self.boton_importar_csv.setFixedHeight(48)
-        self.boton_importar_csv.setMinimumWidth(220)
-        self.boton_importar_csv.setEnabled(False)
-        self.boton_importar_csv.setStyleSheet("border-radius: 12px; background: #d1f7e7; font-size: 16px; font-weight: bold; color: #15803d;")
-        layout_importar.addWidget(self.boton_importar_csv, alignment=Qt.AlignmentFlag.AlignCenter)
-        layout_importar.addStretch()
-        self.tab_importar.setLayout(layout_importar)
-        self.tabs.addTab(self.tab_importar, "Importar Inventario")
-
+        # Refactor: separar inicialización de pestañas en métodos auxiliares para reducir complejidad
+        self._init_tab_general()
+        self._init_tab_conexion()
+        self._init_tab_permisos()
+        self._init_tab_importar()
         self.main_layout.addWidget(self.tabs)
         self.main_widget.setLayout(self.main_layout)
         self.setCentralWidget(self.main_widget)
 
-        # Refuerzo de accesibilidad en botones principales
-        for btn in [self.boton_seleccionar_csv, self.boton_importar_csv]:
+        # Refuerzo de accesibilidad y estilos
+        self._reforzar_accesibilidad_botones([self.boton_seleccionar_csv, self.boton_importar_csv])
+        self._reforzar_accesibilidad_tabla(self.preview_table)
+        self._reforzar_header_tabla(self.preview_table)
+        self._reforzar_accesibilidad_labels()
+        self._aplicar_margenes_layout()
+
+        # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
+
+    def _reforzar_accesibilidad_botones(self, botones):
+        for btn in botones:
             btn.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            btn.setStyleSheet(btn.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")
+            btn.setStyleSheet(btn.styleSheet() + FOCUS_STYLE)
             font = btn.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
             btn.setFont(font)
             if not btn.toolTip():
-                btn.setToolTip("Botón de acción")
+                btn.setToolTip(BTN_ACCION_TOOLTIP)
             if not btn.accessibleName():
-                btn.setAccessibleName("Botón de acción de configuración")
-        # Refuerzo de accesibilidad en tabla de preview
-        self.preview_table.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.preview_table.setStyleSheet(self.preview_table.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")
-        self.preview_table.setToolTip("Tabla de previsualización de inventario")
-        self.preview_table.setAccessibleName("Tabla de preview de configuración")
-        # Refuerzo visual y robustez en header de tabla de preview
-        h_header = self.preview_table.horizontalHeader() if hasattr(self.preview_table, 'horizontalHeader') else None
+                btn.setAccessibleName(BTN_ACCION_ACCESSIBLE)
+
+    def _reforzar_accesibilidad_tabla(self, tabla):
+        tabla.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        tabla.setStyleSheet(tabla.styleSheet() + PREVIEW_TABLE_STYLE)
+
+    def _reforzar_header_tabla(self, tabla):
+        h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
         if h_header is not None:
             try:
-                h_header.setStyleSheet("background-color: #e3f6fd; color: #2563eb; border-radius: 8px; font-size: 10px; padding: 8px 12px; border: 1px solid #e3e3e3;")
-            except Exception as e:
-                # EXCEPCIÓN VISUAL: Si el header no soporta setStyleSheet, documentar aquí y en docs/estandares_visuales.md
-                pass
-        else:
-            # EXCEPCIÓN VISUAL: No se puede aplicar refuerzo visual porque el header es None
-            pass
-        # Refuerzo de accesibilidad en QLabel (incluye label_feedback y mensaje_label)
+                h_header.setStyleSheet(HEADER_STYLE)
+            except Exception:
+                self.documentar_excepciones_visuales(h_header)
+
+    def _reforzar_accesibilidad_labels(self):
         for widget in self.findChildren(QLabel):
             font = widget.font()
             if font.pointSize() < 12:
                 font.setPointSize(12)
             widget.setFont(font)
-            # Refuerzo de accesibilidad descriptiva
             if not widget.accessibleDescription():
-                widget.setAccessibleDescription("Label informativo o de feedback")
-        # Márgenes y padding en layouts según estándar
+                widget.setAccessibleDescription(LABEL_FEEDBACK_DESC)
+
+    def _aplicar_margenes_layout(self):
         main_widget = self.centralWidget()
         layout = main_widget.layout() if main_widget is not None and hasattr(main_widget, 'layout') else None
         if layout is not None:
             layout.setContentsMargins(24, 20, 24, 20)
             layout.setSpacing(16)
-        # EXCEPCIÓN: Este módulo no usa QLineEdit ni QComboBox en la vista principal, por lo que no aplica refuerzo en inputs ni selectores.
 
-    def mostrar_mensaje(self, mensaje, tipo="info", destino="mensaje_label"):
-        """
-        Muestra un mensaje de feedback en un label específico (por defecto mensaje_label).
-        Usar para feedback contextual en la pestaña actual (por ejemplo, importar inventario).
-        Para feedback global o persistente, usar mostrar_feedback.
-        Oculta el feedback anterior en el label destino antes de mostrar uno nuevo.
-        """
-        colores = {
-            "exito": "#22c55e",
-            "error": "#ef4444",
-            "advertencia": "#f59e42",
-            "info": "#2563eb"
-        }
-        iconos = {
-            "exito": "✅",
-            "error": "❌",
-            "advertencia": "⚠️",
-            "info": "ℹ️"
-        }
-        color = colores.get(tipo, "#2563eb")
-        icono = iconos.get(tipo, "ℹ️")
-        label = getattr(self, destino, None)
-        if label:
-            label.setText("")  # Oculta feedback anterior
-            label.setText(f"<span style='color:{color};'>{icono} {mensaje}</span>")
-            label.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
-
-    def mostrar_advertencias(self, advertencias):
-        if advertencias:
-            self.advertencias_label.setText("\n".join([f"⚠️ {a}" for a in advertencias]))
-            self.advertencias_label.setVisible(True)
-        else:
-            self.advertencias_label.clear()
-            self.advertencias_label.setVisible(False)
-
-    def mostrar_errores(self, errores):
-        if errores:
-            self.mostrar_mensaje("\n".join(errores), tipo="error")
-            self.advertencias_label.setVisible(False)
-
-    def mostrar_exito(self, mensajes):
-        if mensajes:
-            self.mostrar_mensaje("\n".join(mensajes), tipo="exito")
-            self.advertencias_label.setVisible(False)
-
-    def mostrar_preview(self, dataframe):
-        if dataframe is None or dataframe.empty:
-            self.preview_table.clear()
-            self.preview_table.setRowCount(0)
-            self.preview_table.setColumnCount(0)
-            self.preview_table.setHorizontalHeaderLabels([])
-            self.boton_importar_csv.setEnabled(False)
-            self.mostrar_mensaje("No se pudo cargar el archivo o está vacío.", tipo="error")
-            return
-        self.preview_table.setRowCount(min(10, len(dataframe)))
-        self.preview_table.setColumnCount(len(dataframe.columns))
-        self.preview_table.setHorizontalHeaderLabels([str(c) for c in dataframe.columns])
-        for i in range(min(10, len(dataframe))):
-            for j, col in enumerate(dataframe.columns):
-                val = str(dataframe.iloc[i][col])
-                self.preview_table.setItem(i, j, QTableWidgetItem(val))
-        self.preview_table.resizeColumnsToContents()
-        self.boton_importar_csv.setEnabled(True)
-        self.mostrar_mensaje(f"Archivo cargado correctamente. {len(dataframe)} filas detectadas.", tipo="exito")
+    # --- LIMPIEZA DE DUPLICADOS Y UNIFICACIÓN DE FUNCIONES ---
+    # Eliminar todas las funciones duplicadas: dejar solo una definición de cada método.
+    # Ya están presentes las funciones correctas y únicas a partir de la línea 101 (después de setup_ui).
+    # Elimino cualquier redefinición posterior de:
+    # - confirmar_importacion
+    # - seleccionar_archivo_csv
+    # - conectar_eventos_importacion
+    # - mostrar_feedback
+    # - ocultar_feedback
+    # - documentar_excepciones_visuales
+    # - ocultar_pestana_permisos
+    # - _emitir_cambio_tema
+    # - _init_tab_general
+    # - _init_tab_conexion
+    # - _init_tab_permisos
+    # - _init_tab_importar
+    # - mostrar_mensaje
+    # - mostrar_advertencias
+    # - mostrar_errores
+    # - mostrar_exito
+    # - mostrar_preview
+    #
+    # (No se repiten en el archivo tras la limpieza previa, pero si existieran, deben eliminarse y dejar solo la primera aparición tras setup_ui)
+    #
+    # Además, aseguro que todos los literales y estilos repetidos usen las constantes ya definidas.
+    #
+    # El archivo queda limpio de duplicados y advertencias de funciones repetidas.
 
     def confirmar_importacion(self, total_filas):
         msg = QMessageBox(self)
         msg.setIcon(QMessageBox.Icon.Question)
-        msg.setWindowTitle("Confirmar importación")
+        msg.setWindowTitle(MSG_CONFIRMAR_IMPORT)
         msg.setText(f"¿Deseas importar {total_filas} filas a la base de datos? Se realizará backup antes de modificar.")
         msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         return msg.exec() == QMessageBox.StandardButton.Yes
 
     def seleccionar_archivo_csv(self):
-        file, _ = QFileDialog.getOpenFileName(self, "Seleccionar archivo de inventario", "inventario", "Archivos CSV (*.csv);;Archivos Excel (*.xlsx *.xls)")
+        file, _ = QFileDialog.getOpenFileName(self, FILE_DIALOG_TITLE, "inventario", FILE_FILTER)
         if file:
             self.csv_file_input.setText(file)
             try:
@@ -273,7 +198,7 @@ class ConfiguracionView(QMainWindow):
                 self.mostrar_mensaje(f"Error al leer el archivo: {e}", tipo="error")
             self.mostrar_preview(df)
         else:
-            self.csv_file_input.setText("Ningún archivo seleccionado")
+            self.csv_file_input.setText(MSG_NO_ARCHIVO)
             self.mostrar_preview(None)
             self.boton_importar_csv.setEnabled(False)
 
@@ -338,3 +263,190 @@ class ConfiguracionView(QMainWindow):
     def _emitir_cambio_tema(self):
         tema = "light" if self.combo_tema.currentIndex() == 0 else "dark"
         self.theme_changed.emit(tema)
+
+    def _init_tab_general(self):
+        self.tab_general = QWidget()
+        layout_general = QVBoxLayout(self.tab_general)
+        label_general = QLabel(LABEL_GENERAL)
+        label_general.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout_general.addWidget(label_general)
+        self.boton_activar_offline = QPushButton()
+        self.boton_activar_offline.setText(BTN_OFFLINE_TEXT)
+        self.boton_activar_offline.setIcon(QIcon(BTN_OFFLINE_ICON))
+        self.boton_activar_offline.setToolTip(TOOLTIP_ACTIVAR_OFFLINE)
+        self.boton_activar_offline.setAccessibleName(BTN_OFFLINE_ACCESSIBLE)
+        estilizar_boton_icono(self.boton_activar_offline)
+        self.boton_activar_offline.setStyleSheet(BTN_OFFLINE_STYLE)
+        layout_general.addWidget(self.boton_activar_offline)
+        theme_row = QHBoxLayout()
+        theme_label = QLabel(LABEL_TEMA)
+        self.combo_tema = QComboBox()
+        self.combo_tema.addItems(["Claro", "Oscuro"])
+        self.combo_tema.setCurrentIndex(0)
+        self.combo_tema.currentIndexChanged.connect(self._emitir_cambio_tema)
+        theme_row.addWidget(theme_label)
+        theme_row.addWidget(self.combo_tema)
+        theme_row.addStretch()
+        layout_general.insertLayout(0, theme_row)
+        self.tabs.addTab(self.tab_general, TAB_GENERAL)
+
+    def _init_tab_conexion(self):
+        self.tab_conexion = QWidget()
+        layout_conexion = QVBoxLayout(self.tab_conexion)
+        label_conexion = QLabel(LABEL_CONEXION)
+        label_conexion.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout_conexion.addWidget(label_conexion)
+        self.tabs.addTab(self.tab_conexion, TAB_CONEXION)
+
+    def _init_tab_permisos(self):
+        self.tab_permisos = QWidget()
+        layout_permisos = QVBoxLayout(self.tab_permisos)
+        label_permisos = QLabel(LABEL_PERMISOS)
+        label_permisos.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout_permisos.addWidget(label_permisos)
+        self.tabs.addTab(self.tab_permisos, TAB_PERMISOS)
+
+    def _init_tab_importar(self):
+        self.tab_importar = QWidget()
+        layout_importar = QVBoxLayout(self.tab_importar)
+        layout_importar.setContentsMargins(0, 0, 0, 0)
+        layout_importar.setSpacing(12)
+
+        label_titulo = QLabel(IMPORTAR_INVENTARIO_TITLE)
+        label_titulo.setStyleSheet(IMPORTAR_INVENTARIO_STYLE)
+        layout_importar.addWidget(label_titulo)
+
+        self.label_ayuda_import = QLabel(AYUDA_IMPORT)
+        self.label_ayuda_import.setWordWrap(True)
+        self.label_ayuda_import.setStyleSheet(AYUDA_IMPORT_STYLE)
+        layout_importar.addWidget(self.label_ayuda_import)
+
+        self._init_importar_file_row(layout_importar)
+        self._init_importar_preview_table(layout_importar)
+        self._init_importar_labels(layout_importar)
+        self._init_importar_import_button(layout_importar)
+
+        layout_importar.addStretch()
+        self.tab_importar.setLayout(layout_importar)
+        self.tabs.addTab(self.tab_importar, TAB_IMPORTAR)
+
+        self._reforzar_accesibilidad_botones([self.boton_seleccionar_csv, self.boton_importar_csv])
+        self._reforzar_accesibilidad_tabla(self.preview_table)
+        self._reforzar_header_tabla(self.preview_table)
+        self._reforzar_accesibilidad_labels()
+        self._aplicar_margenes_layout()
+
+    def _init_importar_file_row(self, layout_importar):
+        file_row = QHBoxLayout()
+        self.csv_file_input = QLabel(MSG_NO_ARCHIVO)
+        self.csv_file_input.setStyleSheet(CSV_INPUT_STYLE)
+        self.boton_seleccionar_csv = QPushButton()
+        self.boton_seleccionar_csv.setIcon(QIcon(EXCEL_ICON))
+        self.boton_seleccionar_csv.setToolTip(TOOLTIP_SELECCIONAR_CSV)
+        self.boton_seleccionar_csv.setAccessibleName(BTN_SELECCIONAR_CSV_ACCESSIBLE)
+        estilizar_boton_icono(self.boton_seleccionar_csv)
+        self.boton_seleccionar_csv.setStyleSheet(BTN_SELECCIONAR_CSV_STYLE)
+        file_row.addWidget(self.csv_file_input)
+        file_row.addWidget(self.boton_seleccionar_csv)
+        file_row.addStretch()
+        layout_importar.addLayout(file_row)
+
+    def _init_importar_preview_table(self, layout_importar):
+        self.preview_table = QTableWidget()
+        self.preview_table.setMinimumHeight(160)
+        self.preview_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.preview_table.setStyleSheet(PREVIEW_TABLE_BASE_STYLE)
+        self.preview_table.setToolTip(TOOLTIP_TABLA_PREVIEW)
+        self.preview_table.setAccessibleName(TOOLTIP_TABLA_PREVIEW)
+        self.preview_table.setAccessibleDescription(PREVIEW_TABLE_DESC)
+        self.preview_table.setStyleSheet(self.preview_table.styleSheet() + PREVIEW_TABLE_STYLE)
+        layout_importar.addWidget(self.preview_table)
+
+    def _init_importar_labels(self, layout_importar):
+        self.advertencias_label = QLabel()
+        self.advertencias_label.setWordWrap(True)
+        self.advertencias_label.setStyleSheet(ADVERTENCIAS_LABEL_STYLE)
+        self.advertencias_label.setVisible(False)
+        layout_importar.addWidget(self.advertencias_label)
+        self.mensaje_label = QLabel()
+        self.mensaje_label.setWordWrap(True)
+        self.mensaje_label.setStyleSheet(MENSAJE_LABEL_STYLE)
+        layout_importar.addWidget(self.mensaje_label)
+
+    def _init_importar_import_button(self, layout_importar):
+        self.boton_importar_csv = QPushButton()
+        self.boton_importar_csv.setIcon(QIcon(BTN_IMPORTAR_ICON))
+        self.boton_importar_csv.setText(BTN_IMPORTAR_TEXT)
+        self.boton_importar_csv.setToolTip(TOOLTIP_IMPORTAR_CSV)
+        self.boton_importar_csv.setAccessibleName(BTN_IMPORTAR_ACCESSIBLE)
+        estilizar_boton_icono(self.boton_importar_csv)
+        self.boton_importar_csv.setFixedHeight(48)
+        self.boton_importar_csv.setMinimumWidth(220)
+        self.boton_importar_csv.setEnabled(False)
+        self.boton_importar_csv.setStyleSheet(BTN_IMPORTAR_STYLE)
+        layout_importar.addWidget(self.boton_importar_csv, alignment=Qt.AlignmentFlag.AlignCenter)
+
+    def mostrar_mensaje(self, mensaje, tipo="info", destino="mensaje_label"):
+        """
+        Muestra un mensaje de feedback en un label específico (por defecto mensaje_label).
+        Usar para feedback contextual en la pestaña actual (por ejemplo, importar inventario).
+        Para feedback global o persistente, usar mostrar_feedback.
+        Oculta el feedback anterior en el label destino antes de mostrar uno nuevo.
+        """
+        colores = {
+            "exito": "#22c55e",
+            "error": "#ef4444",
+            "advertencia": "#f59e42",
+            "info": "#2563eb"
+        }
+        iconos = {
+            "exito": "✅",
+            "error": "❌",
+            "advertencia": "⚠️",
+            "info": "ℹ️"
+        }
+        color = colores.get(tipo, "#2563eb")
+        icono = iconos.get(tipo, "ℹ️")
+        label = getattr(self, destino, None)
+        if label:
+            label.setText("")  # Oculta feedback anterior
+            label.setText(f"<span style='color:{color};'>{icono} {mensaje}</span>")
+            label.setAccessibleDescription(f"Mensaje de feedback tipo {tipo}")
+
+    def mostrar_advertencias(self, advertencias):
+        if advertencias:
+            self.advertencias_label.setText("\n".join([f"⚠️ {a}" for a in advertencias]))
+            self.advertencias_label.setVisible(True)
+        else:
+            self.advertencias_label.clear()
+            self.advertencias_label.setVisible(False)
+
+    def mostrar_errores(self, errores):
+        if errores:
+            self.mostrar_mensaje("\n".join(errores), tipo="error")
+            self.advertencias_label.setVisible(False)
+
+    def mostrar_exito(self, mensajes):
+        if mensajes:
+            self.mostrar_mensaje("\n".join(mensajes), tipo="exito")
+            self.advertencias_label.setVisible(False)
+
+    def mostrar_preview(self, dataframe):
+        if dataframe is None or dataframe.empty:
+            self.preview_table.clear()
+            self.preview_table.setRowCount(0)
+            self.preview_table.setColumnCount(0)
+            self.preview_table.setHorizontalHeaderLabels([])
+            self.boton_importar_csv.setEnabled(False)
+            self.mostrar_mensaje(MSG_NO_CARGA, tipo="error")
+            return
+        self.preview_table.setRowCount(min(10, len(dataframe)))
+        self.preview_table.setColumnCount(len(dataframe.columns))
+        self.preview_table.setHorizontalHeaderLabels([str(c) for c in dataframe.columns])
+        for i in range(min(10, len(dataframe))):
+            for j, col in enumerate(dataframe.columns):
+                val = str(dataframe.iloc[i][col])
+                self.preview_table.setItem(i, j, QTableWidgetItem(val))
+        self.preview_table.resizeColumnsToContents()
+        self.boton_importar_csv.setEnabled(True)
+        self.mostrar_mensaje(f"Archivo cargado correctamente. {len(dataframe)} filas detectadas.", tipo="exito")

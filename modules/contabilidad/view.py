@@ -51,6 +51,8 @@ class ContabilidadView(QWidget, TableResponsiveMixin):
         self.boton_agregar.setIcon(QIcon("img/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar registro")
+        self.boton_agregar.setAccessibleName("Botón agregar registro contable")
+        estilizar_boton_icono(self.boton_agregar)
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)

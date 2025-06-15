@@ -9,13 +9,17 @@
 |-------------|------------------|------------------|------------------------|-----------------|-----------------------|-------------------|--------------------------|
 | Obras       | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
 | Vidrios     | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubic., accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
-| Compras     | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
-| Pedidos     | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
-| Logística   | ✅ (usa setObjectName y QSS)        | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Compras     | ✅ (setObjectName, diálogos y autocompletado implementados) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, diálogos) |
+| Pedidos     | ✅ (setObjectName, diálogos y autocompletado implementados) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, diálogos) |
+| Logística   | ✅ (usa setObjectName y QSS, sombra y accesibilidad en botones)        | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, formularios) |
 | Producción  | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
-| Usuarios    | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
-| Inventario  | ✅ (setObjectName, layout y QSS global OK, pestañas) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes, pestañas) |
-| Herrajes    | ⚠️ (falta unificar lógica de pedidos por obra y exponer estado) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
+| Usuarios    | ✅ (setObjectName, sombra y accesibilidad en botón principal) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, formularios) |
+| Inventario  | ✅ (setObjectName, sombra y accesibilidad en botones principales) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, formularios) |
+| Herrajes    | ✅ (setObjectName, sombra y accesibilidad en botones principales y de pedidos) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, formularios) |
+| Mantenimiento | ✅ (setObjectName, layout y QSS global OK, filtros) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes, filtros) |
+| Configuración | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
+| Contabilidad | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
+| Notificaciones | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
 
 ## Pendientes generales
 - Aplicar setObjectName a los títulos de módulo en todos los view.py para que tomen el QSS unificado.

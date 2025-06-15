@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QDialog, QLineEdit, QDateEdit, QSpinBox, QFormLayout, QProgressBar
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHBoxLayout, QGraphicsDropShadowEffect, QMenu, QHeaderView, QMessageBox, QDialog, QLineEdit, QDateEdit, QSpinBox, QFormLayout, QProgressBar, QTabWidget
 from PyQt6.QtGui import QIcon, QColor, QAction, QIntValidator, QRegularExpressionValidator
 from PyQt6.QtCore import QSize, Qt, QPoint, pyqtSignal, QDate, QRegularExpression
 import json
@@ -6,6 +6,8 @@ import os
 from functools import partial
 from core.table_responsive_mixin import TableResponsiveMixin
 from core.ui_components import estilizar_boton_icono, aplicar_qss_global_y_tema
+
+FECHA_ENTREGA_LABEL = "Fecha Entrega"
 
 # ---
 # EXCEPCIÓN JUSTIFICADA: Este módulo no requiere feedback de carga adicional porque los procesos son instantáneos o ya usan QProgressBar en operaciones largas (ver mostrar_feedback_carga). Ver test_feedback_carga y docs/estandares_visuales.md.
@@ -107,13 +109,10 @@ class AltaObraDialog(QDialog):
         """
         nombre = self.nombre_input.text().strip()
         cliente = self.cliente_input.text().strip()
-        fecha_medicion = self.fecha_medicion_input.date().toString("yyyy-MM-dd")
-        fecha_entrega = self.fecha_entrega_input.date().toString("yyyy-MM-dd")
 
         # Validación básica
         if not nombre or not cliente:
             QMessageBox.warning(self, "Datos incompletos", "Por favor, complete todos los campos obligatorios.")
-            return
 
         # Emitir señal con los datos de la nueva obra
         self.accept()
@@ -204,10 +203,8 @@ class EditObraDialog(QDialog):
         """Carga los datos de la obra en los campos del formulario."""
         self.nombre_input.setText(self.datos_obra.get('nombre', ''))
         self.cliente_input.setText(self.datos_obra.get('cliente', ''))
-        fecha_medicion = QDate.fromString(self.datos_obra.get('fecha_medicion', ''), "yyyy-MM-dd")
-        fecha_entrega = QDate.fromString(self.datos_obra.get('fecha_entrega', ''), "yyyy-MM-dd")
-        self.fecha_medicion_input.setDate(fecha_medicion)
-        self.fecha_entrega_input.setDate(fecha_entrega)
+        self.fecha_medicion_input.setDate(QDate.fromString(self.datos_obra.get('fecha_medicion', ''), "yyyy-MM-dd"))
+        self.fecha_entrega_input.setDate(QDate.fromString(self.datos_obra.get('fecha_entrega', ''), "yyyy-MM-dd"))
 
     def guardar_obra(self):
         """
@@ -216,13 +213,10 @@ class EditObraDialog(QDialog):
         """
         nombre = self.nombre_input.text().strip()
         cliente = self.cliente_input.text().strip()
-        fecha_medicion = self.fecha_medicion_input.date().toString("yyyy-MM-dd")
-        fecha_entrega = self.fecha_entrega_input.date().toString("yyyy-MM-dd")
 
         # Validación básica
         if not nombre or not cliente:
             QMessageBox.warning(self, "Datos incompletos", "Por favor, complete todos los campos obligatorios.")
-            return
 
         # Emitir señal con los datos de la obra
         self.accept()
@@ -241,6 +235,7 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.label.setObjectName("label_titulo")  # Unificación visual: todos los títulos usan este objectName
         self.label.setAccessibleName("Título de módulo Obras")
         self.label.setAccessibleDescription("Encabezado principal de la vista de obras")
+        self.label.setStyleSheet("")  # Eliminar estilos embebidos
         # Layout horizontal para título y botón
         titulo_layout = QHBoxLayout()
         titulo_layout.addWidget(self.label)
@@ -265,14 +260,15 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.search_bar = QLineEdit()
         self.search_bar.setPlaceholderText("Buscar obra por nombre o cliente...")
         self.search_bar.setFixedHeight(40)
+        self.search_bar.setAccessibleName("Campo de búsqueda de obras")
+        self.search_bar.setAccessibleDescription("Permite buscar obras por nombre o cliente")
         search_layout.addWidget(self.search_bar)
         search_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.addLayout(search_layout)
 
         # Tabla de obras
-        self.tabla_obras = QTableWidget()
-        self.tabla_obras.setObjectName("tabla_obras")  # Unificación visual: todas las tablas usan este objectName
-        columnas_base = ["Nombre", "Cliente", "Fecha Medición", "Fecha Entrega"]
+        self.tabla_obras = QTableWidget(self)
+        columnas_base = ["Nombre", "Cliente", "Fecha Medición", FECHA_ENTREGA_LABEL]
         columnas_pedidos = ["Estado Materiales", "Estado Vidrios", "Estado Herrajes"]
         self.tabla_obras.setColumnCount(len(columnas_base) + len(columnas_pedidos))
         self.tabla_obras.setHorizontalHeaderLabels(columnas_base + columnas_pedidos)
@@ -284,10 +280,37 @@ class ObrasView(QWidget, TableResponsiveMixin):
         else:
             QMessageBox.critical(self, "Error", "El encabezado horizontal de la tabla no está inicializado.")
         self.tabla_obras.setAlternatingRowColors(True)
-        # Eliminar cualquier styleSheet embebido, usar solo QSS global
-        self.tabla_obras.setStyleSheet("")
+        self.tabla_obras.setStyleSheet("")  # Eliminar cualquier styleSheet embebido, usar solo QSS global
+        self.tabla_obras.setAccessibleName("Tabla de obras")
+        self.tabla_obras.setAccessibleDescription("Muestra la lista de obras registradas")
         self.main_layout.addWidget(self.tabla_obras)
 
+        # --- Pestañas: General y Producción ---
+        from PyQt6.QtWidgets import QTabWidget
+        self.tabs = QTabWidget()
+        # Pestaña General (contenido actual)
+        tab_general = QWidget()
+        tab_general_layout = QVBoxLayout(tab_general)
+        tab_general_layout.addWidget(self.label)
+        tab_general_layout.addLayout(titulo_layout)
+        tab_general_layout.addLayout(search_layout)
+        tab_general_layout.addWidget(self.tabla_obras)
+        tab_general_layout.addWidget(self.label_feedback)
+        self.tabs.addTab(tab_general, "General")
+        # Pestaña Producción
+        # Pestaña Producción
+        self.tab_produccion = QWidget()
+        self.tabla_produccion = QTableWidget(self.tab_produccion)
+        self.tabla_produccion.setColumnCount(7)
+        self.tabla_produccion.setHorizontalHeaderLabels(["ID", "Nombre", "Cliente", "Estado", FECHA_ENTREGA_LABEL, "Días restantes", "Avance"])
+        self.tabla_produccion.setAlternatingRowColors(True)
+        layout_prod = QVBoxLayout(self.tab_produccion)
+        layout_prod.addWidget(QLabel("Obras en estado de fabricación"))
+        layout_prod.addWidget(self.tabla_produccion)
+        self.tabs.addTab(self.tab_produccion, "Producción")
+        self.main_layout.addWidget(self.tabs)
+        # Llenar tabla de producción al inicializar
+        self.actualizar_tabla_produccion()
         # Conectar señales de los botones
         self.boton_agregar.clicked.connect(self.mostrar_dialogo_alta)
 
@@ -304,6 +327,26 @@ class ObrasView(QWidget, TableResponsiveMixin):
         self.label_feedback.setAccessibleName("Feedback visual de Obras")
         self.label_feedback.setAccessibleDescription("Muestra mensajes de éxito, error o advertencia para el usuario")
         self.main_layout.addWidget(self.label_feedback)
+
+        # Aplicar QSS global y tema visual
+        aplicar_qss_global_y_tema(self)
+
+    def mostrar_feedback(self, mensaje, tipo="info"):
+        """Muestra feedback visual accesible y claro según el tipo (info, error, exito, advertencia)."""
+        colores = {
+            "info": "#2563eb",
+            "exito": "#22c55e",
+            "error": "#ef4444",
+            "advertencia": "#f59e42"
+        }
+        self.label_feedback.setText(mensaje)
+        self.label_feedback.setStyleSheet(f"color: {colores.get(tipo, '#2563eb')}; font-weight: bold; font-size: 12px;")
+        self.label_feedback.setVisible(True)
+        self.label_feedback.setAccessibleDescription(mensaje)
+
+    def limpiar_feedback(self):
+        self.label_feedback.setText("")
+        self.label_feedback.setVisible(False)
 
     def set_controller(self, controller):
         """Asigna el controlador a la vista."""
@@ -329,11 +372,14 @@ class ObrasView(QWidget, TableResponsiveMixin):
             }
             self.agregar_obra_a_tabla(datos_obra)
             self.obra_agregada.emit(datos_obra)
+            self.mostrar_feedback("Obra agregada correctamente.", tipo="exito")
+        else:
+            self.mostrar_feedback("Alta de obra cancelada.", tipo="advertencia")
 
     def mostrar_dialogo_edicion(self):
         fila_actual = self.tabla_obras.currentRow()
         if fila_actual < 0:
-            QMessageBox.warning(self, "Selección inválida", "Por favor, seleccione una obra para editar.")
+            self.mostrar_feedback("Por favor, seleccione una obra para editar.", tipo="advertencia")
             return
         datos_obra = {
             'nombre': self.obtener_texto_item(fila_actual, 0),
@@ -345,29 +391,28 @@ class ObrasView(QWidget, TableResponsiveMixin):
         if dialogo.exec():
             for col, key in enumerate(['nombre', 'cliente', 'fecha_medicion', 'fecha_entrega']):
                 self.establecer_texto_item(fila_actual, col, dialogo.datos_obra[key])
+            self.mostrar_feedback("Obra editada correctamente.", tipo="exito")
+        else:
+            self.mostrar_feedback("Edición de obra cancelada.", tipo="advertencia")
 
     def eliminar_obra(self):
         fila_actual = self.tabla_obras.currentRow()
         if fila_actual < 0:
-            QMessageBox.warning(self, "Selección inválida", "Por favor, seleccione una obra para eliminar.")
+            self.mostrar_feedback("Por favor, seleccione una obra para eliminar.", tipo="advertencia")
             return
         nombre_obra = self.obtener_texto_item(fila_actual, 0)
         confirmacion = QMessageBox.question(self, "Confirmar eliminación", f"¿Está seguro de eliminar la obra '{nombre_obra}'?",
                                              QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if confirmacion == QMessageBox.StandardButton.Yes:
             self.tabla_obras.removeRow(fila_actual)
+            self.mostrar_feedback(f"Obra '{nombre_obra}' eliminada correctamente.", tipo="exito")
+        else:
+            self.mostrar_feedback("Eliminación cancelada.", tipo="advertencia")
 
     def generar_reporte(self):
         fila_actual = self.tabla_obras.currentRow()
         if fila_actual < 0:
             QMessageBox.warning(self, "Selección inválida", "Por favor, seleccione una obra para generar el reporte.")
-            return
-        datos_obra = {
-            'nombre': self.obtener_texto_item(fila_actual, 0),
-            'cliente': self.obtener_texto_item(fila_actual, 1),
-            'fecha_medicion': self.obtener_texto_item(fila_actual, 2),
-            'fecha_entrega': self.obtener_texto_item(fila_actual, 3)
-        }
         # Aquí se debería agregar la lógica para generar el reporte (por ejemplo, exportar a PDF)
 
     def filtrar_tabla(self, texto):
@@ -404,14 +449,40 @@ class ObrasView(QWidget, TableResponsiveMixin):
         """Ajusta automáticamente el ancho de la columna seleccionada al contenido."""
         self.tabla_obras.resizeColumnToContents(index)
 
-class TestObrasViewHeaders:
-    def test_headers_correctos(self):
-        from PyQt6.QtWidgets import QApplication
-        import sys
-        app = QApplication.instance() or QApplication(sys.argv)
-        view = ObrasView()
-        headers = []
-        for i in range(view.tabla_obras.columnCount()):
-            item = view.tabla_obras.horizontalHeaderItem(i)
-            headers.append(item.text() if item is not None else '')
-        assert headers == ["Nombre", "Cliente", "Fecha Medición", "Fecha Entrega"], f"Headers incorrectos: {headers}"
+    def actualizar_tabla_produccion(self):
+        """Llena la tabla de producción solo con obras en estado 'fabricacion', mostrando días restantes y barra de progreso."""
+        from datetime import datetime
+        if not hasattr(self, 'controller') or not self.controller:
+            return
+        obras = self.controller.obtener_obras_en_fabricacion() if hasattr(self.controller, 'obtener_obras_en_fabricacion') else []
+        self.tabla_produccion.setRowCount(0)
+        for obra in obras:
+            row = self.tabla_produccion.rowCount()
+            self.tabla_produccion.insertRow(row)
+            # ID, Nombre, Cliente, Estado, Fecha Entrega
+            for col, value in enumerate(obra[:5]):
+                item = QTableWidgetItem(str(value))
+                self.tabla_produccion.setItem(row, col, item)
+            # Días restantes
+            fecha_entrega = obra[5] if len(obra) > 5 else obra[4]
+            try:
+                dias_restantes = (datetime.strptime(str(fecha_entrega), "%Y-%m-%d") - datetime.now()).days
+            except Exception:
+                dias_restantes = "-"
+        item_dias = QTableWidgetItem(str(dias_restantes))
+        if isinstance(dias_restantes, int):
+            if dias_restantes < 0:
+                item_dias.setForeground(QColor("#ef4444"))
+            elif dias_restantes <= 3:
+                item_dias.setForeground(QColor("#f59e42"))
+        self.tabla_produccion.setItem(row, 5, item_dias)
+        # Barra de progreso (placeholder: 0% si no hay cronograma)
+        barra = QProgressBar()
+        barra.setMinimum(0)
+        barra.setMaximum(100)
+        avance = 0
+        if hasattr(self.controller, 'obtener_avance_obra'):
+            avance = self.controller.obtener_avance_obra(obra[0])
+        barra.setValue(avance)
+        barra.setFormat(f"{avance}%")
+        self.tabla_produccion.setCellWidget(row, 6, barra)

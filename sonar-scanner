@@ -1,0 +1,5 @@
+sonar-scanner `
+  -Dsonar.projectKey=nomdedev `
+  -Dsonar.organization=nomdedev `
+  -Dsonar.host.url=https://sonarcloud.io `
+  -Dsonar.login=484d313bac0fbf2f0091c0215ad7aa0607e2f74a

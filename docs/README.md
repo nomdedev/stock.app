@@ -9,6 +9,8 @@ Este índice centraliza el acceso a todos los documentos clave del proyecto. Con
 - [Estándares de seguridad y manejo de datos sensibles](estandares_seguridad.md)
 - [Estándares de feedback visual y procedimientos de carga](estandares_feedback.md)
 - [Estándares de auditoría y registro de acciones](estandares_auditoria.md)
+- [Checklist unificado de mejoras UI/UX y accesibilidad](checklists/checklist_unificado_mejoras_uiux.md)
+- [Checklist de mejoras UI/UX por módulo](checklists/checklist_mejoras_uiux_por_modulo.md)
 
 ## Flujos y buenas prácticas
 - [Flujo de integración Obras/Material/Vidrios](flujo_obras_material_vidrios.md)
@@ -53,4 +55,7 @@ La conexión a la base de datos implementa:
 
 **Convención:** Si agregas un nuevo estándar, guía o flujo, enlázalo aquí y describe brevemente su propósito.
 
-Última actualización: 1 de junio de 2025
+**Actualización:**
+- [14/06/2025] Documentación y checklists actualizados tras la unificación visual, accesibilidad y feedback en Mantenimiento, Configuración, Contabilidad y Notificaciones. Todos los ítems marcados como completos en los checklists correspondientes.
+
+Última actualización: 14 de junio de 2025

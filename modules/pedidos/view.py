@@ -20,6 +20,8 @@ class PedidosView(QWidget):
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Pedidos")
         self.label_titulo.setObjectName("label_titulo_pedidos")  # Para QSS global
+        self.label_titulo.setAccessibleName("Título de módulo Pedidos")
+        self.label_titulo.setAccessibleDescription("Encabezado principal de la vista de pedidos")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         # Botón principal (Agregar pedido)
         self.boton_agregar = QPushButton()
@@ -27,6 +29,9 @@ class PedidosView(QWidget):
         self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar pedido")
+        self.boton_agregar.setAccessibleName("Botón agregar pedido")
+        self.boton_agregar.setAccessibleDescription("Agrega un nuevo pedido al sistema")
+        estilizar_boton_icono(self.boton_agregar)
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
@@ -34,13 +39,13 @@ class PedidosView(QWidget):
         # Tabla de pedidos
         self.tabla_pedidos = QTableWidget()
         self.tabla_pedidos.setObjectName("tabla_inventario")  # Unificación visual
+        self.tabla_pedidos.setAccessibleName("Tabla principal de pedidos")
+        self.tabla_pedidos.setAccessibleDescription("Muestra la lista de pedidos registrados")
         self.tabla_pedidos.setColumnCount(5)
         self.pedidos_headers = ["id", "obra", "fecha", "estado", "observaciones"]
         self.tabla_pedidos.setHorizontalHeaderLabels(self.pedidos_headers)
         self.tabla_pedidos.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        # self.tabla_pedidos.setStyleSheet(self.tabla_pedidos.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")  # Migrado a QSS global
         self.tabla_pedidos.setToolTip("Tabla de pedidos")
-        self.tabla_pedidos.setAccessibleName("Tabla principal de pedidos")
         self.main_layout.addWidget(self.tabla_pedidos)
 
         # Configuración de columnas
@@ -63,10 +68,10 @@ class PedidosView(QWidget):
         # --- FEEDBACK VISUAL CENTRALIZADO Y QSS GLOBAL ---
         self.label_feedback = QLabel()
         self.label_feedback.setObjectName("label_feedback")  # Para QSS global
-        # QSS global gestiona el estilo del feedback visual, no usar setStyleSheet embebido
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de pedidos")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
+        self.label_feedback.setStyleSheet("")  # Eliminar estilos embebidos
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None
 

@@ -7,3 +7,4 @@ config/privado/
 .env
 # Ignorar archivos compilados de Python
 *.pyc
+sonar-scanner/

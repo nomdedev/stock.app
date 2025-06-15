@@ -221,12 +221,25 @@ pip install PyQt6-WebEngine
         header_layout.setContentsMargins(0, 0, 0, 0)
         header_layout.setSpacing(24)
         self.label_titulo = QLabel("Gestión de Logística")
+        self.label_titulo.setObjectName("label_titulo_logistica")
+        self.label_titulo.setAccessibleName("Título de módulo Logística")
+        self.label_titulo.setAccessibleDescription("Encabezado principal de la vista de logística")
         header_layout.addWidget(self.label_titulo, alignment=Qt.AlignmentFlag.AlignVCenter)
         self.boton_agregar = QPushButton()
         self.boton_agregar.setObjectName("boton_agregar_logistica")
         self.boton_agregar.setIcon(QIcon("resources/icons/add-material.svg"))
         self.boton_agregar.setIconSize(QSize(24, 24))
         self.boton_agregar.setToolTip("Agregar registro")
+        self.boton_agregar.setAccessibleName("Botón agregar envío")
+        self.boton_agregar.setAccessibleDescription("Agrega un nuevo envío de logística")
+        estilizar_boton_icono(self.boton_agregar)
+        # Aplicar sombra visual al botón principal
+        sombra_agregar = QGraphicsDropShadowEffect()
+        sombra_agregar.setBlurRadius(12)
+        sombra_agregar.setXOffset(0)
+        sombra_agregar.setYOffset(2)
+        sombra_agregar.setColor(QColor(0, 0, 0, 40))
+        self.boton_agregar.setGraphicsEffect(sombra_agregar)
         header_layout.addWidget(self.boton_agregar)
         header_layout.addStretch()
         self.main_layout.addLayout(header_layout)
@@ -260,6 +273,7 @@ pip install PyQt6-WebEngine
             tabla.setObjectName("tabla_logistica")
             tabla.setToolTip("Tabla de datos")
             tabla.setAccessibleName("Tabla principal de logística")
+            tabla.setAccessibleDescription("Muestra la lista de registros de logística")
             h_header = tabla.horizontalHeader() if hasattr(tabla, 'horizontalHeader') else None
             if h_header is not None:
                 h_header.setObjectName("header_logistica")
@@ -319,6 +333,7 @@ pip install PyQt6-WebEngine
         self.label_feedback.setVisible(False)
         self.label_feedback.setAccessibleName("Mensaje de feedback de logística")
         self.label_feedback.setAccessibleDescription("Mensaje de feedback visual y accesible para el usuario")
+        self.label_feedback.setStyleSheet("")  # Eliminar estilos embebidos
         self.main_layout.addWidget(self.label_feedback)
         self._feedback_timer = None
         self.progress_bar = QProgressBar()
@@ -573,6 +588,15 @@ pip install PyQt6-WebEngine
         layout.setContentsMargins(24, 20, 24, 20)
         layout.setSpacing(16)
         form = QFormLayout()
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QLineEdit, QComboBox, QPushButton, QHBoxLayout
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Agregar nuevo envío")
+        dialog.setModal(True)
+        dialog.setStyleSheet("QDialog { background: #fff9f3; border-radius: 12px; }")
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setSpacing(16)
+        form = QFormLayout()
         form.setContentsMargins(0, 0, 0, 0)
         form.setSpacing(12)
         obra_input = QLineEdit()
@@ -620,6 +644,19 @@ pip install PyQt6-WebEngine
         btns.addWidget(btn_guardar)
         btns.addWidget(btn_cancelar)
         layout.addLayout(btns)
+        # Aplicar sombra visual a los botones del formulario modal
+        sombra_guardar = QGraphicsDropShadowEffect()
+        sombra_guardar.setBlurRadius(12)
+        sombra_guardar.setXOffset(0)
+        sombra_guardar.setYOffset(2)
+        sombra_guardar.setColor(QColor(0, 0, 0, 40))
+        btn_guardar.setGraphicsEffect(sombra_guardar)
+        sombra_cancelar = QGraphicsDropShadowEffect()
+        sombra_cancelar.setBlurRadius(12)
+        sombra_cancelar.setXOffset(0)
+        sombra_cancelar.setYOffset(2)
+        sombra_cancelar.setColor(QColor(0, 0, 0, 40))
+        btn_cancelar.setGraphicsEffect(sombra_cancelar)
         def guardar():
             # Validación básica
             if not obra_input.text().strip() or not material_input.text().strip() or not cantidad_input.text().strip():
@@ -694,7 +731,21 @@ pip install PyQt6-WebEngine
         btns.addWidget(btn_guardar)
         btns.addWidget(btn_cancelar)
         layout.addLayout(btns)
+        # Aplicar sombra visual a los botones del formulario modal de edición
+        sombra_guardar = QGraphicsDropShadowEffect()
+        sombra_guardar.setBlurRadius(12)
+        sombra_guardar.setXOffset(0)
+        sombra_guardar.setYOffset(2)
+        sombra_guardar.setColor(QColor(0, 0, 0, 40))
+        btn_guardar.setGraphicsEffect(sombra_guardar)
+        sombra_cancelar = QGraphicsDropShadowEffect()
+        sombra_cancelar.setBlurRadius(12)
+        sombra_cancelar.setXOffset(0)
+        sombra_cancelar.setYOffset(2)
+        sombra_cancelar.setColor(QColor(0, 0, 0, 40))
+        btn_cancelar.setGraphicsEffect(sombra_cancelar)
         def guardar():
+            # Validación básica
             if not obra_input.text().strip() or not material_input.text().strip() or not cantidad_input.text().strip():
                 self.mostrar_feedback("Todos los campos obligatorios deben completarse.", tipo="error")
                 return

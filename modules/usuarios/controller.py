@@ -11,55 +11,108 @@ from core.logger import log_error
 class PermisoAuditoria:
     def __init__(self, modulo):
         self.modulo = modulo
+
+    def _validar_usuario(self, controller, accion):
+        usuario = getattr(controller, 'usuario_actual', None)
+        usuario_model = getattr(controller, 'usuarios_model', None)
+        auditoria_model = getattr(controller, 'auditoria_model', None)
+        if not usuario or not usuario_model or not auditoria_model:
+            self._feedback(controller, f"No tiene permiso para realizar la acción: {accion}")
+            return False
+        return True
+
+    def _feedback(self, controller, mensaje):
+        if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
+            controller.view.label.setText(mensaje)
+
+    def _registrar_denegado(self, controller, accion, motivo):
+        usuario = getattr(controller, 'usuario_actual', None)
+        auditoria_model = getattr(controller, 'auditoria_model', None)
+        usuario_id = usuario.get('id') if usuario else None
+        ip = usuario.get('ip', '') if usuario else ''
+        detalle = f"{accion} - denegado ({motivo})"
+        if usuario_id is not None and auditoria_model:
+            auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+
     def __call__(self, accion):
         def decorador(func):
             @wraps(func)
             def wrapper(controller, *args, **kwargs):
-                usuario_model = getattr(controller, 'usuarios_model', None)
-                auditoria_model = getattr(controller, 'auditoria_model', None)
-                usuario = getattr(controller, 'usuario_actual', None)
-                ip = usuario.get('ip', '') if usuario else ''
-                if not usuario or not usuario_model or not auditoria_model:
-                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
+                if not self._validar_usuario(controller, accion):
                     return None
-                if usuario['rol'] not in ('admin', 'supervisor'):
-                    modulos_permitidos = usuario_model.obtener_modulos_permitidos(usuario)
-                    if self.modulo not in modulos_permitidos:
-                        if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                            controller.view.label.setText(f"No tiene permiso para acceder al módulo: {self.modulo}")
-                        usuario_id = usuario.get('id') if usuario else None
-                        detalle = f"{accion} - denegado (módulo)"
-                        if usuario_id is not None:
-                            auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
-                        return None
-                if not usuario_model.tiene_permiso(usuario, self.modulo, accion):
-                    if hasattr(controller, 'view') and hasattr(controller.view, 'label'):
-                        controller.view.label.setText(f"No tiene permiso para realizar la acción: {accion}")
-                    usuario_id = usuario.get('id') if usuario else None
-                    detalle = f"{accion} - denegado (permiso)"
-                    if usuario_id is not None:
-                        auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+                if not self._check_usuario_model(controller, accion):
+                    return None
+                if not self._check_modulo_permitido(controller, accion):
+                    return None
+                if not self._check_permiso(controller, accion):
                     return None
                 try:
-                    print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
+                    self._log_accion_inicio(controller, accion)
                     resultado = func(controller, *args, **kwargs)
-                    print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
-                    usuario_id = usuario.get('id') if usuario else None
-                    detalle = f"{accion} - éxito"
-                    if usuario_id is not None:
-                        auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+                    self._log_accion_exito(controller, accion)
                     return resultado
                 except Exception as e:
-                    print(f"[LOG ACCIÓN] Error en acción '{accion}' en módulo '{self.modulo}': {e}")
-                    usuario_id = usuario.get('id') if usuario else None
-                    detalle = f"{accion} - error: {e}"
-                    if usuario_id is not None:
-                        auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
-                    log_error(f"Error en {accion}: {e}")
+                    self._log_accion_error(controller, accion, e)
                     raise
             return wrapper
         return decorador
+
+    def _check_usuario_model(self, controller, accion):
+        usuario = getattr(controller, 'usuario_actual', None)
+        usuario_model = getattr(controller, 'usuarios_model', None)
+        if not usuario or not usuario_model:
+            self._feedback(controller, f"No tiene permiso para realizar la acción: {accion}")
+            self._registrar_denegado(controller, accion, "usuario/model ausente")
+            return False
+        return True
+
+    def _check_modulo_permitido(self, controller, accion):
+        usuario = getattr(controller, 'usuario_actual', None)
+        usuario_model = getattr(controller, 'usuarios_model', None)
+        if not usuario or usuario.get('rol', None) not in ('admin', 'supervisor'):
+            modulos_permitidos = []
+            if usuario_model and hasattr(usuario_model, 'obtener_modulos_permitidos'):
+                modulos_permitidos = usuario_model.obtener_modulos_permitidos(usuario)
+            if self.modulo not in modulos_permitidos:
+                self._feedback(controller, f"No tiene permiso para acceder al módulo: {self.modulo}")
+                self._registrar_denegado(controller, accion, "módulo")
+                return False
+        return True
+
+    def _check_permiso(self, controller, accion):
+        usuario = getattr(controller, 'usuario_actual', None)
+        usuario_model = getattr(controller, 'usuarios_model', None)
+        if not usuario_model or not hasattr(usuario_model, 'tiene_permiso') or not usuario_model.tiene_permiso(usuario, self.modulo, accion):
+            self._feedback(controller, f"No tiene permiso para realizar la acción: {accion}")
+            self._registrar_denegado(controller, accion, "permiso")
+            return False
+        return True
+
+    def _log_accion_inicio(self, controller, accion):
+        usuario = getattr(controller, 'usuario_actual', None)
+        nombre_usuario = usuario.get('username', 'desconocido') if usuario else 'desconocido'
+        usuario_id = usuario.get('id') if usuario else None
+        print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {nombre_usuario} (id={usuario_id})")
+
+    def _log_accion_exito(self, controller, accion):
+        usuario = getattr(controller, 'usuario_actual', None)
+        usuario_id = usuario.get('id') if usuario else None
+        ip = usuario.get('ip', '') if usuario else ''
+        print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
+        auditoria_model = getattr(controller, 'auditoria_model', None)
+        if usuario_id is not None and auditoria_model:
+            detalle = f"{accion} - éxito"
+            auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+
+    def _log_accion_error(self, controller, accion, e):
+        usuario = getattr(controller, 'usuario_actual', None)
+        usuario_id = usuario.get('id') if usuario else None
+        ip = usuario.get('ip', '') if usuario else ''
+        auditoria_model = getattr(controller, 'auditoria_model', None)
+        if usuario_id is not None and auditoria_model:
+            detalle = f"{accion} - error: {e}"
+            auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
+        log_error(f"Error en {accion}: {e}")
 
 permiso_auditoria_usuarios = PermisoAuditoria('usuarios')
 
@@ -68,6 +121,8 @@ class UsuariosController(BaseController):
         super().__init__(model, view)
         self.usuario_actual = usuario_actual
         self.auditoria_model = AuditoriaModel(db_connection)
+        # Definir constante para éxito
+        self.EXITO_LITERAL = "éxito"
 
     def inicializar_vista(self):
         # Llamar esto tras login o al inicializar la vista
@@ -123,29 +178,25 @@ class UsuariosController(BaseController):
                 "Usuario Existente",
                 "Ya existe un usuario con el mismo email o nombre de usuario."
             )
-            # self.view.email_input.setStyleSheet("border: 1px solid red;")
-            # self.view.nombre_input.setStyleSheet("border: 1px solid red;")
             return
 
         self.model.agregar_usuario((nombre, email, rol))
         self.view.label.setText("Usuario agregado exitosamente.")
-        self._registrar_evento_auditoria('agregar', estado="éxito")
-        # self.view.email_input.setStyleSheet("")
-        # self.view.nombre_input.setStyleSheet("")
+        self._registrar_evento_auditoria('agregar', estado=self.EXITO_LITERAL)
 
     @permiso_auditoria_usuarios('actualizar')
     def actualizar_usuario(self, id_usuario, datos, fecha_actualizacion):
         try:
             self.model.actualizar_usuario(id_usuario, datos, fecha_actualizacion)
             self.view.label.setText("Usuario actualizado exitosamente.")
-            self._registrar_evento_auditoria('actualizar', estado="éxito")
+            self._registrar_evento_auditoria('actualizar', estado=self.EXITO_LITERAL)
         except Exception as e:
             self.view.label.setText(f"Error: {str(e)}")
             log_error(f"Error actualizando usuario: {e}")
 
     def marcar_como_favorito(self):
         self.view.parent().agregar_a_favoritos("Usuarios")
-        self._registrar_evento_auditoria('marcar_favorito', estado="éxito")
+        self._registrar_evento_auditoria('marcar_favorito', estado=self.EXITO_LITERAL)
 
     def registrar_login_fallido(self, ip, usuario):
         self.model.db.registrar_login_fallido(ip, usuario, datetime.now().isoformat(), "fallido")
@@ -173,6 +224,7 @@ class UsuariosController(BaseController):
             msg = self.model.suspender_cuenta(user_id)
             self.view.label.setText(msg)
             self.cargar_usuarios()
+            self._registrar_evento_auditoria('suspender', estado=self.EXITO_LITERAL)
 
     @permiso_auditoria_usuarios('reactivar')
     def _reactivar_selected(self):
@@ -181,6 +233,7 @@ class UsuariosController(BaseController):
             msg = self.model.reactivar_cuenta(user_id)
             self.view.label.setText(msg)
             self.cargar_usuarios()
+            self._registrar_evento_auditoria('reactivar', estado=self.EXITO_LITERAL)
 
     @permiso_auditoria_usuarios('resetear_password')
     def _resetear_password_selected(self):
@@ -261,7 +314,7 @@ class UsuariosController(BaseController):
         self.model.actualizar_estado_usuario(usuario_id, nuevo_estado)
         self.view.label.setText(f"Estado del usuario con ID {usuario_id} cambiado a {nuevo_estado}.")
         self.cargar_usuarios()
-        self._registrar_evento_auditoria('cambiar_estado', estado="éxito")
+        self._registrar_evento_auditoria('cambiar_estado', estado=self.EXITO_LITERAL)
 
     def _mostrar_roles_permisos(self):
         # Carga la tabla de roles y permisos con checkboxes usando permisos_modulos
@@ -310,7 +363,7 @@ class UsuariosController(BaseController):
         """
         mensaje = self.model.exportar_logs_usuarios(formato)
         self.view.label.setText(mensaje)
-        self._registrar_evento_auditoria('exportar_logs', estado="éxito" if 'exportado' in mensaje else "error")
+        self._registrar_evento_auditoria('exportar_logs', estado=self.EXITO_LITERAL if 'exportado' in mensaje else "error")
 
     @permiso_auditoria_usuarios('exportar_usuarios')
     def exportar_usuarios(self, formato):
@@ -320,7 +373,7 @@ class UsuariosController(BaseController):
         """
         mensaje = self.model.exportar_usuarios(formato)
         self.view.label.setText(mensaje)
-        self._registrar_evento_auditoria('exportar_usuarios', estado="éxito" if 'exportado' in mensaje else "error")
+        self._registrar_evento_auditoria('exportar_usuarios', estado=self.EXITO_LITERAL if 'exportado' in mensaje else "error")
 
     def verificar_permiso(self, usuario_id, modulo, accion):
         permisos = self.model.obtener_permisos_por_usuario(usuario_id, modulo)
@@ -387,15 +440,26 @@ class UsuariosController(BaseController):
         username = self.view.combo_usuario.currentData()
         if not username:
             return
-        nuevos_permisos = []
+        nuevos_permisos = {}
         for row in range(self.view.tabla_permisos_modulos.rowCount()):
             modulo = self.view.tabla_permisos_modulos.item(row, 0).text()
             chk = self.view.tabla_permisos_modulos.cellWidget(row, 1)
-            if chk.isChecked():
-                nuevos_permisos.append(modulo)
-        # Guardar en la tabla permisos_usuario usando username
-        self.model.actualizar_permisos_usuario(username, nuevos_permisos)
+            nuevos_permisos[modulo] = {
+                'ver': chk.isChecked(),
+                'modificar': False,  # Puedes expandir para más acciones si la UI lo permite
+                'aprobar': False
+            }
+        # Guardar en la tabla permisos_modulos usando username
+        self.model.actualizar_permisos_modulos_usuario(username, nuevos_permisos, self.usuario_actual['id'] if self.usuario_actual else 1)
+        # Registrar en auditoría cada cambio de permiso
+        for modulo, permisos in nuevos_permisos.items():
+            detalle = f"Permisos actualizados: {modulo} - ver: {permisos['ver']} modificar: {permisos['modificar']} aprobar: {permisos['aprobar']}"
+            self._registrar_evento_auditoria('actualizar_permisos', detalle_extra=detalle, estado=self.EXITO_LITERAL)
         QMessageBox.information(self.view, "Permisos actualizados", "Los permisos de módulos han sido actualizados para el usuario seleccionado.")
+        # Refrescar la vista de permisos
+        self.actualizar_permisos_modulos_usuario()
+        if hasattr(self, 'cargar_resumen_permisos'):
+            self.cargar_resumen_permisos()
 
     def cargar_resumen_permisos(self):
         """
@@ -437,7 +501,7 @@ class UsuariosController(BaseController):
         else:
             raise NotImplementedError("No se encuentra un método para crear/agregar usuario compatible con los tests.")
 
-    def editar_usuario(self, id_usuario, datos):
+    def editar_usuario_backend(self, id_usuario, datos):
         """
         Implementa la lógica real de edición de usuario: llama al modelo para editar y refresca la vista si corresponde.
         """
@@ -455,17 +519,3 @@ class UsuariosController(BaseController):
             return self.model.editar_usuario(id_usuario, datos)
         else:
             raise NotImplementedError("No se encuentra un método editar_usuario compatible con los tests.")
-
-    # Mantener el método editar_usuario original de la UI debajo, sin cambios
-    @permiso_auditoria_usuarios('editar')
-    def editar_usuario(self, usuario):
-        # usuario es una tupla o dict, obtener id y datos
-        id_usuario = usuario[0] if isinstance(usuario, (list, tuple)) else usuario.get('id')
-        # Prevenir edición del admin por otros usuarios
-        if id_usuario == 1 and (not self.usuario_actual or self.usuario_actual.get('id_rol', None) != 1):
-            raise PermissionError("Solo el admin puede editar al usuario admin.")
-        dialog = QDialog()
-        dialog.setWindowTitle("Editar Usuario")
-        layout = QVBoxLayout(dialog)
-        layout.addWidget(QLabel(f"Editar usuario: {id_usuario}"))
-        dialog.exec()

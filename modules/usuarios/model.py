@@ -108,7 +108,10 @@ class UsuariosModel:
         return [r[0] for r in resultado] if resultado else []
 
     def actualizar_permisos_modulos_usuario(self, id_usuario, permisos_dict, creado_por):
-        """Actualiza los permisos de módulos para un usuario."""
+        """Actualiza los permisos de módulos para un usuario, eliminando los previos para evitar duplicados."""
+        # Eliminar permisos previos
+        self.db.ejecutar_query(self._SQL_DELETE_PERMISOS_MODULOS_BY_USUARIO, (id_usuario,))
+        # Insertar nuevos permisos
         for modulo, permisos in permisos_dict.items():
             self.db.ejecutar_query(
                 self._SQL_INSERT_PERMISOS_MODULOS,
@@ -307,8 +310,39 @@ class UsuariosModel:
                     (usuario_id, modulo, *permisos, creado_por)
                 )
 
-    def obtener_modulos_permitidos(self, usuario_id):
-        """Devuelve una lista de módulos a los que el usuario tiene permiso de ver."""
+    def obtener_modulos_permitidos(self, usuario):
+        """
+        Devuelve una lista de módulos a los que el usuario tiene permiso de ver.
+        Si el usuario es admin (rol == 'admin'), devuelve todos los módulos.
+        Acepta usuario como dict, id o username.
+        """
+        # Si es dict, extraer id y rol
+        usuario_id = None
+        rol = None
+        if isinstance(usuario, dict):
+            usuario_id = usuario.get('id')
+            rol = usuario.get('rol')
+            if not usuario_id and usuario.get('username'):
+                # Buscar id por username
+                res = self.db.ejecutar_query("SELECT id, rol FROM usuarios WHERE usuario = ?", (usuario['username'],))
+                if res:
+                    usuario_id = res[0][0]
+                    if not rol:
+                        rol = res[0][1]
+        elif isinstance(usuario, int):
+            usuario_id = usuario
+        elif isinstance(usuario, str):
+            # Buscar id y rol por username
+            res = self.db.ejecutar_query("SELECT id, rol FROM usuarios WHERE usuario = ?", (usuario,))
+            if res:
+                usuario_id = res[0][0]
+                rol = res[0][1]
+        # Si es admin, devolver todos los módulos
+        if rol == 'admin':
+            return self.obtener_todos_los_modulos()
+        # Si no hay id, no puede consultar
+        if not usuario_id:
+            return []
         query = "SELECT modulo FROM permisos_modulos WHERE id_usuario = ? AND puede_ver = 1"
         resultado = self.db.ejecutar_query(query, (usuario_id,))
         return [r[0] for r in resultado] if resultado else []

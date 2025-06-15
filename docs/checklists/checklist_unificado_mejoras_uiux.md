@@ -1,22 +1,22 @@
 # Checklist Unificado de Mejoras UI/UX, Accesibilidad y Feedback
 
 ## Generales (aplican a todos los módulos)
-- [ ] Unificar QSS de cabecera de tablas: fondo `#f8fafc`, radio `4px`, fuente `10px`, altura filas `25px`, selección `#e3f6fd`.
-- [ ] Consistencia en fuente y tamaño de celdas (**estándar: 12 px** en todas las tablas principales).
-- [ ] Alinear columnas importantes (números a la derecha, texto a la izquierda).
-- [ ] Todos los botones principales/secundarios usan `estilizar_boton_icono`.
-- [ ] Botones ubicados en la misma zona de cada vista.
-- [ ] Todos los botones visibles con ícono SVG/PNG en `resources/icons` y documentados.
-- [ ] Añadir `setAccessibleName` y `setToolTip` descriptivos a todos los botones.
-- [ ] Bordes redondeados de diálogos entre 8 px y 12 px.
-- [ ] Deshabilitar botones durante acciones y mostrar feedback de carga.
-- [ ] Centralizar mensajes en `label_feedback` o equivalente.
-- [ ] Colores estándar de feedback: info `#e3f6fd`, éxito `#d1f7e7`, error `#fee2e2`, advertencia `#fef9c3`.
-- [ ] Permitir cerrar manualmente banners/mensajes largos.
-- [ ] Revisar orden de tabulación en formularios.
-- [ ] Incluir atajos de teclado en acciones frecuentes (ej: `Ctrl+E` para exportar).
-- [ ] Comprobar que lectores de pantalla anuncien correctamente botones e inputs.
-- [ ] Extender tests de UI para cubrir verificaciones de estilo, íconos y accesibilidad.
+- [x] Unificar QSS de cabecera de tablas: fondo `#f8fafc`, radio `4px`, fuente `10px`, altura filas `25px`, selección `#e3f6fd`.
+- [x] Consistencia en fuente y tamaño de celdas (**estándar: 12 px** en todas las tablas principales).
+- [x] Alinear columnas importantes (números a la derecha, texto a la izquierda).
+- [x] Todos los botones principales/secundarios usan `estilizar_boton_icono`.
+- [x] Botones ubicados en la misma zona de cada vista.
+- [x] Todos los botones visibles con ícono SVG/PNG en `resources/icons` y documentados.
+- [x] Añadir `setAccessibleName` y `setToolTip` descriptivos a todos los botones.
+- [x] Bordes redondeados de diálogos entre 8 px y 12 px.
+- [x] Deshabilitar botones durante acciones y mostrar feedback de carga.
+- [x] Centralizar mensajes en `label_feedback` o equivalente.
+- [x] Colores estándar de feedback: info `#e3f6fd`, éxito `#d1f7e7`, error `#fee2e2`, advertencia `#fef9c3`.
+- [x] Permitir cerrar manualmente banners/mensajes largos.
+- [x] Revisar orden de tabulación en formularios.
+- [x] Incluir atajos de teclado en acciones frecuentes (ej: `Ctrl+E` para exportar).
+- [x] Comprobar que lectores de pantalla anuncien correctamente botones e inputs.
+- [x] Extender tests de UI para cubrir verificaciones de estilo, íconos y accesibilidad.
 
 ---
 
@@ -73,22 +73,23 @@
 - [ ] Notificación visual/sonora al cambiar estado de pedido.
 
 ### Mantenimiento
-- [ ] Centralizar mensajes de error en banner reutilizable.
-- [ ] Confirmar tooltips y `accessibleName` en botones.
-- [ ] Añadir filtros por fecha y estado.
+- [x] Centralizar mensajes de error en banner reutilizable.
+- [x] Confirmar tooltips y `accessibleName` en botones.
+- [x] Añadir filtros por fecha y estado.
 
 ### Configuración
-- [ ] Validación visual al probar conexión de base de datos.
-- [ ] Guardar configuración de tema y recargar vista al aplicar cambios.
-- [ ] Mensajes de éxito/error en `label_feedback`.
+- [x] Añadir validación visual al probar conexión de base de datos.
+- [x] Guardar la configuración de tema y recargar la vista al aplicar cambios.
+- [x] Incluir mensajes de éxito/error en `label_feedback`.
 
 ### Contabilidad
-- [ ] Filtros por fecha y obra.
-- [ ] Banner de feedback al registrar pagos.
-- [ ] Mejorar legibilidad de tabla de facturas (alineación de montos).
+- [x] Incorporar filtros por fecha y por obra.
+- [x] Implementar banner de feedback al registrar pagos.
+- [x] Mejorar la legibilidad de la tabla de facturas (alineación de montos a la derecha).
 
 ### Notificaciones
-- [ ] (Completar checklist específico si existe).
+- [x] Unificación visual y accesibilidad en botones principales.
+- [x] Feedback visual centralizado y tabla accesible.
 
 ---
 

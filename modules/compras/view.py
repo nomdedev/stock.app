@@ -52,7 +52,7 @@ class ComprasView(QWidget, TableResponsiveMixin):
         # --- FIN FEEDBACK VISUAL GLOBAL ---
 
         self.comparacion_headers = ["proveedor", "precio_total", "comentarios"]
-        self.config_path_comparacion = f"config_compras_comparacion_columns.json"
+        self.config_path_comparacion = "config_compras_comparacion_columns.json"
         self.columnas_visibles_comparacion = self.cargar_config_columnas(self.config_path_comparacion, self.comparacion_headers)
 
         self._feedback_timer = None  # Temporizador para feedback visual
@@ -71,9 +71,10 @@ class ComprasView(QWidget, TableResponsiveMixin):
         self.boton_nuevo.setIconSize(QSize(24, 24))
         self.boton_nuevo.setToolTip("Nuevo pedido")
         self.boton_nuevo.setAccessibleName("Botón nuevo pedido de compras")
+        self.boton_nuevo.setAccessibleDescription("Agrega un nuevo pedido de compras")
         self.boton_nuevo.setText("")
         self.boton_nuevo.setFixedSize(48, 48)
-        # self.boton_nuevo.setStyleSheet("")  # Migrado a QSS global
+        estilizar_boton_icono(self.boton_nuevo)
         sombra = QGraphicsDropShadowEffect()
         sombra.setBlurRadius(15)
         sombra.setXOffset(0)
@@ -86,7 +87,6 @@ class ComprasView(QWidget, TableResponsiveMixin):
 
         # Refuerzo de accesibilidad en botón principal
         self.boton_nuevo.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        # self.boton_nuevo.setStyleSheet(self.boton_nuevo.styleSheet() + "\nQPushButton:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }")  # Migrado a QSS global
         font = self.boton_nuevo.font()
         if font.pointSize() < 12:
             font.setPointSize(12)
@@ -96,8 +96,8 @@ class ComprasView(QWidget, TableResponsiveMixin):
         # Refuerzo de accesibilidad en tabla de comparación si existe
         if hasattr(self, 'tabla_comparacion'):
             self.tabla_comparacion.setObjectName("tabla_comparacion")  # Para QSS global
-            # self.tabla_comparacion.setStyleSheet(self.tabla_comparacion.styleSheet() + "\nQTableWidget:focus { outline: 2px solid #2563eb; border: 2px solid #2563eb; }\nQTableWidget { font-size: 13px; }")  # Migrado a QSS global
-        # EXCEPCIÓN: Si algún botón requiere texto visible por UX, debe estar documentado aquí y en docs/estandares_visuales.md
+            self.tabla_comparacion.setAccessibleName("Tabla de comparación de presupuestos")
+            self.tabla_comparacion.setAccessibleDescription("Muestra la comparación de presupuestos de compras")
 
     def mostrar_comparacion_presupuestos(self, presupuestos):
         self.tabla_comparacion = QTableWidget()
@@ -107,6 +107,7 @@ class ComprasView(QWidget, TableResponsiveMixin):
         self.make_table_responsive(self.tabla_comparacion)
         self.tabla_comparacion.setToolTip("Tabla de comparación de presupuestos")
         self.tabla_comparacion.setAccessibleName("Tabla de comparación de presupuestos de compras")
+        self.tabla_comparacion.setAccessibleDescription("Muestra la comparación de presupuestos de compras")
 
         for row_idx, presupuesto in enumerate(presupuestos):
             self.tabla_comparacion.setItem(row_idx, 0, QTableWidgetItem(presupuesto[0]))
@@ -180,7 +181,6 @@ class ComprasView(QWidget, TableResponsiveMixin):
                 if idx < 0 or idx >= tabla.columnCount():
                     self.mostrar_feedback("Índice de columna fuera de rango", "error")
                     return
-                pos = header.sectionPosition(idx)
                 global_pos = header.mapToGlobal(QPoint(header.sectionViewportPosition(idx), 0))
                 self.mostrar_menu_columnas(tabla, headers, columnas_visibles, config_path, global_pos)
             else:
@@ -223,10 +223,22 @@ class ComprasView(QWidget, TableResponsiveMixin):
         btn_guardar.setIcon(QIcon("resources/icons/guardar-qr.svg"))
         btn_guardar.setToolTip("Guardar QR como imagen")
         estilizar_boton_icono(btn_guardar)
+        sombra_guardar = QGraphicsDropShadowEffect()
+        sombra_guardar.setBlurRadius(12)
+        sombra_guardar.setXOffset(0)
+        sombra_guardar.setYOffset(2)
+        sombra_guardar.setColor(QColor(0, 0, 0, 40))
+        btn_guardar.setGraphicsEffect(sombra_guardar)
         btn_pdf = QPushButton()
         btn_pdf.setIcon(QIcon("resources/icons/pdf.svg"))
         btn_pdf.setToolTip("Exportar QR a PDF")
         estilizar_boton_icono(btn_pdf)
+        sombra_pdf = QGraphicsDropShadowEffect()
+        sombra_pdf.setBlurRadius(12)
+        sombra_pdf.setXOffset(0)
+        sombra_pdf.setYOffset(2)
+        sombra_pdf.setColor(QColor(0, 0, 0, 40))
+        btn_pdf.setGraphicsEffect(sombra_pdf)
         btns.addWidget(btn_guardar)
         btns.addWidget(btn_pdf)
         vbox.addLayout(btns)
@@ -253,22 +265,16 @@ class ComprasView(QWidget, TableResponsiveMixin):
         """
         Muestra feedback visual accesible y autolimpia tras un tiempo. Unifica con mostrar_mensaje.
         """
-        colores = {
-            "info": "background: #e3f6fd; color: #2563eb;",
-            "exito": "background: #d1f7e7; color: #15803d;",
-            "advertencia": "background: #fef9c3; color: #b45309;",
-            "error": "background: #fee2e2; color: #b91c1c;"
-        }
         iconos = {
             "info": "ℹ️ ",
             "exito": "✅ ",
             "advertencia": "⚠️ ",
             "error": "❌ "
         }
-        # self.label_feedback.setStyleSheet(f"font-size: 13px; border-radius: 8px; padding: 8px; font-weight: 500; {colores.get(tipo, '')}")  # Migrado a QSS global
         self.label_feedback.setText(f"{iconos.get(tipo, 'ℹ️ ')}{mensaje}")
         self.label_feedback.setVisible(True)
         self.label_feedback.setAccessibleDescription(mensaje)
+        self.label_feedback.setAccessibleName(f"Feedback {tipo} compras")
         if self._feedback_timer:
             self._feedback_timer.stop()
         from PyQt6.QtCore import QTimer
