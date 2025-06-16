@@ -62,12 +62,17 @@
 #     - Documentar cualquier excepción a estas reglas.
 # --- FIN DE PRINCIPIOS DE DISEÑO ---
 
+import codecs
 import sys
 import subprocess
 import os
 import platform
 import importlib.metadata as importlib_metadata  # Sustituye pkg_resources (deprecado)
 from core.event_bus import event_bus
+
+# Forzar la codificación de salida estándar a UTF-8 para evitar errores con caracteres Unicode.
+# Solución compatible con Windows
+os.environ['PYTHONIOENCODING'] = 'utf-8'
 
 # Definir constantes para literales duplicados
 MODULO_CONFIGURACION = "Configuración"
@@ -205,41 +210,35 @@ def chequear_dependencias(lista, tipo_log):
     return faltantes
 
 def mostrar_mensaje_dependencias(titulo, mensaje, detalles, tipo="info"):
-    from PyQt6.QtWidgets import QMessageBox, QApplication
-    icon = {
-        "info": QMessageBox.Icon.Information,
-        "exito": QMessageBox.Icon.Information,
-        "advertencia": QMessageBox.Icon.Warning,
-        "warning": QMessageBox.Icon.Warning,
-        "error": QMessageBox.Icon.Critical
-    }.get(tipo, QMessageBox.Icon.Information)
-    msg_box = QMessageBox()
-    msg_box.setIcon(icon)
-    msg_box.setWindowTitle(titulo)
-    msg_box.setText(mensaje)
-    msg_box.setInformativeText(detalles)
-    msg_box.exec()
+    from PyQt6.QtWidgets import QApplication
+    import sys
+    from core.feedback_dialog import FeedbackDialog
+    app = QApplication.instance()
+    app_creado = False
+    if app is None:
+        app = QApplication(sys.argv)
+        app_creado = True
+    dlg = FeedbackDialog(titulo, mensaje, detalles, tipo)
+    dlg.exec()
+    if app_creado:
+        app.quit()
 
 def manejar_dependencias_faltantes(faltantes_criticos, faltantes_secundarios):
-    if faltantes_criticos:
-        print("[LOG 2.3] Dependencias críticas faltantes. Mostrando mensaje y abortando.", flush=True)
+    if faltantes_criticos or faltantes_secundarios:
+        print("[LOG 2.3] Dependencias faltantes detectadas. Mostrando mensaje.", flush=True)
+        mensaje = "No se puede iniciar la aplicación. Instala las siguientes dependencias críticas:" if faltantes_criticos else "La aplicación se iniciará, pero faltan dependencias secundarias. Algunas funciones pueden estar limitadas (exportar PDF, QR, gráficos, etc.):"
+        detalles = "\n".join(faltantes_criticos + faltantes_secundarios)
+        tipo = "error" if faltantes_criticos else "warning"
         mostrar_mensaje_dependencias(
-            "Faltan dependencias críticas",
-            "No se puede iniciar la aplicación. Instala las siguientes dependencias críticas:",
-            "\n".join(faltantes_criticos),
-            tipo="error"
+            "Dependencias faltantes",
+            mensaje,
+            detalles,
+            tipo
         )
-        sys.exit(1)
-    if faltantes_secundarios:
-        print("[LOG 2.4] Dependencias secundarias faltantes. Mostrando advertencia.", flush=True)
-        mostrar_mensaje_dependencias(
-            "Dependencias opcionales faltantes",
-            "La aplicación se iniciará, pero faltan dependencias secundarias. Algunas funciones pueden estar limitadas (exportar PDF, QR, gráficos, etc.):",
-            "\n".join(faltantes_secundarios),
-            tipo="warning"
-        )
-    # Si no hay faltantes críticos ni secundarios, ya se ha manejado todo correctamente.
-    print("[LOG 2.5] ✅ Todas las dependencias críticas y secundarias están instaladas correctamente.", flush=True)
+        if faltantes_criticos:
+            sys.exit(1)
+    else:
+        print("[LOG 2.5] ✅ Todas las dependencias críticas y secundarias están instaladas correctamente.", flush=True)
 
 def verificar_dependencias():
     """

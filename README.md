@@ -1019,3 +1019,20 @@ El flujo de edición de fecha de entrega desde la UI está cubierto por el test 
 - [ ] Accesibilidad: orden de tabulación, atajos de teclado y soporte para lectores de pantalla (en progreso)
 
 > Avance y próximos pasos documentados en el checklist y en este README. Actualizar tras cada mejora o test.
+
+---
+
+## Instalación recomendada de dependencias
+
+Para instalar todas las dependencias del proyecto de forma segura y automática, ejecuta el siguiente script en vez de usar directamente `pip install -r requirements.txt`:
+
+```bash
+python scripts/install_dependencies.py
+```
+
+Este script:
+- Actualiza las herramientas de construcción (`setuptools`, `wheel`).
+- Instala todas las dependencias listadas en `requirements.txt`.
+- Instala `pillow` desde binarios precompilados para evitar errores de compilación.
+
+> **Recomendación:** Siempre usa este script para instalar o actualizar dependencias.

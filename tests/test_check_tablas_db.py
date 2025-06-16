@@ -108,10 +108,22 @@ def obtener_tablas_db(cursor):
     cursor.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
     return set(row[0] for row in cursor.fetchall())
 
+def get_db_connection(base):
+    driver = os.environ.get('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
+    server = os.environ.get('DB_SERVER')
+    username = os.environ.get('DB_USERNAME')
+    password = os.environ.get('DB_PASSWORD')
+    timeout = os.environ.get('DB_TIMEOUT', '5')
+    assert server and username and password, "Faltan variables de entorno para la conexión a la base de datos"
+    connection_string = (
+        f"DRIVER={{{driver}}};SERVER={server};DATABASE={base};UID={username};PWD={password};TrustServerCertificate=yes;Timeout={timeout};"
+    )
+    return pyodbc.connect(connection_string)
+
 def get_conn_for_tabla(tabla):
     base = TABLA_A_BASE.get(tabla)
     assert base is not None, f"No se ha definido la base de datos para la tabla '{tabla}'"
-    return pyodbc.connect(f"DRIVER={{SQL Server}};SERVER=localhost;DATABASE={base};Trusted_Connection=yes;")
+    return get_db_connection(base)
 
 @pytest.mark.parametrize("tabla, columnas", TABLAS_Y_COLUMNAS.items())
 def test_tabla_y_columnas(tabla, columnas):

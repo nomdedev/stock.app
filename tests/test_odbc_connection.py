@@ -1,5 +1,8 @@
 import os
 import pyodbc
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def probar_conexion(driver, server, username, password, database):
     try:
@@ -18,9 +21,9 @@ def probar_conexion(driver, server, username, password, database):
 
 if __name__ == "__main__":
     # Configuración de la base de datos desde variables de entorno
-    server = os.getenv("DB_SERVER", "<TU_SERVIDOR>")
-    username = os.getenv("DB_USERNAME", "<TU_USUARIO>")
-    password = os.getenv("DB_PASSWORD", "<TU_PASSWORD>")
+    server = os.getenv("DB_SERVER")
+    username = os.getenv("DB_USERNAME")
+    password = os.getenv("DB_PASSWORD")
     database = os.getenv("DB_DEFAULT_DATABASE", "inventario_perfiles")
 
     # Lista de controladores a probar

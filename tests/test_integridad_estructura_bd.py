@@ -5,18 +5,19 @@ import os
 from dotenv import load_dotenv
 
 # Cargar variables de entorno desde .env privado
-load_dotenv("config/privado/.env")
+load_dotenv()
 
 # Ruta a la documentación de referencia
 doc_path = "docs/estructura_tablas_por_modulo.md"
 
 def get_db_connection():
     driver = os.environ.get('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
-    server = os.environ.get('DB_SERVER', 'localhost')
+    server = os.environ.get('DB_SERVER')
     database = os.environ.get('DB_DEFAULT_DATABASE', 'inventario')
-    username = os.environ.get('DB_USERNAME', 'sa')
-    password = os.environ.get('DB_PASSWORD', '')
+    username = os.environ.get('DB_USERNAME')
+    password = os.environ.get('DB_PASSWORD')
     timeout = os.environ.get('DB_TIMEOUT', '5')
+    assert server and username and password, "Faltan variables de entorno para la conexión a la base de datos"
     connection_string = (
         f"DRIVER={{{driver}}};SERVER={server};DATABASE={database};UID={username};PWD={password};TrustServerCertificate=yes;Timeout={timeout};"
     )

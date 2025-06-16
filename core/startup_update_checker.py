@@ -101,6 +101,11 @@ class StartupUpdateChecker(QWidget):
             self.label.setText("Todo actualizado. Iniciando...")
             QThread.msleep(1000)
             self.finish(self.on_continue)
+        
+        # Asegurarse de que los botones no se muestren si no hay actualizaciones
+        if not updates:
+            self.btn_update.hide()
+            self.btn_skip.hide()
 
     def update_packages(self):
         pkgs = [f"{pkg}=={info['latest']}" for pkg, info in self.updates.items()]
