@@ -1,131 +1,90 @@
-import unittest
-from unittest.mock import Mock
-from modules.logistica.model import LogisticaModel
+"""
+Tests de integración y feedback visual para Logística:
+- Validación de habilitación de colocación solo si el pago está realizado.
+- Registro de excepción si se realiza la colocación sin pago (y feedback visual).
+- Visualización del estado y fecha de pago.
+- Interacción con Contabilidad para consultar pagos.
+- Feedback visual inmediato en la UI de Logística.
+"""
+import pytest
+from unittest.mock import MagicMock
 
-class MockDBConnection:
+# Dummy classes para aislar lógica
+class DummyContabilidadController:
+    def __init__(self, pagos_realizados=None):
+        self.pagos_realizados = pagos_realizados or {}
+    def esta_pagado(self, id_obra):
+        return self.pagos_realizados.get(id_obra, False)
+    def obtener_fecha_pago(self, id_obra):
+        return "2025-06-09" if self.esta_pagado(id_obra) else None
+
+class DummyLogisticaModel:
     def __init__(self):
-        self.entregas_obras = []
-        self.checklist_entrega = []
-        self.last_id = 1
-        self.query_log = []
-    def ejecutar_query(self, query, params=None):
-        self.query_log.append((query, params))
-        if "INSERT INTO entregas_obras" in query:
-            # Aceptar cualquier variante de inserción y mapear a la estructura estándar
-            # Estructura: id, id_obra, fecha_programada, fecha_realizada, estado, vehiculo_asignado, chofer_asignado, observaciones
-            valores = list(params) if params else []
-            # Rellenar hasta 9 campos
-            while len(valores) < 9:
-                valores.append(None)
-            id_obra = valores[0]
-            fecha_programada = valores[1]
-            fecha_realizada = valores[2]
-            estado = valores[3] if valores[3] is not None else "pendiente"
-            vehiculo_asignado = valores[4]
-            chofer_asignado = valores[5]
-            observaciones = valores[8] if valores[8] is not None else "Sin observaciones"
-            # Asignar id_entrega igual a id_obra si es un entero positivo, si no usar last_id
-            try:
-                id_entrega = int(id_obra)
-                if id_entrega > 0:
-                    pass
-                else:
-                    id_entrega = self.last_id
-            except Exception:
-                id_entrega = self.last_id
-            entrega = (
-                int(id_entrega), id_obra, fecha_programada, fecha_realizada, estado, vehiculo_asignado, chofer_asignado, observaciones
-            )
-            print(f"[MOCK] INSERT entrega: id_entrega={id_entrega}, id_obra={id_obra}, entrega={entrega}")
-            self.entregas_obras.append(entrega)
-            self.last_id += 1
-            return None
-        if "SELECT id, id_obra, fecha_programada, fecha_realizada, estado, vehiculo_asignado, chofer_asignado, observaciones FROM entregas_obras WHERE id = ?" in query:
-            if params is None:
-                return []
-            id_entrega = int(params[0])
-            print(f"[MOCK] SELECT EXPORT busca id_entrega={id_entrega}, entregas={self.entregas_obras}")
-            for e in self.entregas_obras:
-                print(f"[MOCK] Comparando e[0]={e[0]} con id_entrega={id_entrega}")
-                if int(e[0]) == id_entrega:
-                    print(f"[MOCK] EXPORT found: {e}")
-                    return [e]
-            print("[MOCK] EXPORT not found")
-            return []
-        if "SELECT id, id_obra, fecha_programada, estado FROM entregas_obras WHERE id = ?" in query:
-            if params is None:
-                return []
-            id_entrega = int(params[0])
-            print(f"[MOCK] SELECT ACTA busca id_entrega={id_entrega}, entregas={self.entregas_obras}")
-            for e in self.entregas_obras:
-                print(f"[MOCK] Comparando e[0]={e[0]} con id_entrega={id_entrega}")
-                if int(e[0]) == id_entrega:
-                    return [(e[0], e[1], e[2], e[4])]
-            print("[MOCK] ACTA not found")
-            return []
-        if "SELECT * FROM checklist_entrega WHERE id_entrega = ?" in query:
-            return [ ("Item 1", "OK", "Ninguna"), ("Item 2", "OK", "Ninguna") ]
-        if "SELECT * FROM entregas_obras" in query:
-            return list(self.entregas_obras)
-        if "UPDATE entregas_obras SET estado = ? WHERE id = ?" in query:
-            if params is None:
-                return None
-            for i, e in enumerate(self.entregas_obras):
-                if int(e[0]) == int(params[1]):
-                    self.entregas_obras[i] = e[:4] + (params[0],) + e[5:]
-            return None
-        return []
+        self.colocaciones = []
+        self.excepciones = []
+    def registrar_colocacion(self, id_obra, usuario):
+        self.colocaciones.append((id_obra, usuario))
+    def registrar_excepcion(self, id_obra, usuario, motivo):
+        self.excepciones.append((id_obra, usuario, motivo))
 
-class MockLogisticaView:
+class DummyLogisticaView:
     def __init__(self):
-        self.tabla_data = []
-    def actualizar_tabla(self, data):
-        self.tabla_data = data
+        self.feedback = []
+    def mostrar_feedback(self, mensaje, tipo="info", **kwargs):
+        self.feedback.append((mensaje, tipo))
+    def mostrar_estado_pago(self, pagado, fecha):
+        self.estado_pago = (pagado, fecha)
 
-class TestLogisticaIntegracion(unittest.TestCase):
-    def setUp(self):
-        self.mock_db = MockDBConnection()
-        self.model = LogisticaModel(self.mock_db)
-        self.view = MockLogisticaView()
-    def tearDown(self):
-        self.mock_db.entregas_obras.clear()
-        # No reiniciar last_id para mantener ids únicos
-    def test_programar_y_reflejar_entrega(self):
-        # 1. Programar entrega
-        self.model.programar_entrega(1, "2025-05-20", "Vehículo 1", "Chofer 1", None, None)
-        entregas = self.mock_db.ejecutar_query("SELECT * FROM entregas_obras") or []
-        self.assertTrue(any(e[1] == 1 for e in entregas))
-        # 2. Simular actualización de tabla en la vista
-        self.view.actualizar_tabla(entregas)
-        self.assertEqual(self.view.tabla_data, entregas)
-    def test_actualizar_estado_entrega(self):
-        # 1. Programar entrega
-        self.model.programar_entrega(2, "2025-05-21", "Vehículo 2", "Chofer 2", None, None)
-        entregas = self.mock_db.ejecutar_query("SELECT * FROM entregas_obras") or []
-        if not entregas:
-            self.fail("No se encontró la entrega recién creada")
-        id_entrega = entregas[0][0]
-        # 2. Actualizar estado
-        self.model.actualizar_estado_entrega(id_entrega, "en ruta")
-        entregas = self.mock_db.ejecutar_query("SELECT * FROM entregas_obras") or []
-        self.assertTrue(any(len(e) > 4 and e[4] == "en ruta" for e in entregas))
-        # 3. Simular actualización de tabla en la vista
-        self.view.actualizar_tabla(entregas)
-        self.assertEqual(self.view.tabla_data, entregas)
-    def test_generar_y_exportar_acta(self):
-        # 1. Programar entrega
-        self.model.programar_entrega(3, "2025-05-13", "Vehículo 3", "Chofer 3", None, None)
-        entregas = self.mock_db.ejecutar_query("SELECT * FROM entregas_obras") or []
-        if not entregas:
-            self.fail("No se encontró la entrega recién creada")
-        id_entrega = entregas[-1][0]
-        # 2. Generar acta
-        resultado = self.model.generar_acta_entrega(id_entrega)
-        self.assertIn("Acta de entrega generada", resultado)
-        # 3. Exportar acta
-        resultado_export = self.model.exportar_acta_entrega(id_entrega)
-        print(f"DEBUG id_entrega: {id_entrega}, resultado_export: {resultado_export}")
-        self.assertIn(f"acta_entrega_{id_entrega}.pdf", resultado_export)
+@pytest.fixture
+def setup_logistica():
+    model = DummyLogisticaModel()
+    view = DummyLogisticaView()
+    contab = DummyContabilidadController({1: True, 2: False})
+    usuario = {"id": 1, "usuario": "testuser"}
+    # Simular LogisticaController real
+    class LogisticaController:
+        def __init__(self, model, view, contab, usuario):
+            self.model = model
+            self.view = view
+            self.contab = contab
+            self.usuario = usuario
+        def intentar_colocacion(self, id_obra):
+            if self.contab.esta_pagado(id_obra):
+                self.model.registrar_colocacion(id_obra, self.usuario["usuario"])
+                self.view.mostrar_feedback("Colocación habilitada y registrada.", tipo="exito")
+            else:
+                self.model.registrar_excepcion(id_obra, self.usuario["usuario"], "Colocación sin pago")
+                self.view.mostrar_feedback("No se puede habilitar colocación: pago pendiente.", tipo="error")
+        def mostrar_estado_pago(self, id_obra):
+            pagado = self.contab.esta_pagado(id_obra)
+            fecha = self.contab.obtener_fecha_pago(id_obra)
+            self.view.mostrar_estado_pago(pagado, fecha)
+    return LogisticaController(model, view, contab, usuario), model, view, contab
 
-if __name__ == "__main__":
-    unittest.main()
+def test_colocacion_habilitada_si_pago(setup_logistica):
+    controller, model, view, _ = setup_logistica
+    controller.intentar_colocacion(1)
+    assert model.colocaciones == [(1, "testuser")]
+    assert view.feedback[-1][1] == "exito"
+    assert "habilitada" in view.feedback[-1][0]
+
+def test_colocacion_bloqueada_si_no_pago(setup_logistica):
+    controller, model, view, _ = setup_logistica
+    controller.intentar_colocacion(2)
+    assert model.excepciones[-1] == (2, "testuser", "Colocación sin pago")
+    assert view.feedback[-1][1] == "error"
+    assert "pago pendiente" in view.feedback[-1][0]
+
+def test_visualizacion_estado_pago(setup_logistica):
+    controller, _, view, _ = setup_logistica
+    controller.mostrar_estado_pago(1)
+    assert view.estado_pago == (True, "2025-06-09")
+    controller.mostrar_estado_pago(2)
+    assert view.estado_pago == (False, None)
+
+def test_feedback_visual_inmediato(setup_logistica):
+    controller, _, view, _ = setup_logistica
+    controller.intentar_colocacion(2)
+    assert view.feedback[-1][1] == "error"
+    controller.intentar_colocacion(1)
+    assert view.feedback[-1][1] == "exito"

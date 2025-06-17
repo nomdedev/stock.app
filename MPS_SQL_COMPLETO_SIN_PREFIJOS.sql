@@ -2,20 +2,67 @@
 -- Ejecutar en la base de datos correspondiente antes de cada bloque
 
 -- =====================
--- TABLA usuarios
+-- TABLA usuarios (ajustada para pruebas y uso real)
 -- =====================
 IF OBJECT_ID('usuarios', 'U') IS NOT NULL DROP TABLE usuarios;
 CREATE TABLE usuarios (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    nombre NVARCHAR(100),
-    apellido NVARCHAR(100),
+    username NVARCHAR(50) UNIQUE,
     email NVARCHAR(100) UNIQUE,
-    usuario NVARCHAR(50) UNIQUE,
-    password_hash NVARCHAR(255),
     rol NVARCHAR(50),
-    estado NVARCHAR(20),
-    fecha_creacion DATETIME DEFAULT GETDATE(),
-    ultima_conexion DATETIME
+    activo BIT DEFAULT 1,
+    password_hash NVARCHAR(255),
+    fecha_creacion DATETIME DEFAULT GETDATE()
+);
+
+-- =====================
+-- TABLA auditoria
+-- =====================
+IF OBJECT_ID('auditoria', 'U') IS NOT NULL DROP TABLE auditoria;
+CREATE TABLE auditoria (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    usuario_id INT,
+    modulo NVARCHAR(50),
+    accion NVARCHAR(50),
+    detalle NVARCHAR(MAX),
+    fecha DATETIME DEFAULT GETDATE(),
+    ip NVARCHAR(50)
+);
+
+-- =====================
+-- TABLA configuracion
+-- =====================
+IF OBJECT_ID('configuracion', 'U') IS NOT NULL DROP TABLE configuracion;
+CREATE TABLE configuracion (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    clave NVARCHAR(100),
+    valor NVARCHAR(MAX),
+    descripcion NVARCHAR(MAX)
+);
+
+-- =====================
+-- TABLA facturas
+-- =====================
+IF OBJECT_ID('facturas', 'U') IS NOT NULL DROP TABLE facturas;
+CREATE TABLE facturas (
+    id_factura INT IDENTITY(1,1) PRIMARY KEY,
+    id_obra INT,
+    monto DECIMAL(18,2),
+    fecha DATETIME,
+    estado NVARCHAR(50),
+    usuario NVARCHAR(50)
+);
+
+-- =====================
+-- TABLA pagos
+-- =====================
+IF OBJECT_ID('pagos', 'U') IS NOT NULL DROP TABLE pagos;
+CREATE TABLE pagos (
+    id_pago INT IDENTITY(1,1) PRIMARY KEY,
+    id_factura INT,
+    monto DECIMAL(18,2),
+    fecha DATETIME,
+    usuario NVARCHAR(50)
 );
 
 -- =====================
