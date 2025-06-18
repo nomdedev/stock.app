@@ -165,7 +165,7 @@ class AuditoriaView(QWidget, TableResponsiveMixin):
                     return json.load(f)
             except Exception:
                 pass
-        return {header: True for header in headers}
+        return dict.fromkeys(headers, True)
 
     def guardar_config_columnas(self, config_path, columnas_visibles):
         try:

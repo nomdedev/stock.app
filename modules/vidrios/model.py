@@ -1,4 +1,6 @@
 class VidriosModel:
+    CANTIDAD_INVALIDA_MSG = "Cantidad inválida"
+
     def __init__(self, db_connection):
         self.db = db_connection
 
@@ -13,16 +15,14 @@ class VidriosModel:
         """
         self.db.ejecutar_query(query, datos)
 
-    def asignar_a_obra(self, id_vidrio, id_obra):
+    def asignar_a_obra(self, id_vidrio, id_obra, cantidad, usuario):
         query = """
         INSERT INTO vidrios_obras (id_vidrio, id_obra)
         VALUES (?, ?)
         """
         self.db.ejecutar_query(query, (id_vidrio, id_obra))
-
-    def reservar_vidrio(self, usuario, id_obra, id_vidrio, cantidad):
         if cantidad <= 0:
-            raise ValueError("Cantidad inválida")
+            raise ValueError(self.CANTIDAD_INVALIDA_MSG)
         with self.db.transaction():
             stock = self.db.ejecutar_query("SELECT stock_actual FROM vidrios WHERE id_vidrio = ?", (id_vidrio,))
             if not stock:
@@ -43,7 +43,7 @@ class VidriosModel:
 
     def devolver_vidrio(self, usuario, id_obra, id_vidrio, cantidad):
         if cantidad <= 0:
-            raise ValueError("Cantidad inválida")
+            raise ValueError(self.CANTIDAD_INVALIDA_MSG)
         with self.db.transaction():
             self.db.ejecutar_query("UPDATE vidrios SET stock_actual = stock_actual + ? WHERE id_vidrio = ?", (cantidad, id_vidrio))
             reserva = self.db.ejecutar_query("SELECT cantidad_reservada FROM vidrios_por_obra WHERE id_obra = ? AND id_vidrio = ?", (id_obra, id_vidrio))
@@ -57,10 +57,10 @@ class VidriosModel:
             self.db.ejecutar_query("INSERT INTO movimientos_vidrios (id_vidrio, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Ingreso', ?, CURRENT_TIMESTAMP, ?)", (id_vidrio, cantidad, usuario or ""))
             self.db.ejecutar_query("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", (usuario, "Vidrios", f"Devolvió {cantidad} del vidrio {id_vidrio} de la obra {id_obra}"))
         return True
-
-    def ajustar_stock_vidrio(self, usuario, id_vidrio, nueva_cantidad):
         if nueva_cantidad < 0:
-            raise ValueError("Cantidad inválida")
+            raise ValueError(self.CANTIDAD_INVALIDA_MSG)
+        if nueva_cantidad < 0:
+            raise ValueError(self.CANTIDAD_INVALIDA_MSG)
         with self.db.transaction():
             stock = self.db.ejecutar_query("SELECT stock_actual FROM vidrios WHERE id_vidrio = ?", (id_vidrio,))
             if not stock:

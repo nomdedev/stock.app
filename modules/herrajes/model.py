@@ -1,9 +1,12 @@
-from core.database import InventarioDatabaseConnection
+from core.database import InventarioDatabaseConnection, AuditoriaDatabaseConnection
 
 class HerrajesModel:
     """
     Modelo de Herrajes que utiliza InventarioDatabaseConnection (hereda de BaseDatabaseConnection) para conexión persistente y segura.
     """
+    CANTIDAD_INVALIDA_MSG = "Cantidad inválida"
+    AUDITORIA_INSERT_QUERY = "INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)"
+
     def __init__(self, db_connection=None):
         self.db = db_connection or InventarioDatabaseConnection()
 
@@ -46,11 +49,8 @@ class HerrajesModel:
         self.db.ejecutar_query(query, (id_material,))
 
     def reservar_herraje(self, usuario, id_obra, id_herraje, cantidad):
-        """
-        Reserva cantidad de herraje para una obra, actualiza stock y movimientos, y registra auditoría.
-        """
         if cantidad is None or cantidad <= 0:
-            raise ValueError("Cantidad inválida")
+            raise ValueError(self.CANTIDAD_INVALIDA_MSG)
         stock = self.db.ejecutar_query("SELECT stock_actual FROM herrajes WHERE id_herraje = ?", (id_herraje,))
         if not stock or stock[0][0] is None:
             raise ValueError("Herraje no encontrado")
@@ -65,14 +65,12 @@ class HerrajesModel:
             else:
                 self.db.ejecutar_query("INSERT INTO herrajes_por_obra (id_obra, id_herraje, cantidad_reservada, estado) VALUES (?, ?, ?, 'Reservado')", (id_obra, id_herraje, cantidad))
             self.db.ejecutar_query("INSERT INTO movimientos_herrajes (id_herraje, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Egreso', ?, CURRENT_TIMESTAMP, ?)", (id_herraje, cantidad, usuario or ""))
-            if usuario:
-                self.db.ejecutar_query("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", (usuario, "Herrajes", f"Reservó {cantidad} del herraje {id_herraje} para obra {id_obra}",))
+            auditoria_db = AuditoriaDatabaseConnection()
+            auditoria_db.ejecutar_query(self.AUDITORIA_INSERT_QUERY, (usuario, "Herrajes", f"Reservó {cantidad} del herraje {id_herraje} para obra {id_obra}"))
+            auditoria_db.ejecutar_query(self.AUDITORIA_INSERT_QUERY, (usuario, "Herrajes", f"Reservó {cantidad} del herraje {id_herraje} para obra {id_obra}"))
         return True
 
     def devolver_herraje(self, usuario, id_obra, id_herraje, cantidad):
-        """
-        Devuelve cantidad de herraje a inventario, actualiza stock y movimientos, y registra auditoría.
-        """
         if cantidad is None or cantidad <= 0:
             raise ValueError("Cantidad inválida")
         self.db.ejecutar_query("UPDATE herrajes SET stock_actual = stock_actual + ? WHERE id_herraje = ?", (cantidad, id_herraje))
@@ -89,25 +87,24 @@ class HerrajesModel:
             else:
                 self.db.ejecutar_query("UPDATE herrajes_por_obra SET cantidad_reservada=0, estado='Liberado' WHERE id_obra=? AND id_herraje=?", (id_obra, id_herraje))
             self.db.ejecutar_query("INSERT INTO movimientos_herrajes (id_herraje, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Ingreso', ?, CURRENT_TIMESTAMP, ?)", (id_herraje, cantidad, usuario or ""))
-            if usuario:
-                self.db.ejecutar_query("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", (usuario, "Herrajes", f"Devolvió {cantidad} del herraje {id_herraje} de la obra {id_obra}",))
+            auditoria_db = AuditoriaDatabaseConnection()
+            auditoria_db.ejecutar_query(self.AUDITORIA_INSERT_QUERY, (usuario, "Herrajes", f"Devolvió {cantidad} del herraje {id_herraje} de la obra {id_obra}"))
+            auditoria_db.ejecutar_query(self.AUDITORIA_INSERT_QUERY, (usuario, "Herrajes", f"Devolvió {cantidad} del herraje {id_herraje} de la obra {id_obra}"))
         return True
 
-    def ajustar_stock_herraje(self, usuario, id_herraje, nueva_cantidad):
-        """
-        Ajusta el stock de un herraje a un nuevo valor, registra movimiento y auditoría.
-        """
-        if nueva_cantidad < 0:
-            raise ValueError("Cantidad inválida")
+    def ajustar_stock_herraje(self, usuario, id_herraje, cantidad):
+        if cantidad < 0:
+            raise ValueError(self.CANTIDAD_INVALIDA_MSG)
         stock_ant = self.db.ejecutar_query("SELECT stock_actual FROM herrajes WHERE id_herraje = ?", (id_herraje,))
         if not stock_ant or stock_ant[0][0] is None:
             raise ValueError("Herraje no encontrado")
         stock_anterior = stock_ant[0][0]
         with self.db.transaction(timeout=30, retries=2):
-            self.db.ejecutar_query("UPDATE herrajes SET stock_actual = ? WHERE id_herraje = ?", (nueva_cantidad, id_herraje))
-            self.db.ejecutar_query("INSERT INTO movimientos_herrajes (id_herraje, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Ajuste', ?, CURRENT_TIMESTAMP, ?)", (id_herraje, abs(nueva_cantidad - stock_anterior), usuario or ""))
-            if usuario:
-                self.db.ejecutar_query("INSERT INTO auditorias_sistema (usuario, modulo, accion, fecha) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", (usuario, "Herrajes", f"Ajustó stock del herraje {id_herraje} de {stock_anterior} a {nueva_cantidad}",))
+            self.db.ejecutar_query("UPDATE herrajes SET stock_actual = ? WHERE id_herraje = ?", (cantidad, id_herraje))
+            self.db.ejecutar_query("INSERT INTO movimientos_herrajes (id_herraje, tipo_movimiento, cantidad, fecha, usuario) VALUES (?, 'Ajuste', ?, CURRENT_TIMESTAMP, ?)", (id_herraje, abs(cantidad - stock_anterior), usuario or ""))
+            auditoria_db = AuditoriaDatabaseConnection()
+            auditoria_db.ejecutar_query(self.AUDITORIA_INSERT_QUERY, (usuario, "Herrajes", f"Ajustó stock del herraje {id_herraje} de {stock_anterior} a {cantidad}"))
+            auditoria_db.ejecutar_query(self.AUDITORIA_INSERT_QUERY, (usuario, "Herrajes", f"Ajustó stock del herraje {id_herraje} de {stock_anterior} a {cantidad}"))
         return True
 
     def obtener_estado_pedido_por_obra(self, id_obra):

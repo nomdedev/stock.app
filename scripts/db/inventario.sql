@@ -8,7 +8,6 @@ IF OBJECT_ID('inventario_perfiles', 'U') IS NOT NULL DROP TABLE inventario_perfi
 CREATE TABLE inventario_perfiles (
     id INT IDENTITY(1,1) PRIMARY KEY,
     codigo NVARCHAR(100) UNIQUE NOT NULL,
-    nombre NVARCHAR(100),
     tipo_material NVARCHAR(50),
     unidad NVARCHAR(20),
     stock_actual DECIMAL(18,2) DEFAULT 0,
@@ -188,7 +187,7 @@ CREATE TABLE materiales_por_obra (
 -- =====================
 -- DATOS DE EJEMPLO MÍNIMOS
 -- =====================
-INSERT INTO inventario_perfiles (codigo, nombre, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion) VALUES ('PERF001', 'Perfil A', 'PVC', 'm', 100, 10, 'Depósito', 'Perfil estándar');
+INSERT INTO inventario_perfiles (codigo, descripcion, tipo_material, unidad, stock_actual, stock_minimo, ubicacion, descripcion) VALUES ('PERF001', 'Perfil A', 'PVC', 'm', 100, 10, 'Depósito', 'Perfil estándar');
 INSERT INTO herrajes (codigo, descripcion, stock_actual, stock_minimo, ubicacion) VALUES ('HERR001', 'Herraje A', 50, 5, 'Depósito');
 INSERT INTO materiales (codigo, descripcion, cantidad, ubicacion) VALUES ('MAT001', 'Material A', 200, 'Depósito');
 INSERT INTO perfiles_por_obra (id_obra, id_perfil, cantidad_reservada) VALUES (1, 1, 10);

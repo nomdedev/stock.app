@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import pandas as pd
 import pyodbc
 import os
@@ -9,7 +13,7 @@ import unicodedata
 csv_path = os.path.join('data_inventario', 'inventario_formato_final.csv')
 
 # Configuración de conexión (ajusta si es necesario)
-server = "192.168.88.205"
+server = r"ITACHI\SQLEXPRESS"
 database = "inventario"
 username = "sa"
 password = "mps.1887"
@@ -185,3 +189,5 @@ if errores:
         pass
 else:
     pass
+
+# No se usa 'nombre', solo 'descripcion' en el DataFrame y en la tabla.

@@ -254,7 +254,7 @@ class InventarioView(QWidget, TableResponsiveMixin):
         if os.path.exists(self.config_path):
             with open(self.config_path, "r", encoding="utf-8") as f:
                 return json.load(f)
-        return {header: True for header in self.inventario_headers}
+        return dict.fromkeys(self.inventario_headers, True)
 
     def guardar_config_columnas(self):
         with open(self.config_path, "w", encoding="utf-8") as f:

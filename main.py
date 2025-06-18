@@ -372,165 +372,168 @@ icon_map = {
 class MainWindow(QMainWindow):
     def __init__(self, usuario, modulos_permitidos):
         super().__init__()
-        from PyQt6.QtWidgets import QStatusBar
-        self._status_bar = QStatusBar()
-        self.setStatusBar(self._status_bar)
+        self._db_connections = {}
+        self._models = {}
+        self._views = {}
+        self._controllers = {}
+        # Inicializar modelos, vistas, controladores y layout principal
         self.logger = Logger()
-        self.logger.info("Aplicación iniciada")
-        self.setWindowTitle("MPS Inventario App")
-        self.resize(1280, 720)
-        self.setMinimumSize(1024, 600)
-        self.usuario_actual = usuario
-        self.modulos_permitidos = modulos_permitidos
-        self.usuario_label = QLabel()
-        self.usuario_label.setObjectName("usuarioActualLabel")
-        # El estilo visual de usuario_label se gestiona por QSS de theme global. No usar setStyleSheet aquí.
-        self.usuario_label.setText("")
-        self._status_bar.addPermanentWidget(self.usuario_label, 1)
-        self.initUI(usuario, modulos_permitidos)
+        self._init_models()
+        self._init_views_and_controllers(usuario)
+        self._setup_main_layout()
+        self._filter_modules_and_setup_sidebar(usuario, modulos_permitidos)
+        self._connect_module_signals()
+        self._integrate_order_status_in_works()
+        self._setup_conexion_checker()
 
-    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000, show_modal=None):
-        # tipo: "info", "exito", "advertencia", "error"
-        # El estilo visual del status bar se gestiona por QSS de theme global.
-        self._status_bar.showMessage(mensaje, duracion)
-
-        if show_modal is None:
-            # Comportamiento por defecto: modales para error y advertencia.
-            # Éxito e info no muestran modal por defecto, para ser menos intrusivos.
-            show_modal_decision = tipo in ["error", "advertencia"]
+    def mostrar_mensaje(self, mensaje, tipo="info", duracion=4000):
+        """
+        Muestra un mensaje temporal en la ventana principal.
+        tipo: "info", "warning", "error", "success"
+        duracion: milisegundos (por defecto 4000)
+        """
+        from PyQt6.QtWidgets import QMessageBox
+        if tipo == "info":
+            icon = QMessageBox.Icon.Information
+        elif tipo == "warning":
+            icon = QMessageBox.Icon.Warning
+        elif tipo == "error":
+            icon = QMessageBox.Icon.Critical
+        elif tipo == "success":
+            icon = QMessageBox.Icon.Information
         else:
-            show_modal_decision = show_modal
-
-        if show_modal_decision:
-            if tipo == "error":
-                QMessageBox.critical(self, "Error", mensaje)
-            elif tipo == "advertencia":
-                QMessageBox.warning(self, "Advertencia", mensaje)
-            elif tipo == "exito":  # Solo si show_modal es True explícitamente
-                QMessageBox.information(self, "Éxito", mensaje)
-            elif tipo == "info":  # Solo si show_modal es True explícitamente
-                QMessageBox.information(self, "Información", mensaje)
+            icon = QMessageBox.Icon.NoIcon
+        msg_box = QMessageBox(self)
+        msg_box.setIcon(icon)
+        msg_box.setText(mensaje)
+        msg_box.setWindowTitle("Mensaje")
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+        # Cerrar automáticamente después de 'duracion' ms
+        from PyQt6.QtCore import QTimer
+        QTimer.singleShot(duracion, msg_box.accept)
+        msg_box.exec()
 
     def actualizar_usuario_label(self, usuario):
-        # rol = usuario.get(\'rol\', \'\').lower() # Variable rol no se usa si el color es por QSS
-        # El color se maneja por QSS global, esta variable no se usa.
-        self.usuario_label.setText(f"Usuario: {usuario['usuario']} ({usuario['rol']})")
+        """
+        Actualiza el label de usuario actual en la interfaz, si existe.
+        """
+        # Si tienes un label específico para mostrar el usuario, actualízalo aquí.
+        # Por ejemplo, si tienes self.usuario_label:
+        if hasattr(self, "usuario_label"):
+            if isinstance(usuario, dict) and "usuario" in usuario and "rol" in usuario:
+                self.usuario_label.setText(f"Usuario: {usuario['usuario']} ({usuario['rol']})")
+            else:
+                self.usuario_label.setText(f"Usuario: {str(usuario)}")
 
-    def initUI(self, usuario=None, modulos_permitidos_param=None):
-        # Crear conexiones persistentes a las bases de datos (una sola instancia por base)
-        self._init_database_connections()
-        # Crear instancias de modelos
-        self._init_models()
-        # Crear vistas y controladores principales
-        self._init_views_and_controllers(usuario)
-        # Layout principal
-        self._setup_main_layout()
-        # Filtrado de módulos y configuración del sidebar
-        self._filter_modules_and_setup_sidebar(usuario, modulos_permitidos_param)
-        # Pasar usuario_actual a los controladores
-        self._update_controllers_with_user(usuario)
-        # Conectar señales para integración entre módulos
-        self._connect_module_signals()
-        # Integración visual de estado de pedidos en obras
-        self._integrate_order_status_in_works()
+    def get_inventario_connection(self):
+        if 'inventario' not in self._db_connections:
+            db = DatabaseConnection()
+            db.conectar_a_base("inventario")
+            self._db_connections['inventario'] = db
+        return self._db_connections['inventario']
 
-    def _init_database_connections(self):
-        self.db_connection_inventario = DatabaseConnection()
-        self.db_connection_inventario.conectar_a_base("inventario")
-        self.db_connection_usuarios = DatabaseConnection()
-        self.db_connection_usuarios.conectar_a_base("users")
-        self.db_connection_auditoria = DatabaseConnection()
-        self.db_connection_auditoria.conectar_a_base("auditoria")
-        self.db_connection_pedidos = self.db_connection_inventario
-        self.db_connection_configuracion = self.db_connection_inventario
-        self.db_connection_produccion = self.db_connection_inventario
+    def get_usuarios_connection(self):
+        if 'users' not in self._db_connections:
+            db = DatabaseConnection()
+            db.conectar_a_base("users")
+            self._db_connections['users'] = db
+        return self._db_connections['users']
+
+    def get_auditoria_connection(self):
+        if 'auditoria' not in self._db_connections:
+            db = DatabaseConnection()
+            db.conectar_a_base("auditoria")
+            self._db_connections['auditoria'] = db
+        return self._db_connections['auditoria']
+
+    def get_configuracion_connection(self):
+        # Si configuracion está en inventario, se reutiliza
+        return self.get_inventario_connection()
+
+    def get_pedidos_connection(self):
+        # Si pedidos está en inventario, se reutiliza
+        return self.get_inventario_connection()
+
+    def get_produccion_connection(self):
+        # Si producción está en inventario, se reutiliza
+        return self.get_inventario_connection()
 
     def _init_models(self):
-        self.inventario_model = InventarioModel(db_connection=self.db_connection_inventario)
-        # self.inventario_model.actualizar_qr_y_campos_por_descripcion()  # Método no existe, línea comentada para evitar error
-        self.obras_model = ObrasModel(db_connection=self.db_connection_inventario)
-        self.produccion_model = ProduccionModel(db_connection=self.db_connection_produccion)
-        self.logistica_model = LogisticaModel(db_connection=self.db_connection_inventario)
-        self.pedidos_model = PedidosModel(db_connection=self.db_connection_pedidos)
-        self.configuracion_model = ConfiguracionModel(db_connection=self.db_connection_configuracion)
-        self.herrajes_model = HerrajesModel(self.db_connection_inventario)
-        self.usuarios_model = UsuariosModel(db_connection=self.db_connection_usuarios)
-        # self.usuarios_model.crear_usuarios_iniciales()  # Método no existe, línea comentada para evitar error
-        self.auditoria_model = AuditoriaModel(db_connection=self.db_connection_auditoria) # Movido aquí para consistencia
+        self._models['inventario'] = InventarioModel(db_connection=self.get_inventario_connection())
+        self._models['obras'] = ObrasModel(db_connection=self.get_inventario_connection())
+        self._models['produccion'] = ProduccionModel(db_connection=self.get_produccion_connection())
+        self._models['logistica'] = LogisticaModel(db_connection=self.get_inventario_connection())
+        self._models['pedidos'] = PedidosModel(db_connection=self.get_pedidos_connection())
+        self._models['configuracion'] = ConfiguracionModel(db_connection=self.get_configuracion_connection())
+        self._models['herrajes'] = HerrajesModel(self.get_inventario_connection())
+        self._models['usuarios'] = UsuariosModel(db_connection=self.get_usuarios_connection())
+        self._models['auditoria'] = AuditoriaModel(db_connection=self.get_auditoria_connection())
 
     def _init_views_and_controllers(self, usuario):
         usuario_str = usuario['usuario'] if isinstance(usuario, dict) and 'usuario' in usuario else str(usuario)
-        
-        self.inventario_view = InventarioView(db_connection=self.db_connection_inventario, usuario_actual=usuario_str)
-        self.inventario_controller = InventarioController(
-            model=self.inventario_model,
-            view=self.inventario_view,
-            db_connection=self.db_connection_inventario,
+        self._views['inventario'] = InventarioView(db_connection=self.get_inventario_connection(), usuario_actual=usuario_str)
+        self._controllers['inventario'] = InventarioController(
+            model=self._models['inventario'],
+            view=self._views['inventario'],
+            db_connection=self.get_inventario_connection(),
             usuario_actual=usuario
         )
-        self.obras_view = ObrasView()
-        self.obras_controller = ObrasController(
-            model=self.obras_model, view=self.obras_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model, logistica_controller=None
+        self._views['obras'] = ObrasView()
+        self._controllers['obras'] = ObrasController(
+            model=self._models['obras'], view=self._views['obras'], db_connection=self.get_inventario_connection(), usuarios_model=self._models['usuarios'], logistica_controller=None
         )
-        self.obras_view.set_controller(self.obras_controller)
-        
-        self.produccion_view = ProduccionView()
-        self.produccion_controller = ProduccionController(
-            model=self.produccion_model, view=self.produccion_view, db_connection=self.db_connection_produccion
+        self.obras_controller = self._controllers['obras']
+        self._views['produccion'] = ProduccionView()
+        self._controllers['produccion'] = ProduccionController(
+            model=self._models['produccion'], view=self._views['produccion'], db_connection=self.get_produccion_connection()
         )
-        
-        self.logistica_view = LogisticaView()
-        self.logistica_controller = LogisticaController(
-            model=self.logistica_model, view=self.logistica_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
+        self._views['logistica'] = LogisticaView()
+        self._controllers['logistica'] = LogisticaController(
+            model=self._models['logistica'], view=self._views['logistica'], db_connection=self.get_inventario_connection(), usuarios_model=self._models['usuarios']
         )
-        self.obras_controller.logistica_controller = self.logistica_controller
-        
-        self.compras_pedidos_view = ComprasPedidosView()
-        self.compras_pedidos_controller = ComprasPedidosController(
-            self.pedidos_model, self.compras_pedidos_view, self.db_connection_pedidos, self.usuarios_model
+        self._controllers['obras'].logistica_controller = self._controllers['logistica']
+        self._views['compras_pedidos'] = ComprasPedidosView()
+        self._controllers['compras_pedidos'] = ComprasPedidosController(
+            self._models['pedidos'], self._views['compras_pedidos'], self.get_pedidos_connection(), self._models['usuarios']
         )
-        self.compras_pedidos_controller.cargar_pedidos()
-        
-        self.pedidos_view = PedidosIndependienteView()
-        self.pedidos_controller = PedidosController(self.pedidos_view, self.db_connection_pedidos)
-        
-        self.usuarios_view = UsuariosView() # Crear vista antes de pasarla al controlador
-        self.usuarios_controller = UsuariosController(
-            model=self.usuarios_model, view=self.usuarios_view, db_connection=self.db_connection_usuarios
+        self._controllers['compras_pedidos'].cargar_pedidos()
+        self._views['pedidos'] = PedidosIndependienteView()
+        self._controllers['pedidos'] = PedidosController(self._views['pedidos'], self.get_pedidos_connection())
+        self._views['usuarios'] = UsuariosView()
+        self._controllers['usuarios'] = UsuariosController(
+            model=self._models['usuarios'], view=self._views['usuarios'], db_connection=self.get_usuarios_connection()
         )
-        
-        self.auditoria_view = AuditoriaView()
-        self.auditoria_controller = AuditoriaController(
-            model=self.auditoria_model, view=self.auditoria_view, db_connection=self.db_connection_auditoria
+        self._views['auditoria'] = AuditoriaView()
+        self._controllers['auditoria'] = AuditoriaController(
+            model=self._models['auditoria'], view=self._views['auditoria'], db_connection=self.get_auditoria_connection()
         )
-        
-        self.configuracion_view = ConfiguracionView()
-        self.configuracion_controller = ConfiguracionController(
-            model=self.configuracion_model, view=self.configuracion_view, db_connection=self.db_connection_configuracion, usuarios_model=self.usuarios_model
+        self._views['configuracion'] = ConfiguracionView()
+        self._controllers['configuracion'] = ConfiguracionController(
+            model=self._models['configuracion'], view=self._views['configuracion'], db_connection=self.get_configuracion_connection(), usuarios_model=self._models['usuarios']
         )
         
         self.mantenimiento_view = MantenimientoView()
         from modules.mantenimiento.controller import MantenimientoController
         self.mantenimiento_controller = MantenimientoController(
-            model=self.mantenimiento_view, view=self.mantenimiento_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
+            model=self.mantenimiento_view, view=self.mantenimiento_view, db_connection=self.get_inventario_connection(), usuarios_model=self._models['usuarios']
         )
         
         self.contabilidad_view = ContabilidadView()
         from modules.contabilidad.controller import ContabilidadController
         self.contabilidad_controller = ContabilidadController(
-            model=self.contabilidad_view, view=self.contabilidad_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
+            model=self.contabilidad_view, view=self.contabilidad_view, db_connection=self.get_inventario_connection(), usuarios_model=self._models['usuarios']
         )
         
         self.herrajes_view = HerrajesView()
         self.herrajes_controller = HerrajesController(
-            self.herrajes_model, self.herrajes_view, db_connection=self.db_connection_inventario, usuarios_model=self.usuarios_model
+            self._models['herrajes'], self.herrajes_view, db_connection=self.get_inventario_connection(), usuarios_model=self._models['usuarios']
         )
         
         from modules.vidrios.view import VidriosView
         from modules.vidrios.controller import VidriosController
         self.vidrios_view = VidriosView()
         self.vidrios_controller = VidriosController(
-            model=self.vidrios_view, view=self.vidrios_view, db_connection=self.db_connection_inventario
+            model=self.vidrios_view, view=self.vidrios_view, db_connection=self.get_inventario_connection()
         )
 
     def _setup_main_layout(self):
@@ -538,22 +541,33 @@ class MainWindow(QMainWindow):
         central_widget = QWidget()
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
+
+        # Crear un layout vertical para el área principal (usuario_label + module_stack)
+        main_area_layout = QVBoxLayout()
+        # Crear y agregar el label de usuario
+        self.usuario_label = QLabel("Usuario: -")
+        self.usuario_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        self.usuario_label.setStyleSheet("font-weight: 500; font-size: 13px; margin: 8px 0 8px 16px; color: #1e293b;")
+        main_area_layout.addWidget(self.usuario_label)
+
         self.module_stack = QStackedWidget()
         
         # Agregar vistas al stack en el MISMO orden que sidebar_sections
-        self.module_stack.addWidget(self.obras_view)            # 0 Obras
-        self.module_stack.addWidget(self.inventario_view)       # 1 Inventario
-        self.module_stack.addWidget(self.herrajes_view)         # 2 Herrajes
-        self.module_stack.addWidget(self.vidrios_view)          # 3 Vidrios
-        self.module_stack.addWidget(self.produccion_view)       # 4 Producción
-        self.module_stack.addWidget(self.logistica_view)        # 5 Logística
-        self.module_stack.addWidget(self.compras_pedidos_view)  # 6 Compras / Pedidos
-        self.module_stack.addWidget(self.contabilidad_view)     # 7 Contabilidad
-        self.module_stack.addWidget(self.auditoria_view)        # 8 Auditoría
-        self.module_stack.addWidget(self.mantenimiento_view)    # 9 Mantenimiento
-        self.module_stack.addWidget(self.usuarios_view)         # 10 Usuarios
-        self.module_stack.addWidget(self.configuracion_view)    # 11 Configuración
-        main_layout.addWidget(self.module_stack)
+        self.module_stack.addWidget(self._views['obras'])            # 0 Obras
+        self.module_stack.addWidget(self._views['inventario'])       # 1 Inventario
+        self.module_stack.addWidget(self._views['herrajes'])         # 2 Herrajes
+        self.module_stack.addWidget(self._views['vidrios'])          # 3 Vidrios
+        self.module_stack.addWidget(self._views['produccion'])       # 4 Producción
+        self.module_stack.addWidget(self._views['logistica'])        # 5 Logística
+        self.module_stack.addWidget(self._views['compras_pedidos'])  # 6 Compras / Pedidos
+        self.module_stack.addWidget(self._views['contabilidad'])     # 7 Contabilidad
+        self.module_stack.addWidget(self._views['auditoria'])        # 8 Auditoría
+        self.module_stack.addWidget(self._views['mantenimiento'])    # 9 Mantenimiento
+        self.module_stack.addWidget(self._views['usuarios'])         # 10 Usuarios
+        self.module_stack.addWidget(self._views['configuracion'])    # 11 Configuración
+        main_area_layout.addWidget(self.module_stack)
+
+        main_layout.addLayout(main_area_layout)
         self._ajustar_sidebar() # Llamada inicial para ajustar el sidebar
 
     def _filter_modules_and_setup_sidebar(self, usuario, modulos_permitidos_param):
@@ -586,7 +600,7 @@ class MainWindow(QMainWindow):
 
     def _obtener_modulos_a_usar(self, usuario, modulos_permitidos_param):
         try:
-            modulos_permitidos_obtenidos = self.usuarios_model.obtener_modulos_permitidos(usuario)
+            modulos_permitidos_obtenidos = self._models['usuarios'].obtener_modulos_permitidos(usuario)
             if not modulos_permitidos_obtenidos:
                 self.logger.error(f"[PERMISOS] No se encontraron módulos permitidos para el usuario: {usuario}")
         except Exception as e:
@@ -662,34 +676,34 @@ class MainWindow(QMainWindow):
         self.module_stack.setCurrentIndex(self.module_stack.count() - 1)
 
     def _update_controllers_with_user(self, usuario):
-        self.inventario_controller.usuario_actual = usuario
-        self.obras_controller.usuario_actual = usuario
-        self.produccion_controller.usuario_actual = usuario
-        self.logistica_controller.usuario_actual = usuario
-        self.compras_pedidos_controller.usuario_actual = usuario
-        self.pedidos_controller.usuario_actual = usuario
-        self.usuarios_controller.usuario_actual = usuario
-        self.auditoria_controller.usuario_actual = usuario
-        self.configuracion_controller.usuario_actual = usuario
+        self._controllers['inventario'].usuario_actual = usuario
+        self._controllers['obras'].usuario_actual = usuario
+        self._controllers['produccion'].usuario_actual = usuario
+        self._controllers['logistica'].usuario_actual = usuario
+        self._controllers['compras_pedidos'].usuario_actual = usuario
+        self._controllers['pedidos'].usuario_actual = usuario
+        self._controllers['usuarios'].usuario_actual = usuario
+        self._controllers['auditoria'].usuario_actual = usuario
+        self._controllers['configuracion'].usuario_actual = usuario
         self.herrajes_controller.usuario_actual = usuario
         # self.vidrios_controller no tiene usuario_actual actualmente, si se necesita, añadirlo.
 
     def _connect_module_signals(self):
-        if hasattr(self.obras_view, 'obra_agregada'):
-            if hasattr(self.inventario_controller, 'actualizar_por_obra'):
-                self.obras_view.obra_agregada.connect(self.inventario_controller.actualizar_por_obra)
+        if hasattr(self._views['obras'], 'obra_agregada'):
+            if hasattr(self._controllers['inventario'], 'actualizar_por_obra'):
+                self._views['obras'].obra_agregada.connect(self._controllers['inventario'].actualizar_por_obra)
             if hasattr(self.vidrios_controller, 'actualizar_por_obra'):
-                self.obras_view.obra_agregada.connect(self.vidrios_controller.actualizar_por_obra)
+                self._views['obras'].obra_agregada.connect(self.vidrios_controller.actualizar_por_obra)
         
-        if hasattr(self.inventario_controller, 'actualizar_por_pedido'):
-            event_bus.pedido_actualizado.connect(self.inventario_controller.actualizar_por_pedido)
-        if hasattr(self.obras_controller, 'actualizar_por_pedido'):
-            event_bus.pedido_actualizado.connect(self.obras_controller.actualizar_por_pedido)
+        if hasattr(self._controllers['inventario'], 'actualizar_por_pedido'):
+            event_bus.pedido_actualizado.connect(self._controllers['inventario'].actualizar_por_pedido)
+        if hasattr(self._controllers['obras'], 'actualizar_por_pedido'):
+            event_bus.pedido_actualizado.connect(self._controllers['obras'].actualizar_por_pedido)
         
-        if hasattr(self.inventario_controller, 'actualizar_por_pedido_cancelado'):
-            event_bus.pedido_cancelado.connect(self.inventario_controller.actualizar_por_pedido_cancelado)
-        if hasattr(self.obras_controller, 'actualizar_por_pedido_cancelado'):
-            event_bus.pedido_cancelado.connect(self.obras_controller.actualizar_por_pedido_cancelado)
+        if hasattr(self._controllers['inventario'], 'actualizar_por_pedido_cancelado'):
+            event_bus.pedido_cancelado.connect(self._controllers['inventario'].actualizar_por_pedido_cancelado)
+        if hasattr(self._controllers['obras'], 'actualizar_por_pedido_cancelado'):
+            event_bus.pedido_cancelado.connect(self._controllers['obras'].actualizar_por_pedido_cancelado)
         
         if hasattr(self, 'sidebar'): # Asegurarse que el sidebar existe
             self.sidebar.pageChanged.connect(self._on_sidebar_page_changed)
@@ -697,7 +711,7 @@ class MainWindow(QMainWindow):
     def _integrate_order_status_in_works(self):
         try:
             self.obras_controller.mostrar_estado_pedidos_en_tabla(
-                inventario_controller=self.inventario_controller,
+                inventario_controller=self._controllers['inventario'],
                 vidrios_controller=self.vidrios_controller,
                 herrajes_controller=self.herrajes_controller
             )
@@ -775,14 +789,15 @@ class MainWindow(QMainWindow):
             if self._estado_bd_online:
                 self.sidebar.set_estado_online(False)
                 self._estado_bd_online = False
-        # No mostrar mensajes ni cerrar la app aquí, solo actualizar el círculo visual
+            # Aquí termina el manejo de excepción, no hay que concatenar ni repetir código
+            return
 
 def chequear_conexion_bd():
     import pyodbc
-    # Puedes ajustar estos valores según tu configuración real
-    # DB_DRIVER = os.environ.get('DB_DRIVER', 'ODBC Driver 17 for SQL Server') # Usar constante global
+    # Puedes ajustar estos valores según tu configuración realonn, se puede quitar el with y el as conn
+    # DB_DRIVER = os.environ.get('DB_DRIVER', 'ODBC Driver 17 for SQL Server') # Usar constante global_string, timeout=5).close() # Cerrar conexión inmediatamente
     db_driver_local = os.environ.get('DB_DRIVER', DB_DRIVER_SQL_SERVER)
-    DB_SERVER = os.environ.get('DB_SERVER', 'localhost\\SQLEXPRESS')
+    DB_SERVER = os.environ.get('DB_SERVER', '')
     DB_DATABASE = os.environ.get('DB_DATABASE', 'inventario')
     DB_USERNAME = os.environ.get('DB_USERNAME', 'sa')
     DB_PASSWORD = os.environ.get('DB_PASSWORD', 'tu_contraseña_aqui')
@@ -806,7 +821,9 @@ def chequear_conexion_bd():
 def chequear_conexion_bd_gui():
     from PyQt6.QtWidgets import QApplication, QMessageBox
     from core.config import DB_SERVER, DB_SERVER_ALTERNATE, DB_USERNAME, DB_PASSWORD, DB_DEFAULT_DATABASE, DB_TIMEOUT
+    import traceback
     servidores = [DB_SERVER, DB_SERVER_ALTERNATE]
+    # print(f"[LOG 3.2] ✅ Conexión exitosa a la base de datos: {db_server_actual}")  # Esta línea se debe mover al lugar correcto si es necesario
     # Renombrar variable para cumplir convención
     for db_server_actual in servidores:
         try:
@@ -825,7 +842,7 @@ def chequear_conexion_bd_gui():
             print(f"[LOG 3.2] ✅ Conexión exitosa a la base de datos: {db_server_actual}")
             return
         except Exception as e:
-            print(f"[LOG 3.3] ❌ Error de conexión a la base de datos ({db_server_actual}): {e}")
+            print(f"[LOG 3.3] ❌ Error de conexión a la base de datos ({db_server_actual}): {e}\n{traceback.format_exc()}")
     print("[LOG 3.4] ❌ No se pudo conectar a ninguna base de datos. Mostrando error GUI.")
     # No es necesario crear una nueva instancia de QApplication si ya existe
     # app = QApplication.instance() or QApplication(sys.argv)
@@ -838,9 +855,11 @@ def chequear_conexion_bd_gui():
     msg.exec()
     sys.exit(1)
 
-# --- DIAGNÓSTICO ROBUSTO DE ENTORNO Y DEPENDENCIAS ---
+# --- DIAGNÓSTICO ROBUSTO DE ENTORNO Y DEPENDENCIAS ---amente. Versión: {pandas.__version__}")
 def diagnostico_entorno_dependencias():
-    import sys, os, traceback
+    import sys
+    import os
+    import traceback
     import datetime
     log_path = os.path.join(os.getcwd(), 'logs', 'diagnostico_dependencias.txt')
     os.makedirs(os.path.dirname(log_path), exist_ok=True)
@@ -859,22 +878,11 @@ def diagnostico_entorno_dependencias():
             log(f"[DIAG 4] ❌ Error importando pandas: {e}\n{traceback.format_exc()}")
         try:
             import reportlab
-            log(f"[DIAG 5] reportlab importado correctamente. Versión: {reportlab.__version__}")
+            log("[DIAG 5] reportlab importado correctamente.")
         except Exception as e:
             log(f"[DIAG 5] ❌ Error importando reportlab: {e}\n{traceback.format_exc()}")
-        log("[DIAG 6] === FIN DIAGNÓSTICO ===")
     except Exception as e:
-        print("Ocurrió un error crítico. Consulta logs/diagnostico_dependencias.txt para más detalles y pasos de diagnóstico.")
-        log(f"[DIAG 7] ❌ Error inesperado en diagnóstico: {e}\n{traceback.format_exc()}")
-        sys.exit(1)
-
-# Solo ejecutar diagnóstico si falla la importación de dependencias críticas
-try:
-    import pandas
-    import reportlab
-except ImportError:
-    diagnostico_entorno_dependencias()
-
+        log(f"[DIAG ERROR] Excepción en diagnóstico: {e}\n{traceback.format_exc()}")
 # --- BASE DE MEJORES PRÁCTICAS DE DISEÑO PARA TODA LA APP ---
 # 1. Todos los diálogos y mensajes deben tener padding simétrico, bordes redondeados y fondo claro.
 # 2. El texto debe estar centrado y usar fuente moderna, tamaño 11-13px, peso 500-600.

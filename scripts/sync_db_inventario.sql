@@ -60,13 +60,13 @@ BEGIN
     CREATE TABLE inventario_perfiles (
         id INT IDENTITY(1,1) PRIMARY KEY,
         codigo NVARCHAR(50),
-        nombre NVARCHAR(100),
+        -- nombre NVARCHAR(100), -- Eliminada, usar descripcion
+        descripcion NVARCHAR(255),
         tipo_material NVARCHAR(50),
         unidad NVARCHAR(20),
         stock_actual DECIMAL(18,2), -- Unificado a DECIMAL
         stock_minimo DECIMAL(18,2), -- Unificado a DECIMAL
         ubicacion NVARCHAR(100),
-        descripcion NVARCHAR(255),
         qr NVARCHAR(100),
         imagen_referencia NVARCHAR(255),
         -- Columnas adicionales de la importación y uso
