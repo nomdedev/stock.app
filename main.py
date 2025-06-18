@@ -290,7 +290,12 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # Importar utilidades principales
 from core.logger import Logger
-from core.database import DatabaseConnection, InventarioDatabaseConnection
+from core.database import (
+    DatabaseConnection,
+    InventarioDatabaseConnection,
+    UsuariosDatabaseConnection,
+    AuditoriaDatabaseConnection,
+)
 from core.startup_update_checker import check_and_update_critical_packages
 from core.splash_screen import SplashScreen
 
@@ -435,12 +440,13 @@ class MainWindow(QMainWindow):
         self._integrate_order_status_in_works()
 
     def _init_database_connections(self):
-        self.db_connection_inventario = DatabaseConnection()
-        self.db_connection_inventario.conectar_a_base("inventario")
-        self.db_connection_usuarios = DatabaseConnection()
-        self.db_connection_usuarios.conectar_a_base("users")
-        self.db_connection_auditoria = DatabaseConnection()
-        self.db_connection_auditoria.conectar_a_base("auditoria")
+        """Inicializa conexiones persistentes para cada base de datos."""
+        self.db_connection_inventario = InventarioDatabaseConnection()
+        self.db_connection_inventario.conectar()
+        self.db_connection_usuarios = UsuariosDatabaseConnection()
+        self.db_connection_usuarios.conectar()
+        self.db_connection_auditoria = AuditoriaDatabaseConnection()
+        self.db_connection_auditoria.conectar()
         self.db_connection_pedidos = self.db_connection_inventario
         self.db_connection_configuracion = self.db_connection_inventario
         self.db_connection_produccion = self.db_connection_inventario
