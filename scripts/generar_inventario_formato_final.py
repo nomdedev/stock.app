@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 import unicodedata
+from core.logger import Logger
 
 # Archivo fuente y destino
 csv_path = 'data_inventario/INVENTARIO_COMPLETO_REHAU_LIMPIO.csv'
@@ -132,9 +133,9 @@ def procesar():
     # Guardar incompletos
     if incompletos:
         pd.DataFrame(incompletos).to_csv('data_inventario/inventario_items_incompletos.csv', sep=';', index=False)
-    print(f"Archivo final generado: {out_path}")
+    Logger().info(f"Archivo final generado: {out_path}")
     if incompletos:
-        print(f"Se encontraron {len(incompletos)} items incompletos. Ver inventario_items_incompletos.csv")
+        Logger().info(f"Se encontraron {len(incompletos)} items incompletos. Ver inventario_items_incompletos.csv")
 
 if __name__ == '__main__':
     procesar()

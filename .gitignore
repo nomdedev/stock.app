@@ -1,5 +1,6 @@
 # Ignorar archivos y carpetas sensibles
 config/privado/
+core/config.py
 # Ignorar tests confidenciales
 **/tests/*confidencial*
 **/tests/*privado*

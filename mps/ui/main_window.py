@@ -7,8 +7,7 @@ from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSta
 from PyQt6.QtCore import Qt
 
 # Importar componentes UI
-# from mps.ui.components.topbar import TopBar  # ERROR: No existe el archivo topbar.py en mps/ui/components/
-# TODO: Crear o restaurar el componente TopBar, o reemplazarlo por un header alternativo.
+from mps.ui.components.topbar import TopBar
 from mps.ui.components.sidebar_moderno import Sidebar
 from modules.inventario.view import InventarioView
 from modules.obras.view import ObrasView
@@ -38,8 +37,8 @@ class MainWindow(QMainWindow):
         main_layout.setSpacing(0)
 
         # TopBar
-        # self.topbar = TopBar(usuario=config.get("usuario", "admin"))
-        # main_layout.addWidget(self.topbar)
+        self.topbar = TopBar(title="MPS")
+        main_layout.addWidget(self.topbar)
 
         # Layout central (sidebar + stack)
         content_layout = QHBoxLayout()

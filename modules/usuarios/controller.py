@@ -6,7 +6,7 @@ from core.base_controller import BaseController
 from modules.usuarios.model import UsuariosModel
 from modules.auditoria.model import AuditoriaModel
 from functools import wraps
-from core.logger import log_error
+from core.logger import log_error, Logger
 
 class PermisoAuditoria:
     def __init__(self, modulo):
@@ -92,13 +92,13 @@ class PermisoAuditoria:
         usuario = getattr(controller, 'usuario_actual', None)
         nombre_usuario = usuario.get('username', 'desconocido') if usuario else 'desconocido'
         usuario_id = usuario.get('id') if usuario else None
-        print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {nombre_usuario} (id={usuario_id})")
+        Logger().info(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {nombre_usuario} (id={usuario_id})")
 
     def _log_accion_exito(self, controller, accion):
         usuario = getattr(controller, 'usuario_actual', None)
         usuario_id = usuario.get('id') if usuario else None
         ip = usuario.get('ip', '') if usuario else ''
-        print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
+        Logger().info(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
         auditoria_model = getattr(controller, 'auditoria_model', None)
         if usuario_id is not None and auditoria_model:
             detalle = f"{accion} - éxito"

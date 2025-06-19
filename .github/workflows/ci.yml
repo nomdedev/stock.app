@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      DB_SERVER: localhost
+      DB_USERNAME: usuario
+      DB_PASSWORD: password
+      DB_DEFAULT_DATABASE: inventario
+      DEBUG_MODE: false
+      FILE_STORAGE_PATH: ./storage
+      DEFAULT_LANGUAGE: es
+      DEFAULT_TIMEZONE: UTC-3
+      NOTIFICATIONS_ENABLED: true
+      DEFAULT_THEME: light
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: pytest tests/ --maxfail=1 -v

@@ -20,6 +20,7 @@ from functools import wraps
 from core.ui_components import estilizar_boton_icono
 from modules.obras.model import OptimisticLockError
 from core.event_bus import event_bus
+from core.logger import Logger
 
 class PermisoAuditoria:
     def __init__(self, modulo):
@@ -90,14 +91,14 @@ class PermisoAuditoria:
 
     def _ejecutar_funcion_auditoria(self, func, controller, args, kwargs, usuario, usuario_id, accion, auditoria_model, ip):
         try:
-            print(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
+            Logger().info(f"[LOG ACCIÓN] Ejecutando acción '{accion}' en módulo '{self.modulo}' por usuario: {usuario.get('username', 'desconocido')} (id={usuario.get('id', '-')})")
             resultado = func(controller, *args, **kwargs)
-            print(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
+            Logger().info(f"[LOG ACCIÓN] Acción '{accion}' en módulo '{self.modulo}' finalizada con éxito.")
             detalle = f"{accion} - éxito"
             auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
             return resultado
         except Exception as e:
-            print(f"[LOG ACCIÓN] Error en acción '{accion}' en módulo '{self.modulo}': {e}")
+            Logger().error(f"[LOG ACCIÓN] Error en acción '{accion}' en módulo '{self.modulo}': {e}")
             detalle = f"{accion} - error: {e}"
             auditoria_model.registrar_evento(usuario_id, self.modulo, accion, detalle, ip)
             from core.logger import log_error
@@ -522,7 +523,7 @@ class ObrasController:
                 "Notificación enviada a Inventario y Vidrios para actualización en tiempo real.",
                 tipo='info', duracion=3500, titulo_personalizado="Agregar Obra"
             )
-        print(f"[INTEGRACIÓN] Señal obra_agregada emitida con datos: {datos_obra}")
+        Logger().info(f"[INTEGRACIÓN] Señal obra_agregada emitida con datos: {datos_obra}")
         mensaje = (
             f"<b>Obra agregada exitosamente:</b><br>"
             f"<ul style='margin:0 0 0 16px;padding:0'>"
@@ -829,7 +830,15 @@ class ObrasController:
             return
         self.view.tabla_obras.setRowCount(len(obras))
         for fila, obra in enumerate(obras):
-            id_obra = obra[0] if isinstance(obra, (list, tuple)) else obra.get('id')
+            # Compatibilidad con pyodbc.Row, tuple, dict
+            if hasattr(obra, 'id'):
+                id_obra = obra.id
+            elif isinstance(obra, (list, tuple)):
+                id_obra = obra[0]
+            elif isinstance(obra, dict):
+                id_obra = obra.get('id')
+            else:
+                raise TypeError("Tipo de obra no soportado para obtener id")
             # Rellenar columnas base
             for col, valor in enumerate(obra[:4]):
                 self.view.tabla_obras.setItem(fila, col, QTableWidgetItem(str(valor)))
@@ -856,9 +865,9 @@ class ObrasController:
         if hasattr(self.view, 'mostrar_estado_pedidos'):
             self.view.mostrar_estado_pedidos(pedidos_inventario, pedidos_vidrios, pedidos_herrajes)
         else:
-            print(f"Pedidos Inventario: {pedidos_inventario}")
-            print(f"Pedidos Vidrios: {pedidos_vidrios}")
-            print(f"Pedidos Herrajes: {pedidos_herrajes}")
+            Logger().info(f"Pedidos Inventario: {pedidos_inventario}")
+            Logger().info(f"Pedidos Vidrios: {pedidos_vidrios}")
+            Logger().info(f"Pedidos Herrajes: {pedidos_herrajes}")
 
     def editar_fecha_entrega_dialog(self, id_obra=None, *args, **kwargs):
         """

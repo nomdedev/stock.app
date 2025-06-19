@@ -64,6 +64,7 @@ Modelo de Obras que utiliza ObrasDatabaseConnection (hereda de BaseDatabaseConne
 import pandas as pd
 from fpdf import FPDF
 from core.database import ObrasDatabaseConnection
+from core.logger import Logger
 
 CLIENTE_SOLO_LETRAS_NUMEROS_ESPACIOS = "Cliente solo puede contener letras, números y espacios"
 NOMBRE_MUY_LARGO = "Nombre muy largo (máx 100 caracteres)"
@@ -110,7 +111,7 @@ class ObrasModel:
             res = self.db_connection.ejecutar_query("SELECT last_insert_rowid()")
             return res[0][0] if res else None
         except Exception as e:
-            print(f"Error al agregar obra: {e}")
+            Logger().error(f"Error al agregar obra: {e}")
             raise
 
     def _validar_datos_agregar_obra(self, datos):
@@ -168,7 +169,7 @@ class ObrasModel:
             resultado = self.db_connection.ejecutar_query(query, (id_obra,))
             return resultado if resultado else []
         except Exception as e:
-            print(f"Error al obtener materiales por obra: {e}")
+            Logger().error(f"Error al obtener materiales por obra: {e}")
             return []
 
     def asignar_material_a_obra(self, datos):
@@ -180,7 +181,7 @@ class ObrasModel:
             """ # Asumiendo que cantidad_reservada es cantidad_utilizada y cantidad_necesaria es cantidad_requerida
             self.db_connection.ejecutar_query(query, datos)
         except Exception as e:
-            print(f"Error al asignar material a obra: {e}")
+            Logger().error(f"Error al asignar material a obra: {e}")
             raise
 
     def insertar_material_obra(self, id_obra, id_perfil, cantidad, estado):
