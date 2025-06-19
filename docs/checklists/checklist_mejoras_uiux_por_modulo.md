@@ -12,10 +12,10 @@
 | Compras     | ✅ (setObjectName, diálogos y autocompletado implementados) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, diálogos) |
 | Pedidos     | ✅ (setObjectName, diálogos y autocompletado implementados) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, diálogos) |
 | Logística   | ✅ (usa setObjectName y QSS, sombra y accesibilidad en botones)        | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, formularios) |
-| Producción  | ⚠️ (falta setObjectName en código) | ✅ | ⚠️ (revisar sombra) | ✅ | ⚠️ (revisar tooltips) | ✅ | ⚠️ (revisar paddings) |
+| Producción  | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
 | Usuarios    | ✅ (setObjectName, sombra y accesibilidad en botón principal) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, formularios) |
-| Inventario  | ✅ (setObjectName, sombra y accesibilidad en botones principales) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, formularios) |
-| Herrajes    | ✅ (setObjectName, sombra y accesibilidad en botones principales y de pedidos) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejorados) | ✅ | ✅ (bordes, paddings, márgenes, formularios) |
+| Inventario  | ✅ (setObjectName, sombra y accesibilidad en botones principales) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejoradas) | ✅ | ✅ (bordes, paddings, márgenes, formularios) |
+| Herrajes    | ✅ (setObjectName, sombra y accesibilidad en botones principales y de pedidos) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad mejoradas) | ✅ | ✅ (bordes, paddings, márgenes, formularios) |
 | Mantenimiento | ✅ (setObjectName, layout y QSS global OK, filtros) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes, filtros) |
 | Configuración | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
 | Contabilidad | ✅ (setObjectName, layout y QSS global OK) | ✅ | ✅ (sombra, color, ubicación, accesibilidad) | ✅ | ✅ (tooltips y accesibilidad) | ✅ | ✅ (bordes, paddings, márgenes) |
@@ -163,3 +163,6 @@ Mantener este checklist actualizado y marcar cada punto una vez implementado. To
 - [x] Documentación de estándar visual y selectores QSS en docs/estandares_visuales.md.
 - [x] Checklist actualizado con integración de pagos y feedback visual.
 - [ ] Tests automáticos de integración y feedback visual pendientes de ejecutar.
+
+### Producción
+- [x] Auditoría de accesibilidad y visuales completada el 18/06/2025. Todos los botones, tablas y headers cumplen con QSS global, tooltips, accessibleName y focus. Se recomienda solo revisar inputs secundarios para agregar accessibleName si falta.
